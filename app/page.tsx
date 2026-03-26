@@ -1,65 +1,210 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+// ============================================================
+// / — Main game page
+// Handles auth gating, character creation, and game layout.
+// ============================================================
+
+import { useEffect, useState } from 'react'
+import type { StatBlock } from '@/types/game'
+import { useRouter } from 'next/navigation'
+import { createSupabaseBrowserClient } from '@/lib/supabase'
+import { useGame } from '@/lib/gameContext'
+import Terminal from '@/components/Terminal'
+import CommandInput from '@/components/CommandInput'
+import StatusBar from '@/components/StatusBar'
+import Sidebar from '@/components/Sidebar'
+import CharacterCreation from '@/components/CharacterCreation'
+import Prologue from '@/components/Prologue'
+import DeathScreen from '@/components/DeathScreen'
+import TheBetween from '@/components/TheBetween'
+import ThemePicker from '@/components/ThemePicker'
+import { THEME_KEY, saveTheme, type ThemeId } from '@/lib/theme'
+
+type AuthPhase = 'checking' | 'unauthenticated' | 'loading-player' | 'prologue' | 'no-player' | 'ready'
+type GamePhase = 'alive' | 'dead' | 'between' | 'rebirth' | 'rebirthing'
+
+const PROLOGUE_KEY = 'remnant_saw_prologue'
+
+export default function GamePage() {
+  const router = useRouter()
+  const { state, engine } = useGame()
+  const [authPhase, setAuthPhase] = useState<AuthPhase>('checking')
+  const [gamePhase, setGamePhase] = useState<GamePhase>('alive')
+  const [pendingEchoStats, setPendingEchoStats] = useState<StatBlock | null>(null)
+  const [showThemePicker, setShowThemePicker] = useState(false)
+
+  // Show theme picker once — before prologue — if no theme is saved
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !localStorage.getItem(THEME_KEY)) {
+      setShowThemePicker(true)
+    }
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function init() {
+      const supabase = createSupabaseBrowserClient()
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) {
+        if (!cancelled) setAuthPhase('unauthenticated')
+        return
+      }
+
+      if (!cancelled) setAuthPhase('loading-player')
+
+      try {
+        const found = await engine.loadPlayer(user.id)
+        if (!cancelled) {
+          if (found) {
+            setAuthPhase('ready')
+          } else {
+            // Show prologue once before character creation
+            const sawPrologue = typeof window !== 'undefined' && localStorage.getItem(PROLOGUE_KEY)
+            setAuthPhase(sawPrologue ? 'no-player' : 'prologue')
+          }
+        }
+      } catch {
+        if (!cancelled) setAuthPhase('no-player')
+      }
+    }
+
+    void init()
+    return () => { cancelled = true }
+  }, [engine])
+
+  // Once the engine finishes character creation, flip to ready
+  useEffect(() => {
+    if (authPhase === 'no-player' && state.initialized) {
+      setAuthPhase('ready')
+      setGamePhase('alive')
+    }
+  }, [state.initialized, authPhase])
+
+  // Redirect unauthenticated users
+  useEffect(() => {
+    if (authPhase === 'unauthenticated') {
+      router.replace('/login')
+    }
+  }, [authPhase, router])
+
+  // Watch for player death
+  useEffect(() => {
+    if (state.playerDead && gamePhase === 'alive') {
+      // Small delay so the death messages render first
+      const t = setTimeout(() => setGamePhase('dead'), 1500)
+      return () => clearTimeout(t)
+    }
+  }, [state.playerDead, gamePhase])
+
+  // Theme picker — shown once before anything else
+  if (showThemePicker) {
+    return (
+      <ThemePicker
+        onSelect={(themeId: ThemeId) => {
+          saveTheme(themeId)
+          window.dispatchEvent(new CustomEvent('remnant-theme-change', { detail: themeId }))
+          setShowThemePicker(false)
+        }}
+      />
+    )
+  }
+
+  // Loading / checking states
+  if (authPhase === 'checking' || authPhase === 'loading-player') {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black font-mono text-amber-600 text-sm">
+        <span className="opacity-70">Loading...</span>
+      </div>
+    )
+  }
+
+  if (authPhase === 'unauthenticated') {
+    return null // redirect in progress
+  }
+
+  // Prologue — shown once before character creation
+  if (authPhase === 'prologue') {
+    return (
+      <Prologue
+        onComplete={() => {
+          if (typeof window !== 'undefined') localStorage.setItem(PROLOGUE_KEY, '1')
+          setAuthPhase('no-player')
+        }}
+      />
+    )
+  }
+
+  // Character creation
+  if (authPhase === 'no-player') {
+    return <CharacterCreation />
+  }
+
+  // Death screen
+  if (gamePhase === 'dead') {
+    return (
+      <DeathScreen
+        cycle={state.player?.cycle ?? 1}
+        xpGained={state.player?.xp ?? 0}
+        roomsExplored={0}
+        causeOfDeath="combat"
+        onContinue={() => setGamePhase('between')}
+      />
+    )
+  }
+
+  // The Between
+  if (gamePhase === 'between') {
+    return (
+      <TheBetween
+        cycle={(state.player?.cycle ?? 1) + 1}
+        onContinue={() => {
+          setPendingEchoStats(engine.getEchoStats())
+          setGamePhase('rebirth')
+        }}
+      />
+    )
+  }
+
+  // Rebirth — CharacterCreation pre-filled with echo stats
+  if (gamePhase === 'rebirth') {
+    return (
+      <CharacterCreation
+        isRebirth
+        echoStats={pendingEchoStats ?? undefined}
+        onRebirthComplete={() => {
+          setPendingEchoStats(null)
+          setGamePhase('alive')
+        }}
+      />
+    )
+  }
+
+  // Rebirthing loading screen (interstitial while rebirthWithStats runs)
+  if (gamePhase === 'rebirthing') {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black font-mono text-amber-600 text-sm">
+        <span className="opacity-70">Awakening...</span>
+      </div>
+    )
+  }
+
+  // Game
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="flex flex-col h-screen bg-black overflow-hidden relative">
+      {/* Status bar */}
+      <StatusBar />
+
+      {/* Terminal — takes remaining height */}
+      <div className="flex-1 overflow-hidden relative flex flex-col">
+        <Terminal messages={state.log} />
+        <Sidebar />
+      </div>
+
+      {/* Command input */}
+      <CommandInput />
     </div>
-  );
+  )
 }

@@ -1,0 +1,266 @@
+// ============================================================
+// world.ts — Room loading, navigation, and Supabase persistence
+// ============================================================
+
+import type { Room, Exit, Direction } from '@/types/game'
+import { createSupabaseBrowserClient } from '@/lib/supabase'
+
+// ------------------------------------------------------------
+// Module-level in-memory cache (per browser session)
+// Key: roomId
+// ------------------------------------------------------------
+
+const roomCache = new Map<string, Room>()
+
+// ------------------------------------------------------------
+// Supabase row shape
+// The `generated_rooms` table stores one row per (playerId, roomId).
+// JSON columns: exits, items, enemies, npcs, flags
+// ------------------------------------------------------------
+
+interface WorldRoomRow {
+  player_id: string
+  id: string
+  world_seed: number
+  name: string
+  description: string
+  short_description: string
+  exits: Record<string, string>
+  items: string[]
+  enemies: string[]
+  npcs: string[]
+  zone: string
+  difficulty: number
+  visited: boolean
+  flags: Record<string, boolean>
+}
+
+function rowToRoom(row: WorldRoomRow): Room {
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.description,
+    shortDescription: row.short_description,
+    exits: row.exits as Partial<Record<Direction, string>>,
+    items: row.items,
+    enemies: row.enemies,
+    npcs: row.npcs,
+    zone: row.zone as Room['zone'],
+    difficulty: row.difficulty,
+    visited: row.visited,
+    flags: row.flags,
+  }
+}
+
+// ------------------------------------------------------------
+// persistWorld
+// Upsert all generated rooms for a player into Supabase.
+// Called once on new game creation.
+// ------------------------------------------------------------
+
+export async function persistWorld(
+  rooms: Room[],
+  playerId: string,
+  seed: number,
+): Promise<void> {
+  const supabase = createSupabaseBrowserClient()
+
+  const rows: WorldRoomRow[] = rooms.map((room) => ({
+    player_id: playerId,
+    id: room.id,
+    world_seed: seed,
+    name: room.name,
+    description: room.description,
+    short_description: room.shortDescription,
+    exits: room.exits as Record<string, string>,
+    items: room.items,
+    enemies: room.enemies,
+    npcs: room.npcs,
+    zone: room.zone,
+    difficulty: room.difficulty,
+    visited: room.visited,
+    flags: room.flags,
+  }))
+
+  // Batch upserts in chunks of 100 to avoid request size limits
+  const CHUNK = 100
+  for (let i = 0; i < rows.length; i += CHUNK) {
+    const chunk = rows.slice(i, i + CHUNK)
+    const { error } = await supabase
+      .from('generated_rooms')
+      .upsert(chunk, { onConflict: 'id' })
+    if (error) {
+      throw new Error(`Failed to persist world chunk ${i}–${i + chunk.length}: ${error.message}`)
+    }
+  }
+
+  // Warm the cache
+  for (const room of rooms) {
+    roomCache.set(room.id, room)
+  }
+}
+
+// ------------------------------------------------------------
+// getRoom
+// Load a single room. Returns cached value if available.
+// ------------------------------------------------------------
+
+export async function getRoom(roomId: string, playerId: string): Promise<Room | null> {
+  const cached = roomCache.get(roomId)
+  if (cached !== undefined) return cached
+
+  const supabase = createSupabaseBrowserClient()
+
+  const { data, error } = await supabase
+    .from('generated_rooms')
+    .select('*')
+    .eq('player_id', playerId)
+    .eq('id', roomId)
+    .single()
+
+  if (error) {
+    if (error.code === 'PGRST116') return null // no rows
+    throw new Error(`getRoom failed for ${roomId}: ${error.message}`)
+  }
+
+  if (!data) return null
+
+  const room = rowToRoom(data as WorldRoomRow)
+  roomCache.set(roomId, room)
+  return room
+}
+
+// ------------------------------------------------------------
+// getExits
+// Return all exits as a Direction/roomId array.
+// ------------------------------------------------------------
+
+export function getExits(room: Room): Exit[] {
+  const directions = Object.keys(room.exits) as Direction[]
+  return directions.reduce<Exit[]>((acc, direction) => {
+    const roomId = room.exits[direction]
+    if (roomId !== undefined) {
+      acc.push({ direction, roomId })
+    }
+    return acc
+  }, [])
+}
+
+// ------------------------------------------------------------
+// canMove
+// Return true if a move in the given direction is valid.
+// ------------------------------------------------------------
+
+export function canMove(room: Room, direction: string): boolean {
+  const dir = direction as Direction
+  return room.exits[dir] !== undefined
+}
+
+// ------------------------------------------------------------
+// markVisited
+// Set visited = true in DB and update cache.
+// ------------------------------------------------------------
+
+export async function markVisited(roomId: string, playerId: string): Promise<void> {
+  const supabase = createSupabaseBrowserClient()
+
+  const { error } = await supabase
+    .from('generated_rooms')
+    .update({ visited: true })
+    .eq('player_id', playerId)
+    .eq('id', roomId)
+
+  if (error) {
+    throw new Error(`markVisited failed for ${roomId}: ${error.message}`)
+  }
+
+  const cached = roomCache.get(roomId)
+  if (cached !== undefined) {
+    roomCache.set(roomId, { ...cached, visited: true })
+  }
+}
+
+// ------------------------------------------------------------
+// updateRoomFlags
+// Merge new flag values into existing flags in DB and cache.
+// ------------------------------------------------------------
+
+export async function updateRoomFlags(
+  roomId: string,
+  playerId: string,
+  flags: Record<string, boolean>,
+): Promise<void> {
+  const supabase = createSupabaseBrowserClient()
+
+  // Read current flags first so we can merge rather than overwrite
+  const current = roomCache.get(roomId)
+  let mergedFlags: Record<string, boolean>
+  if (current) {
+    mergedFlags = { ...current.flags, ...flags }
+  } else {
+    // Cache miss (e.g. after page reload) — fetch existing flags from DB
+    const { data: existingRow, error: fetchError } = await supabase
+      .from('generated_rooms')
+      .select('flags')
+      .eq('player_id', playerId)
+      .eq('id', roomId)
+      .single()
+    if (fetchError) {
+      throw new Error(`updateRoomFlags: failed to fetch existing flags for ${roomId}: ${fetchError.message}`)
+    }
+    const existingFlags = (existingRow as { flags: Record<string, boolean> } | null)?.flags ?? {}
+    mergedFlags = { ...existingFlags, ...flags }
+  }
+
+  const { error } = await supabase
+    .from('generated_rooms')
+    .update({ flags: mergedFlags })
+    .eq('player_id', playerId)
+    .eq('id', roomId)
+
+  if (error) {
+    throw new Error(`updateRoomFlags failed for ${roomId}: ${error.message}`)
+  }
+
+  if (current !== undefined) {
+    roomCache.set(roomId, { ...current, flags: mergedFlags })
+  }
+}
+
+// ------------------------------------------------------------
+// updateRoomItems
+// Replace the items array in DB and cache.
+// Called after the player takes or drops items.
+// ------------------------------------------------------------
+
+export async function updateRoomItems(
+  roomId: string,
+  playerId: string,
+  items: string[],
+): Promise<void> {
+  const supabase = createSupabaseBrowserClient()
+
+  const { error } = await supabase
+    .from('generated_rooms')
+    .update({ items })
+    .eq('player_id', playerId)
+    .eq('id', roomId)
+
+  if (error) {
+    throw new Error(`updateRoomItems failed for ${roomId}: ${error.message}`)
+  }
+
+  const cached = roomCache.get(roomId)
+  if (cached !== undefined) {
+    roomCache.set(roomId, { ...cached, items })
+  }
+}
+
+// ------------------------------------------------------------
+// clearRoomCache
+// Discard all in-memory room data. Call on logout.
+// ------------------------------------------------------------
+
+export function clearRoomCache(): void {
+  roomCache.clear()
+}

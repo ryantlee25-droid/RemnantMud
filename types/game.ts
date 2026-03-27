@@ -12,7 +12,7 @@ export type Direction = 'north' | 'south' | 'east' | 'west' | 'up' | 'down'
 
 export type Stat = 'vigor' | 'grit' | 'reflex' | 'wits' | 'presence' | 'shadow'
 
-// 12 hand-crafted zones replacing the procedural zone system
+// 13 hand-crafted zones replacing the procedural zone system
 export type ZoneType =
   | 'crossroads'
   | 'river_road'
@@ -26,6 +26,7 @@ export type ZoneType =
   | 'the_deep'
   | 'the_pine_sea'
   | 'the_scar'
+  | 'the_pens'
 
 // Legacy zones kept for any residual code references — will be removed post-migration
 export type LegacyZoneType =

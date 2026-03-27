@@ -223,6 +223,154 @@ export const ENEMIES: Record<string, Enemy> = {
       'The patience is the most frightening part. It will wait. It has always waited.',
     ],
   },
+
+  // ----------------------------------------------------------
+  // MERIDIAN-specific enemies
+  // ----------------------------------------------------------
+
+  meridian_automated_turret: {
+    id: 'meridian_automated_turret',
+    name: 'Automated Turret',
+    description: 'MERIDIAN security hardware, pre-Collapse, still functional. No biological component. No hesitation. No negotiation. It identified you as unauthorized the moment you entered its field of view. The red indicator light on its housing is not a warning. It was already past warning before you noticed it.',
+    hp: 20,
+    maxHp: 20,
+    attack: 6,
+    defense: 16,
+    damage: [6, 12],
+    xp: 120,
+    loot: [
+      { itemId: 'electronics_salvage', chance: 0.50 },
+      { itemId: 'ammo_9mm', chance: 0.30 },
+    ],
+    flavorText: [
+      'The barrel traverses at a speed that does not correspond to any mechanism you can see.',
+      'It does not rush. It is already at the correct rate of fire.',
+      'The report is flat and businesslike. It has fired ten thousand times before this.',
+      'You move left. The turret was already tracking left when you decided to move.',
+      'No hesitation, no warning shot. Authorization expired seven years ago and it has been patient.',
+    ],
+  },
+
+  meridian_ancient_hollow: {
+    id: 'meridian_ancient_hollow',
+    name: 'Ancient Hollow',
+    description: 'Seven years inside MERIDIAN. The virus has had seven years to work on this one and the result is not what the shufflers outside look like. Something has calcified in the biology — the joints are wrong, the movement is wrong, the eyes are fully silver and tracking with a precision no other Hollow exhibits. It was a researcher. The badge is still on its coat. The name has worn away.',
+    hollowType: 'remnant',
+    hp: 45,
+    maxHp: 45,
+    attack: 6,
+    defense: 14,
+    damage: [6, 12],
+    xp: 180,
+    loot: [
+      { itemId: 'chemicals_basic', chance: 0.35 },
+      { itemId: 'bandages', chance: 0.20 },
+    ],
+    flavorText: [
+      'It turns toward you with a precision that no other Hollow has demonstrated. Seven years of refinement.',
+      'The movement is wrong in a way that is hard to quantify — too deliberate, too economical.',
+      'It does not shamble. It advances. There is a difference, and you feel it.',
+      'The silver eyes track you the way a camera tracks movement. Cold. Accurate. Tireless.',
+      'Whatever it was remembering when it became this, it has spent seven years practicing it.',
+    ],
+  },
+
+  // ----------------------------------------------------------
+  // The Deep — specialized variants
+  // ----------------------------------------------------------
+
+  elder_sanguine_deep: {
+    id: 'elder_sanguine_deep',
+    name: 'Elder Sanguine (Apex)',
+    description: 'The Deep is not a territory you stumbled into. You were assessed, tracked, and allowed to reach this point. What stands before you is the reason. The oldest Sanguine in the region — pre-Collapse converted, not post. It has had eleven years. Its biology and the CHARON-7 variant that altered it are no longer distinguishable. It is watching you with something that is not exactly curiosity and is not exactly hunger and may be a word you do not have yet.',
+    hp: 75,
+    maxHp: 75,
+    attack: 10,
+    defense: 18,
+    damage: [10, 18],
+    xp: 600,
+    loot: [
+      { itemId: 'sanguine_blood_vial', chance: 0.90 },
+      { itemId: 'silver_knife', chance: 0.15 },
+      { itemId: 'meridian_keycard', chance: 0.08 },
+    ],
+    flavorText: [
+      'It does not move first. It has never needed to move first.',
+      'The speed is not a surprise anymore. The precision still is.',
+      'It says something in a voice that is entirely calm. You do not have time to parse it.',
+      'It moves through the dark like it was made for it, because it was.',
+      'Whatever it was before CHARON-7, what it is now has fully replaced the question.',
+    ],
+  },
+
+  hive_mother_the_deep: {
+    id: 'hive_mother_the_deep',
+    name: 'Hive Mother (Deep)',
+    description: 'The Deep Hive Mother is not the same as those found in open territory. Underground isolation has concentrated the pheromonal broadcast — narrower range, more total density. Every Hollow in these tunnels is an extension of this signal. You are not fighting a creature. You are fighting a node in a network, and the network knows you are here.',
+    hollowType: 'hive_mother',
+    hp: 65,
+    maxHp: 65,
+    attack: 6,
+    defense: 15,
+    damage: [6, 12],
+    xp: 350,
+    loot: [
+      { itemId: 'chemicals_basic', chance: 0.45 },
+      { itemId: 'sanguine_blood_vial', chance: 0.10 },
+    ],
+    flavorText: [
+      'The tunnels change when it moves. The other Hollow reorient.',
+      'It does not look at you. It is looking at the space around you, calculating occupancy.',
+      'Something below the threshold of hearing shifts, and the distant shuffling in the tunnels gets louder.',
+      'It points. Not at you. At where you will be.',
+    ],
+  },
+
+  hollow_brute_deep: {
+    id: 'hollow_brute_deep',
+    name: 'Deep Brute',
+    description: 'The Deep Brute is what happens when a brute spends years in low-light underground space. Broader, lower, adapted to confined passages. The shoulders have changed. The jaw has changed. It moves through the tunnels with the ease of something that grew up here, because it has, in a biological sense, since the virus rewrote it.',
+    hollowType: 'brute',
+    hp: 45,
+    maxHp: 45,
+    attack: 5,
+    defense: 13,
+    damage: [5, 10],
+    xp: 110,
+    loot: [
+      { itemId: 'scrap_metal', chance: 0.50 },
+      { itemId: 'pipe_wrench', chance: 0.20 },
+    ],
+    flavorText: [
+      'It fills the tunnel in a way that suggests the tunnel was not built for something this wide.',
+      'It charges low, using the ceiling as a brace — a technique no surface brute would know.',
+      'It moves in the dark without sound until it is very close and then it is too late for the sound to matter.',
+      'The weight of it shakes the floor when it lands.',
+    ],
+  },
+
+  hollow_remnant_deep: {
+    id: 'hollow_remnant_deep',
+    name: 'Deep Remnant',
+    description: 'A mine worker once. The lamp it carries is a mine-spec headlamp, still functional, still attached. It navigates the tunnels by routes it no longer understands it knows. The viral memory is precise in the Deep — whatever it was doing in these tunnels before, it is still doing it, in the remnant language of the Hollow.',
+    hollowType: 'remnant',
+    hp: 20,
+    maxHp: 20,
+    attack: 3,
+    defense: 10,
+    damage: [2, 6],
+    xp: 35,
+    loot: [
+      { itemId: 'bandages', chance: 0.15 },
+      { itemId: 'scrap_metal', chance: 0.20 },
+    ],
+    flavorText: [
+      'The headlamp casts moving shadows as it turns. For a moment you cannot tell which shadow is real.',
+      'It follows its route until you intersect it, then adjusts.',
+      'It moves with the muscle memory of someone who spent years in these tunnels.',
+      'The lamp has been on for seven years. That\'s what it runs on — whatever CHARON-7 made of the body.',
+    ],
+  },
 }
 
 export function getEnemy(id: string): Enemy | undefined {

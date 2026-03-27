@@ -88,7 +88,7 @@ export async function persistWorld(
     const chunk = rows.slice(i, i + CHUNK)
     const { error } = await supabase
       .from('generated_rooms')
-      .upsert(chunk, { onConflict: 'id' })
+      .upsert(chunk, { onConflict: 'player_id,id' })
     if (error) {
       throw new Error(`Failed to persist world chunk ${i}–${i + chunk.length}: ${error.message}`)
     }

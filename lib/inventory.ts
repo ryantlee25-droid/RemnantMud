@@ -94,7 +94,30 @@ export async function addItem(
       equipped: false,
     })
 
-    if (insertError) throw new Error(insertError.message)
+    if (insertError) {
+      // Unique constraint violation (23505): a concurrent insert beat us — fall back to UPDATE
+      if (insertError.code === '23505') {
+        const { data: raceRow, error: raceSelectError } = await supabase
+          .from('player_inventory')
+          .select('id, quantity')
+          .eq('player_id', playerId)
+          .eq('item_id', itemId)
+          .maybeSingle()
+
+        if (raceSelectError) throw new Error(raceSelectError.message)
+        if (raceRow !== null) {
+          const row = raceRow as { id: string; quantity: number }
+          const { error: retryUpdateError } = await supabase
+            .from('player_inventory')
+            .update({ quantity: row.quantity + quantity })
+            .eq('id', row.id)
+
+          if (retryUpdateError) throw new Error(retryUpdateError.message)
+        }
+      } else {
+        throw new Error(insertError.message)
+      }
+    }
   }
 }
 
@@ -177,12 +200,14 @@ export async function equipItem(playerId: string, itemId: string): Promise<void>
     if (unequipError) throw new Error(unequipError.message)
   }
 
-  // Equip the target item
+  // Equip the target item — find its row UUID and update by id (not item_id)
+  const targetRow = rows.find((r) => r.item_id === itemId)
+  if (targetRow === undefined) throw new Error(`Item ${itemId} not found in inventory`)
+
   const { error: equipError } = await supabase
     .from('player_inventory')
     .update({ equipped: true })
-    .eq('player_id', playerId)
-    .eq('item_id', itemId)
+    .eq('id', targetRow.id)
 
   if (equipError) throw new Error(equipError.message)
 }

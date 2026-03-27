@@ -976,7 +976,7 @@ export class GameEngine {
     const newCycle = (player.cycle ?? 1) + 1
     const newTotalDeaths = (player.totalDeaths ?? 0) + 1
     const newHp = 8 + (echoStats.vigor - 2) * 2
-    const pressure = Math.min(5, Math.floor(newCycle / 3) + 1)
+    const pressure = computePressure(newCycle)
 
     // Reset player row
     await supabase
@@ -988,9 +988,7 @@ export class GameEngine {
         cycle: newCycle,
         total_deaths: newTotalDeaths,
         ...echoStats,
-        // Reset position to first shelter room
-        // NOTE: currentRoomId stays as-is — player starts at their current location
-        // A future improvement would reset to the shelter start room
+        current_room_id: 'shelter-000',
         xp: 0,
         level: 1,
         actions_taken: 0,
@@ -1069,7 +1067,7 @@ export class GameEngine {
 
     const newCycle = (player.cycle ?? 1) + 1
     const newTotalDeaths = (player.totalDeaths ?? 0) + 1
-    const pressure = Math.min(5, Math.floor(newCycle / 3) + 1)
+    const pressure = computePressure(newCycle)
     const newHp = 8 + (stats.vigor - 2) * 2
 
     await supabase
@@ -1083,6 +1081,7 @@ export class GameEngine {
         is_dead: false,
         cycle: newCycle,
         total_deaths: newTotalDeaths,
+        current_room_id: 'shelter-000',
         xp: 0,
         level: 1,
         actions_taken: 0,

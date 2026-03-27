@@ -234,7 +234,7 @@ export async function markVisited(roomId: string, playerId: string): Promise<voi
 export async function updateRoomFlags(
   roomId: string,
   playerId: string,
-  flags: Record<string, boolean>,
+  flags: Record<string, boolean | number>,
 ): Promise<void> {
   const supabase = createSupabaseBrowserClient()
 
@@ -254,7 +254,7 @@ export async function updateRoomFlags(
     if (fetchError) {
       throw new Error(`updateRoomFlags: failed to fetch existing flags for ${roomId}: ${fetchError.message}`)
     }
-    const existingFlags = (existingRow as { flags: Record<string, boolean> } | null)?.flags ?? {}
+    const existingFlags = (existingRow as { flags: Record<string, boolean | number> } | null)?.flags ?? {}
     mergedFlags = { ...existingFlags, ...flags }
   }
 

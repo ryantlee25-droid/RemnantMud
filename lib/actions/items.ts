@@ -11,7 +11,7 @@ import {
   equipItem,
   unequipItem,
 } from '@/lib/inventory'
-import { updateRoomItems } from '@/lib/world'
+import { updateRoomItems, updateRoomFlags } from '@/lib/world'
 import { getItem } from '@/data/items'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 
@@ -64,10 +64,34 @@ export async function handleTake(engine: EngineCore, noun: string | undefined): 
 
   engine._appendMessages([msg(`You pick up the ${item.name}.`, 'system')])
 
+  // W-3: Record depletion for itemSpawns items so they don't immediately re-spawn
+  const isSpawnedItem = currentRoom.itemSpawns?.some(e => e.entityId === itemId) ?? false
+  const depletionUpdate = isSpawnedItem
+    ? updateRoomFlags(currentRoom.id, player.id, {
+        [`depleted_${itemId}`]: true,
+        [`depleted_${itemId}_at`]: player.actionsTaken ?? 0,
+      })
+    : Promise.resolve()
+
   await Promise.all([
     addItem(player.id, itemId),
     updateRoomItems(currentRoom.id, player.id, newItems),
+    depletionUpdate,
   ])
+
+  // Update cached room flags if depletion was recorded
+  if (isSpawnedItem) {
+    engine._setState({
+      currentRoom: {
+        ...updatedRoom,
+        flags: {
+          ...updatedRoom.flags,
+          [`depleted_${itemId}`]: true,
+          [`depleted_${itemId}_at`]: player.actionsTaken ?? 0,
+        },
+      },
+    })
+  }
 
   const inventory = await getInventory(player.id)
   engine._setState({ inventory })

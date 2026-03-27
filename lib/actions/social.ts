@@ -62,11 +62,23 @@ export async function handleTalk(engine: EngineCore, noun: string | undefined): 
   const messages: GameMessage[] = []
   const talkFlag = `talked_${npcId}`
 
+  // Check rolled disposition from _applyPopulation (W-2)
+  const rolledNpc = currentRoom.population?.npcs.find(n => n.npcId === npcId)
+  const disposition = rolledNpc?.disposition ?? 'neutral'
+
+  // Hostile NPCs refuse conversation
+  if (disposition === 'hostile') {
+    const hostileNpcName = npc.name
+    engine._appendMessages([
+      msg(`${hostileNpcName} turns away, hand moving toward something at their belt. You're not welcome here.`),
+    ])
+    return
+  }
+
   // Show NPC description on first talk this session
   if (!currentRoom.flags[talkFlag]) {
     messages.push(msg(npc.description))
 
-    // Track that we've shown the description
     await updateRoomFlags(currentRoom.id, player.id, { [talkFlag]: true })
     const updatedRoom = {
       ...currentRoom,
@@ -75,26 +87,20 @@ export async function handleTalk(engine: EngineCore, noun: string | undefined): 
     engine._setState({ currentRoom: updatedRoom })
   }
 
-  // Activity line (random pick from activityPool if available)
-  const richNpc = npc as { activityPool?: Array<{ activity: string; weight: number }> }
-  if (richNpc.activityPool && richNpc.activityPool.length > 0) {
-    const pool = richNpc.activityPool
-    const totalWeight = pool.reduce((s, e) => s + e.weight, 0)
-    let r = Math.random() * totalWeight
-    for (const entry of pool) {
-      r -= entry.weight
-      if (r <= 0) {
-        messages.push(msg(`${npc.name} ${entry.activity}.`))
-        break
-      }
-    }
-  }
-
-  // Dialogue line
+  // Dialogue line — wary NPCs are terse
   const cycle = player.cycle ?? 1
   const revenantLine = getRevenantDialogue(npcId, cycle)
   const dialogue = revenantLine ?? npc.dialogue
-  messages.push(msg(`"${dialogue}" \u2014 ${npc.name}`))
+
+  if (disposition === 'wary') {
+    messages.push(msg(`${npc.name} doesn't meet your eyes. "${dialogue}"`))
+    messages.push(msg(`They don't offer anything else.`))
+  } else if (disposition === 'friendly') {
+    messages.push(msg(`"${dialogue}" \u2014 ${npc.name}`))
+    messages.push(msg(`${npc.name} seems willing to talk more if you have questions.`))
+  } else {
+    messages.push(msg(`"${dialogue}" \u2014 ${npc.name}`))
+  }
 
   engine._appendMessages(messages)
 }

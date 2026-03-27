@@ -93,10 +93,16 @@ export function itemsLine(room: Room): string {
 
 export function npcsLine(room: Room): string {
   if (room.npcs.length === 0) return ''
-  const names = room.npcs
-    .map((id) => getNPC(id)?.name ?? id)
-    .join(', ')
-  return `${names} is here.`
+  const lines = room.npcs.map((id) => {
+    const rolledNpc = room.population?.npcs.find(n => n.npcId === id)
+    // Use rolled activity description if available (full sentence from activityPool)
+    if (rolledNpc && rolledNpc.activity !== 'is here') {
+      return rolledNpc.activity
+    }
+    const name = getNPC(id)?.name ?? id
+    return `${name} is here.`
+  })
+  return lines.join(' ')
 }
 
 export function enemiesLine(room: Room): string {

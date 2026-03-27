@@ -17,6 +17,7 @@ import type {
   QuantityConfig,
   FactionType,
   CharacterClass,
+  SpawnedNPC,
 } from '@/types/game'
 import { CLASS_DEFINITIONS } from '@/types/game'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
@@ -120,17 +121,24 @@ export class GameEngine implements EngineCore {
     const timeOfDay = computeTimeOfDay(this.state.player?.actionsTaken ?? 0)
     const cycle = this.state.player?.cycle ?? 1
     const pressure = computePressure(cycle)
+    const actionsTakenNow = this.state.player?.actionsTaken ?? 0
+
+    // --- W-4: Enemy defeat persistence constants ---
+    const ENEMY_RESPAWN_ACTIONS = 160 // 8 time periods
+    const roomCleared = room.flags.room_cleared
+    const clearedAt = room.flags.room_cleared_at
+    const enemiesRestored = !roomCleared ||
+      (typeof clearedAt === 'number' && actionsTakenNow - clearedAt >= ENEMY_RESPAWN_ACTIONS)
 
     // --- Hollow encounter spawns ---
     const enemyIds: string[] = []
-    if (room.hollowEncounter) {
+    if (room.hollowEncounter && enemiesRestored) {
       const { baseChance, timeModifier, threatPool } = room.hollowEncounter
       const timeMod = timeModifier[timeOfDay] ?? 1.0
       const pressMod = pressureModifier(pressure)
       const finalChance = Math.min(baseChance * timeMod * pressMod, 0.95)
 
       if (Math.random() < finalChance && threatPool.length > 0) {
-        // Weighted roll from threat pool
         const total = threatPool.reduce((s, e) => s + e.weight, 0)
         let r = Math.random() * total
         for (const entry of threatPool) {
@@ -144,21 +152,66 @@ export class GameEngine implements EngineCore {
       }
     }
 
-    // --- NPC spawns ---
-    // Static NPCs always present; rich npcSpawns rolled probabilistically
+    // --- W-2: NPC spawns with activity + disposition rolling ---
     const npcIds: string[] = [...room.npcs]
+    const rolledNpcs: SpawnedNPC[] = []
     if (room.npcSpawns) {
       for (const entry of room.npcSpawns) {
         if (Math.random() < entry.spawnChance) {
           npcIds.push(entry.npcId)
+
+          // Roll activity (filtered by current time of day)
+          let activity = 'is here'
+          if (entry.activityPool && entry.activityPool.length > 0) {
+            const filtered = entry.activityPool.filter(
+              e => !e.timeRestrict || e.timeRestrict.includes(timeOfDay)
+            )
+            const pool = filtered.length > 0 ? filtered : entry.activityPool
+            const total = pool.reduce((s, e) => s + e.weight, 0)
+            let r = Math.random() * total
+            for (const a of pool) {
+              r -= a.weight
+              if (r <= 0) { activity = a.desc; break }
+            }
+          }
+
+          // Roll disposition
+          let disposition: SpawnedNPC['disposition'] = 'neutral'
+          if (entry.dispositionRoll) {
+            const dr = entry.dispositionRoll
+            const dPool: Array<{ key: SpawnedNPC['disposition']; weight: number }> = []
+            if (dr.friendly) dPool.push({ key: 'friendly', weight: dr.friendly })
+            if (dr.neutral)  dPool.push({ key: 'neutral',  weight: dr.neutral  })
+            if (dr.wary)     dPool.push({ key: 'wary',     weight: dr.wary     })
+            if (dr.hostile)  dPool.push({ key: 'hostile',  weight: dr.hostile  })
+            if (dPool.length > 0) {
+              const total = dPool.reduce((s, e) => s + e.weight, 0)
+              let r = Math.random() * total
+              for (const p of dPool) {
+                r -= p.weight
+                if (r <= 0) { disposition = p.key; break }
+              }
+            }
+          }
+
+          rolledNpcs.push({ npcId: entry.npcId, activity, disposition })
         }
       }
     }
 
-    // --- Item spawns ---
+    // --- W-3: Item spawns with depletion check ---
+    const ITEM_RESPAWN_ACTIONS = 80 // 4 time periods
     const itemIds: string[] = [...room.items]
     if (room.itemSpawns) {
       for (const entry of room.itemSpawns) {
+        // Skip if depleted and respawn timer hasn't elapsed
+        const depletedFlag = room.flags[`depleted_${entry.entityId}`]
+        if (depletedFlag) {
+          const depletedAt = room.flags[`depleted_${entry.entityId}_at`]
+          if (typeof depletedAt !== 'number' || actionsTakenNow - depletedAt < ITEM_RESPAWN_ACTIONS) {
+            continue
+          }
+        }
         const timeMod = entry.timeModifier?.[timeOfDay] ?? 1.0
         const finalChance = Math.min(entry.spawnChance * timeMod, 0.95)
         if (Math.random() < finalChance) {
@@ -168,7 +221,6 @@ export class GameEngine implements EngineCore {
       }
     }
 
-    // If no hollow encounter data and no spawn tables, return room as-is
     if (!room.hollowEncounter && !room.npcSpawns && !room.itemSpawns) {
       return room
     }
@@ -178,6 +230,12 @@ export class GameEngine implements EngineCore {
       items: itemIds,
       enemies: enemyIds,
       npcs: [...new Set(npcIds)],
+      population: {
+        items: [],
+        enemyIds,
+        npcs: rolledNpcs,
+        ambientLines: [],
+      },
     }
   }
 

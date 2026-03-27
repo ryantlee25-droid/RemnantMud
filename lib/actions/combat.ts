@@ -14,7 +14,7 @@ import {
 } from '@/lib/combat'
 import { getItem } from '@/data/items'
 import { getEnemy } from '@/data/enemies'
-import { updateRoomItems } from '@/lib/world'
+import { updateRoomItems, updateRoomFlags } from '@/lib/world'
 
 // ------------------------------------------------------------
 // Local message helpers
@@ -231,6 +231,25 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
       const lootNames = playerResult.loot.map((id) => getItem(id)?.name ?? id).join(', ')
       engine._appendMessages([msg(`The ${combatState.enemy.name} dropped: ${lootNames}.`)])
       await updateRoomItems(currentRoom.id, player.id, newItems)
+    }
+
+    // W-4: Mark room cleared when last enemy falls (suppresses re-spawn for 8 time periods)
+    if (newEnemies.length === 0 && !afterPlayer.additionalEnemies?.length) {
+      const actionsTaken = player.actionsTaken ?? 0
+      await updateRoomFlags(currentRoom.id, player.id, {
+        room_cleared: true,
+        room_cleared_at: actionsTaken,
+      })
+      engine._setState({
+        currentRoom: {
+          ...engine.getState().currentRoom!,
+          flags: {
+            ...engine.getState().currentRoom!.flags,
+            room_cleared: true,
+            room_cleared_at: actionsTaken,
+          },
+        },
+      })
     }
 
     // Check if screamer summoned additional enemies that need fighting

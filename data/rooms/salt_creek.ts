@@ -1,0 +1,901 @@
+import type { Room } from '@/types/game'
+
+// ============================================================
+// SALT CREEK STRONGHOLD — 14 Rooms
+// The Salters' fortress. Militaristic, disciplined, aggressive. Act I–II.
+// ============================================================
+
+export const SALT_CREEK_ROOMS: Room[] = [
+
+  // ----------------------------------------------------------
+  // SC-01: Outer Perimeter
+  // ----------------------------------------------------------
+  {
+    id: 'sc_01_outer_perimeter',
+    name: 'Salt Creek — Outer Perimeter',
+    zone: 'salt_creek',
+    act: 1,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: false },
+    description: 'The outer perimeter of Salt Creek Stronghold announces itself a hundred yards before you reach it: earthwork berms three meters high, topped with coils of razor wire that catch the sun like something alive and hostile. No artistry here, no attempt at welcome — the fortifications are functional, expensive in labor, and designed by someone who has thought carefully about what an attacking force would need to do and then made every one of those things worse. A guard post is visible at the crest of the berm, a silhouette with a long gun. They saw you before you saw them. The challenge when it comes is flat and procedural: "Halt. State your business. Hands where I can see them." There is no curiosity in the voice.',
+    descriptionNight: 'The perimeter at night is perimeter at night. No lights — light is a target. The sentries work by night-adapted vision and sound discipline. You know they\'re there because the challenge comes before you expect it, from a direction you weren\'t watching.',
+    shortDescription: 'Earth berms topped with razor wire and sentries who saw you long before you saw them.',
+    exits: {
+      east: 'rr_12_covenant_outskirts',
+      west: 'sc_02_kill_zone',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.10,
+      timeModifier: { day: 0.3, dusk: 1.5, night: 2.5, dawn: 0.7 },
+      threatPool: [
+        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'brute', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.5, awarePassive: 0.3, awareAggressive: 0.2 },
+    },
+    extras: [
+      {
+        keywords: ['berm', 'earthwork', 'dirt', 'fortification'],
+        description: 'The earthwork berms are hand-dug — the labor of hundreds of person-hours. The earth is packed and shaped by someone who knows soil engineering: the angle of repose correct, the drainage channels cut on the back face to prevent saturation. This wasn\'t improvised. Briggs had a plan and made people execute it, which is the Salter way, which is why Salt Creek is still standing.',
+      },
+      {
+        keywords: ['razor wire', 'wire', 'coils', 'glint'],
+        description: 'Three overlapping coils of razor wire along the crest. The middle coil is elevated on stakes to create a mid-level barrier. Someone has wired tin can lids along the perimeter wire at irregular intervals — audible alarm system, low tech, effective. Anything big enough to matter will hit the cans.',
+      },
+      {
+        keywords: ['guard', 'sentry', 'post', 'challenge'],
+        description: 'The sentries rotate every two hours. Briggs instituted it after a sentry fell asleep on post in the first month and was never found — the implication left to do its work. Two-hour rotations, overlap at handover, no exceptions. The current sentry has the particular stillness of someone who has been trained not to fidget. You haven\'t heard them breathe.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'salter_perimeter_guard',
+        spawnChance: 0.95,
+        spawnType: 'anchored',
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        activityPool: [
+          { desc: 'A Salter sentry levels a scoped rifle from the berm crest, tracking your approach. The barrel doesn\'t waver. "State your name and purpose. Slowly."', weight: 5 },
+          { desc: 'Two sentries are at the transition — one coming off watch, one going on. The handover is professional: "Quiet approach from the east, twenty minutes ago. Nothing came of it." Both heads turn to you.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.0, neutral: 0.3, wary: 0.5, hostile: 0.2 },
+        dialogueTree: 'sc_perimeter_challenge',
+      },
+    ],
+    itemSpawns: [],
+  },
+
+  // ----------------------------------------------------------
+  // SC-02: The Kill Zone
+  // ----------------------------------------------------------
+  {
+    id: 'sc_02_kill_zone',
+    name: 'Salt Creek — The Kill Zone',
+    zone: 'salt_creek',
+    act: 1,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: false },
+    description: 'The cleared ground between the outer berm and the inner container wall is exactly what its name says it is. A hundred-meter swath of stripped earth, no cover, no shadow, no place to shelter. The vegetation has been pulled, burned, and treated so thoroughly that nothing grows back — salt in the soil, the Salters\' preferred solution, which is why they\'re called what they\'re called. From the inner wall, a defender has clean sightlines in every direction. From the cleared ground, you are simply visible. You move through it with the deliberate pace of someone who has decided that looking comfortable with their vulnerability is the best available option. It is not, actually, an option.',
+    descriptionNight: 'At night the kill zone is darkness and the assumption of eyes. The inner wall has firing ports lit from behind, barely, just enough for the defenders inside to orient. You are a shape in the dark. They know you\'re there.',
+    shortDescription: 'A hundred meters of stripped bare earth between walls, with no cover and firing positions on both sides.',
+    exits: {
+      east: 'sc_01_outer_perimeter',
+      west: 'sc_03_inner_gate',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.05,
+      timeModifier: { day: 0.5, dusk: 1.0, night: 1.5, dawn: 0.7 },
+      threatPool: [
+        { type: 'shuffler', weight: 80, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'screamer', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.3, awarePassive: 0.3, awareAggressive: 0.4 },
+      noiseModifier: 3,
+    },
+    extras: [
+      {
+        keywords: ['ground', 'soil', 'salt', 'bare', 'stripped'],
+        description: 'The name \'Salters\' comes from this practice — salting cleared ground to prevent regrowth. Briggs adopted it from historical siege warfare, which he read extensively during the first winter. The soil here won\'t support plant life for years. That is the point.',
+      },
+      {
+        keywords: ['sightlines', 'sight', 'cover', 'exposed'],
+        description: 'You count the firing positions while you cross: six on the inner wall, three elevated on the container tops, two at the outer berm behind you. If you were a threat, you would already be addressed. You are not comfortable with that construction.',
+      },
+      {
+        keywords: ['stakes', 'warning', 'signs', 'markers'],
+        description: 'At regular intervals, wooden stakes with red-painted tops mark distances from the inner wall — 80 meters, 60 meters, 40 meters, 20 meters. Range markers for the defenders. The numbers are large and legible. This is also intentional.',
+      },
+    ],
+    npcSpawns: [],
+    itemSpawns: [],
+  },
+
+  // ----------------------------------------------------------
+  // SC-03: Inner Gate
+  // ----------------------------------------------------------
+  {
+    id: 'sc_03_inner_gate',
+    name: 'Salt Creek — Inner Gate',
+    zone: 'salt_creek',
+    act: 1,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: true },
+    description: 'The inner gate is built from stacked shipping containers, two on each side, welded at the seams to form a gatehouse that would take a vehicle at speed to breach — and even then, you\'d need the follow-up vehicle to deal with what was waiting inside. The gate itself is a repurposed steel loading door, counterbalanced and fitted with a lock that requires two keys from two different sentries. A sign above the gate reads: SALT CREEK STRONGHOLD — SALTER TERRITORY — ACCORD LACKEYS AND DRIFTER PARASITES TURN BACK. Someone has drawn a fist below the text. The sentries are watching you with professional contempt that softens marginally if you\'re Recognized.',
+    descriptionNight: 'Night entry procedure is different: password challenge, which changes nightly, plus reputation verification. The sentries are less patient at night. The sign says the same things in the dark.',
+    shortDescription: 'A container-steel gatehouse with two-key locks and a sign that leaves no ambiguity about Salter hospitality.',
+    exits: {
+      east: 'sc_02_kill_zone',
+      west: 'sc_04_the_yard',
+    },
+    richExits: {
+      west: {
+        destination: 'sc_04_the_yard',
+        reputationGate: { faction: 'salters', minLevel: 1 },
+        descriptionVerbose: 'the inner gate — Recognized standing with the Salters required',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['sign', 'text', 'accord', 'drifters', 'fist'],
+        description: 'The sign has been there since the beginning — Briggs wrote it himself on a piece of container wall with industrial paint. He was offered a chance to revise it when Covenant relations required diplomacy. He didn\'t revise it. The fist was added by a Salter private three years ago as an unofficial amendment, and Briggs said nothing, which the private took as approval.',
+      },
+      {
+        keywords: ['container', 'gatehouse', 'steel', 'welded'],
+        description: 'The containers were hauled here from a rail yard twenty miles east, a project that took three weeks and seventeen people and a vehicle they later had to cannibalize for parts but that Briggs still considers worth it. The welds on the corner seams are visible, lumpy with the confidence of self-taught metalwork. They hold.',
+      },
+      {
+        keywords: ['lock', 'two keys', 'procedure'],
+        description: 'Two-key procedure: one sentry holds the north lock key, one holds the south lock key. Both must turn simultaneously, which requires both sentries to be present and in agreement. This prevents a lone sentry from being coerced or killed to open the gate. Briggs designed the procedure after a near-breach in year one. You note that both sentries are present and in agreement about you.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'salter_inner_gate_sentry',
+        spawnChance: 1.0,
+        spawnType: 'anchored',
+        quantity: { min: 2, max: 2, distribution: 'single' },
+        activityPool: [
+          { desc: 'Two sentries flank the gate, each holding one key, watching you with the synchronized attention of people who practice this together regularly. One of them speaks: "State your name. Affiliation. Reason for entry."', weight: 5 },
+          { desc: 'A sentry at the gate runs her eyes over your gear with a systematic assessment that communicates both experience and the complete indifference to your comfort that the assessment entails.', weight: 3 },
+        ],
+        dispositionRoll: { friendly: 0.0, neutral: 0.2, wary: 0.6, hostile: 0.2 },
+        dialogueTree: 'sc_inner_gate_challenge',
+      },
+    ],
+    itemSpawns: [],
+  },
+
+  // ----------------------------------------------------------
+  // SC-04: The Yard
+  // ----------------------------------------------------------
+  {
+    id: 'sc_04_the_yard',
+    name: 'Salt Creek — The Yard',
+    zone: 'salt_creek',
+    act: 1,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: false },
+    description: 'The yard is where Salters become Salters — a dirt-floored training ground inside the container wall, with the organized chaos of people pushing themselves past where they were yesterday. Four stations running simultaneously: a sparring ring where two people are working through a takedown sequence with focused intensity, a weapons drill line doing dry-fire presentations in unison, an obstacle course of stacked tires and crawl tunnels at the east end, and a fitness station where a trainee does push-ups while a trainer counts with the flat affect of someone who will count forever if that\'s what\'s required. The sound of exertion, impacts, and counted repetitions is constant. Nobody looks at you twice. You are not the most important thing happening here.',
+    descriptionNight: 'Night PT. Salters run at night by preference — conditions prepare you for conditions. The yard is lanterns-only, which makes the sparring ring into something with shadows and consequence.',
+    shortDescription: 'The training ground — constant drills, sparring, and the organized sound of people getting harder.',
+    exits: {
+      east: 'sc_03_inner_gate',
+      north: 'sc_05_barracks',
+      south: 'sc_09_the_pit',
+      west: 'sc_06_mess_hall',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.03,
+      timeModifier: { day: 0.5, dusk: 1.0, night: 1.5, dawn: 0.7 },
+      threatPool: [
+        { type: 'shuffler', weight: 90, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.2, awarePassive: 0.3, awareAggressive: 0.5 },
+    },
+    extras: [
+      {
+        keywords: ['sparring ring', 'fighting', 'takedown', 'combat'],
+        description: 'The ring is a cleared circle of dirt with a boundary marked in painted stone. No rules visible anywhere. Two people working a shoulder takedown in slow-motion practice, then full speed, then slow again. The trainer calls corrections without emotion: "Wrist, not sleeve. Over and again." If you watch long enough, you see the sequence improve. The learning is in the repetition.',
+        skillCheck: { skill: 'brawling', dc: 10, successAppend: 'The trainer notices you watching with actual understanding and nods, once, which is the closest thing to an invitation you\'ll get here.' },
+      },
+      {
+        keywords: ['drill line', 'weapons drill', 'dry fire', 'presentation'],
+        description: 'Seven trainees in a line, presenting empty rifles to a target and squeezing triggers in unison. "Draw. Present. Acquire. Squeeze. Reset." The cadence is the trainer\'s voice and the clicking of dry mechanisms. They do it again. They\'ll do it until the motion lives in muscle, not mind.',
+      },
+      {
+        keywords: ['obstacle course', 'tires', 'crawl tunnel', 'course'],
+        description: 'The obstacle course has been modified and added to since the beginning — you can see the original design and at least four generations of additions, each requiring something the previous version didn\'t. Tires to run through. A log barrier to vault. A crawl tube made from drainage pipe. At the end, a rope climb to a platform. The rope shows the evidence of thousands of pairs of hands.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'salter_trainer',
+        spawnChance: 0.90,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'The trainer calls corrections to the sparring ring in a voice that carries without rising — experience has taught her that volume is for emergencies, not feedback.', weight: 3 },
+          { desc: 'A trainer demonstrates a disarm sequence to a group of trainees, performing it slowly three times, then asking the trainees to identify the pivot point.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.0, neutral: 0.4, wary: 0.5, hostile: 0.1 },
+        dialogueTree: 'sc_trainer_yard',
+      },
+      {
+        npcId: 'salter_trainee',
+        spawnChance: 0.80,
+        spawnType: 'wanderer',
+        quantity: { min: 2, max: 4, distribution: 'bell' },
+        activityPool: [
+          { desc: 'A trainee moves through the obstacle course at controlled speed, not sprinting — economy of movement is the lesson, not time.', weight: 3 },
+          { desc: 'A trainee in the sparring ring takes a throw to the ground, gets up immediately without dramatic pause, and returns to ready position. The trainer says nothing, which means correct.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.0, neutral: 0.3, wary: 0.5, hostile: 0.2 },
+      },
+    ],
+    itemSpawns: [],
+  },
+
+  // ----------------------------------------------------------
+  // SC-05: Barracks
+  // ----------------------------------------------------------
+  {
+    id: 'sc_05_barracks',
+    name: 'Salt Creek — Barracks',
+    zone: 'salt_creek',
+    act: 1,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: true },
+    description: 'The barracks occupy what was a commercial warehouse — the square footage is enough for the eighty-person permanent garrison with room for a rotating cast of trainees and contract fighters. Bunks in rows, salvage-built from lumber and steel tube, each with a footlocker that is the only private space most Salters have. The discipline of the space is visible at a glance: bedding aligned, gear stowed, the floor clean enough. Not pretty — the light is bad, the air is crowded with the smell of bodies and weapon oil — but functional in the way that a weapon is functional: made for use, maintained for use, designed to do one thing well. People off-shift talk, sleep, check their gear. Conversations you half-catch are about equipment, about patrols, about specific tactical problems that have specific tactical solutions and not very much else.',
+    descriptionNight: 'The barracks at night fills to capacity. The sounds: breathing, a few people talking quietly, the creak of bunks, the occasional single word from someone in a dream. The night sentry makes circuits without a lantern, by feel, because the garrison is a hundred people who know each other in the dark.',
+    shortDescription: 'Eight rows of bunks, eighty Salters, and conversations exclusively about gear, patrols, and problems that have solutions.',
+    exits: {
+      south: 'sc_04_the_yard',
+      east: 'sc_07_warlords_command',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['bunks', 'beds', 'footlocker', 'gear'],
+        description: 'Each footlocker is padlocked and personal — the only privacy in the barracks. What people keep there: spare ammunition, a weapon they\'re more attached to than their issue gear, something from before the Collapse that they didn\'t think would still matter and does. Nobody opens another person\'s footlocker. This rule has never been written down. It has never been violated.',
+      },
+      {
+        keywords: ['wall', 'board', 'patrol', 'schedule', 'assignments'],
+        description: 'The duty board covers one full wall — patrol assignments, training schedules, equipment maintenance rotations, post assignments. Updated daily in a standard format that every Salter learns in the first week. The current day\'s assignments are in red. Tomorrow\'s are in black. Everything is accounted for.',
+      },
+      {
+        keywords: ['conversation', 'talk', 'soldiers', 'troops'],
+        description: 'You catch fragments: "—the north gate seal is degrading, I put it in the maintenance log—" and "—new rotation starts the sixth—" and "—Briggs wants the motor pool finished by end of week—" and, quietly, from two people in a corner bunk: "—I know. I know. I just—" and then they see you and the conversation ends, which tells you something about what it was.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'salter_off_duty',
+        spawnChance: 0.75,
+        spawnType: 'wanderer',
+        quantity: { min: 1, max: 3, distribution: 'bell' },
+        activityPool: [
+          { desc: 'A Salter sits on his bunk cleaning a rifle with mechanical precision, the process carrying the particular calm of practiced routine.', weight: 3 },
+          { desc: 'A Salter lies on her bunk reading from a field manual, one finger tracking her place on the page, her lips forming words occasionally.', weight: 2 },
+          { desc: 'Two Salters at a small table play cards. The game is quiet. The stakes appear to be small scrap-metal tokens. Neither is winning decisively.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.0, neutral: 0.3, wary: 0.5, hostile: 0.2 },
+        dialogueTree: 'sc_barracks_soldier',
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'ammo_9mm',
+        spawnChance: 0.20,
+        quantity: { min: 2, max: 5, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.8, max: 1.0 },
+        groundDescription: 'A few loose rounds on the floor near a footlocker — someone\'s pocket dropped them.',
+        depletion: { cooldownMinutes: { min: 120, max: 360 }, respawnChance: 0.15 },
+      },
+    ],
+  },
+
+  // ----------------------------------------------------------
+  // SC-06: Mess Hall
+  // ----------------------------------------------------------
+  {
+    id: 'sc_06_mess_hall',
+    name: 'Salt Creek — Mess Hall',
+    zone: 'salt_creek',
+    act: 1,
+    difficulty: 1,
+    visited: false,
+    flags: { noCombat: true },
+    description: 'The mess hall is the social center of Salt Creek and the most human room in the stronghold — not despite its austerity but partly because of it. Long tables, bench seating, a serving line at one end where the cooks work with an efficiency that makes Briggs\'s training philosophy legible in food-service form: no excess, no waste, no argument. The food is: adequate. Protein heavy. Salted. The important thing the mess hall does is put eighty people in the same room three times a day with enforced proximity, which generates the information exchange that makes a military unit function. You hear more operational intelligence here than you would in a briefing room, because the people doing the talking don\'t frame it as intelligence.',
+    descriptionNight: 'Evening chow has a different quality — the shift off the day\'s work, the loosening that food and warmth and the absence of active threat allows. Conversations are longer. Someone is usually telling a story at the far table.',
+    shortDescription: 'Adequate food served efficiently to eighty Salters, and the best intelligence briefing in the stronghold.',
+    exits: {
+      east: 'sc_04_the_yard',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['food', 'meal', 'rations', 'serving line', 'cook'],
+        description: 'Today: salted pork and grain porridge, with a small amount of pickled vegetables on the side. The cook serves it without commentary. You take what\'s given. The recipe is consistent because consistency is a resource — people eat what they expect, no one argues about portions, the line moves. It is also, quietly, good. Not restaurant good. Survival good. The kind of good that means someone cared.',
+      },
+      {
+        keywords: ['rumors', 'conversation', 'information', 'intel'],
+        description: 'In fifteen minutes of sitting with a bowl: the motor pool truck has a cracked block that changes the Hollow-clearing radius by twelve miles. A Drifter scout came through yesterday with information about Accord patrol patterns that Briggs received without comment, which everyone present read as either approval or a decision already made. A patrol to the south came back with evidence of Sanguine activity closer than the last sighting. Everyone heard this. Nobody changed their expression.',
+        skillCheck: { skill: 'perception', dc: 9, successAppend: 'You catch the thread that connects two of those rumors. The Sanguine activity to the south is in the same area as the Accord patrol pattern intelligence. Someone is maneuvering.' },
+      },
+      {
+        keywords: ['tables', 'benches', 'seating', 'long tables'],
+        description: 'Six long tables, permanent-fixed to the concrete floor. The bench seats are worn smooth at the high-contact points. Every table has visible initials, drawings, and notched tallies — the cumulative graffiti of people with knives and time. One bench end has been signed by thirty-seven different hands, with ranks and dates. The oldest signature is Briggs\'s: Day 1.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'salter_mess_cook',
+        spawnChance: 0.85,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'The cook works the serving line with the efficiency of someone who has timed each portion to three seconds and sees no reason to elaborate.', weight: 4 },
+          { desc: 'The cook is prepping the next meal in a large steel pot, working with the domestic focus of someone who finds large-scale feeding genuinely satisfying.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.2, neutral: 0.6, wary: 0.2, hostile: 0.0 },
+        dialogueTree: 'sc_mess_cook',
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'salted_rations',
+        spawnChance: 0.50,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.8, max: 1.0 },
+        groundDescription: 'A serving of salt-cured rations sits at the end of the serving line, unclaimed.',
+        depletion: { cooldownMinutes: { min: 60, max: 180 }, respawnChance: 0.60 },
+      },
+    ],
+  },
+
+  // ----------------------------------------------------------
+  // SC-07: Warlord's Command
+  // ----------------------------------------------------------
+  {
+    id: 'sc_07_warlords_command',
+    name: 'Salt Creek — Warlord\'s Command',
+    zone: 'salt_creek',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { noCombat: true, questHub: true },
+    description: 'The command center is a converted container unit — one long steel room with maps, comms equipment in various states of function, a weapons rack with Briggs\'s personal gear, and a desk that has the look of something used by a person who thinks at the desk, not for it. Briggs is in the room. He always seems to be in the room — the garrison runs on the assumption of his presence the way a clock runs on the assumption of gravity. He\'s a large man who wears his size without using it, a Marine\'s economy of movement in a civilian post-Collapse body. He looks at you the way he looks at new intelligence: completely, quickly, filing the assessment before you\'ve finished being assessed. "You made it this far," he says, which is both true and contains the clear implication that it was not guaranteed.',
+    descriptionNight: 'Briggs works at night. The command is lit. The radio runs all shifts. He reads patrol reports while they\'re still warm.',
+    shortDescription: 'Briggs\'s command center — a converted container, maps, a desk used for actual thinking, and a man who has already assessed you.',
+    exits: {
+      west: 'sc_05_barracks',
+      north: 'sc_10_watchtower',
+    },
+    richExits: {
+      west: {
+        destination: 'sc_05_barracks',
+        reputationGate: { faction: 'salters', minLevel: 2 },
+        descriptionVerbose: 'the command door — Trusted Salter standing required',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['maps', 'wall', 'territory', 'planning'],
+        description: 'Briggs\'s maps are military-grade where they exist and hand-annotated everywhere else. The Four Corners region is covered in tactical notations: Hollow herd movement corridors, Sanguine territorial markers in black, Accord and Drifter positions noted with a particular quality of annotation that suggests Briggs considers them variables rather than allies. MERIDIAN has a marker, north, with a series of question marks and then a single word: PERSONAL.',
+        cycleGate: 2,
+      },
+      {
+        keywords: ['briggs', 'warlord', 'marine', 'commander'],
+        description: 'Warlord Briggs. Ex-Marine, rank unknown — he doesn\'t use it. Assigned, before the Collapse, to a security detail at a facility in the northern mountains. He\'s never said which one. The facility burned. He walked out. He doesn\'t discuss the walking out, and you understand from the way he doesn\'t discuss it that the walking out was the most significant event in a life that has contained very significant events.',
+        cycleGate: 2,
+      },
+      {
+        keywords: ['radio', 'comms', 'communications', 'equipment'],
+        description: 'Three radio units in varying states of function. One runs continuous scan on a standard emergency frequency. Another is dedicated to patrol communication. The third is on a channel that isn\'t labeled — Briggs controls it himself, and he was at the desk when you came in, and you notice that he moved slightly in the direction of the unlabeled unit before you spoke.',
+        skillCheck: { skill: 'electronics', dc: 12, successAppend: 'The unlabeled unit\'s frequency display is just visible from this angle. The frequency is not standard. It\'s close to, but not identical to, the MERIDIAN signal frequency that\'s been scattered in radio fragments across the Four Corners.' },
+        cycleGate: 2,
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'warlord_briggs',
+        spawnChance: 0.90,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'Briggs is at his desk reading a patrol report, making notations with a marker in a system that is clearly legible only to him. He doesn\'t look up when you enter. He acknowledges you when he\'s finished the page.', weight: 4 },
+          { desc: 'Briggs stands at the map wall with his arms crossed, looking at a specific quadrant with the focused attention of someone running a scenario. He turns when he hears you come in.', weight: 3 },
+          { desc: 'Briggs is on the radio, listening more than speaking. He holds up one finger — wait. His expression during the call doesn\'t change.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.0, neutral: 0.4, wary: 0.4, hostile: 0.2 },
+        dialogueTree: 'sc_briggs_command',
+        questGiver: ['sc_hollow_clearance', 'sc_brig_moral_choice', 'sc_motor_pool_fuel'],
+        narrativeNotes: 'Warlord Briggs. Ex-Marine. Was MERIDIAN perimeter security. Knows more than he admits. The revelation is Cycle 2+ in his quarters.',
+      },
+    ],
+    itemSpawns: [],
+  },
+
+  // ----------------------------------------------------------
+  // SC-08: The Armory
+  // ----------------------------------------------------------
+  {
+    id: 'sc_08_armory',
+    name: 'Salt Creek — The Armory',
+    zone: 'salt_creek',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { noCombat: true },
+    description: 'The Salter armory is what Covenant\'s armory aspires to be, which the Salters know and consider appropriate. The selection is serious: military-grade weapons recovered from National Guard depots and federal caches in the first two years, maintained with the kind of discipline that suggests whoever runs this room considers proper maintenance a moral position. A wall of rifles sorted by caliber and condition. A secondary rack of sidearms. A dedicated shelf for explosive ordnance — the sign above it reads TRAINED PERSONNEL ONLY and it means it. The armorer looks at you the way all armorer characters look at new people: assessing what you know about what you\'re looking at.',
+    descriptionNight: 'The armory operates on reduced-access protocol at night. The armorer or a designated alternate only. No browsing.',
+    shortDescription: 'The best weapons in the Four Corners, maintained to military standard by someone who considers it a moral obligation.',
+    exits: {
+      south: 'sc_09_the_pit',
+    },
+    richExits: {
+      south: {
+        destination: 'sc_09_the_pit',
+        reputationGate: { faction: 'salters', minLevel: 3 },
+        descriptionVerbose: 'the armory — Blooded Salter standing required',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['rifles', 'weapons', 'rack', 'military', 'grade'],
+        description: 'AR pattern rifles, at least six, in better condition than anything you\'ve seen outside a pre-Collapse armory. A bolt-action sniper platform with a scope that has the look of careful calibration. Two light machine guns that Briggs keeps for static defense, tagged DO NOT FIELD WITHOUT COMMAND AUTH. The tags are for people who might be tempted, not for people who have been around long enough to not need to be told.',
+      },
+      {
+        keywords: ['ordnance', 'explosives', 'grenades', 'shelf'],
+        description: 'The ordnance shelf: six fragmentation grenades in a padlocked case, three smoke grenades, what appears to be two blocks of C4 in a separate locked steel box, and a row of improvised explosive components in clearly labeled bins. The armorer manages the ordnance inventory personally and does not delegate it. The ledger for the ordnance shelf is thicker than the one for the firearms.',
+      },
+      {
+        keywords: ['armorer', 'keeper', 'manager'],
+        description: 'The armorer is a compact woman named Reyes who was an Army Ordnance Corps specialist before the Collapse. She speaks about weapons the way specialists speak about their field: with precision, without performance, and with the immediate recognition of whether you\'re doing the same.',
+        skillCheck: { skill: 'marksmanship', dc: 11, successAppend: 'Reyes notes the way you\'re looking at the rack and nods. "You know what you\'re looking at. Good. That means we can skip the explanations."' },
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'armorer_reyes',
+        spawnChance: 0.90,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'Reyes runs a function check on a rifle with the concentrated efficiency of someone doing a safety verification, not a performance.', weight: 4 },
+          { desc: 'Reyes is updating the ordnance ledger, cross-referencing it with the physical count from earlier, her expression neutral throughout.', weight: 3 },
+        ],
+        tradeInventory: ['ar_platform_rifle', 'sniper_rifle', 'military_sidearm', 'fragmentation_grenade', 'ammo_556', 'ammo_762', 'body_armor_military'],
+        dispositionRoll: { friendly: 0.0, neutral: 0.4, wary: 0.5, hostile: 0.1 },
+        dialogueTree: 'sc_reyes_armory',
+      },
+    ],
+    itemSpawns: [],
+  },
+
+  // ----------------------------------------------------------
+  // SC-09: The Pit
+  // ----------------------------------------------------------
+  {
+    id: 'sc_09_the_pit',
+    name: 'Salt Creek — The Pit',
+    zone: 'salt_creek',
+    act: 1,
+    difficulty: 3,
+    visited: false,
+    flags: { noCombat: false },
+    description: 'The Pit is a depression in the earth at the south end of the compound — deliberately excavated so spectators on the rim look down at the fighters below, creating a natural amphitheater effect that Briggs, who designed it, does not mention is borrowed from Roman architecture. The fighting ring is marked with chalk lines that get re-drawn after rain. Straw on the floor, raked each morning. The rules, posted on a board at the top of the rim stairs: NO WEAPONS. NO KILLING. FIRST UNCONSCIOUS OR YIELD LOSES. WINNER WALKS. It is the most direct economy in Salt Creek: fight here, prove something, earn reputation. Spectators arrange themselves along the rim with the focused attention of people for whom this is both entertainment and professional development.',
+    descriptionNight: 'Night matches are by lantern — four of them, one at each cardinal corner of the pit. The shadows make the fighting more interesting and the scoring more subjective. Night matches count for twice the reputation.',
+    shortDescription: 'The fighting pit — a deliberate excavation, chalk lines, straw on the floor, and the most direct economy in Salt Creek.',
+    exits: {
+      north: 'sc_04_the_yard',
+      up: 'sc_08_armory',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.04,
+      timeModifier: { day: 0.5, dusk: 1.5, night: 2.0, dawn: 1.0 },
+      threatPool: [
+        { type: 'brute', weight: 60, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'shuffler', weight: 10, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+      ],
+      awarenessRoll: { unaware: 0.2, awarePassive: 0.3, awareAggressive: 0.5 },
+    },
+    extras: [
+      {
+        keywords: ['rules', 'board', 'sign', 'posted'],
+        description: 'The rules board has been there since the beginning. FIRST UNCONSCIOUS OR YIELD LOSES. The wood is weathered enough that the paint has faded into the grain. Someone has added, in a different hand: ALSO THE OBVIOUS STUFF. Briggs left this amendment in place. He said it was clearer.',
+      },
+      {
+        keywords: ['spectators', 'crowd', 'watching', 'rim'],
+        description: 'Seven spectators currently on the rim. A few are clearly off-duty Salters, watching with the attentive stillness of people doing operational assessment rather than recreation. One is taking notes in a small book. You realize the notes are probably not personal. Everything in Salt Creek is training.',
+      },
+      {
+        keywords: ['straw', 'floor', 'chalk', 'lines'],
+        description: 'The straw smells of iron from old bloodstains and the particular sweetness of vegetation doing its thankless work of absorbing impact. The chalk boundary lines have been redrawn so many times that the underlying earth is lighter in those strips from repeated chalk saturation. The pit\'s history is in the floor.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'pit_fighter_active',
+        spawnChance: 0.55,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'A pit fighter warms up in the ring — shadow footwork, loose and economical, face neutral. They glance at the rim to see who\'s watching. They see you.', weight: 3 },
+          { desc: 'Two fighters circle each other in the chalk ring, neither committing, both reading. The spectators on the rim are very quiet.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.0, neutral: 0.3, wary: 0.4, hostile: 0.3 },
+        dialogueTree: 'sc_pit_challenge',
+        questGiver: ['sc_pit_reputation_fight'],
+      },
+    ],
+    itemSpawns: [],
+  },
+
+  // ----------------------------------------------------------
+  // SC-10: The Watchtower
+  // ----------------------------------------------------------
+  {
+    id: 'sc_10_watchtower',
+    name: 'Salt Creek — The Watchtower',
+    zone: 'salt_creek',
+    act: 1,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: false },
+    description: 'The watchtower is the highest structure at Salt Creek — four shipping containers stacked two by two, with a reinforced platform welded to the top. From up here, the view south opens into The Dust and the broken country beyond. You can see the Animas River as a silver line to the east. You can see the road south running into the horizon, where the distance blurs geography into atmosphere. The sniper post here isn\'t staffed continuously — the Salters don\'t have the people — but when it is, the effective range covers the entire outer perimeter and well beyond. The logbook at the post records sightings in a format so spare it reads like poetry: time, bearing, description, disposition. The last entry is from two nights ago.',
+    descriptionNight: 'The tower at night is cold and clear. The stars over the high desert fill the sky in a way that hasn\'t been visible since the power grid died. The Milky Way. You\'ve read about it. The sniper on night post works by starlight and scope optics and says, when you ask about the view: "I stopped looking at it. It makes the job harder."',
+    shortDescription: 'Four containers stacked to a platform with a view south to The Dust and the faint shine of the Animas.',
+    exits: {
+      down: 'sc_07_warlords_command',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.06,
+      timeModifier: { day: 0.3, dusk: 1.5, night: 2.5, dawn: 0.8 },
+      threatPool: [
+        { type: 'remnant', weight: 60, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+      ],
+      awarenessRoll: { unaware: 0.5, awarePassive: 0.3, awareAggressive: 0.2 },
+    },
+    extras: [
+      {
+        keywords: ['view', 'south', 'dust', 'horizon', 'distance'],
+        description: 'The Dust is visible as a yellower haze at the southern horizon — the high desert extending into territory that the Salters patrol but do not hold. You can see maybe forty miles on a clear day. At thirty miles out, something dark moves against the lighter ground. It could be a herd. From this distance, it\'s just: movement.',
+      },
+      {
+        keywords: ['logbook', 'sightings', 'records', 'entries'],
+        description: 'The logbook entries go back six months. The format is consistent: Day 1,847 — 0315 — Bearing 195 — 2-4 shufflers — Passed south, no approach. The last entry, from two nights ago: Day 1,855 — 2240 — Bearing 210 — Unknown type — Bipedal, stationary, observed compound for 22 minutes, withdrew. FLAGGED. The FLAGGED notation is in Briggs\'s handwriting.',
+        cycleGate: 2,
+        skillCheck: { skill: 'tracking', dc: 11, successAppend: 'Stationary, observing, then withdrawing. That\'s not Hollow behavior. The Hollow don\'t surveil. The FLAGGED notation is more significant than it looks.' },
+      },
+      {
+        keywords: ['animas', 'river', 'silver', 'east'],
+        description: 'The Animas cuts a silver line through the landscape to the east. From up here you can follow its path north toward Covenant territory and south toward the breaks. You can see, at the river\'s closest point to Salt Creek, a shallow ford — navigable in dry season. Briggs has the ford marked on his command maps with a red circle.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'watchtower_sniper',
+        spawnChance: 0.65,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'The sniper scans the southern approach through a scope, moving in the slow methodical pattern of a professional who has learned not to hurry the looking.', weight: 3 },
+          { desc: 'The sniper is logging an entry in the watchtower book, writing without taking his eyes fully from the south horizon.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.0, neutral: 0.5, wary: 0.4, hostile: 0.1 },
+        dialogueTree: 'sc_watchtower_sniper',
+      },
+    ],
+    itemSpawns: [],
+  },
+
+  // ----------------------------------------------------------
+  // SC-11: Motor Pool
+  // ----------------------------------------------------------
+  {
+    id: 'sc_11_motor_pool',
+    name: 'Salt Creek — Motor Pool',
+    zone: 'salt_creek',
+    act: 1,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: true, questHub: true },
+    description: 'The motor pool is the noisiest room in Salt Creek — a partially covered bay where two vehicles occupy most of the floor space and the people working on them are in constant productive argument with physics. The two trucks: a pre-Collapse diesel pickup in good condition and an older military utility vehicle in the process of having its engine replaced. The mechanic running the motor pool is a young man named Cutter who speaks to vehicles in a different register than he speaks to people and appears to trust the vehicles more. The smell of diesel and metal and the particular mineral smell of very old engine oil recently disturbed.',
+    descriptionNight: 'Cutter works nights when a deadline is on. The motor pool at night is one lantern and the sound of tools and occasionally Cutter\'s voice telling a crankshaft what it has to do.',
+    shortDescription: 'Two trucks, one mechanic, a deadline from Briggs, and the smell of diesel that means someone is keeping something running.',
+    exits: {
+      east: 'sc_04_the_yard',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['trucks', 'vehicles', 'pickup', 'diesel'],
+        description: 'The diesel pickup has been running since before the Collapse and is still running because Cutter treats it like a patient rather than equipment. The military utility vehicle — a former Forest Service truck that got repurposed early in year one — needs a rebuilt fuel system. Cutter has most of the parts. Most.',
+      },
+      {
+        keywords: ['cutter', 'mechanic', 'engine'],
+        description: 'Cutter got his name because he was a machinist before the Collapse who specialized in precision cutting. He is twenty-six years old. He has kept Salt Creek\'s vehicles running for three years through the combination of MacGyver-grade improvisation and the kind of deep mechanical intuition that amounts to a different language.',
+        skillCheck: { skill: 'mechanics', dc: 9, successAppend: 'Cutter turns around when he hears you work through the problem correctly. "You know motors," he says, with the relief of someone who has been talking to himself for too long.' },
+      },
+      {
+        keywords: ['fuel', 'diesel', 'supply', 'shortage'],
+        description: 'The fuel situation is posted on a board: CURRENT RESERVE — 47 GALLONS. OPERATIONAL MINIMUM — 100 GALLONS. REQUIRED ACTION: FUEL RUN SOUTHWEST CACHE. Underneath, in Briggs\'s hand: CUTTER — GET THIS DONE. The date on the note is nine days ago. The fuel run requires personnel Briggs hasn\'t assigned yet, which is the situation Briggs resolves by making the need visible until someone takes it on.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'mechanic_cutter',
+        spawnChance: 0.85,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'Cutter is under the military truck, visible only as boots and the occasional swear word, working something loose with steady torque.', weight: 3 },
+          { desc: 'Cutter stands back from the diesel pickup with his arms folded, looking at it in the diagnostician\'s mode — not doing, thinking.', weight: 2 },
+          { desc: 'Cutter is sorting salvaged engine parts in a bin, holding each up to the light, setting aside the ones that meet his standard and dropping the rest.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.2, neutral: 0.5, wary: 0.3, hostile: 0.0 },
+        dialogueTree: 'sc_cutter_motor_pool',
+        questGiver: ['sc_motor_pool_fuel'],
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'salvaged_engine_part',
+        spawnChance: 0.40,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.4, max: 0.8 },
+        groundDescription: 'A salvaged engine component sits in a parts bin near the bay door.',
+        depletion: { cooldownMinutes: { min: 180, max: 480 }, respawnChance: 0.30 },
+      },
+    ],
+  },
+
+  // ----------------------------------------------------------
+  // SC-12: The Brig
+  // ----------------------------------------------------------
+  {
+    id: 'sc_12_the_brig',
+    name: 'Salt Creek — The Brig',
+    zone: 'salt_creek',
+    act: 1,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: true, questHub: true },
+    description: 'The Salter brig is a converted container cell block — three cells in a row, each welded shut except for a food slot and a barred window slit. Two are occupied. The first holds a young man in Accord armbands who was picked up near the eastern perimeter — he says he was traveling through, the Salters say the route he was traveling didn\'t lead through anything you\'d go through by accident. The second holds a woman who gives no affiliation and no name and sits in the back corner of her cell facing the wall, which is either psychological tactics or something you don\'t want to know about. The brig guard is unhappy about this posting and shows it in the way unhappy people do: by explaining, to anyone who will listen, exactly why he shouldn\'t be the one doing this.',
+    descriptionNight: 'The brig is quieter at night. The Accord man sleeps, or pretends to. The nameless woman doesn\'t move, which you note is different from sleeping.',
+    shortDescription: 'Three cells, two prisoners, one unhappy guard, and a moral question Briggs has handed to someone else to resolve.',
+    exits: {
+      north: 'sc_09_the_pit',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['accord man', 'prisoner', 'young man', 'armbands'],
+        description: '"I\'m not a spy," the Accord man says, and then, more quietly: "Okay, I am technically a scout, but that\'s different from a spy." He has an open, slightly desperate face that makes this admission involuntary-seeming, which might be tactic or might be genuine. He wants to be released. He has information about Covenant patrol patterns and will trade it. Briggs hasn\'t decided yet whether to let you be the one who decides.',
+        questGate: 'sc_brig_moral_choice',
+      },
+      {
+        keywords: ['nameless woman', 'woman', 'second cell', 'facing wall'],
+        description: 'She hasn\'t spoken. The guard says she hasn\'t spoken since they brought her in four days ago. She eats when food is provided. She doesn\'t sleep in any position the guard has ever observed a sleeping person use. The guard logs this in his brig journal under the heading UNKNOWN and has been hoping someone else will make a decision about it.',
+        skillCheck: { skill: 'perception', dc: 14, successAppend: 'The way she sits isn\'t normal stillness. She\'s controlled stillness — the position of someone with enhanced senses managing sensory load. She knows everything that\'s happened in this room since they brought her in.' },
+      },
+      {
+        keywords: ['guard', 'brig guard', 'posting'],
+        description: '"This isn\'t my job," the guard says. "I\'m a patrol specialist. I don\'t do containment. I don\'t do philosophical questions about what to do with people who might be Accord or might be worse. I do patrols." He says this with the particular energy of someone who has been saying it and will continue saying it.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'brig_prisoner_accord',
+        spawnChance: 1.0,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'The Accord scout sits against the cell wall with his knees up, watching the door with the transparent hope of someone who hasn\'t given up on being rescued.', weight: 4 },
+          { desc: 'The scout is pacing — three steps, turn, three steps — the only exercise his cell allows. He stops when you approach.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.4, neutral: 0.4, wary: 0.2, hostile: 0.0 },
+        dialogueTree: 'sc_brig_accord_prisoner',
+        questGiver: ['sc_brig_moral_choice'],
+      },
+      {
+        npcId: 'brig_guard',
+        spawnChance: 0.95,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'The brig guard is writing in his log with the exhausted diligence of someone maintaining professionalism through sheer stubbornness.', weight: 3 },
+          { desc: 'The guard is looking at the second cell with an expression you recognize as the human response to something that makes you feel wrong without knowing exactly why.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.1, neutral: 0.6, wary: 0.3, hostile: 0.0 },
+        dialogueTree: 'sc_brig_guard',
+      },
+    ],
+    itemSpawns: [],
+  },
+
+  // ----------------------------------------------------------
+  // SC-13: Briggs's Quarters
+  // ----------------------------------------------------------
+  {
+    id: 'sc_13_briggs_quarters',
+    name: 'Salt Creek — Briggs\'s Quarters',
+    zone: 'salt_creek',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { noCombat: true },
+    cycleGate: 2,
+    description: 'Briggs\'s quarters are at the top of the container stack — private access, the only room in the stronghold with a lock that only he holds. The room is larger than the barracks bunks but not by much, and the extra space is occupied by the things a person accumulates when they\'ve been responsible for something important for a long time: more maps, a second radio unit, two locked strongboxes under the cot, and along the back wall, a shelf of personal items. Among them: a pre-Collapse ID badge, lanyard still attached, the photo worn smooth by handling. The name on it is MAJOR D. BRIGGS, USMC. The facility name above the logo is MERIDIAN SECURE RESEARCH FACILITY. The badge is faced down. It has been placed that way deliberately. You know this because everything in this room has been placed deliberately.',
+    descriptionNight: 'Briggs sleeps here occasionally. When he does, he sleeps with the ID badge face-up. You learn this because the night sentry change happens to coincide with a moment when his door is briefly open. You note it. You do not comment on it.',
+    shortDescription: 'Briggs\'s private quarters — a face-down ID badge from MERIDIAN, and two locked boxes under the cot.',
+    exits: {
+      down: 'sc_07_warlords_command',
+    },
+    richExits: {
+      down: {
+        destination: 'sc_07_warlords_command',
+        reputationGate: { faction: 'salters', minLevel: 3 },
+        cycleGate: 2,
+        descriptionVerbose: 'access to Briggs\'s private quarters — Blooded Salter standing and Cycle 2+ required',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['id badge', 'badge', 'meridian', 'major', 'marine'],
+        description: 'You turn the badge over. The photo is Briggs, younger, in dress uniform, the expression the particular neutral of official photography. MAJOR D. BRIGGS, USMC. SECURITY CLEARANCE: TOP SECRET/SCI. FACILITY: MERIDIAN SECURE RESEARCH FACILITY — ASSIGNMENT: PERIMETER SECURITY COMMAND. The facility seal shows a double helix and a mountain silhouette you recognize: the Scar.',
+        cycleGate: 2,
+        skillCheck: { skill: 'lore', dc: 10, successAppend: 'PERIMETER SECURITY COMMAND. Not lab security. Not building security. Perimeter. The kind of posting that means keeping things in, not keeping things out. Briggs wasn\'t guarding the facility. He was keeping the facility contained.' },
+      },
+      {
+        keywords: ['strongbox', 'locked box', 'cot', 'under'],
+        description: 'Two military-grade strongboxes, padlocked, under the cot. You can read the labels on their tops: Box 1 is labeled PERSONAL — DNO. Box 2 has a label that has been removed, the adhesive residue still there, and in its place a piece of tape in Briggs\'s hand: MERIDIAN LOG — CYCLE 0.',
+        cycleGate: 2,
+        questGate: 'sc_briggs_meridian_revelation',
+      },
+      {
+        keywords: ['radio', 'second unit', 'unlabeled'],
+        description: 'The second radio in Briggs\'s quarters is on the same unlabeled frequency you noticed in the command room. It\'s broadcasting on receive only. A light blinks at irregular intervals — incoming signal, intermittent. The pattern is not random. It has the structure of a repeating automated broadcast: short, long, short, long-short-long. Someone who knows Morse would find this significant.',
+        cycleGate: 2,
+        skillCheck: { skill: 'electronics', dc: 12, successAppend: 'Morse. SOS is too simple — this is alphanumeric. You decode enough to read: ...M-E-R... and then the signal fades. It cycles back six seconds later. MERIDIAN is broadcasting, and Briggs has been listening.' },
+      },
+      {
+        keywords: ['shelf', 'personal items', 'things'],
+        description: 'The shelf: a unit citation from the Marine Corps, framed, the glass cracked. A photograph of a squad, twelve people in desert cammies squinting into the sun, the location unidentifiable. A folded piece of paper with a single equation on it — you\'d need a chemistry background to know what it represents. A small piece of dried plant material in a glass vial, labeled: CHARON-7 BLOOM — MERIDIAN PERIMETER — 2031. He kept it.',
+        cycleGate: 2,
+      },
+    ],
+    npcSpawns: [],
+    itemSpawns: [
+      {
+        entityId: 'meridian_security_log',
+        spawnChance: 0.0,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.8, max: 1.0 },
+        groundDescription: 'The MERIDIAN security log, accessible only through the locked strongbox.',
+        depletion: { cooldownMinutes: { min: 99999, max: 99999 }, respawnChance: 0.0 },
+      },
+    ],
+    narrativeNotes: 'Blooded Salter + Cycle 2+ gate. This room reframes Briggs\'s entire character. He wasn\'t just military — he was MERIDIAN security. His aggression toward the Scar is personal.',
+  },
+
+  // ----------------------------------------------------------
+  // SC-14: The South Wall
+  // ----------------------------------------------------------
+  {
+    id: 'sc_14_south_wall',
+    name: 'Salt Creek — The South Wall',
+    zone: 'salt_creek',
+    act: 1,
+    difficulty: 3,
+    visited: false,
+    flags: { noCombat: false, questHub: true },
+    description: 'The south wall faces The Dust and the broken country beyond, and it has the character of something defending against a direction that doesn\'t stop producing threats. The wall is adequate — shipping container panels bolted to a concrete footing — but its maintenance has fallen behind the north and east sections, and the gap in priority is visible in small ways: a panel with a loose lower bolt, a firing port that has been field-repaired with epoxy that\'s beginning to crack, a section of the firing step that flexes slightly under weight. The Hollow come from the south. They always come from the south. The current wall is adequate for what came last time and less adequate for what might come next time, and everyone on this wall knows the math.',
+    descriptionNight: 'The south wall at night is the most active post in the stronghold. Three sentries minimum, armed with everything that doesn\'t need to be saved for something worse. In the six months of deployment here, this post has had four engagement incidents — more than any other section. The sentries don\'t discuss this. They\'re aware of it.',
+    shortDescription: 'The south wall — facing The Dust, showing its maintenance gaps, and with more engagement incidents than anywhere else.',
+    exits: {
+      north: 'sc_04_the_yard',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.25,
+      timeModifier: { day: 0.5, dusk: 2.0, night: 3.5, dawn: 1.5 },
+      threatPool: [
+        { type: 'shuffler', weight: 50, quantity: { min: 2, max: 4, distribution: 'bell' } },
+        { type: 'brute', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 15, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'screamer', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.2, awarePassive: 0.2, awareAggressive: 0.6 },
+      noiseModifier: -3,
+    },
+    extras: [
+      {
+        keywords: ['loose panel', 'bolt', 'maintenance', 'weakness'],
+        description: 'The loose lower bolt on the third panel from the east has been logged four times in the maintenance system. A work order exists. The work order requires a specific bolt size that hasn\'t been sourced yet. The panel moves perhaps two centimeters at the base when significant force is applied. A Hollow brute generates significant force. The math is straightforward.',
+        questGate: 'sc_hollow_clearance',
+        skillCheck: { skill: 'mechanics', dc: 8, successAppend: 'You can improvise a fix. Not ideal, not permanent, but sufficient until the right bolt is sourced. It would take twenty minutes and what you have in your kit.' },
+      },
+      {
+        keywords: ['south', 'view', 'dust', 'landscape'],
+        description: 'The view south from the firing step: the strip of cleared kill zone, then the transition to open ground, then the broken country that grades into The Dust. The horizon is hazy. Things move in the middle distance in the way that things move in open country when you can\'t resolve individual shapes — could be wind, could be animals, could be the wrong kind of movement entirely.',
+      },
+      {
+        keywords: ['incident', 'engagement', 'records', 'attacks'],
+        description: 'The engagement log for the south wall is posted at the western end of the firing step: four incidents in six months, dated. The most recent was eleven days ago — three shufflers and a brute, breached the outer fence but were engaged at the wall. The brute dented the compromised panel. The note says: URGENT REPAIR REQUIRED. Below it, in a different hand: STILL URGENT.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'south_wall_sentry',
+        spawnChance: 0.95,
+        spawnType: 'patrol',
+        quantity: { min: 2, max: 3, distribution: 'weighted_low' },
+        activityPool: [
+          { desc: 'A sentry on the south wall scans the broken country beyond the kill zone with an intensity that has the quality of anticipation rather than vigilance.', weight: 3 },
+          { desc: 'Two sentries confer quietly at the compromised panel, one pointing at the loose bolt, the other writing something in a small notebook. Both sets of eyes keep returning south.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.1, neutral: 0.4, wary: 0.4, hostile: 0.1 },
+        dialogueTree: 'sc_south_wall_defense',
+        questGiver: ['sc_hollow_clearance'],
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'ammo_shotgun',
+        spawnChance: 0.35,
+        quantity: { min: 2, max: 4, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.7, max: 1.0 },
+        groundDescription: 'A loose cluster of shotgun shells sits by the firing port — left by the last shift.',
+        depletion: { cooldownMinutes: { min: 60, max: 180 }, respawnChance: 0.35 },
+      },
+    ],
+  },
+]

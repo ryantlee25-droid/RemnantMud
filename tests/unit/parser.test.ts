@@ -71,9 +71,9 @@ describe('parseCommand — look verbs', () => {
     })
   }
 
-  it('"look sword" → look with noun sword', () => {
+  it('"look sword" → examine_extra with noun sword', () => {
     const r = parseCommand('look sword')
-    expect(r.verb).toBe('look')
+    expect(r.verb).toBe('examine_extra')
     expect(r.noun).toBe('sword')
   })
 })

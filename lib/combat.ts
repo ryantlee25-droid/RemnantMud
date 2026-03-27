@@ -13,7 +13,7 @@ import { roll1d10, rollCheck, rollDamage, DC } from '@/lib/dice'
 // ------------------------------------------------------------
 
 function msg(text: string, type: GameMessage['type'] = 'combat'): GameMessage {
-  return { text, type }
+  return { id: crypto.randomUUID(), text, type }
 }
 
 // ------------------------------------------------------------

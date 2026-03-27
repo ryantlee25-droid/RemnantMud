@@ -13,10 +13,17 @@ function computeTimeOfDay(actionsTaken: number): TimeOfDay {
 }
 
 const TIME_LABELS: Record<TimeOfDay, string> = {
-  dawn:  'dawn',
-  day:   'day',
-  dusk:  'dusk',
-  night: 'night',
+  dawn:  'DAWN',
+  day:   'DAY',
+  dusk:  'DUSK',
+  night: 'NIGHT',
+}
+
+function formatZone(zone: string): string {
+  return zone
+    .split('_')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ')
 }
 
 const TIME_COLORS: Record<TimeOfDay, string> = {
@@ -33,7 +40,9 @@ export default function StatusBar() {
   if (!player) return null
 
   const locationName = currentRoom?.name ?? '...'
+  const zoneName = currentRoom?.zone ? formatZone(currentRoom.zone) : null
   const timeOfDay = computeTimeOfDay(player.actionsTaken ?? 0)
+  const cycle = player.cycle ?? 1
   const combatIndicator = combatState?.active
     ? ` | COMBAT: ${combatState.enemy.name} [${combatState.enemyHp}/${combatState.enemy.maxHp}]`
     : ''
@@ -42,6 +51,12 @@ export default function StatusBar() {
     <div className="bg-black border-b border-amber-900 px-4 py-1 font-mono text-xs text-amber-400 select-none">
       <span className="opacity-70">[</span>
       {locationName}
+      {zoneName && (
+        <>
+          <span className="mx-1 opacity-40">·</span>
+          <span className="opacity-60">{zoneName}</span>
+        </>
+      )}
       <span className="opacity-70">]</span>
       <span className="mx-2 opacity-40">|</span>
       <span className={TIME_COLORS[timeOfDay]}>{TIME_LABELS[timeOfDay]}</span>
@@ -49,6 +64,8 @@ export default function StatusBar() {
       HP: {player.hp}/{player.maxHp}
       <span className="mx-2 opacity-40">|</span>
       XP: {player.xp}
+      <span className="mx-2 opacity-40">|</span>
+      <span className="opacity-60">Cycle {cycle}</span>
       {combatIndicator && (
         <span className="text-red-400">{combatIndicator}</span>
       )}

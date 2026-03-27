@@ -4,13 +4,49 @@
 
 import type { Room, Exit, Direction } from '@/types/game'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
+import { generateWorld } from '@/lib/worldGen'
 
 // ------------------------------------------------------------
 // Module-level in-memory cache (per browser session)
 // Key: roomId
 // ------------------------------------------------------------
 
-const roomCache = new Map<string, Room>()
+const MAX_CACHE_SIZE = 150
+
+class LRUCache<K, V> {
+  private map = new Map<K, V>()
+  private maxSize: number
+
+  constructor(maxSize: number) { this.maxSize = maxSize }
+
+  get(key: K): V | undefined {
+    if (!this.map.has(key)) return undefined
+    // Move to end (most recently used)
+    const val = this.map.get(key)!
+    this.map.delete(key)
+    this.map.set(key, val)
+    return val
+  }
+
+  set(key: K, val: V): void {
+    if (this.map.has(key)) this.map.delete(key)
+    else if (this.map.size >= this.maxSize) {
+      // Evict least recently used (first entry)
+      this.map.delete(this.map.keys().next().value!)
+    }
+    this.map.set(key, val)
+  }
+
+  has(key: K): boolean { return this.map.has(key) }
+
+  delete(key: K): void { this.map.delete(key) }
+
+  clear(): void { this.map.clear() }
+
+  get size(): number { return this.map.size }
+}
+
+const roomCache = new LRUCache<string, Room>(MAX_CACHE_SIZE)
 
 // ------------------------------------------------------------
 // Supabase row shape
@@ -32,7 +68,7 @@ interface WorldRoomRow {
   zone: string
   difficulty: number
   visited: boolean
-  flags: Record<string, boolean>
+  flags: Record<string, boolean | number>
 }
 
 function rowToRoom(row: WorldRoomRow): Room {
@@ -119,11 +155,21 @@ export async function getRoom(roomId: string, playerId: string): Promise<Room | 
     .single()
 
   if (error) {
-    if (error.code === 'PGRST116') return null // no rows
+    if (error.code === 'PGRST116') {
+      // No DB row — fall back to static world definition
+      const staticRoom = getRoomDefinition(roomId)
+      if (staticRoom) roomCache.set(roomId, staticRoom)
+      return staticRoom
+    }
     throw new Error(`getRoom failed for ${roomId}: ${error.message}`)
   }
 
-  if (!data) return null
+  if (!data) {
+    // Fall back to static world definition
+    const staticRoom = getRoomDefinition(roomId)
+    if (staticRoom) roomCache.set(roomId, staticRoom)
+    return staticRoom
+  }
 
   const room = rowToRoom(data as WorldRoomRow)
   roomCache.set(roomId, room)
@@ -194,7 +240,7 @@ export async function updateRoomFlags(
 
   // Read current flags first so we can merge rather than overwrite
   const current = roomCache.get(roomId)
-  let mergedFlags: Record<string, boolean>
+  let mergedFlags: Record<string, boolean | number>
   if (current) {
     mergedFlags = { ...current.flags, ...flags }
   } else {
@@ -263,4 +309,15 @@ export async function updateRoomItems(
 
 export function clearRoomCache(): void {
   roomCache.clear()
+}
+
+// ------------------------------------------------------------
+// getRoomDefinition
+// Get a room from the static world definition (not from DB).
+// Used for first-time room population and as fallback.
+// ------------------------------------------------------------
+
+export function getRoomDefinition(roomId: string): Room | null {
+  const allRooms = generateWorld(0)
+  return allRooms.find(r => r.id === roomId) ?? null
 }

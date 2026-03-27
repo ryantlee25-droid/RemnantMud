@@ -1,5 +1,6 @@
 // ============================================================
 // MUD Game — Core TypeScript Types
+// The Remnant — Post-Apocalyptic MUD
 // All game interfaces live here. No `any` allowed.
 // ============================================================
 
@@ -11,9 +12,35 @@ export type Direction = 'north' | 'south' | 'east' | 'west' | 'up' | 'down'
 
 export type Stat = 'vigor' | 'grit' | 'reflex' | 'wits' | 'presence' | 'shadow'
 
-export type ZoneType = 'shelter' | 'ruins' | 'wastes' | 'outpost' | 'underground'
+// 12 hand-crafted zones replacing the procedural zone system
+export type ZoneType =
+  | 'crossroads'
+  | 'river_road'
+  | 'covenant'
+  | 'salt_creek'
+  | 'the_ember'
+  | 'the_breaks'
+  | 'the_dust'
+  | 'the_stacks'
+  | 'duskhollow'
+  | 'the_deep'
+  | 'the_pine_sea'
+  | 'the_scar'
 
-export type ItemType = 'weapon' | 'armor' | 'consumable' | 'key' | 'junk'
+// Legacy zones kept for any residual code references — will be removed post-migration
+export type LegacyZoneType =
+  | 'shelter'
+  | 'ruins'
+  | 'wastes'
+  | 'highway'
+  | 'flooded_district'
+  | 'outpost'
+  | 'factory'
+  | 'bunker'
+  | 'deadlands'
+  | 'underground'
+
+export type ItemType = 'weapon' | 'armor' | 'consumable' | 'key' | 'junk' | 'lore' | 'currency'
 
 export type MessageType = 'narrative' | 'combat' | 'system' | 'error'
 
@@ -23,8 +50,49 @@ export type CharacterClass = 'enforcer' | 'scout' | 'wraith' | 'shepherd' | 'rec
 
 export type PersonalLossType = 'child' | 'partner' | 'community' | 'identity' | 'promise'
 
+// Hollow enemy sub-types (used in hollow_encounter threat pools)
+export type HollowType = 'shuffler' | 'remnant' | 'screamer' | 'brute' | 'whisperer' | 'hive_mother'
+
+// Factions
+export type FactionType =
+  | 'accord'
+  | 'salters'
+  | 'drifters'
+  | 'kindling'
+  | 'reclaimers'
+  | 'covenant_of_dusk'
+  | 'red_court'
+  | 'ferals'
+  | 'lucid'
+
+// Reputation levels: -3 (Hunted) to +3 (Blooded)
+export type ReputationLevel = -3 | -2 | -1 | 0 | 1 | 2 | 3
+
+// Skill types (used for skill gates, quest checks)
+export type SkillType =
+  | 'survival'
+  | 'marksmanship'
+  | 'brawling'
+  | 'bladework'
+  | 'scavenging'
+  | 'field_medicine'
+  | 'mechanics'
+  | 'tracking'
+  | 'negotiation'
+  | 'intimidation'
+  | 'stealth'
+  | 'lockpicking'
+  | 'electronics'
+  | 'lore'
+  | 'climbing'
+  | 'blood_sense'
+  | 'daystalking'
+  | 'mesmerize'
+  | 'perception'
+  | 'vigor'  // stats used as skill checks in some gates
+
 // ------------------------------------------------------------
-// Spawn / Randomization System (Phase 1)
+// Spawn / Randomization System
 // ------------------------------------------------------------
 
 export type DistributionType = 'flat' | 'weighted_low' | 'weighted_high' | 'bell' | 'single'
@@ -68,17 +136,165 @@ export interface PopulatedRoom {
 }
 
 // ------------------------------------------------------------
+// Room Extras — examined details triggered by "look <keyword>"
+// ------------------------------------------------------------
+
+export interface RoomExtra {
+  keywords: string[]
+  description?: string
+  descriptionPool?: Array<{ desc: string; weight: number; cycleGate?: number }>
+  skillCheck?: { skill: SkillType; dc: number; successAppend: string }
+  cycleGate?: number
+  questGate?: string
+}
+
+// ------------------------------------------------------------
+// Hollow Encounter — room-specific Hollow spawning data
+// ------------------------------------------------------------
+
+export interface HollowActivityEntry {
+  desc: string
+  weight: number
+}
+
+export interface HollowThreatEntry {
+  type: HollowType
+  weight: number
+  quantity: QuantityConfig
+}
+
+export interface HollowEncounter {
+  baseChance: number
+  timeModifier: Partial<Record<TimeOfDay, number>>
+  threatPool: HollowThreatEntry[]
+  awarenessRoll?: { unaware: number; awarePassive: number; awareAggressive: number }
+  activityPool?: Partial<Record<HollowType, HollowActivityEntry[]>>
+  noiseModifier?: number
+}
+
+// ------------------------------------------------------------
+// Exit gates
+// ------------------------------------------------------------
+
+export interface SkillGate {
+  skill: SkillType
+  dc: number
+  failMessage: string
+}
+
+export interface ReputationGate {
+  faction: FactionType
+  minLevel: ReputationLevel
+}
+
+// ------------------------------------------------------------
+// Room Exit (rich version with gates)
+// ------------------------------------------------------------
+
+export interface RoomExit {
+  destination: string
+  descriptionVerbose?: string
+  hidden?: boolean
+  locked?: boolean
+  lockedBy?: string               // item_id of key
+  skillGate?: SkillGate
+  reputationGate?: ReputationGate
+  questGate?: string
+  cycleGate?: number
+  discoverSkill?: SkillType
+  discoverDc?: number
+  discoverMessage?: string
+}
+
+// ------------------------------------------------------------
+// Environmental Rolls
+// ------------------------------------------------------------
+
+export interface AmbientSoundEntry {
+  sound: string | null
+  weight: number
+}
+
+export interface FlavorLine {
+  line: string
+  chance: number
+  time?: TimeOfDay[] | null
+  skillGate?: { skill: SkillType; dc: number }
+}
+
+export interface EnvironmentalRolls {
+  ambientSoundPool?: { day?: AmbientSoundEntry[]; night?: AmbientSoundEntry[]; dawn?: AmbientSoundEntry[]; dusk?: AmbientSoundEntry[] }
+  ambientCount?: QuantityConfig
+  flavorLines?: FlavorLine[]
+}
+
+// ------------------------------------------------------------
+// NPC Activity / Disposition (for room NPCs)
+// ------------------------------------------------------------
+
+export interface NpcActivityEntry {
+  desc: string
+  weight: number
+  timeRestrict?: TimeOfDay[]
+  questTrigger?: string
+}
+
+export interface NpcSpawnEntry {
+  npcId: string
+  spawnChance: number
+  spawnType?: 'anchored' | 'patrol' | 'wanderer' | 'event' | 'unique'
+  quantity?: QuantityConfig
+  activityPool?: NpcActivityEntry[]
+  dispositionRoll?: { friendly?: number; neutral?: number; wary?: number; hostile?: number }
+  dialogueTree?: string
+  questGiver?: string[]
+  tradeInventory?: string[]
+  narrativeNotes?: string
+}
+
+// ------------------------------------------------------------
+// Item Spawn (rich version)
+// ------------------------------------------------------------
+
+export interface ItemSpawnEntry {
+  entityId: string
+  spawnChance: number
+  quantity: QuantityConfig
+  conditionRoll?: { min: number; max: number }
+  groundDescription?: string
+  timeModifier?: Partial<Record<TimeOfDay, number>>
+  depletion?: { cooldownMinutes: { min: number; max: number }; respawnChance: number }
+}
+
+// ------------------------------------------------------------
+// Room Flags
+// ------------------------------------------------------------
+
+export interface RoomFlags {
+  safeRest?: boolean
+  noCombat?: boolean
+  campfireAllowed?: boolean
+  fastTravelWaypoint?: boolean
+  tutorialZone?: boolean
+  dark?: boolean
+  healingBonus?: number
+  hiddenRoom?: boolean
+  scavengingZone?: boolean
+  questHub?: boolean
+  waterSource?: boolean
+  [key: string]: boolean | number | undefined
+}
+
+// ------------------------------------------------------------
 // Class Definitions
 // ------------------------------------------------------------
 
 export const CLASS_DEFINITIONS: Record<CharacterClass, {
   name: string
-  archetype: string  // D&D archetype
+  archetype: string
   description: string
-  // Bonus points the class assigns on top of BASE (2). Creates a floor — can't be removed.
-  // User may still add free points to these stats.
   classBonus: Partial<Record<Stat, number>>
-  freePoints: number  // additional points user distributes freely to any stat
+  freePoints: number
   specialties: string[]
 }> = {
   enforcer: {
@@ -159,18 +375,21 @@ export interface Item {
   description: string
   type: ItemType
   weight: number
-  damage?: number        // weapons only
-  defense?: number       // armor only
-  healing?: number       // consumables only
+  damage?: number
+  defense?: number
+  healing?: number
   statBonus?: Partial<Record<Stat, number>>
-  value: number          // trade/junk value
+  value: number          // in .22 LR pennies (base currency unit)
+  usable?: boolean       // can "use" command be run on it
+  useText?: string       // text displayed when using it
+  loreText?: string      // for lore items, the vignette text
 }
 
 export interface InventoryItem {
   id: string             // inventory row id (uuid)
   playerId: string
   itemId: string
-  item: Item             // resolved from data/items.ts
+  item: Item
   quantity: number
   equipped: boolean
 }
@@ -181,20 +400,22 @@ export interface InventoryItem {
 
 export interface LootEntry {
   itemId: string
-  chance: number         // 0.0 – 1.0
+  chance: number
 }
 
 export interface Enemy {
   id: string
   name: string
   description: string
+  hollowType?: HollowType
   hp: number
   maxHp: number
-  attack: number         // attack modifier added to d10 roll
-  defense: number        // DC the player must beat to hit
-  damage: [number, number] // [min, max] damage per hit
+  attack: number
+  defense: number
+  damage: [number, number]
   xp: number
   loot: LootEntry[]
+  flavorText?: string[]  // varied combat descriptions
 }
 
 // ------------------------------------------------------------
@@ -205,27 +426,42 @@ export interface NPC {
   id: string
   name: string
   description: string
-  dialogue: string       // single-line response for MVP
+  dialogue: string
+  faction?: FactionType
+  isNamed?: boolean      // key story NPC
 }
 
 // ------------------------------------------------------------
-// Rooms & World
+// Rooms & World — Hand-crafted room format
 // ------------------------------------------------------------
 
 export interface Room {
   id: string
   name: string
-  description: string            // full description (first visit)
-  shortDescription: string       // brief reminder (revisits)
-  exits: Partial<Record<Direction, string>>  // direction -> room_id (null = blocked)
-  items: string[]                // item IDs present
-  enemies: string[]              // enemy IDs that can spawn
-  npcs: string[]                 // NPC IDs present
+  description: string              // full description (first visit / default)
+  descriptionNight?: string        // night variant
+  descriptionDawn?: string         // dawn variant
+  descriptionDusk?: string         // dusk variant
+  shortDescription: string         // brief reminder (revisits)
+  exits: Partial<Record<Direction, string>>  // simple direction -> room_id map
+  richExits?: Partial<Record<Direction, RoomExit>>  // full exit data with gates
+  items: string[]                  // item IDs (static seeding)
+  enemies: string[]                // enemy IDs that can spawn
+  npcs: string[]                   // NPC IDs present
+  npcSpawns?: NpcSpawnEntry[]      // rich NPC spawn data
+  itemSpawns?: ItemSpawnEntry[]    // rich item spawn data
   zone: ZoneType
-  difficulty: number             // 1–5
+  difficulty: number               // 1–5
   visited: boolean
-  flags: Record<string, boolean> // door_unlocked, searched, etc.
-  population?: PopulatedRoom     // in-memory only, not persisted
+  flags: Record<string, boolean | number>
+  extras?: RoomExtra[]             // examinable details via "look <keyword>"
+  hollowEncounter?: HollowEncounter
+  environmentalRolls?: EnvironmentalRolls
+  cycleGate?: number               // minimum cycle to access
+  questGate?: string               // quest flag required
+  act?: 1 | 2 | 3
+  narrativeNotes?: string          // implementation notes, not player-facing
+  population?: PopulatedRoom       // in-memory only, not persisted
 }
 
 export interface Exit {
@@ -234,16 +470,16 @@ export interface Exit {
 }
 
 // ------------------------------------------------------------
-// Zone Templates (used by world generator)
+// Zone Templates (legacy — used only if procedural zones still exist)
 // ------------------------------------------------------------
 
 export interface ZoneTemplate {
-  type: ZoneType
-  roomCount: [number, number]           // [min, max]
-  difficulty: [number, number]          // [min, max]
+  type: ZoneType | LegacyZoneType
+  roomCount: [number, number]
+  difficulty: [number, number]
   nameFragments: string[]
   locationFragments: string[]
-  descriptionFragments: string[][]      // arrays of sentences to combine
+  descriptionFragments: string[][]
   featurePool: string[]
   enemyPool: string[]
   itemPool: string[]
@@ -271,13 +507,17 @@ export interface Player {
   worldSeed: number
   xp: number
   level: number
-  actionsTaken?: number         // for Phase 2 — tracks total player actions (optional until Phase 2 wires it in)
+  actionsTaken: number
   personalLossType?: PersonalLossType
-  personalLossDetail?: string   // player-written or selected detail
+  personalLossDetail?: string
   squirrelName?: 'Chippy' | 'Stumpy'
-  isDead?: boolean
-  cycle?: number
-  totalDeaths?: number
+  isDead: boolean
+  cycle: number
+  totalDeaths: number
+  // Faction reputations: stored as JSON in DB
+  factionReputation?: Partial<Record<FactionType, number>>
+  // Quest flags: stored as JSON in DB
+  questFlags?: Record<string, boolean | number>
 }
 
 // ------------------------------------------------------------
@@ -289,7 +529,7 @@ export interface PlayerLedger {
   worldSeed: number
   currentCycle: number
   totalDeaths: number
-  pressureLevel: number           // 1–5, computed from cycle count
+  pressureLevel: number
   discoveredRoomIds: string[]
   squirrelAlive: boolean
   squirrelTrust: number
@@ -298,10 +538,10 @@ export interface PlayerLedger {
 }
 
 export interface StashItem {
-  id: string                      // inventory row id
+  id: string
   playerId: string
   itemId: string
-  item: Item                      // resolved from data/items.ts
+  item: Item
   quantity: number
 }
 
@@ -329,12 +569,12 @@ export interface CombatState {
 export interface CombatResult {
   hit: boolean
   damage: number
-  critical: boolean        // natural 10
-  fumble: boolean          // natural 1
+  critical: boolean
+  fumble: boolean
   messages: GameMessage[]
   enemyDefeated?: boolean
   playerDefeated?: boolean
-  loot?: string[]          // item IDs dropped
+  loot?: string[]
 }
 
 export interface FleeResult {
@@ -347,13 +587,13 @@ export interface FleeResult {
 // ------------------------------------------------------------
 
 export interface CheckResult {
-  roll: number             // raw d10 result
+  roll: number
   modifier: number
   total: number
   dc: number
   success: boolean
-  critical: boolean        // natural 10
-  fumble: boolean          // natural 1
+  critical: boolean
+  fumble: boolean
 }
 
 // ------------------------------------------------------------
@@ -361,6 +601,7 @@ export interface CheckResult {
 // ------------------------------------------------------------
 
 export interface GameMessage {
+  id: string
   text: string
   type: MessageType
 }

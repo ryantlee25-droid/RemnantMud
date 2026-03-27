@@ -30,8 +30,8 @@ export default function Terminal({ messages }: TerminalProps) {
 
   return (
     <div className="flex-1 overflow-y-auto bg-black font-mono text-sm leading-relaxed px-4 py-3 select-text">
-      {messages.map((m, i) => (
-        <div key={i} className={`${messageColor(m.type)} mb-0.5`}>
+      {messages.map((m) => (
+        <div key={m.id} className={`${messageColor(m.type)} mb-0.5`}>
           {m.text}
         </div>
       ))}

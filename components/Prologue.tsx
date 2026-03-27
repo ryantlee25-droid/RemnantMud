@@ -23,25 +23,21 @@ const PROLOGUE_LINES = [
   "",
   "That was seven years ago.",
   "",
-  "The old world is gone. The highways are rivers of weeds. The cities are tombs. What's left is us. The Unturned. The ones who didn't get sick, didn't change, didn't become something else's food supply. We built walls. We found guns. We remembered how to grow things and fix things and make do.",
+  "The old world is gone. The highways are rivers of weeds. The cities are tombs. The government, the military, the internet, the electrical grid, the supply chains, the systems that made modern life possible — all of it, gone. What's left is us. The Unturned. The ones who didn't get sick, didn't change, didn't become something else's food supply. We built walls. We found guns. We remembered how to grow things and fix things and make do. We built new communities on the bones of the old ones, here in the Four Corners, where the mountains and the desert and the canyons gave us something to put our backs against.",
   "",
   "It's not a good life. But it's a life.",
   "",
-  "You are here because you survived. That's it. That's your credential.",
+  "You are here because you survived. That's it. That's your credential. You walked, or drove, or crawled, or were carried to this place — the last stretch of the American Southwest where people are still trying to be people. Where settlements trade and fight and worship and argue about what kind of world to build on top of the one that died.",
   "",
-  "You have nothing. A pack. A knife. Whatever you were wearing when everything fell apart. You have no faction, no reputation, no allegiance. You are no one.",
+  "You have nothing. A pack. A knife. Whatever you were wearing when everything fell apart. You have no faction, no reputation, no allegiance. You are no one. In the old world, that was the worst thing you could be. In this one, it might be the best. No one owns you. No one is hunting you.",
   "",
-  "In the old world, that was the worst thing you could be.",
+  "Not yet.",
   "",
-  "In this one, it might be the best.",
+  "The road ahead forks in more ways than you can see from here. There are people who want to rebuild. People who want to conquer. People who want to be left alone. People who aren't people anymore but remember being one. And somewhere in the mountains to the north, buried under rock and silence and seven years of secrets, there is a place called the Scar — the place where CHARON-7 was born — and someone, somewhere, believes that what was made there can be unmade.",
   "",
-  "Three weeks ago, a shortwave broadcast began repeating across the Rockies. Nobody knows who's sending it. The signal is distorted, patchy — but the core message is clear:",
+  "You don't know if that's true. Nobody does.",
   "",
-  '> "...Scar site... containment breach... data survives... if you can read, if you can think, if you are still you... come to the Four Corners... the answer is here..."',
-  "",
-  "You heard it. You followed it. Why is your own business.",
-  "",
-  "The road ahead forks in more ways than you can see from here.",
+  "But you're going to find out. Because that's what survivors do. They move forward. Even when forward is dark. Even when forward is teeth.",
   "",
   "Welcome to The Remnant.",
   "",
@@ -133,7 +129,7 @@ export default function Prologue({ onComplete }: PrologueProps) {
               className="border border-amber-600 text-amber-400 px-6 py-2 text-sm hover:bg-amber-900 transition-colors"
               autoFocus
             >
-              {skipped ? 'Begin →' : 'Begin →'}
+              Continue →
             </button>
           )}
         </div>

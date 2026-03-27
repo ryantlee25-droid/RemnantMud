@@ -137,7 +137,16 @@ export function parseCommand(input: string): Action {
 
   // --- Look ---
   if (first in LOOK_VERBS) {
-    return { verb: LOOK_VERBS[first]!, noun: rest || undefined, raw }
+    // "look <keyword>" triggers extra examination of room details
+    if (rest) {
+      return { verb: 'examine_extra', noun: rest, raw }
+    }
+    return { verb: LOOK_VERBS[first]!, noun: undefined, raw }
+  }
+
+  // --- Read (alias for use, for lore items) ---
+  if (first === 'read') {
+    return { verb: 'use', noun: rest || undefined, raw }
   }
 
   // --- Inventory ---

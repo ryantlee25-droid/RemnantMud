@@ -660,7 +660,7 @@ export const COVENANT_ROOMS: Room[] = [
     ],
     itemSpawns: [
       {
-        entityId: 'letter_home_collectible',
+        entityId: 'torn_note_fragment',
         spawnChance: 0.60,
         quantity: { min: 1, max: 1, distribution: 'single' },
         conditionRoll: { min: 0.5, max: 0.9 },
@@ -1060,7 +1060,11 @@ export const COVENANT_ROOMS: Room[] = [
       },
     ],
     npcSpawns: [],
-    itemSpawns: [],
+    itemSpawns: [
+      { entityId: 'cross_personal_journal_page', spawnChance: 1.0, quantity: { min: 1, max: 1, distribution: 'flat' } },
+      { entityId: 'ammo_22lr', spawnChance: 0.7, quantity: { min: 5, max: 15, distribution: 'flat' } },
+      { entityId: 'field_surgery_kit', spawnChance: 0.5, quantity: { min: 1, max: 1, distribution: 'flat' } },
+    ],
   },
 
   // ----------------------------------------------------------
@@ -1073,7 +1077,7 @@ export const COVENANT_ROOMS: Room[] = [
     act: 2,
     difficulty: 2,
     visited: false,
-    flags: { noCombat: true },
+    flags: {},
     cycleGate: 2,
     description: 'The courthouse basement is a records room that smells of damp concrete and very old paper. Filing cabinets run the length of the walls — county records from before the Collapse, the kind of administrative infrastructure that seems pointless until you need to know who owned the land you\'re defending, or whether the building you\'re using has documented structural issues. Cross had it organized in the first year by her most detail-oriented lieutenant. There is, in the back left corner, a cabinet that is locked with a secondary padlock that wasn\'t original to the building. The lock is recent. The cabinet has no file label. Behind it, barely visible if you\'re looking from the right angle, is the back edge of a manila folder with government classification markings.',
     descriptionNight: 'The basement at night is the darkest room in Covenant. The single overhead bulb failed three months ago and wasn\'t replaced. People come down with lamps. The cabinet in the corner looks the same in lamplight. The shadows around it don\'t help.',
@@ -1113,6 +1117,14 @@ export const COVENANT_ROOMS: Room[] = [
         description: 'The basement collects moisture from the east wall\'s compromised foundation — the same problem the wall engineer is worried about, expressing itself here as a faint seep along the back wall and a persistent smell of wet earth. Someone has placed a bucket in the corner. The bucket is a quarter full.',
       },
     ],
+    hollowEncounter: {
+      baseChance: 0.95,
+      timeModifier: { night: 1.0, dawn: 1.0, dusk: 1.0, day: 1.0 },
+      threatPool: [
+        { type: 'hive_mother', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
+        { type: 'shuffler', weight: 2, quantity: { min: 2, max: 4, distribution: 'flat' } },
+      ],
+    },
     npcSpawns: [],
     itemSpawns: [
       {
@@ -1124,7 +1136,7 @@ export const COVENANT_ROOMS: Room[] = [
         depletion: { cooldownMinutes: { min: 99999, max: 99999 }, respawnChance: 0.0 },
       },
     ],
-    narrativeNotes: 'Cycle 2+ AND Trusted Accord gate. The MERIDIAN file fragment here is Act II critical path. The item spawn is for the lore item specifically unlocked by quest progression, not random scavenging.',
+    narrativeNotes: 'Cycle 2+ AND Trusted Accord gate. The MERIDIAN file fragment here is Act II critical path. The item spawn is for the lore item specifically unlocked by quest progression, not random scavenging. Hive Mother boss — Act II climax encounter.',
   },
 
   // ----------------------------------------------------------

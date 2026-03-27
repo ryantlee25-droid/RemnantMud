@@ -551,7 +551,7 @@ export const EMBER_ROOMS: Room[] = [
     act: 2,
     difficulty: 3,
     visited: false,
-    flags: { noCombat: true, hiddenRoom: true },
+    flags: { hiddenRoom: true },
     description: 'Behind the false wall, a second space — small, square, stone-walled, older than the cathedral by the look of the mortar. The air is cold and perfectly still, the kind of stillness that belongs to enclosed spaces that haven\'t been opened in a long time. A wooden shelf on the back wall holds: one glass jar of ash, one bundle of dried herbs, one pre-Collapse journal with a cracked leather cover, and a faded photograph of a janitorial crew standing in a corridor that you\'d recognize from your research as institutional — the overhead lighting, the painted concrete floors, the security badge lanyards. On the journal cover, in pencil: HARLOW, T. — PERSONAL. MERIDIAN 2029-2031. Below the photograph, scratched into the stone: THEY MADE IT AND COULDN\'T STOP IT AND NOW WE ARE THE FIRE THAT CLEANS. The journal contains maps.',
     descriptionNight: 'The hidden chapel is the same in the dark. The journal is the same. The scratched words are the same. The maps are the same.',
     shortDescription: 'A sealed room behind the false wall — a janitor\'s journal from MERIDIAN 2029-2031, a photograph of the crew, and a scratched text that connects the fire to the facility.',
@@ -591,6 +591,13 @@ export const EMBER_ROOMS: Room[] = [
         cycleGate: 2,
       },
     ],
+    hollowEncounter: {
+      baseChance: 0.80,
+      timeModifier: { night: 1.3, dawn: 0.9, dusk: 1.1, day: 0.7 },
+      threatPool: [
+        { type: 'brute', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
+      ],
+    },
     npcSpawns: [],
     itemSpawns: [
       {
@@ -610,6 +617,6 @@ export const EMBER_ROOMS: Room[] = [
         depletion: { cooldownMinutes: { min: 99999, max: 99999 }, respawnChance: 0.0 },
       },
     ],
-    narrativeNotes: 'Hidden behind Perception DC 16 OR Kindling Blooded. The founder\'s journal is a MERIDIAN janitor\'s record. Contains maintenance tunnel map — one of four Act III routes into the Scar.',
+    narrativeNotes: 'Hidden behind Perception DC 16 OR Kindling Blooded. The founder\'s journal is a MERIDIAN janitor\'s record. Contains maintenance tunnel map — one of four Act III routes into the Scar. Brute boss guards the chapel.',
   },
 ]

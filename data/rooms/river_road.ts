@@ -256,14 +256,14 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     ],
     itemSpawns: [
       {
-        entityId: 'firewood_cottonwood',
+        entityId: 'juniper_firewood',
         spawnChance: 0.55,
         quantity: { min: 1, max: 4, distribution: 'bell' },
         conditionRoll: { min: 0.5, max: 1.0 },
         groundDescription: 'Fallen cottonwood branches, dry and ready to burn, are scattered along the bank.',
       },
       {
-        entityId: 'river_stone_flat',
+        entityId: 'smooth_river_stone',
         spawnChance: 0.40,
         quantity: { min: 1, max: 2, distribution: 'weighted_low' },
         conditionRoll: { min: 0.8, max: 1.0 },
@@ -509,7 +509,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     ],
     itemSpawns: [
       {
-        entityId: 'dropped_pennies',
+        entityId: 'ammo_22lr',
         spawnChance: 0.15,
         quantity: { min: 1, max: 3, distribution: 'weighted_low' },
         conditionRoll: { min: 0.8, max: 1.0 },
@@ -659,7 +659,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
         groundDescription: 'Scrap metal from the tractor and farm equipment is scattered through the barn.',
       },
       {
-        entityId: 'letter_003_farmhouse',
+        entityId: 'torn_note_fragment',
         spawnChance: 0.30,
         quantity: { min: 1, max: 1, distribution: 'single' },
         conditionRoll: { min: 0.8, max: 1.0 },
@@ -842,7 +842,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     npcSpawns: [],
     itemSpawns: [
       {
-        entityId: 'letter_004_bus',
+        entityId: 'torn_note_fragment',
         spawnChance: 0.50,
         quantity: { min: 1, max: 1, distribution: 'single' },
         conditionRoll: { min: 0.4, max: 0.8 },
@@ -1118,7 +1118,18 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       },
     ],
     npcSpawns: [],
-    itemSpawns: [],
+    itemSpawns: [
+      { entityId: 'smooth_river_stone', spawnChance: 0.6, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      { entityId: 'juniper_firewood', spawnChance: 0.4, quantity: { min: 1, max: 1, distribution: 'flat' } },
+    ],
+    hollowEncounter: {
+      baseChance: 0.25,
+      timeModifier: { night: 1.4, dawn: 0.7, dusk: 1.1, day: 0.6 },
+      threatPool: [
+        { type: 'shuffler', weight: 3, quantity: { min: 1, max: 2, distribution: 'flat' } },
+        { type: 'remnant', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
+      ],
+    },
   },
 
   // ─── RR-16: The Deep Pools ────────────────────────────────────────────────
@@ -1217,7 +1228,18 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       },
     ],
     npcSpawns: [],
-    itemSpawns: [],
+    itemSpawns: [
+      { entityId: 'smooth_river_stone', spawnChance: 0.6, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      { entityId: 'juniper_firewood', spawnChance: 0.4, quantity: { min: 1, max: 1, distribution: 'flat' } },
+    ],
+    hollowEncounter: {
+      baseChance: 0.25,
+      timeModifier: { night: 1.4, dawn: 0.7, dusk: 1.1, day: 0.6 },
+      threatPool: [
+        { type: 'shuffler', weight: 3, quantity: { min: 1, max: 2, distribution: 'flat' } },
+        { type: 'remnant', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
+      ],
+    },
   },
 
   // ─── RR-18: The Hanging Tree ──────────────────────────────────────────────
@@ -1262,7 +1284,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     npcSpawns: [],
     itemSpawns: [
       {
-        entityId: 'letter_005_hanging_tree',
+        entityId: 'torn_note_fragment',
         spawnChance: 0.20,
         quantity: { min: 1, max: 1, distribution: 'single' },
         conditionRoll: { min: 0.5, max: 0.8 },
@@ -1489,7 +1511,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     npcSpawns: [],
     itemSpawns: [
       {
-        entityId: 'letter_006_room7',
+        entityId: 'torn_note_fragment',
         spawnChance: 0.80,
         quantity: { min: 1, max: 1, distribution: 'single' },
         conditionRoll: { min: 0.9, max: 1.0 },

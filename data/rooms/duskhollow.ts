@@ -356,6 +356,19 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     items: [],
     enemies: [],
     npcs: [],
+    itemSpawns: [
+      { entityId: 'boiled_rations', spawnChance: 0.6, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      { entityId: 'water_bottle_sealed', spawnChance: 0.7, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      { entityId: 'scrap_metal', spawnChance: 0.5, quantity: { min: 1, max: 2, distribution: 'flat' } },
+    ],
+    hollowEncounter: {
+      baseChance: 0.35,
+      timeModifier: { night: 1.5, dawn: 0.8, dusk: 1.2, day: 0.5 },
+      threatPool: [
+        { type: 'remnant', weight: 2, quantity: { min: 1, max: 1, distribution: 'flat' } },
+        { type: 'shuffler', weight: 3, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      ],
+    },
     extras: [
       {
         keywords: ['recipe', 'book', 'production', 'process'],
@@ -377,7 +390,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     act: 2,
     difficulty: 2,
     visited: false,
-    flags: { noCombat: true },
+    flags: {},
     description: 'Portraits in oil, floor to ceiling, covering every wall. The subjects are Sanguine — you can tell from the uncanny quality of stillness the painters captured. Each portrait has a small brass plate with a name and a date range. The date ranges are long. Some start in the 1800s. All are open-ended, the closing date never filled in. The portraits show the same faces across different painted decades — the same bone structure, the same eyes, aging not at all, wearing the fashions of different centuries like costumes. They\'re still here. Some of them are in the great hall right now.',
     descriptionNight: 'By candlelight, the portraits seem to watch more directly. This is a trick of light and your expectations. Probably.',
     shortDescription: 'Portraits of the Sanguine through the centuries. They haven\'t aged.',
@@ -388,6 +401,17 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     items: [],
     enemies: [],
     npcs: [],
+    itemSpawns: [
+      { entityId: 'gallery_portrait_placard', spawnChance: 1.0, quantity: { min: 1, max: 1, distribution: 'flat' } },
+      { entityId: 'scrap_metal', spawnChance: 0.3, quantity: { min: 1, max: 1, distribution: 'flat' } },
+    ],
+    hollowEncounter: {
+      baseChance: 0.20,
+      timeModifier: { night: 1.6, dawn: 0.7, dusk: 1.3, day: 0.4 },
+      threatPool: [
+        { type: 'remnant', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
+      ],
+    },
     extras: [
       {
         keywords: ['portrait', 'painting', 'faces', 'identity'],
@@ -470,6 +494,11 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     items: [],
     enemies: [],
     npcs: [],
+    itemSpawns: [
+      { entityId: 'textiles', spawnChance: 0.6, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      { entityId: 'bandages', spawnChance: 0.4, quantity: { min: 1, max: 1, distribution: 'flat' } },
+      { entityId: 'torn_note_fragment', spawnChance: 0.5, quantity: { min: 1, max: 1, distribution: 'flat' } },
+    ],
     extras: [
       {
         keywords: ['bed', 'sheets', 'sleep', 'rest'],
@@ -517,7 +546,15 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         cycleGate: 2,
       },
     ],
-    narrativeNotes: 'Critical Act III setup room. The discovery that MERIDIAN was built with Sanguine entry in mind — and that the Covenant were willing partners — reshapes the central mystery. The "letting them in, not keeping them out" revelation is the room\'s anchor.',
+    hollowEncounter: {
+      baseChance: 0.90,
+      timeModifier: { night: 1.5, dawn: 1.0, dusk: 1.2, day: 0.8 },
+      threatPool: [
+        { type: 'whisperer', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
+        { type: 'remnant', weight: 2, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      ],
+    },
+    narrativeNotes: 'Critical Act III setup room. The discovery that MERIDIAN was built with Sanguine entry in mind — and that the Covenant were willing partners — reshapes the central mystery. The "letting them in, not keeping them out" revelation is the room\'s anchor. Whisperer boss guards the data.',
   },
 
   {

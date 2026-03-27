@@ -508,7 +508,7 @@ export const THE_DEEP_ROOMS: Room[] = [
       up: { destination: 'dp_10_shaft_two', descriptionVerbose: 'up the shaft' },
       east: { destination: 'dp_12_sealed_door', descriptionVerbose: 'east, deeper into the MERIDIAN-adjacent tunnels' },
     },
-    items: ['lore_mine_supervisor_log'],
+    items: ['mine_supervisor_log'],
     enemies: [],
     npcs: [],
     extras: [

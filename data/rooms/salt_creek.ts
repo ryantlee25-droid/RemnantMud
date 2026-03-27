@@ -889,7 +889,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     ],
     itemSpawns: [
       {
-        entityId: 'ammo_shotgun',
+        entityId: 'ammo_shotgun_shell',
         spawnChance: 0.35,
         quantity: { min: 2, max: 4, distribution: 'weighted_low' },
         conditionRoll: { min: 0.7, max: 1.0 },

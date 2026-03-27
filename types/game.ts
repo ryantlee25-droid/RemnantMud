@@ -51,7 +51,7 @@ export type CharacterClass = 'enforcer' | 'scout' | 'wraith' | 'shepherd' | 'rec
 export type PersonalLossType = 'child' | 'partner' | 'community' | 'identity' | 'promise'
 
 // Hollow enemy sub-types (used in hollow_encounter threat pools)
-export type HollowType = 'shuffler' | 'remnant' | 'screamer' | 'brute' | 'whisperer' | 'hive_mother'
+export type HollowType = 'shuffler' | 'remnant' | 'screamer' | 'brute' | 'whisperer' | 'hive_mother' | 'elder_sanguine' | 'sanguine_feral'
 
 // Factions
 export type FactionType =

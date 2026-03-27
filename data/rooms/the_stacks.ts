@@ -398,6 +398,11 @@ export const THE_STACKS_ROOMS: Room[] = [
     items: [],
     enemies: [],
     npcs: [],
+    itemSpawns: [
+      { entityId: 'boiled_rations', spawnChance: 0.8, quantity: { min: 1, max: 3, distribution: 'flat' } },
+      { entityId: 'purification_tabs', spawnChance: 0.6, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      { entityId: 'chemicals_basic', spawnChance: 0.4, quantity: { min: 1, max: 1, distribution: 'flat' } },
+    ],
     extras: [
       {
         keywords: ['samples', 'CHARON-7', 'vials', 'case'],
@@ -431,6 +436,10 @@ export const THE_STACKS_ROOMS: Room[] = [
     items: [],
     enemies: [],
     npcs: [],
+    itemSpawns: [
+      { entityId: 'radio_tower_broadcast_notes', spawnChance: 0.9, quantity: { min: 1, max: 1, distribution: 'flat' } },
+      { entityId: 'electronics_salvage', spawnChance: 0.5, quantity: { min: 1, max: 1, distribution: 'flat' } },
+    ],
     extras: [
       {
         keywords: ['telescope', 'lens', 'scope', 'look'],

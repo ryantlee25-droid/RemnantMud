@@ -133,7 +133,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     act: 3,
     difficulty: 3,
     visited: false,
-    flags: { noCombat: true },
+    flags: {},
     cycleGate: 3,
     description: 'The automated systems are still running. UV strips cycle on as you enter. A chemical mist activates — the nozzles spray something that smells like isopropyl and ozone, a decontamination protocol running the same cycle it\'s been running, presumably, for seven years. Nobody updated the decontamination system when the facility went dark. It doesn\'t know the facility went dark. It greets you with institutional efficiency and the specific eerie functionality of a machine that has outlasted its purpose.',
     descriptionNight: 'The UV strips are blue-white and harsh. The decon mist is cold. The automated welcome is the same at 3am.',
@@ -147,6 +147,18 @@ export const THE_SCAR_ROOMS: Room[] = [
     items: [],
     enemies: [],
     npcs: [],
+    itemSpawns: [
+      { entityId: 'purification_tabs', spawnChance: 0.6, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      { entityId: 'chemicals_basic', spawnChance: 0.5, quantity: { min: 1, max: 1, distribution: 'flat' } },
+    ],
+    hollowEncounter: {
+      baseChance: 0.60,
+      timeModifier: { night: 1.2, dawn: 1.0, dusk: 1.1, day: 0.9 },
+      threatPool: [
+        { type: 'remnant', weight: 2, quantity: { min: 1, max: 2, distribution: 'flat' } },
+        { type: 'shuffler', weight: 3, quantity: { min: 1, max: 3, distribution: 'flat' } },
+      ],
+    },
     extras: [
       {
         keywords: ['UV', 'lights', 'strips', 'blue'],
@@ -310,16 +322,14 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.20,
-      timeModifier: { day: 1.0, night: 1.2, dawn: 1.0, dusk: 1.1 },
+      baseChance: 0.85,
+      timeModifier: { night: 1.2, dawn: 0.9, dusk: 1.1, day: 0.8 },
       threatPool: [
-        { type: 'remnant', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
-        { type: 'whisperer', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
-        { type: 'shuffler', weight: 15, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'elder_sanguine', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
+        { type: 'sanguine_feral', weight: 2, quantity: { min: 1, max: 2, distribution: 'flat' } },
       ],
-      awarenessRoll: { unaware: 0.2, awarePassive: 0.35, awareAggressive: 0.45 },
     },
-    narrativeNotes: 'Letters collectible in this room. Cell 7 subject\'s writing is the most developed — the final entry is ambiguous about whether they became Sanguine or Hollow. The door-unlocking detail (Vane giving them codes) is crucial to the Director\'s character.',
+    narrativeNotes: 'Letters collectible in this room. Cell 7 subject\'s writing is the most developed — the final entry is ambiguous about whether they became Sanguine or Hollow. The door-unlocking detail (Vane giving them codes) is crucial to the Director\'s character. Elder Sanguine boss encounter — Act III climax.',
   },
 
   {

@@ -914,6 +914,605 @@ export const ITEMS: Record<string, Item> = {
     usable: true,
     loreText: 'You are close. The core is through the lab wing, past the holding cells, down one more level. The power is still on in the core. My office is the third door on the left. The dataset is in the terminal on the desk. The terminal will respond to voice. My name is the password. If you have read everything else, you know my name. Come and find me. I\'ll be here. I have always been here. — E.V.',
   },
+
+  // ----------------------------------------------------------
+  // Scavenged Goods — Junk
+  // ----------------------------------------------------------
+
+  empty_water_bottle: {
+    id: 'empty_water_bottle',
+    name: 'Empty Water Bottle',
+    description: 'A plastic bottle. Empty. Worth something to someone who\'s thirsty.',
+    type: 'junk',
+    weight: 0.3,
+    value: 1,
+  },
+
+  lighter_disposable: {
+    id: 'lighter_disposable',
+    name: 'Disposable Lighter',
+    description: 'A plastic lighter. Still has fluid.',
+    type: 'junk',
+    weight: 0.1,
+    value: 2,
+  },
+
+  old_binoculars: {
+    id: 'old_binoculars',
+    name: 'Old Binoculars',
+    description: 'Old binoculars. One lens cracked, the other still works.',
+    type: 'junk',
+    weight: 0.8,
+    value: 3,
+  },
+
+  binoculars_intact: {
+    id: 'binoculars_intact',
+    name: 'Intact Binoculars',
+    description: 'Military-grade binoculars. Both lenses clear.',
+    type: 'junk',
+    weight: 0.9,
+    value: 8,
+  },
+
+  can_opener_quality: {
+    id: 'can_opener_quality',
+    name: 'Quality Can Opener',
+    description: 'A good can opener. The kind that doesn\'t slip.',
+    type: 'junk',
+    weight: 0.3,
+    value: 2,
+  },
+
+  cast_iron_skillet: {
+    id: 'cast_iron_skillet',
+    name: 'Cast-Iron Skillet',
+    description: 'A cast-iron skillet. Heavy. Could cook with it. Could fight with it.',
+    type: 'junk',
+    weight: 2.0,
+    value: 4,
+  },
+
+  hand_tools_basic: {
+    id: 'hand_tools_basic',
+    name: 'Basic Hand Tools',
+    description: 'Hammer, screwdriver, pliers. Basic tools. Useful.',
+    type: 'junk',
+    weight: 1.5,
+    value: 5,
+  },
+
+  gun_oil: {
+    id: 'gun_oil',
+    name: 'Gun Oil',
+    description: 'Gun oil. Keeps metal from rusting.',
+    type: 'junk',
+    weight: 0.2,
+    value: 3,
+  },
+
+  crafting_components: {
+    id: 'crafting_components',
+    name: 'Crafting Components',
+    description: 'Various small parts. Gears, wires, clips. Something useful in here.',
+    type: 'junk',
+    weight: 0.8,
+    value: 4,
+  },
+
+  salvaged_engine_part: {
+    id: 'salvaged_engine_part',
+    name: 'Salvaged Engine Part',
+    description: 'An engine component. Heavy and oily. Someone might want this.',
+    type: 'junk',
+    weight: 3.0,
+    value: 6,
+  },
+
+  mineral_sample: {
+    id: 'mineral_sample',
+    name: 'Mineral Sample',
+    description: 'A rock sample. Labeled in faded pencil. Worth something to the right buyer.',
+    type: 'junk',
+    weight: 0.5,
+    value: 2,
+  },
+
+  smooth_river_stone: {
+    id: 'smooth_river_stone',
+    name: 'Smooth River Stone',
+    description: 'A smooth river stone. Fits perfectly in the palm.',
+    type: 'junk',
+    weight: 0.4,
+    value: 1,
+  },
+
+  tinder_bundle: {
+    id: 'tinder_bundle',
+    name: 'Tinder Bundle',
+    description: 'Dry bark and grass, bound with twine. Lights fast.',
+    type: 'junk',
+    weight: 0.3,
+    value: 1,
+  },
+
+  fire_starter_kit: {
+    id: 'fire_starter_kit',
+    name: 'Fire Starter Kit',
+    description: 'Flint, steel, and tinder. The old way.',
+    type: 'junk',
+    weight: 0.4,
+    value: 3,
+  },
+
+  wild_herbs: {
+    id: 'wild_herbs',
+    name: 'Wild Herbs',
+    description: 'A bundle of wild herbs. Medicinal or culinary — you\'re not sure which.',
+    type: 'junk',
+    weight: 0.2,
+    value: 2,
+  },
+
+  ghost_sage_sprig: {
+    id: 'ghost_sage_sprig',
+    name: 'Ghost Sage Sprig',
+    description: 'Ghost sage. Pale and aromatic. Used in Covenant purification rites.',
+    type: 'junk',
+    weight: 0.1,
+    value: 3,
+  },
+
+  fishing_line_improvised: {
+    id: 'fishing_line_improvised',
+    name: 'Improvised Fishing Line',
+    description: 'A length of monofilament with a bent-hook lure.',
+    type: 'junk',
+    weight: 0.2,
+    value: 2,
+  },
+
+  scavenging_useful_bones: {
+    id: 'scavenging_useful_bones',
+    name: 'Useful Bones',
+    description: 'Hollow bones. Useful for making tools, needles, or charms.',
+    type: 'junk',
+    weight: 0.3,
+    value: 2,
+  },
+
+  hollow_nest_salvage: {
+    id: 'hollow_nest_salvage',
+    name: 'Hollow Nest Salvage',
+    description: 'Material pulled from a Hollow nest. Organic fiber and shed chitinous shell.',
+    type: 'junk',
+    weight: 0.6,
+    value: 4,
+  },
+
+  soap_bar: {
+    id: 'soap_bar',
+    name: 'Bar of Soap',
+    description: 'A bar of soap. Mostly used. Still works.',
+    type: 'junk',
+    weight: 0.2,
+    value: 1,
+  },
+
+  room_key_motel: {
+    id: 'room_key_motel',
+    name: 'Motel Room Key',
+    description: 'A motel room key. Old brass. Room 7 is stamped on the fob.',
+    type: 'junk',
+    weight: 0.05,
+    value: 1,
+  },
+
+  motel_bible: {
+    id: 'motel_bible',
+    name: 'Motel Bible',
+    description: 'A Gideons Bible. Someone crossed out the 23rd Psalm and wrote something else.',
+    type: 'junk',
+    weight: 0.4,
+    value: 1,
+  },
+
+  empty_cola_can: {
+    id: 'empty_cola_can',
+    name: 'Empty Cola Can',
+    description: 'An empty cola can. Pre-collapse brand. You could still read the logo if you squinted.',
+    type: 'junk',
+    weight: 0.05,
+    value: 0,
+  },
+
+  backpack_child: {
+    id: 'backpack_child',
+    name: 'Child\'s Backpack',
+    description: 'A child\'s backpack. Small. Covered in faded cartoon characters.',
+    type: 'junk',
+    weight: 0.3,
+    value: 1,
+  },
+
+  lost_cargo_crate: {
+    id: 'lost_cargo_crate',
+    name: 'Lost Cargo Crate',
+    description: 'A sealed cargo crate. Something inside shifts when you move it.',
+    type: 'junk',
+    weight: 5.0,
+    value: 10,
+  },
+
+  // ----------------------------------------------------------
+  // Scavenged Goods — Weapons
+  // ----------------------------------------------------------
+
+  rebar_club: {
+    id: 'rebar_club',
+    name: 'Rebar Club',
+    description: 'A length of rebar. Heavy. Blunt. Effective.',
+    type: 'weapon',
+    weight: 2.5,
+    damage: 6,
+    value: 4,
+  },
+
+  // ----------------------------------------------------------
+  // Scavenged Goods — Food
+  // ----------------------------------------------------------
+
+  canned_food: {
+    id: 'canned_food',
+    name: 'Canned Food',
+    description: 'A dented can. Label gone. You peel it open and eat without looking.',
+    type: 'consumable',
+    weight: 1.0,
+    healing: 15,
+    value: 5,
+    usable: true,
+    useText: 'You eat. It\'s fine. You don\'t ask what it was.',
+  },
+
+  canned_food_random: {
+    id: 'canned_food_random',
+    name: 'Canned Food',
+    description: 'A dented can. Label gone. You peel it open and eat without looking.',
+    type: 'consumable',
+    weight: 1.0,
+    healing: 15,
+    value: 5,
+    usable: true,
+    useText: 'You eat. It\'s fine. You don\'t ask what it was.',
+  },
+
+  canned_food_premium: {
+    id: 'canned_food_premium',
+    name: 'Premium Canned Food',
+    description: 'Vacuum-sealed. Pre-collapse. Whatever\'s inside hasn\'t gone bad yet.',
+    type: 'consumable',
+    weight: 1.2,
+    healing: 25,
+    value: 10,
+    usable: true,
+    useText: 'You eat. It tastes like it was made in a world that still had quality control.',
+  },
+
+  dried_meat_strip: {
+    id: 'dried_meat_strip',
+    name: 'Dried Meat Strip',
+    description: 'Salted and dried. Chewy. Better than nothing.',
+    type: 'consumable',
+    weight: 0.3,
+    healing: 10,
+    value: 3,
+    usable: true,
+    useText: 'You chew. It takes a while. It keeps you going.',
+  },
+
+  scavenged_rations: {
+    id: 'scavenged_rations',
+    name: 'Scavenged Rations',
+    description: 'Mixed scavenged food. You\'ve stopped asking what it was.',
+    type: 'consumable',
+    weight: 0.8,
+    healing: 12,
+    value: 4,
+    usable: true,
+    useText: 'You eat what\'s there. It\'s enough.',
+  },
+
+  preserved_rations: {
+    id: 'preserved_rations',
+    name: 'Preserved Rations',
+    description: 'Preserved in salt or oil. Will last another season.',
+    type: 'consumable',
+    weight: 1.0,
+    healing: 20,
+    value: 8,
+    usable: true,
+    useText: 'You eat. The preservation held. That alone is worth something.',
+  },
+
+  salted_rations: {
+    id: 'salted_rations',
+    name: 'Salted Rations',
+    description: 'Salt-cured strips. The Salters know how to make food last.',
+    type: 'consumable',
+    weight: 0.9,
+    healing: 18,
+    value: 7,
+    usable: true,
+    useText: 'You eat. The salt burns your lips. You don\'t mind.',
+  },
+
+  emergency_rations: {
+    id: 'emergency_rations',
+    name: 'Emergency Rations',
+    description: 'Emergency pack. The label says 3-day supply. It\'s one meal.',
+    type: 'consumable',
+    weight: 0.8,
+    healing: 22,
+    value: 9,
+    usable: true,
+    useText: 'You eat the whole pack. You\'re still hungry, but less so.',
+  },
+
+  fresh_fish: {
+    id: 'fresh_fish',
+    name: 'Fresh Fish',
+    description: 'River-caught. Still smells like the water.',
+    type: 'consumable',
+    weight: 0.6,
+    healing: 20,
+    value: 6,
+    usable: true,
+    useText: 'You cook it over the fire. It\'s good. Simple and good.',
+  },
+
+  culinary_herbs_fresh: {
+    id: 'culinary_herbs_fresh',
+    name: 'Fresh Culinary Herbs',
+    description: 'Fresh-cut herbs from the rooftop garden. Mint, sage, something else.',
+    type: 'consumable',
+    weight: 0.2,
+    healing: 5,
+    value: 2,
+    usable: true,
+    useText: 'You chew a leaf. The taste is sharp and clean.',
+  },
+
+  // ----------------------------------------------------------
+  // Scavenged Goods — Medical
+  // ----------------------------------------------------------
+
+  bandages_clean: {
+    id: 'bandages_clean',
+    name: 'Clean Bandages',
+    description: 'Sterile bandages. Still in the wrapper.',
+    type: 'consumable',
+    weight: 0.2,
+    healing: 12,
+    value: 10,
+    usable: true,
+    useText: 'You wrap the wound with clean gauze. It holds.',
+  },
+
+  first_aid_kit_basic: {
+    id: 'first_aid_kit_basic',
+    name: 'Basic First Aid Kit',
+    description: 'A red cross kit. Half the supplies are still inside.',
+    type: 'consumable',
+    weight: 1.5,
+    healing: 30,
+    value: 25,
+    usable: true,
+    useText: 'You open the kit and work through it methodically. Gauze, tape, antiseptic. Better.',
+  },
+
+  field_dressing: {
+    id: 'field_dressing',
+    name: 'Field Dressing',
+    description: 'Field dressing. The kind you press into a wound with your palm.',
+    type: 'consumable',
+    weight: 0.4,
+    healing: 15,
+    value: 12,
+    usable: true,
+    useText: 'You press the dressing into the wound. The bleeding slows.',
+  },
+
+  fresh_water_container: {
+    id: 'fresh_water_container',
+    name: 'Fresh Water Container',
+    description: 'A container of clean water. Rare enough to be valuable.',
+    type: 'consumable',
+    weight: 1.2,
+    healing: 10,
+    value: 8,
+    usable: true,
+    useText: 'You drink. Clean water. You forgot how good that feels.',
+  },
+
+  // ----------------------------------------------------------
+  // Lore Items — MERIDIAN Expansion
+  // ----------------------------------------------------------
+
+  harlow_journal_meridian: {
+    id: 'harlow_journal_meridian',
+    name: 'Harlow\'s Journal (MERIDIAN ref.)',
+    description: 'A water-stained journal page in precise handwriting.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'Dr. Harlow — entry 44. The trial subjects in Block C are responding. Not to the serum. To each other. They\'re communicating through the walls. Tapping. In sequence. I reported this to Director Vane. She said: document it. I said: shouldn\'t we stop it? She said: document it.',
+  },
+
+  osei_research_notebook: {
+    id: 'osei_research_notebook',
+    name: 'Dr. Osei\'s Research Notebook',
+    description: 'A field notebook with careful handwriting and sketches of bone samples.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'Field note — canyon site. The organism in the bones isn\'t CHARON-7. It predates the facility by at least sixty years. Someone was studying it long before MERIDIAN. Someone who didn\'t leave their name. Just initials: E.V.',
+  },
+
+  meridian_file_fragment: {
+    id: 'meridian_file_fragment',
+    name: 'MERIDIAN Personnel File (fragment)',
+    description: 'A torn fragment of an official personnel file, stamped RED-TIER.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'CLEARANCE: RED-TIER / EYES ONLY. Subject: CHARON-7 Exposure Protocol, Cohort 3. All cohort-3 subjects have been reclassified from \'patient\' to \'asset.\' Transfer to Holding Wing C upon successful phase-2 transition. Note: Do not inform subjects of reclassification.',
+  },
+
+  meridian_security_log: {
+    id: 'meridian_security_log',
+    name: 'MERIDIAN Security Log — Briggs',
+    description: 'A security log on yellowed paper, the final entry circled in red ink.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'Security Director Briggs — final entry. They\'re calling it a containment breach. It\'s not. They opened the doors. I was there. I saw Vane give the order. Whatever comes next — whatever the Hollow are now — that was a choice. Made by people in suits. I want that on the record.',
+  },
+
+  meridian_tunnel_map: {
+    id: 'meridian_tunnel_map',
+    name: 'MERIDIAN Tunnel Access Map',
+    description: 'A hand-drawn map on graph paper, creased from repeated folding.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'Hand-drawn on graph paper. The maintenance tunnels run under the entire facility — including sections not on any official blueprint. Someone marked three locations in red ink: WATER INTAKE / SIGNAL ARRAY / THE BELOW. Below what is not labeled.',
+  },
+
+  radio_fragment: {
+    id: 'radio_fragment',
+    name: 'Radio Signal Fragment',
+    description: 'A decoded partial transmission on a strip of thermal printer paper.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: '...if you can hear this, the signal is still running. CHARON-7 is still running. We didn\'t stop it. We just moved the dial. Find the source. Find the choice. What you do with it... [signal degrades]',
+  },
+
+  radio_signal_fragment: {
+    id: 'radio_signal_fragment',
+    name: 'Radio Signal Fragment',
+    description: 'A decoded partial transmission on a strip of thermal printer paper.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: '...if you can hear this, the signal is still running. CHARON-7 is still running. We didn\'t stop it. We just moved the dial. Find the source. Find the choice. What you do with it... [signal degrades]',
+  },
+
+  lore_cabin_logbook: {
+    id: 'lore_cabin_logbook',
+    name: 'Cabin Logbook',
+    description: 'A logbook left in a mountain cabin, the entries spanning years.',
+    type: 'lore',
+    weight: 1,
+    value: 0,
+    usable: true,
+    loreText: 'Eleven visits marked in the same handwriting. Each visit: a date, a bearing, and a distance. The last entry: \'Confirmed. Still broadcasting. Still changing things. The shepherd I met on visit 9 — he doesn\'t remember being human. But he misses it. I could see it.\'',
+  },
+
+  lore_director_vane_journal: {
+    id: 'lore_director_vane_journal',
+    name: 'Director Vane\'s Personal Journal',
+    description: 'A leather-bound journal, the clasp broken, the pages dense with small handwriting.',
+    type: 'lore',
+    weight: 1,
+    value: 0,
+    usable: true,
+    loreText: 'I have stopped trying to justify CHARON-7 in terms the ethics board will accept. The ethics board is a legacy institution from a world that no longer exists. What I know: the Hollow are not dying. They are becoming. I know because I took a half-dose six months ago. I know because I can hear the ones in the basement. Not words. Intent.',
+  },
+
+  lore_meridian_funding_data: {
+    id: 'lore_meridian_funding_data',
+    name: 'MERIDIAN Funding Data — Server Archive',
+    description: 'Recovered financial records printed from a damaged server.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'Recovered financial records. MERIDIAN was not a government project. It was privately funded — twelve investors, names redacted — with a government contract as cover. The money came from somewhere. The directive to \'develop a population-scale behavioral modification agent\' came from somewhere. That somewhere is not in this file.',
+  },
+
+  lore_meridian_r1_research: {
+    id: 'lore_meridian_r1_research',
+    name: 'MERIDIAN R1 Research Report',
+    description: 'A research report marked PHASE 1, the pages brittle and stained.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'Phase 1 results: CHARON-7 achieves 98.7% tissue integration within 72 hours. Subjects display increased aggression, sensory acuity, and pack-behavior formation. Subjects display decreased verbal cognition. This was unexpected. Dr. Harlow believes verbal cognition can be restored with a stabilizing compound. Director Vane has not approved further testing on stabilization.',
+  },
+
+  lore_reclaimer_field_notes: {
+    id: 'lore_reclaimer_field_notes',
+    name: 'Reclaimer Field Notes',
+    description: 'Field notes on repurposed graph paper, the handwriting precise and technical.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'The Stacks were supposed to be a comms hub. We found it that way — equipment still running on solar backup, signal still cycling. Someone set this up to last. The question is: last until what? Until someone with the right key arrived? The broadcast array upstairs is still locked. We haven\'t found the key.',
+  },
+
+  kindling_treatment_compound: {
+    id: 'kindling_treatment_compound',
+    name: 'Kindling Treatment Compound',
+    description: 'An opaque flask with a handwritten label.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'An opaque flask with a handwritten label: PURIFICATION FORMULA R-7. The Kindling have been distributing this through their clinics. It smells chemical and sweet. What it actually does to the Hollow exposure in the body — you\'d need a lab to know.',
+  },
+
+  pre_collapse_prayer_book: {
+    id: 'pre_collapse_prayer_book',
+    name: 'Pre-Collapse Prayer Book',
+    description: 'A small devotional book, the spine cracked, margin notes in a second hand.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'A small devotional book. The prayers are standard. But someone has added margin notes in a different hand: \'God didn\'t leave. We did. The signal isn\'t His. But maybe answering it is.\' Dated three years post-collapse.',
+  },
+
+  letter_meridian_cell_11: {
+    id: 'letter_meridian_cell_11',
+    name: 'Letter — Cell 11',
+    description: 'Words written on a cell wall in what might be charcoal.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'Written on the wall in what might be charcoal. \'To whoever is next: they feed you. They test you. They say you\'re helping. They don\'t say what you\'re helping with. I lasted 40 days. I think that\'s a record. My name was Kepler. I was from Albuquerque. I had a son.\'',
+  },
+
+  letter_meridian_cell_7: {
+    id: 'letter_meridian_cell_7',
+    name: 'Letter — Cell 7',
+    description: 'Words scratched into the floor beside a bunk.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'Scratched into the floor beside the bunk. \'Day 1 they took blood. Day 7 I could hear the others. Not through the walls. Just — hear them. Day 14 I stopped needing to sleep. Day 21 I stopped being afraid. I don\'t know if that\'s better or worse.\'',
+  },
 }
 
 export function getItem(id: string): Item | undefined {

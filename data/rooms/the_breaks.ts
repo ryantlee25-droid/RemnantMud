@@ -471,13 +471,12 @@ export const BREAKS_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.85,
-      timeModifier: { day: 0.8, dusk: 1.5, night: 2.0, dawn: 1.2 },
+      baseChance: 0.90,
+      timeModifier: { night: 1.4, dawn: 0.8, dusk: 1.2, day: 0.6 },
       threatPool: [
-        { type: 'shuffler', weight: 45, quantity: { min: 3, max: 6, distribution: 'bell' } },
-        { type: 'remnant', weight: 30, quantity: { min: 2, max: 4, distribution: 'bell' } },
-        { type: 'brute', weight: 15, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
-        { type: 'screamer', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'screamer', weight: 2, quantity: { min: 1, max: 1, distribution: 'flat' } },
+        { type: 'brute', weight: 1, quantity: { min: 1, max: 2, distribution: 'flat' } },
+        { type: 'shuffler', weight: 3, quantity: { min: 2, max: 4, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.1, awarePassive: 0.2, awareAggressive: 0.7 },
       noiseModifier: -5,

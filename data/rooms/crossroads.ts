@@ -273,7 +273,7 @@ export const CROSSROADS_ROOMS: Room[] = [
     ],
     itemSpawns: [
       {
-        entityId: 'dropped_penny_22lr',
+        entityId: 'ammo_22lr',
         spawnChance: 0.15,
         quantity: { min: 1, max: 2, distribution: 'weighted_low' },
         conditionRoll: { min: 0.8, max: 1.0 },
@@ -335,7 +335,7 @@ export const CROSSROADS_ROOMS: Room[] = [
           { desc: 'Cole is field-stripping a pistol, his hands moving with the unconscious speed of deep practice. He glances up. \'Buying or browsing?\'', weight: 3 },
           { desc: 'Cole is arguing with a Salter about the price of 9mm. The Salter wants bulk pricing. Cole doesn\'t do bulk pricing. The conversation has the energy of two people who\'ve had it before.', weight: 1 },
         ],
-        tradeInventory: ['pipe_wrench', 'hatchet', 'combat_knife', 'machete', '22_rifle', '9mm_pistol', 'ammo_22lr', 'ammo_9mm', 'ammo_shotgun'],
+        tradeInventory: ['pipe_wrench', 'hatchet', 'combat_knife', 'machete', '22_rifle', '9mm_pistol', 'ammo_22lr', 'ammo_9mm', 'ammo_shotgun_shell'],
         dialogueTree: 'cr_cole_intro',
       },
       {
@@ -861,7 +861,7 @@ export const CROSSROADS_ROOMS: Room[] = [
         groundDescription: 'Cans of food — real food, labeled. Chili. Peaches. Condensed soup.',
       },
       {
-        entityId: 'letter_001_prepper',
+        entityId: 'torn_note_fragment',
         spawnChance: 0.60,
         quantity: { min: 1, max: 1, distribution: 'single' },
         conditionRoll: { min: 1.0, max: 1.0 },
@@ -1023,7 +1023,7 @@ export const CROSSROADS_ROOMS: Room[] = [
     ],
     itemSpawns: [
       {
-        entityId: 'textiles_scrap',
+        entityId: 'textiles',
         spawnChance: 0.35,
         quantity: { min: 1, max: 2, distribution: 'weighted_low' },
         conditionRoll: { min: 0.3, max: 0.7 },
@@ -1092,7 +1092,7 @@ export const CROSSROADS_ROOMS: Room[] = [
     ],
     itemSpawns: [
       {
-        entityId: 'letter_002_grave',
+        entityId: 'torn_note_fragment',
         spawnChance: 0.15,
         quantity: { min: 1, max: 1, distribution: 'single' },
         conditionRoll: { min: 0.6, max: 0.9 },

@@ -12,7 +12,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     description: 'An avenue of old-growth oaks lines the gravel drive, branches meeting overhead in a cathedral vault. The trees are healthy — someone tends them, or something about this land keeps them alive while everything else dries. Candlelight shows in the manor windows half a mile ahead. The drive is clean of debris, the gravel raked, the verge trimmed. The Covenant of Dusk maintains this approach the way a dignified person maintains their appearance: because presentation is the first argument.',
     descriptionNight: 'At night the drive is a tunnel of darkness between oak walls, with the manor candlelight as the only forward reference. The leaves barely move. Somewhere in the trees, something watches your approach with patience that exceeds any human calibration of waiting. You are expected. This is not the same as being welcome.',
     shortDescription: 'Tree-lined drive to Duskhollow Manor.',
-    exits: { east: 'br_01_canyon_mouth', west: 'dh_02_entrance_hall' },
+    exits: { east: 'br_01_canyon_mouth', west: 'dh_02_entrance_hall', south: 'dh_13_tithe_house' },
     richExits: {
       east: {
         destination: 'br_01_canyon_mouth',
@@ -22,6 +22,10 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         destination: 'dh_02_entrance_hall',
         descriptionVerbose: 'the manor entrance ahead',
         questGate: 'covenant_of_dusk_invited',
+      },
+      south: {
+        destination: 'dh_13_tithe_house',
+        descriptionVerbose: 'south, a foot-worn path descending into the hollow where the settlement sits',
       },
     },
     items: [],
@@ -607,5 +611,466 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
       ],
     },
     narrativeNotes: 'The roof walk is a lore and emotional payoff room. The Sanguine here remembers the pre-MERIDIAN world. "MERIDIAN didn\'t create us. It named us." is a key thematic line.',
+  },
+
+  // ----------------------------------------------------------
+  // Duskhollow Settlement Rooms (dh_13–dh_18)
+  // The human settlement in the hollow below the manor.
+  // Accord tributary zone. Kindling cell active. Act II.
+  // ----------------------------------------------------------
+
+  {
+    id: 'dh_13_tithe_house',
+    name: 'Duskhollow — The Tithe House',
+    zone: 'duskhollow',
+    act: 2,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: true, questHub: true },
+    description: 'A low building of reclaimed cinder block, chinked with mortar someone mixed badly — gaps stuffed with rags against the wind. The interior is spare: a wooden counter bolted to the wall, a mesh collector\'s booth behind it, a row of numbered hooks for hanging ledgers. The ledgers are there. The collector is not. Their absence is recent — a coffee tin still half-full, papers mid-sorted, a pen left uncapped and drying out on the counter. Whatever the Accord sends to collect, it hasn\'t arrived yet this cycle. The residents know this. You can tell by how they walk past the window: quickly, and without looking.',
+    descriptionNight: 'The tithe house is locked at night — a padlock through a hasp, the kind of lock that takes ten seconds to defeat. Inside, the ledgers sit in the dark. No collector. No oversight. The settlement exhales.',
+    shortDescription: 'The Accord\'s collection point. Ledgers. Resentment. The collector is gone.',
+    exits: { north: 'dh_01_long_drive', east: 'dh_16_elder_house', west: 'dh_14_hollow_rim', south: 'dh_17_cistern' },
+    richExits: {
+      north: { destination: 'dh_01_long_drive', descriptionVerbose: 'north, the path up to the Long Drive and the manor beyond' },
+      east: { destination: 'dh_16_elder_house', descriptionVerbose: 'east along the settlement\'s main track, toward the elder\'s house' },
+      west: { destination: 'dh_14_hollow_rim', descriptionVerbose: 'west to the edge of the hollow, where the tree line starts' },
+      south: { destination: 'dh_17_cistern', descriptionVerbose: 'south to the cistern, behind the tithe house' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    npcSpawns: [
+      {
+        npcId: 'tithe_human_resident',
+        spawnChance: 0.60,
+        spawnType: 'wanderer',
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        activityPool: [
+          { desc: 'A resident leans against the wall outside the booth, arms folded, not quite looking at the ledgers on the hooks. They\'ve been looking at them for a while.', weight: 3 },
+          { desc: 'A resident counts coins on the counter — small denomination scrip, Accord-issued, barely legal tender anywhere else. They look up when you enter. "Collector\'s late," they say. "That\'s not always good news."', weight: 2 },
+          { desc: 'Two residents speak quietly near the door, stopping when they notice you. One nods to the empty booth. "Three days," they say, as if you asked.', weight: 2 },
+        ],
+        dispositionRoll: { neutral: 0.5, wary: 0.4, friendly: 0.1 },
+        dialogueTree: 'duskhollow_tithe_resident_perspective',
+        narrativeNotes: 'These residents are not hostile but they are watching. The collector\'s absence is a live story thread — is this a reprieve, a trap, or something worse?',
+      },
+      {
+        npcId: 'dusk_covenant_patrol',
+        spawnChance: 0.35,
+        spawnType: 'patrol',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'A Covenant patrol passes the window without stopping. They check the padlock on the booth, find it intact, and move on. Whatever the Covenant enforces here, it isn\'t the Accord\'s accounting.', weight: 2 },
+        ],
+        dispositionRoll: { neutral: 0.6, wary: 0.3, friendly: 0.1 },
+      },
+    ],
+    itemSpawns: [
+      { entityId: 'accord_charter_copy', spawnChance: 0.70, quantity: { min: 1, max: 1, distribution: 'single' } },
+      { entityId: 'torn_note_fragment', spawnChance: 0.55, quantity: { min: 1, max: 1, distribution: 'single' } },
+    ],
+    extras: [
+      {
+        keywords: ['ledger', 'ledgers', 'book', 'records', 'hooks'],
+        description: 'The ledgers are organized by quarter. You pull the current one: page after page of household names, quantities, dates. The handwriting changes every few pages — different collectors, rotating through. The quantities don\'t change. The annotations in the margin do: one resident\'s entry has "ARREARS x2" in red ink, circled, with a date three months back. Someone owes twice what they can give.',
+        skillCheck: { skill: 'lore', dc: 9, successAppend: 'The arrears pattern, once you see it, is everywhere. Eight households flagged in the last year. The Accord isn\'t reducing quotas when times are hard — they\'re banking the debt. This is a trap that closes slowly.' },
+        questFlagOnSuccess: { flag: 'duskhollow_tithe_arrears_seen', value: true },
+      },
+      {
+        keywords: ['booth', 'cage', 'mesh', 'collector'],
+        description: 'The booth is designed for a collector to sit behind — protected from the residents by the mesh, elevated slightly on a low platform. The design is clear about the power arrangement. The coffee tin still sits on the collector\'s side, half-full, going cold. The collector left mid-session. Something interrupted them. The ledger is open to a page that stops two thirds of the way through a household list.',
+      },
+      {
+        keywords: ['pen', 'uncapped', 'drying'],
+        description: 'The uncapped pen on the counter is Accord-issue: metal body, government stamp on the clip. It has been left drying for at least an hour based on the ink at the tip. You cap it. Force of habit.',
+        skillCheck: { skill: 'tracking', dc: 8, successAppend: 'The ledger was stopped mid-entry. The last name written is partial — "RE—" — with no entry beside it. The collector stopped writing in the middle of an R. Interrupted, not finished. Not a routine break.' },
+      },
+    ],
+    narrativeNotes: 'Hub room for the settlement cluster. The collector\'s absence is a mystery thread that connects to broader Accord instability. The arrears discovery should disturb the player. The settlement\'s quiet resentment should be palpable in NPC behavior.',
+  },
+
+  {
+    id: 'dh_14_hollow_rim',
+    name: 'Duskhollow — The Hollow Rim',
+    zone: 'duskhollow',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { dark: true, scavengingZone: true },
+    description: 'The hollow\'s geography makes this edge unmistakable: the ground drops sharply here, and the tree line begins without transition — one step is scrub and packed earth, the next is the dark between old trunks that block the sky. The settlement uses this rim as a perimeter, but the patrols are irregular and everybody knows it. Boot marks in the dirt show where the patrol walks. The gaps between marks show where it doesn\'t. The tree line is quiet in the way that means something has learned to be quiet there. You stand at the edge and look in. The dark looks back.',
+    descriptionNight: 'At night the rim is where the Hollow come from. The tree line goes completely black, and whatever is in there navigates by routes you cannot trace. The patrol marks in the dirt are from hours ago. Nobody has walked this in hours.',
+    descriptionDawn: 'In the grey hour before light, the rim is the most dangerous place in Duskhollow. The Hollow that pushed in during darkness haven\'t yet retreated. The tree line holds them temporarily, the way a shore holds water before the tide turns.',
+    shortDescription: 'The settlement\'s edge. Where the trees begin. Where the Hollow come from.',
+    exits: { east: 'dh_13_tithe_house' },
+    richExits: {
+      east: { destination: 'dh_13_tithe_house', descriptionVerbose: 'east, back into the settlement proper' },
+      north: {
+        destination: 'dh_15_kindling_cache',
+        descriptionVerbose: 'a gap between two root clusters, barely wide enough to squeeze through',
+        hidden: true,
+        discoverSkill: 'perception',
+        discoverDc: 13,
+        discoverMessage: 'You notice that the space between two large root clusters is wider than it looks — and the dirt inside has been packed by repeated passage.',
+      },
+    },
+    items: [],
+    enemies: ['remnant'],
+    npcs: [],
+    npcSpawns: [
+      {
+        npcId: 'dusk_covenant_patrol',
+        spawnChance: 0.45,
+        spawnType: 'patrol',
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        activityPool: [
+          { desc: 'A Covenant patrol walks the rim with a handheld light, moving fast. They don\'t slow when they see you. "Don\'t stay at the rim after dusk," they say without stopping. "Not a suggestion."', weight: 3 },
+          { desc: 'A Covenant patrol crouches at a section of the perimeter, examining tracks in the soft earth at the tree line\'s edge. They don\'t look comfortable.', weight: 2, timeRestrict: ['dawn', 'dusk'] },
+        ],
+        dispositionRoll: { neutral: 0.5, wary: 0.4, hostile: 0.1 },
+      },
+    ],
+    itemSpawns: [
+      { entityId: 'scrap_metal', spawnChance: 0.40, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      { entityId: 'ammo_22lr', spawnChance: 0.30, quantity: { min: 1, max: 3, distribution: 'flat' } },
+    ],
+    hollowEncounter: {
+      baseChance: 0.55,
+      timeModifier: { day: 0.4, dawn: 1.5, dusk: 1.2, night: 2.0 },
+      threatPool: [
+        { type: 'remnant', weight: 4, quantity: { min: 1, max: 2, distribution: 'flat' } },
+        { type: 'shuffler', weight: 3, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
+        { type: 'screamer', weight: 1, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.25, awarePassive: 0.35, awareAggressive: 0.4 },
+      noiseModifier: -2,
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'Something moves in the tree line. By the time you look, it has stopped.', chance: 0.30, time: ['night', 'dusk'] },
+        { line: 'The trees here are old enough that their root systems have broken through the rim\'s edge, making the ground uneven. Something has been walking the roots.', chance: 0.20 },
+        { line: 'A patrol boot mark ends at the edge of the tree line. The print is pressed in facing the dark. There is no second print facing back.', chance: 0.15, skillGate: { skill: 'tracking', dc: 10 } },
+      ],
+    },
+    extras: [
+      {
+        keywords: ['tracks', 'prints', 'boot', 'marks'],
+        description: 'Two sets of tracks: human boot marks walking the rim in a circuit, and something else at the tree line\'s edge — low, irregular, multiple points of contact. The Hollow don\'t walk the way people do. These tracks are from last night. They came to the rim\'s edge and stopped.',
+        skillCheck: { skill: 'tracking', dc: 11, successAppend: 'The Hollow tracks stop and restart multiple times along the rim — they tested it, withdrew, tested further along. This is behavioral. Something in the settlement is drawing their attention. The pattern is new.' },
+        questFlagOnSuccess: { flag: 'duskhollow_rim_hollow_pattern_seen', value: true },
+      },
+      {
+        keywords: ['trees', 'tree line', 'dark', 'forest'],
+        description: 'The trees are old growth — pre-Collapse, their trunks wide enough to hide behind. The dark between them isn\'t absolute, but it\'s close. You can hear the settlement behind you and you cannot hear what\'s in front of you. That asymmetry is the problem.',
+      },
+      {
+        keywords: ['gap', 'root', 'passage', 'roots'],
+        description: 'Two large roots have created a natural arch between their crowns, deep enough in shadow that it reads as solid from a distance. Up close, there\'s a gap — body-width, low, requiring a crouch. The dirt inside has been recently pressed.',
+      },
+    ],
+    narrativeNotes: 'High-danger room functioning as settlement perimeter. The patrol irregularity and Hollow behavioral pattern establish the threat. The hidden passage to the Kindling Cache is the room\'s other key feature — perception 13 to find, or it reveals on the cistern quest line.',
+  },
+
+  {
+    id: 'dh_15_kindling_cache',
+    name: 'Duskhollow — The Kindling Cache',
+    zone: 'duskhollow',
+    act: 2,
+    difficulty: 2,
+    visited: false,
+    flags: { hiddenRoom: true, noCombat: true, questHub: true },
+    description: 'A hollow between root crowns, expanded by hand — the walls shored with salvaged planks, the floor packed flat. Small enough that two people would be cramped; large enough for what it holds. A waterproof case sits against the back wall: inside, rolled maps with coded route markings, a stack of folded papers sealed with a wax thumb-print, three glass vials of a compound you don\'t recognize. A supply drop, staged and waiting. Whoever uses this space has been here recently — a canteen still holds water, a blanket has been folded. They will come back. You are the first person to find this who wasn\'t supposed to find it.',
+    descriptionNight: 'The cache is active after dark. The root arch muffles any sound from inside from the rim. Whatever meetings happen here happen in complete quiet.',
+    shortDescription: 'A Kindling supply drop. Hidden. Waiting. You weren\'t supposed to find this.',
+    exits: { south: 'dh_14_hollow_rim' },
+    richExits: {
+      south: { destination: 'dh_14_hollow_rim', descriptionVerbose: 'back out through the root gap to the hollow rim' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    npcSpawns: [
+      {
+        npcId: 'kindling_gatekeeper',
+        spawnChance: 0.35,
+        spawnType: 'event',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'Someone is already here when you enter — crouched over the waterproof case, checking inventory. They look up at you with the specific stillness of someone running a threat calculation. "How did you find this?" Their voice is quiet. The question matters.', weight: 3, timeRestrict: ['night', 'dusk'] },
+        ],
+        dispositionRoll: { wary: 0.7, hostile: 0.3 },
+        dialogueTree: 'kindling_cache_discovery_confrontation',
+        questGiver: ['kindling_duskhollow_cell_contact'],
+        narrativeNotes: 'Finding the gatekeeper here is a quest trigger. Discovery has consequences — either recruitment into the Duskhollow cell or the cache going cold.',
+      },
+      {
+        npcId: 'kindling_resident_faithful',
+        spawnChance: 0.25,
+        spawnType: 'event',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'A Kindling member sits cross-legged against the wall, reading one of the coded documents with a small light. They fold it closed and look at you without alarm, which is more unsettling than alarm would be. "You found it," they say. "Most people who come to the rim don\'t look this carefully."', weight: 2, timeRestrict: ['night'] },
+        ],
+        dispositionRoll: { wary: 0.5, neutral: 0.4, friendly: 0.1 },
+        dialogueTree: 'kindling_cache_faithful_contact',
+      },
+    ],
+    itemSpawns: [
+      { entityId: 'kindling_founders_journal', spawnChance: 0.80, quantity: { min: 1, max: 1, distribution: 'single' } },
+      { entityId: 'kindling_treatment_compound', spawnChance: 0.65, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      { entityId: 'torn_note_fragment', spawnChance: 0.90, quantity: { min: 1, max: 2, distribution: 'flat' } },
+    ],
+    extras: [
+      {
+        keywords: ['maps', 'routes', 'markings', 'coded'],
+        description: 'The maps are of Duskhollow and the surrounding terrain — but the settlement is annotated in a code you\'ve seen variations of before. Route markers for movement through the rim. Timed patrol gaps circled in red. Two locations outside the hollow marked with the same symbol. The Kindling cell here has been planning movement in and out of Duskhollow without Accord or Covenant knowledge. They\'ve been at this long enough that the maps are worn at the folds.',
+        skillCheck: { skill: 'lore', dc: 12, successAppend: 'The patrol gap timings match something you noticed at the rim — the irregular spacing of boot marks. The Kindling knows the patrol pattern. Someone inside the patrol is telling them.' },
+        questFlagOnSuccess: { flag: 'duskhollow_kindling_cell_maps_read', value: true },
+      },
+      {
+        keywords: ['vials', 'compound', 'liquid', 'glass'],
+        description: 'Three vials of an amber compound, sealed with wax. No label. You\'ve seen the same wax seal color — a deep red, slightly irregular — on items connected to Kindling operations in other zones. The compound inside catches the light in a way that looks almost alive.',
+        skillCheck: { skill: 'field_medicine', dc: 11, successAppend: 'The compound is consistent with the Kindling\'s treatment protocol — a viral-inhibitor compound derived from a CHARON-7 variant study. It reduces infection progression. It also, at higher doses, does something to the infection that isn\'t suppression. You\'d need a controlled environment to determine what.' },
+      },
+      {
+        keywords: ['papers', 'sealed', 'documents', 'wax'],
+        description: 'The folded papers are sealed with a thumb-print in red wax — a Kindling authentication mark. Breaking the seal would be discoverable. You could read what\'s inside. Whether you can put it back as found is a separate question.',
+        skillCheck: { skill: 'stealth', dc: 10, successAppend: 'You break the seal carefully and reflectively reheat the wax with the small candle stub in the corner, re-pressing it with your own thumb. The documents inside are instructions: a meeting time, a contact phrase, a location given in the route code from the maps. Something is being organized here.' },
+        questFlagOnSuccess: { flag: 'duskhollow_kindling_documents_read', value: true },
+      },
+    ],
+    narrativeNotes: 'Discovery room with high narrative consequence. Finding it should trigger a flag that either opens the Kindling Duskhollow cell questline or causes the cache to be cleared on the next visit. The NPC encounter is time-gated to night/dusk. The player discovering this before making Kindling contact creates leverage — information they have before the Kindling knows they have it.',
+  },
+
+  {
+    id: 'dh_16_elder_house',
+    name: 'Duskhollow — The Elder\'s House',
+    zone: 'duskhollow',
+    act: 2,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: true, questHub: true, safeRest: false },
+    description: 'The elder\'s house is the oldest structure in the settlement — pre-Collapse, one story, cinder block foundation with a wood frame addition that has been rebuilt twice. The additions show: two different wood types, a window that doesn\'t match its frame, a porch that leans slightly. Inside, it is lived-in rather than maintained: books stacked by use frequency, a kitchen that functions without pretending to charm, a wall of photographs that begins in color and ends in hand-drawn sketches because there\'s been no film for a decade. The elder sits at the kitchen table most hours, which is the kind of rest that isn\'t rest.',
+    descriptionNight: 'The elder keeps a lamp burning all night — a habit from the early years, when light meant safety. The house is visible from the rim. They know this. They keep the light burning anyway.',
+    shortDescription: 'The settlement elder\'s home. Tired compromises. Willing to talk.',
+    exits: { west: 'dh_13_tithe_house', north: 'dh_18_night_market' },
+    richExits: {
+      west: { destination: 'dh_13_tithe_house', descriptionVerbose: 'west along the track back toward the tithe house' },
+      north: { destination: 'dh_18_night_market', descriptionVerbose: 'north, behind the elder\'s house, where the night market sets up after dark', cycleGate: undefined, questGate: undefined },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    npcSpawns: [
+      {
+        npcId: 'tithe_human_resident',
+        spawnChance: 0.85,
+        spawnType: 'unique',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'The elder sits at the kitchen table with a cup of something hot, looking at the photographs on the wall. They turn when you enter with the deliberateness of someone who has had a long time to practice not being startled. "You\'re the one Vesper mentioned. Or the one the Accord sent. I\'ve been expecting both."', weight: 3 },
+          { desc: 'The elder is at the table with papers — settlement accounts, not tithe records, their own accounting of what the hollow needs versus what they have. They look up and set the pen down. "Sit down. I have questions and so do you."', weight: 2 },
+          { desc: 'The elder stands at the window looking toward the rim. They don\'t turn when you enter. "The Hollow were at the edge again last night. Closer than last week. The patrol timing is wrong and I\'ve told the Covenant three times. They nod."', weight: 2 },
+        ],
+        dispositionRoll: { neutral: 0.4, friendly: 0.4, wary: 0.2 },
+        dialogueTree: 'duskhollow_elder_main',
+        questGiver: ['duskhollow_cistern_investigation', 'duskhollow_tithe_arrears_relief', 'duskhollow_rim_patrol_fix'],
+        narrativeNotes: 'The elder is the moral center of the settlement. Old, tired, making compromises they hate. Will not act directly against the Accord or Covenant — the settlement depends on both relationships. Will give quests, will share information, will tell you what they actually think if you ask the right way. Should feel like talking to someone who has already paid the costs you haven\'t paid yet.',
+      },
+    ],
+    extras: [
+      {
+        keywords: ['photographs', 'photos', 'wall', 'pictures'],
+        description: 'The photographs cover twenty years of a settlement: community meals, construction work, children who are now adults. The color photographs from before the Collapse. The black-and-white from the early years. Then: pencil sketches, charcoal, whatever was available. Someone drew every face they could remember after the camera died. The sketches are good — practiced, deliberate, the kind of good that comes from refusing to let faces disappear.',
+        skillCheck: { skill: 'perception', dc: 9, successAppend: 'Some faces appear in the early photographs and not in the later ones. Some appear in the later sketches but not the photographs — arrived after. The absences are the story. The settlement has turned over. Most of the original people are gone.' },
+      },
+      {
+        keywords: ['books', 'stacks', 'reading'],
+        description: 'The books are sorted by use: most-used at arm\'s reach, the rest in loose stacks. The top-of-stack books are pragmatic: a medical reference, an agriculture manual, a legal text on pre-Collapse contract law with extensive margin annotations. That last one has been read recently — the page corners are fresh.',
+        skillCheck: { skill: 'lore', dc: 10, successAppend: 'The legal text is open to sections on "coercive contract terms" and "unconscionability doctrine." The margin note reads: "Accord tithe agreements would not have been enforceable before. Does this matter now?" The question has no answer written beside it. The elder is still deciding.' },
+        questFlagOnSuccess: { flag: 'duskhollow_elder_legal_research_seen', value: true },
+      },
+      {
+        keywords: ['table', 'accounts', 'papers', 'kitchen'],
+        description: 'The elder\'s accounts are honest about the settlement\'s position: caloric surplus in one column, tithe obligations in another, the margin between them thinning each quarter. The accounts project forward — four more quarters before the surplus is gone. After that, the numbers don\'t add up. The elder has done this math. They\'ve known for a while.',
+      },
+    ],
+    narrativeNotes: 'The elder is a key information hub and quest giver. They know about the cistern tampering, the tithe arrears, and the Kindling cell (but won\'t say so directly). The conversation should feel like talking to someone who has survived by making choices they are not proud of. Willing to talk; not willing to act.',
+  },
+
+  {
+    id: 'dh_17_cistern',
+    name: 'Duskhollow — The Cistern',
+    zone: 'duskhollow',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { waterSource: true, scavengingZone: true },
+    description: 'The cistern is pre-Collapse construction — poured concrete, reinforced, sunk into the bedrock of the hollow where the water table is still accessible. A hand pump stands at the edge, well-maintained by necessity. The access hatch is heavy steel, counterweighted so one person can open it alone, and it shows use: the counterweight mechanism is worn smooth at the grip point, the hatch rim scraped by the same hands doing the same thing every day for years. The cistern is what Duskhollow runs on. Without it, there is no settlement. Someone knows this. Someone has been down here who shouldn\'t have been.',
+    descriptionNight: 'At night the cistern area is quiet and poorly lit. The pump handle casts a long shadow. The access hatch is visible from the tithe house window but that window faces the other direction. Nobody watches the cistern at night.',
+    shortDescription: 'The settlement\'s water supply. Pre-Collapse construction. Someone tampered with it.',
+    exits: { north: 'dh_13_tithe_house' },
+    richExits: {
+      north: { destination: 'dh_13_tithe_house', descriptionVerbose: 'north, back around the tithe house' },
+    },
+    items: [],
+    enemies: ['remnant'],
+    npcs: [],
+    npcSpawns: [
+      {
+        npcId: 'duskhollow_cook',
+        spawnChance: 0.65,
+        spawnType: 'anchored',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'The cook pumps water into large containers with the methodical pace of someone doing this twice a day, every day. They look up. "You\'re not from here." Statement, not question. They keep pumping. "Don\'t go near the east intake. Something got in."', weight: 3 },
+          { desc: 'The cook crouches by the intake channel, peering in with a lantern. They hear you coming and don\'t look alarmed — just tired. "Third time this week. I don\'t know what\'s in there. I don\'t know if the elder does either. I just know the water tastes wrong."', weight: 2 },
+        ],
+        dispositionRoll: { neutral: 0.5, friendly: 0.3, wary: 0.2 },
+        dialogueTree: 'cistern_cook_warning',
+        questGiver: ['duskhollow_cistern_investigation'],
+        narrativeNotes: 'The cook is the immediate point of contact for the cistern investigation. Their warning is specific and genuine. They are not Kindling and are not covering for anyone — they just know something is wrong.',
+      },
+    ],
+    itemSpawns: [
+      { entityId: 'water_bottle_sealed', spawnChance: 0.80, quantity: { min: 1, max: 3, distribution: 'flat' } },
+      { entityId: 'chemicals_basic', spawnChance: 0.45, quantity: { min: 1, max: 1, distribution: 'single' } },
+      { entityId: 'torn_note_fragment', spawnChance: 0.50, quantity: { min: 1, max: 1, distribution: 'single' } },
+    ],
+    hollowEncounter: {
+      baseChance: 0.40,
+      timeModifier: { day: 0.5, dawn: 0.8, dusk: 1.3, night: 1.8 },
+      threatPool: [
+        { type: 'remnant', weight: 3, quantity: { min: 1, max: 2, distribution: 'flat' } },
+        { type: 'shuffler', weight: 2, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      ],
+      awarenessRoll: { unaware: 0.4, awarePassive: 0.3, awareAggressive: 0.3 },
+      noiseModifier: -1,
+    },
+    extras: [
+      {
+        keywords: ['water', 'pump', 'intake', 'smell', 'taste'],
+        description: 'You pump a small amount and catch it in your palm. It looks clean. But there\'s something at the back of it — a faint mineral edge that doesn\'t match the underlying geology, too sharp for natural groundwater. Not enough to identify. Enough to notice.',
+        skillCheck: { skill: 'field_medicine', dc: 10, successAppend: 'The compound in the water is consistent with a CHARON-7 metabolic byproduct — trace amounts, below immediately dangerous threshold, but cumulative. Someone has been introducing this slowly, over enough time for the baseline to shift. The settlement has been drinking it for weeks.' },
+        questFlagOnSuccess: { flag: 'duskhollow_cistern_contamination_identified', value: true },
+      },
+      {
+        keywords: ['hatch', 'access', 'hatch', 'below', 'down'],
+        description: 'The access hatch opens to a metal ladder descending ten feet to the water surface. The cistern walls are concrete, green-brown at the waterline, clean above. The pump intake is a screened pipe at the far wall. The screen has been removed and replaced — recently, you can tell from the disturbed silt on the concrete below the housing. Someone went into the cistern. They were careful about it.',
+        skillCheck: { skill: 'perception', dc: 11, successAppend: 'At the far wall, below the intake, something is attached to the concrete: a small device, the size of a fist, held in place with a wire loop around a rebar nub. Not mechanical. Chemical — a reservoir with a slow-release valve. Whoever put this here built it to persist.' },
+        questFlagOnSuccess: [
+          { flag: 'duskhollow_cistern_device_found', value: true },
+          { flag: 'duskhollow_cistern_investigation', value: 'active' },
+        ],
+      },
+      {
+        keywords: ['concrete', 'structure', 'walls', 'construction'],
+        description: 'The cistern\'s construction is quality — poured in sections with rebar reinforcement, the kind of municipal water engineering that only happened before the Collapse. The maintenance stamps are from 2018. Someone has been servicing it since: the pump mechanism is post-Collapse repair, cobbled from three different pump models, but it works.',
+      },
+    ],
+    narrativeNotes: 'The cistern investigation is a central quest for the settlement. The contamination is CHARON-7 derived — either Kindling testing a treatment delivery system, or a Hollow vector attack through water. Resolving this determines which. The device discovery should be a significant player moment. The Hollow encounter here represents creatures drawn by the chemical compound.',
+  },
+
+  {
+    id: 'dh_18_night_market',
+    name: 'Duskhollow — The Night Market',
+    zone: 'duskhollow',
+    act: 2,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: true, campfireAllowed: true },
+    description: 'Behind the elder\'s house, in the space between the storage shed and the hollow\'s east wall, when the Accord collector is gone and the Covenant patrol has done its last circuit — the night market happens. Not every night. Most nights. Blankets laid out on the ground, goods on blankets, no lanterns unless someone has a shuttered one. The market operates in low light by long habit. What gets traded here is what can\'t be traded during collection hours: goods that would appear in the ledger, double-counted goods, Kindling materials that move under Accord notice, small services that the tithe classification makes unclassifiable. The residents know this market runs. The Covenant probably knows. The Accord does not know, which is the point.',
+    descriptionNight: 'At night the market is fully active — a dozen blankets, twice as many people, the specific low-register noise of commerce happening without wanting to be heard. Someone has strung a small solar light between the shed and the wall. The light is dim enough to see by and dark enough not to be seen from the drive.',
+    shortDescription: 'The after-dark market. Unofficial. Untithe-able. Necessary.',
+    exits: { south: 'dh_16_elder_house' },
+    richExits: {
+      south: { destination: 'dh_16_elder_house', descriptionVerbose: 'south, around the elder\'s house to the main track' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    npcSpawns: [
+      {
+        npcId: 'tithe_human_resident',
+        spawnChance: 0.85,
+        spawnType: 'wanderer',
+        quantity: { min: 2, max: 5, distribution: 'bell' },
+        activityPool: [
+          { desc: 'A resident arranges goods on a blanket with the care of someone presenting something they made: dried provisions, a wrapped tool, a folded item of clothing with the stitching visible. They look up at you without alarm. "Trade or browse?"', weight: 3, timeRestrict: ['night', 'dusk'] },
+          { desc: 'Two residents negotiate quietly over something small in one\'s hand, voices barely above breath. They reach agreement with a nod. No currency changes hands. This is a favor economy.', weight: 2, timeRestrict: ['night'] },
+          { desc: 'A resident sits at their blanket not selling anything, just present. They watch you the way people watch things they don\'t recognize yet.', weight: 2 },
+        ],
+        dispositionRoll: { neutral: 0.5, friendly: 0.3, wary: 0.2 },
+        tradeInventory: ['boiled_rations', 'bandages', 'purification_tabs', 'scrap_metal', 'textiles', 'ammo_22lr'],
+        dialogueTree: 'duskhollow_night_market_resident',
+      },
+      {
+        npcId: 'kindling_resident_faithful',
+        spawnChance: 0.50,
+        spawnType: 'wanderer',
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        activityPool: [
+          { desc: 'A Kindling member moves through the market slowly, stopping at each blanket, greeting by name, asking after things that aren\'t goods. They are tending the community the way you tend a fire: steadily, without announcing it.', weight: 3, timeRestrict: ['night', 'dusk'] },
+          { desc: 'A Kindling member sits with an older resident, not trading, just there. The older resident is talking. The Kindling member is listening in the way that people who have learned to listen actually listen.', weight: 2, timeRestrict: ['night'] },
+        ],
+        dispositionRoll: { friendly: 0.5, neutral: 0.4, wary: 0.1 },
+        tradeInventory: ['kindling_treatment_compound', 'purification_tabs', 'quiet_drops'],
+        dialogueTree: 'kindling_market_faithful',
+        narrativeNotes: 'The Kindling presence at the market is not coincidental — the market is one of their organizing spaces. They don\'t advertise this.',
+      },
+      {
+        npcId: 'chapel_visitor',
+        spawnChance: 0.40,
+        spawnType: 'wanderer',
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        activityPool: [
+          { desc: 'Someone who isn\'t quite Kindling yet sits near the shed wall, watching more than participating. They are deciding something. The market is part of what they\'re deciding about.', weight: 2, timeRestrict: ['night'] },
+        ],
+        dispositionRoll: { neutral: 0.6, wary: 0.3, friendly: 0.1 },
+        dialogueTree: 'chapel_visitor_market',
+      },
+    ],
+    itemSpawns: [
+      { entityId: 'boiled_rations', spawnChance: 0.75, quantity: { min: 1, max: 3, distribution: 'flat' }, timeModifier: { night: 1.5, dusk: 1.2 } },
+      { entityId: 'bandages', spawnChance: 0.60, quantity: { min: 1, max: 2, distribution: 'flat' }, timeModifier: { night: 1.5 } },
+      { entityId: 'purification_tabs', spawnChance: 0.50, quantity: { min: 1, max: 2, distribution: 'flat' }, timeModifier: { night: 1.3 } },
+      { entityId: 'ammo_22lr', spawnChance: 0.40, quantity: { min: 1, max: 4, distribution: 'flat' }, timeModifier: { night: 1.2 } },
+      { entityId: 'scrap_metal', spawnChance: 0.45, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      { entityId: 'textiles', spawnChance: 0.35, quantity: { min: 1, max: 2, distribution: 'flat' } },
+    ],
+    environmentalRolls: {
+      ambientSoundPool: {
+        night: [
+          { sound: 'Low voices, close, overlapping like water over stones.', weight: 3 },
+          { sound: 'The soft sound of goods being set down and picked up and set down again.', weight: 2 },
+          { sound: 'Someone laughing quietly — the specific laugh of someone who has remembered they can.', weight: 1 },
+        ],
+        dusk: [
+          { sound: 'The market setting up: blankets unfolding, the dull sound of goods placed on cloth.', weight: 3 },
+        ],
+      },
+      flavorLines: [
+        { line: 'No one checks who you are. That is either trust or resignation.', chance: 0.25, time: ['night'] },
+        { line: 'The goods here have the quality of things kept carefully and offered reluctantly. Everything available came from somewhere someone needed it.', chance: 0.20, time: ['night', 'dusk'] },
+        { line: 'The market smells like the settlement smells — woodsmoke, dried food, the specific mineral note of water from the cistern. The last one is heavier tonight than it should be.', chance: 0.15, time: ['night'], skillGate: { skill: 'perception', dc: 9 } },
+      ],
+    },
+    extras: [
+      {
+        keywords: ['blankets', 'goods', 'market', 'trade'],
+        description: 'The goods on the blankets tell you what the settlement values enough to trade: food that wasn\'t declared in the tithe. Medical supplies in excess of the official ration. Tools. Ammunition in small quantities. A few personal items — pre-Collapse objects, trade value sentimental rather than practical. The market exists because the tithe takes too much and leaves too little, and people have always found ways to adjust that math.',
+      },
+      {
+        keywords: ['kindling', 'members', 'faithful', 'fire'],
+        description: 'The Kindling members here are not proselytizing. They are helping: carrying, organizing, mediating a disagreement between two traders over a quantity of dried goods. The ministry is practical. It has the specific quality of people who have learned that the fastest way to convince someone is to be useful to them first.',
+        skillCheck: { skill: 'perception', dc: 12, successAppend: 'One of the Kindling members passes a small folded paper to a market trader with the casual ease of a handshake. The trader pockets it without looking at it. This is a practiced exchange. The market is also a message drop.' },
+        questFlagOnSuccess: { flag: 'duskhollow_kindling_market_drops_seen', value: true },
+      },
+      {
+        keywords: ['solar', 'light', 'string', 'dim'],
+        description: 'The solar light strung between the buildings gives just enough illumination to see faces and goods. It\'s been here long enough that the bracket holding it to the shed has been reinforced twice. The night market has infrastructure. It has been running long enough to have infrastructure.',
+      },
+    ],
+    narrativeNotes: 'The night market is a community and social hub. It should feel warm and human despite the difficult circumstances — the settlement finding its own life outside the structures imposed on it. The Kindling presence as community organizers rather than recruiters is important. The message drop discovery is a thread connecting to the cache. Time-gate this room: it is mostly inactive during day and dawn.',
   },
 ]

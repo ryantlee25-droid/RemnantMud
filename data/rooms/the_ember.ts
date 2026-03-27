@@ -619,4 +619,605 @@ export const EMBER_ROOMS: Room[] = [
     ],
     narrativeNotes: 'Hidden behind Perception DC 16 OR Kindling Blooded. The founder\'s journal is a MERIDIAN janitor\'s record. Contains maintenance tunnel map — one of four Act III routes into the Scar. Brute boss guards the chapel.',
   },
+
+  // ----------------------------------------------------------
+  // EM-11: The Char Fields
+  // ----------------------------------------------------------
+  {
+    id: 'em_11_char_fields',
+    name: 'The Ember — The Char Fields',
+    zone: 'the_ember',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { scavengingZone: true },
+    description: 'A neighborhood burned so completely that the structures are gone — not collapsed, not skeletal, gone. What remains are the foundations: concrete slabs at regular intervals, their edges blackened, the rebar exposed and rusted orange. Between the slabs, ash. Fine gray ash that shifts with any movement, with any wind, with the weight of a boot. The ash is thick enough to swallow a footprint. You leave tracks and the tracks fill slowly, as if the ground is breathing. The air here tastes different from the rest of The Ember district — not just smoke, but the specific mineral char of things that burned at temperature: brick dust, vaporized paint, the trace residue of lives that were in these houses when they stopped being houses. At the edge of your vision, something moves. By the time you look directly at it, there is only the ash and the foundations and the flat burned sky.',
+    descriptionNight: 'At night the char fields are without reference. The foundations are invisible. The ash is the same gray as the sky and the sky has no stars on smoky nights. You navigate by feel and by the particular wrongness of the air where the ash is deepest. Something moves at the edge of vision. It is always there. At night you hear it.',
+    descriptionDawn: 'Dawn light makes the ash fields look almost like snow. Almost. The cold is real. The foundations emerge from shadow as the light improves and you count them — fifteen, twenty, more than that — and understand that you are standing in what was a street with houses and people and the ordinary noise of people living, and it is all ash now, and the ash is still here because ash does not go anywhere.',
+    shortDescription: 'Ash and foundations where a neighborhood was. Something moves at the edge of vision. The ash records every step.',
+    exits: {
+      east: 'em_12_collapsed_factory_floor',
+      north: 'em_01_the_approach',
+    },
+    richExits: {},
+    items: [],
+    enemies: ['remnant', 'screamer'],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.35,
+      timeModifier: { day: 0.7, dusk: 1.3, night: 2.0, dawn: 1.0 },
+      threatPool: [
+        { type: 'remnant', weight: 55, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'screamer', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 20, quantity: { min: 1, max: 3, distribution: 'bell' } },
+      ],
+      awarenessRoll: { unaware: 0.2, awarePassive: 0.3, awareAggressive: 0.5 },
+      activityPool: {
+        remnant: [
+          { desc: 'drifts across the ash field with the slow directionless motion of something that has forgotten what it was looking for but has not forgotten how to look', weight: 3 },
+          { desc: 'stands at the center of a foundation slab, perfectly still, facing in a direction that has nothing in it', weight: 2 },
+        ],
+        screamer: [
+          { desc: 'crouches in a foundation corner, face pressed to the concrete, making no sound — until it hears you', weight: 2 },
+        ],
+      },
+      noiseModifier: 1.4,
+    },
+    extras: [
+      {
+        keywords: ['foundations', 'slabs', 'concrete', 'rebar'],
+        description: 'The foundations are poured concrete, some cracked by the heat, the rebar exposed at the cracks and flowering with rust. The spacing between them is regular enough to tell you the neighborhood was planned — all the lots the same width, all the houses set back the same distance from the street. The street itself is visible as a slightly lighter stripe of ash, the asphalt burned away to aggregate. You can reconstruct the neighborhood from this if you want to. You find that you do not want to.',
+      },
+      {
+        keywords: ['ash', 'ground', 'footprints', 'tracks'],
+        description: 'The ash is fine enough that your tracks behind you are clearly visible for maybe ten meters before they blur. Ahead, other tracks — older, the edges softened by whatever air movement crosses this field. Multiple sets. Some of them are the wrong shape for boots. You don\'t follow the wrong-shaped tracks.',
+        skillCheck: { skill: 'tracking', dc: 12, successAppend: 'The wrong-shaped tracks lead to a foundation in the northwest corner. The indentations in the ash at the center of that slab are too regular to be random and too numerous to be single visits. Something rests there. Frequently.' },
+      },
+      {
+        keywords: ['movement', 'edge', 'vision', 'peripheral'],
+        description: 'You see it again when you are not looking at it. Peripheral vision is the oldest sense — it evolved for exactly this, for detecting motion at the edge of the visual field, for the thing that moves when the center of your attention is elsewhere. The char fields use this against you. The ash and the uniform gray of the light and the openness of the terrain produce movement where there may be none. May be none. You decide to keep moving.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'scavenger_rival',
+        spawnChance: 0.25,
+        spawnType: 'wanderer',
+        activityPool: [
+          { desc: 'A scavenger picks through a foundation corner with a metal rod, testing the ash depth, looking for basement access that the fire might have missed.', weight: 3 },
+          { desc: 'A scavenger crouches over something in the ash, brushing carefully with a gloved hand, the focused stillness of someone who has found something worth not breaking.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.1, neutral: 0.3, wary: 0.5, hostile: 0.1 },
+        dialogueTree: 'em_scavenger_rival_fields',
+        narrativeNotes: 'Rival scavenger working the char fields. Competitive but not violent unless the player has taken something they wanted.',
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'scrap_metal',
+        spawnChance: 0.50,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.2, max: 0.6 },
+        groundDescription: 'A tangle of rebar offcuts partially buried in ash near a cracked foundation.',
+        depletion: { cooldownMinutes: { min: 480, max: 960 }, respawnChance: 0.30 },
+      },
+      {
+        entityId: 'chemicals_basic',
+        spawnChance: 0.20,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.1, max: 0.5 },
+        groundDescription: 'A partially melted container, something chemical still sealed inside by the deformation of the plastic.',
+        depletion: { cooldownMinutes: { min: 720, max: 1440 }, respawnChance: 0.10 },
+      },
+    ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'Ash drifts across the field in a slow wave, erasing the tracks you just made.', chance: 0.25 },
+        { line: 'A sound — not wind, not settling — from one of the far foundations. Then nothing.', chance: 0.20, time: ['dusk', 'night'] },
+        { line: 'The light here is flat and gray even when the sky is clear. The ash reflects nothing.', chance: 0.15 },
+        { line: 'Something at the edge of your vision. You turn. Ash. Foundations. The gray sky.', chance: 0.30 },
+        { line: 'The temperature drops two degrees between foundation slabs and rises again on the concrete. The ash holds cold.', chance: 0.10 },
+      ],
+    },
+    narrativeNotes: 'Act II open ground. High hollow density. Scavengers compete here for basement access points. The peripheral movement is both hollow and psychological — the Ember district does this to people.',
+  },
+
+  // ----------------------------------------------------------
+  // EM-12: Collapsed Factory Floor
+  // ----------------------------------------------------------
+  {
+    id: 'em_12_collapsed_factory_floor',
+    name: 'The Ember — Collapsed Factory Floor',
+    zone: 'the_ember',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { scavengingZone: true },
+    description: 'The factory floor is vast — the kind of industrial space designed to make you understand scale, to make you feel correctly sized against what production meant when production was happening here. The roof has partially caved: two sections in, one still holding, the steel trusses bent by the fire\'s heat into shapes that have their own logic, like sculpture made by a process that didn\'t care what it was making. Light comes through the holes in irregular shafts that move through the day and make the floor an unreliable thing to read. The machinery is still here, rusted into configurations that are no longer the configurations they were designed for. A conveyor belt sags from its rollers in a long curve. A stamping press stands open, frozen mid-stroke. A gantry crane is locked at an angle that suggests it was moving when the fire reached whatever held it together. The footing is poor throughout: the floor has heaved in places, buckled where supports failed, and the debris is variable — you find steel under ash under glass under concrete in patterns that reward care and punish confidence.',
+    descriptionNight: 'At night the factory floor is dark except where the roof holes allow sky. Moonlight or cloudy dark. The rusted machinery is shapes only. The footing, already poor in the day, is navigable at night only if you know where you\'ve already been.',
+    shortDescription: 'A vast burned factory — roof partially caved, machinery rusted into sculpture, good scavenging for those who can manage the footing.',
+    exits: {
+      west: 'em_11_char_fields',
+      north: 'em_13_chemical_tank_farm',
+      up: 'em_14_foremans_office',
+      east: 'em_16_loading_dock',
+    },
+    richExits: {
+      up: {
+        destination: 'em_14_foremans_office',
+        skillGate: { skill: 'climbing', dc: 11, failMessage: 'The access stairs are partially collapsed. You can\'t find a safe route up without better footing.' },
+        descriptionVerbose: 'a metal staircase along the north wall, partially collapsed, leading to the elevated foreman\'s office',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.20,
+      timeModifier: { day: 0.6, dusk: 1.2, night: 1.8, dawn: 0.9 },
+      threatPool: [
+        { type: 'shuffler', weight: 50, quantity: { min: 1, max: 3, distribution: 'bell' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'brute', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.4, awarePassive: 0.35, awareAggressive: 0.25 },
+      activityPool: {
+        shuffler: [
+          { desc: 'moves between machinery at the far end of the floor with the aimless persistence of something that learned to walk here and hasn\'t stopped', weight: 3 },
+        ],
+        brute: [
+          { desc: 'stands beneath the caved section of the roof, upright, head tilted back toward the open sky, still in the way that large things are still when they\'re waiting', weight: 2 },
+        ],
+      },
+    },
+    extras: [
+      {
+        keywords: ['machinery', 'rusted', 'conveyor', 'press', 'crane'],
+        description: 'The stamping press is frozen mid-stroke — the die lowered to within two centimeters of the bed, held there by whatever jammed in the mechanism when the power failed or the operator left or the fire arrived. The part that was being stamped is still in the die. A steel blank, fire-warped, the impression only half-formed. The work stopped here. The machine doesn\'t know that.',
+        skillCheck: { skill: 'mechanics', dc: 12, successAppend: 'The press is salvageable in components — the hydraulic cylinder is intact, the die steel is good, the bed still level. A Reclaimer with the right equipment could get a working press from this in a day. The question is whether the floor will hold the weight of the removal.' },
+      },
+      {
+        keywords: ['roof', 'cave', 'trusses', 'holes', 'light'],
+        description: 'The two caved sections are connected by a surviving truss that bridges them — bent by the heat but still in place, the steel having deformed to a shape it will hold indefinitely. The light through the holes changes the floor by hour. At midmorning the western hole throws a shaft across the conveyor. At midday the shafts are nearly vertical. The factory floor was designed to be dark. The fire made it something else.',
+      },
+      {
+        keywords: ['footing', 'floor', 'debris', 'unstable'],
+        description: 'The floor heave is worst near the north wall — subsidence from whatever happened below. You test each step before committing. Under the ash: collapsed ductwork in one section that rings hollow underfoot, meaning there is a void beneath, meaning you do not step there. Near the conveyor: good concrete, solid, the fire having left it structurally intact even while taking everything else. You map the safe route through without thinking about it. This is just how you move in places like this.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'scavenger_rival',
+        spawnChance: 0.35,
+        spawnType: 'wanderer',
+        activityPool: [
+          { desc: 'A scavenger works the conveyor belt section, pulling rollers free with a pry bar, the ringing metal sound carrying across the whole floor.', weight: 3 },
+          { desc: 'A scavenger tests the floor carefully ahead of them, moving with the deliberate caution of experience in unstable spaces.', weight: 2 },
+          { desc: 'A scavenger has set up a small field camp near the surviving roof section — bedroll, pack, a lamp. Working this section over multiple days.', weight: 1 },
+        ],
+        dispositionRoll: { friendly: 0.15, neutral: 0.35, wary: 0.40, hostile: 0.10 },
+        dialogueTree: 'em_scavenger_rival_factory',
+        narrativeNotes: 'Serious scavenger, experienced. Will trade information about the tank farm and the foreman\'s office if disposition improves.',
+      },
+      {
+        npcId: 'reclaimer_craftsperson',
+        spawnChance: 0.20,
+        spawnType: 'wanderer',
+        activityPool: [
+          { desc: 'A Reclaimer craftsperson moves through the machinery with a notebook, making sketches and measurements, their attention absorbed by the technical detail of what\'s salvageable.', weight: 3 },
+          { desc: 'A Reclaimer examines the stamping press closely, running gloved hands along the die assembly, lips moving as they calculate something.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.35, neutral: 0.45, wary: 0.20, hostile: 0.0 },
+        dialogueTree: 'em_reclaimer_craftsperson_factory',
+        narrativeNotes: 'Reclaimer doing a technical assessment. Can give quests related to recovering specific components.',
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'scrap_metal',
+        spawnChance: 0.65,
+        quantity: { min: 1, max: 3, distribution: 'bell' },
+        conditionRoll: { min: 0.2, max: 0.7 },
+        groundDescription: 'Structural steel offcuts and collapsed shelving, partially buried in ash and debris.',
+        depletion: { cooldownMinutes: { min: 360, max: 720 }, respawnChance: 0.40 },
+      },
+      {
+        entityId: 'salvaged_engine_part',
+        spawnChance: 0.30,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.3, max: 0.8 },
+        groundDescription: 'A machine component — motor housing or pump — sits under a collapsed section of conveyor, visible from the right angle.',
+        depletion: { cooldownMinutes: { min: 480, max: 960 }, respawnChance: 0.20 },
+      },
+      {
+        entityId: 'wire_coil',
+        spawnChance: 0.40,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.3, max: 0.9 },
+        groundDescription: 'Copper wire coils on a fallen spool rack near the east wall — the insulation cracked but the copper intact.',
+        depletion: { cooldownMinutes: { min: 480, max: 960 }, respawnChance: 0.35 },
+      },
+    ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'A section of ductwork settles somewhere in the debris with a low, resonant boom.', chance: 0.20 },
+        { line: 'The light shaft from the western roof hole slides across the stamping press and for a moment the frozen die looks like it moved.', chance: 0.15, time: ['dawn', 'day'] },
+        { line: 'Something drips from the surviving truss — water or condensation — the sound irregular enough to confuse your pattern-recognition.', chance: 0.20 },
+        { line: 'The floor underfoot gives slightly — not failure, just the compression of debris beneath the ash. You stop. It holds.', chance: 0.25 },
+      ],
+    },
+    narrativeNotes: 'Central factory space. Hub for east/west/north/up routes. High scavenging value, unstable footing, moderate hollow presence. The foreman\'s office above requires Climbing check.',
+  },
+
+  // ----------------------------------------------------------
+  // EM-13: Chemical Tank Farm
+  // ----------------------------------------------------------
+  {
+    id: 'em_13_chemical_tank_farm',
+    name: 'The Ember — Chemical Tank Farm',
+    zone: 'the_ember',
+    act: 2,
+    difficulty: 4,
+    visited: false,
+    flags: { scavengingZone: false },
+    description: 'The tank farm occupies the north end of the factory complex — a grid of cylindrical storage tanks on concrete pads, linked by pipe manifolds and valve assemblies that are still nominally intact even after the fire. Some tanks are sealed, their pressure gauges frozen at readings you cannot interpret. Some are ruptured: the steel split along a seam, the interior visible as a cave of rust and residue, and from several of the split tanks something is still leaking — a slow seep of liquid that has created a discolored stain on the concrete spreading outward from each rupture in a rough circle. The liquid is not water. The smell tells you this before the visual does: a sharp organic chemical odor with a second note underneath it that you cannot name but that your body knows to dislike. The air here is wrong in a way that is different from the rest of the district\'s wrongness. This is where the fire started, according to one theory. Standing here, looking at the ruptured tanks and the spreading stain and the valve assemblies that should have been closed and may or may not have been, you find the theory credible.',
+    descriptionNight: 'The tank farm at night: the seeping liquid catches whatever ambient light crosses the concrete and gives it back slightly luminescent, slightly wrong. The smell is the same at night. The smell is always the same.',
+    descriptionDawn: 'Dawn light makes the stains on the concrete look like topographical maps — the shapes of whatever has been seeping from which tanks for how long, spreading and pooling and drying and spreading again. You can read the history of the leaks from the rings. The outermost rings are from before the fire.',
+    shortDescription: 'Rows of storage tanks, some sealed, some ruptured and leaking something wrong. The smell. This is where the fire started.',
+    exits: {
+      south: 'em_12_collapsed_factory_floor',
+    },
+    richExits: {
+      south: {
+        destination: 'em_12_collapsed_factory_floor',
+        descriptionVerbose: 'back through the tank farm\'s south access gate into the factory floor',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.15,
+      timeModifier: { day: 0.8, dusk: 1.0, night: 1.5, dawn: 0.9 },
+      threatPool: [
+        { type: 'remnant', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'shuffler', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+      ],
+      awarenessRoll: { unaware: 0.5, awarePassive: 0.3, awareAggressive: 0.2 },
+      noiseModifier: 0.8,
+    },
+    extras: [
+      {
+        keywords: ['tanks', 'sealed', 'gauges', 'pressure', 'intact'],
+        description: 'The sealed tanks are rated at something — the gauge faces are corroded but the needles are still at position. If the ratings are still accurate, some of these tanks are still pressurized. Fire rarely improves pressure vessel integrity. You give the sealed tanks more clearance than the ruptured ones. The ruptured ones have already done what they were going to do.',
+        skillCheck: { skill: 'mechanics', dc: 13, successAppend: 'Tank seven — northeast corner, the smallest intact vessel — has a pressure gauge reading significantly below tank spec but still above ambient. The contents are still live. The valve assembly on this one is accessible and in better condition than the others. You could drain it. You decide to think about whether that\'s a good idea.' },
+      },
+      {
+        keywords: ['leak', 'liquid', 'stain', 'seeping', 'chemical'],
+        description: 'You crouch near the edge of the nearest stain — not in it, at the edge. The liquid is slightly viscous, slightly amber, and the concrete it has pooled on has been etched where the concentration is highest. Industrial solvent of some kind. Pre-Collapse manufacture. The tanks were not labeled on the outside — the labels would have been on manifold sheets or a schematic. No manifold sheets remain.',
+        skillCheck: { skill: 'lore', dc: 12, successAppend: 'The etching on the concrete, the viscosity, the second smell underneath the primary chemical smell — this is a petroleum-derived solvent, highly flammable, the kind used as a degreaser or industrial cleaner. In sufficient concentration and with an ignition source, this would have been the start. Not an accident if someone opened the valves. Not impossible as an accident if the fire reached the valve assemblies first. You cannot determine which.' },
+      },
+      {
+        keywords: ['fire', 'origin', 'started', 'source', 'ignition'],
+        description: 'The char pattern on the concrete around the ruptured tanks radiates outward from the rupture points — the fire moved from here, not to here. Which means the tanks ruptured first and the contents ignited, or the contents were released and then ignited, or the fire reached the tanks from elsewhere and the rupture was the result rather than the cause. The char pattern is consistent with all three explanations. You stand here for a while, reading the concrete, and come to no conclusion that the concrete didn\'t already have.',
+        skillCheck: { skill: 'survival', dc: 14, successAppend: 'The valve assembly on the largest ruptured tank shows manual operation — the wheel is in the open position and the wear pattern on the handle is inconsistent with the handle having been turned by the heat. Someone opened this valve. The fire that destroyed the district started here, and someone opened this valve, and you cannot tell from physical evidence whether that someone survived.' },
+        questFlagOnSuccess: { flag: 'em_tank_farm_valve_investigated', value: true },
+      },
+      {
+        keywords: ['pipe', 'manifold', 'valve', 'assembly'],
+        description: 'The pipe manifolds connect the tanks in a grid — a system designed for control, for moving product between storage and processing, for the ordinary commerce of industrial chemistry. The grid is still connected. Some valves open, some closed, the current positions a mixture of whatever the operators set before the fire and whatever the fire itself moved. Reading the manifold is reading the last moment of the facility\'s operation, frozen in metal.',
+      },
+    ],
+    npcSpawns: [],
+    itemSpawns: [
+      {
+        entityId: 'chemicals_basic',
+        spawnChance: 0.45,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.1, max: 0.5 },
+        groundDescription: 'A sealed chemical drum, smaller than the storage tanks, still intact — its label mostly destroyed but the seal uncompromised.',
+        depletion: { cooldownMinutes: { min: 720, max: 1440 }, respawnChance: 0.20 },
+      },
+    ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The chemical smell intensifies without warning, then fades. The air currents in the tank farm have their own logic.', chance: 0.30 },
+        { line: 'A low hiss from somewhere in the pipe manifold — pressure equalization or something moving in the system. You cannot tell which.', chance: 0.15 },
+        { line: 'The seeping liquid catches your boot edge. You move away from it carefully.', chance: 0.20 },
+        { line: 'One of the sealed tanks produces a soft ticking sound — metal contracting in the temperature change. Rational. You wait to be sure.', chance: 0.15 },
+      ],
+    },
+    narrativeNotes: 'Act II investigation room. High narrative weight — the origin of the Ember fire. Skill checks reveal evidence of deliberate valve operation. Quest flag feeds into the larger Ember mystery. Low hollow density because the chemical smell suppresses aggregation.',
+  },
+
+  // ----------------------------------------------------------
+  // EM-14: Foreman's Office
+  // ----------------------------------------------------------
+  {
+    id: 'em_14_foremans_office',
+    name: 'The Ember — Foreman\'s Office',
+    zone: 'the_ember',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { noCombat: false },
+    description: 'The foreman\'s office is elevated above the factory floor on a steel-framed platform — a glass-and-metal booth designed for line-of-sight across the production space below. The glass is gone, melted or blown out, the frames empty and ragged. The floor is still solid: steel plate, the rubber anti-fatigue mat beneath the desk still present and still rubber, which tells you something about what burned and what didn\'t. The desk. A wheeled office chair, the fabric gone, the steel frame and wheels remaining. Filing cabinets along the back wall — the drawers warped but some still openable, the papers inside transformed by heat into brown brittle sheets that crumble if you handle them carelessly. A personal locker beside the filing cabinets, the padlock still closed. On the desk: a wire inbox, two pens fused to the surface, and a production schedule printed on green-bar paper, the ink faded but legible. The schedule runs through August 2031. The Collapse was September 2031. The last week of the schedule shows normal production targets. No one wrote in the margin that it would be the last week.',
+    descriptionNight: 'From the office at night, the factory floor below is darkness and the shapes of machinery. You can see the char fields to the west through the empty window frames. The ash out there picks up any sky glow. The distance makes it quiet.',
+    shortDescription: 'Elevated above the floor — a foreman\'s office, a production schedule through August 2031, and a locked personal locker with a padlock still on it.',
+    exits: {
+      down: 'em_12_collapsed_factory_floor',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.10,
+      timeModifier: { day: 0.5, dusk: 1.2, night: 1.8, dawn: 0.8 },
+      threatPool: [
+        { type: 'remnant', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.45, awarePassive: 0.35, awareAggressive: 0.20 },
+    },
+    extras: [
+      {
+        keywords: ['schedule', 'production', 'green-bar', 'paper', 'desk'],
+        description: 'The production schedule runs Monday to Friday, eight-hour shifts, with targets listed by line and product code. The product codes mean nothing to you. The shift supervisors are listed by initial: K., M., V., T. Line 3 was running below target in July. Someone circled the Line 3 numbers in red pen and wrote: discuss — efficiency or staffing? The question was written perhaps two months before the fire. It was never answered. Or it was answered in a way the writer didn\'t anticipate.',
+        skillCheck: { skill: 'lore', dc: 11, successAppend: 'The product codes on the schedule — cross-referencing with the tank manifold schematic you may have seen — resolve to: industrial solvents, degreaser compounds, and one line labeled only with a government contract number. The government contract line ran through all of 2030 and into 2031. The other lines dropped off in early 2031. By August, only the government contract line was running at full capacity.' },
+        questFlagOnSuccess: { flag: 'em_foreman_schedule_read', value: true },
+      },
+      {
+        keywords: ['filing cabinet', 'files', 'papers', 'drawers'],
+        description: 'The middle drawer opens with effort — the heat warped the frame but not beyond function. Inside: personnel files, the paper brown and fragile. You lift one carefully. A hire form — name, address, date of hire, emergency contact. The emergency contact field is filled in. The name in that field is the same name as the employee. They listed themselves as their own emergency contact. You put the file back and close the drawer.',
+      },
+      {
+        keywords: ['locker', 'padlock', 'personal'],
+        description: 'The padlock is a standard combination type, the steel discolored by heat but the mechanism apparently intact. The locker is narrow — a personal effects locker, not a gear locker. Whatever is inside is whatever the foreman considered worth locking up at work.',
+        skillCheck: { skill: 'lockpicking', dc: 14, successAppend: 'The padlock releases. Inside the locker: a photograph of two children (no names written on it), a bottle of aspirin half full, a spare set of keys on a clip labeled HOME, and a handwritten note folded small. The note reads: "I know what\'s in Tank 7. I know what the contract is for. I signed the NDA. I don\'t know how to sign the other thing." The note is not dated. It was written here and left here and never sent to anyone.' },
+        questFlagOnSuccess: { flag: 'em_foreman_locker_opened', value: true },
+      },
+      {
+        keywords: ['view', 'window', 'floor', 'below', 'factory'],
+        description: 'From the empty window frames, the factory floor below: the conveyor in its long sag, the stamping press frozen, the gantry crane at its angle. From up here the scale of the space is different — larger, the individual machines reducing to components of a system that made sense as a system. The roof holes let in the sky. The shafts of light move. From up here you can see the floor\'s whole pattern of collapse and survival and the route through it is visible in a way it isn\'t from the ground.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'reclaimer_signal_tech',
+        spawnChance: 0.20,
+        spawnType: 'wanderer',
+        activityPool: [
+          { desc: 'A Reclaimer signal tech sits at the foreman\'s desk with portable equipment, using the elevation to take signal readings from a device you don\'t recognize. She\'s methodical, patient.', weight: 3 },
+          { desc: 'A Reclaimer is at the empty window frame, looking across the factory complex, making notes in a field book with careful sketches of the facility layout.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.30, neutral: 0.50, wary: 0.20, hostile: 0.0 },
+        dialogueTree: 'em_reclaimer_signal_tech_office',
+        narrativeNotes: 'Reclaimer investigating the facility. Knows something about the government contract. Possible quest giver for tank farm investigation.',
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'hand_tools_basic',
+        spawnChance: 0.35,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.4, max: 0.8 },
+        groundDescription: 'A tool roll under the desk — screwdrivers and hex keys in a canvas wrap, mostly intact.',
+        depletion: { cooldownMinutes: { min: 360, max: 720 }, respawnChance: 0.15 },
+      },
+      {
+        entityId: 'crafting_components',
+        spawnChance: 0.25,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.5, max: 0.9 },
+        groundDescription: 'A parts box in the desk drawer — small hardware, clips, and fittings still in their labeled bins.',
+        depletion: { cooldownMinutes: { min: 480, max: 960 }, respawnChance: 0.15 },
+      },
+    ],
+    personalLossEchoes: {
+      child: 'The photograph of two children in the locker. No names. The foreman locked it in here. It was the thing worth locking up.',
+      partner: 'HOME, the keys are labeled. Someone was home. The note in the locker was never sent. The keys never went back.',
+    },
+    narrativeNotes: 'Elevated room, investigative focus. Production schedule and locker note build the tank farm conspiracy. Personal loss echoes for child/partner. Connects to the broader Ember fire mystery.',
+  },
+
+  // ----------------------------------------------------------
+  // EM-15: The Burn Shelter
+  // ----------------------------------------------------------
+  {
+    id: 'em_15_burn_shelter',
+    name: 'The Ember — The Burn Shelter',
+    zone: 'the_ember',
+    act: 2,
+    difficulty: 2,
+    visited: false,
+    flags: { safeRest: true, noCombat: true },
+    description: 'The shelter is a basement room — one of the char field foundations had a cellar, and the cellar survived because concrete and earth are patient in the way that fire is not. The access is through a steel hatch, the hinges rusted but functional, the hatch itself warped at one corner and requiring both hands and a specific angle. Below: a single room, low-ceilinged, the walls unpainted concrete, a small high window that is now at ground level and admits a stripe of light across the floor. Someone lived here after the fire. The evidence is layered: bedding in the corner — not rotted, but old enough that the fabric has lost its original color to a uniform dust. Supplies along the west wall — canned goods, some still sealed, some opened and cleaned out and stacked. A camp stove, fuel empty. A clothesline strung corner to corner, nothing on it now. And on the south wall, above the bedding, a journal in a waterproof bag hung from a driven nail. The journal is not recent. Whoever was here is gone. They left the journal on purpose. It is a record, not an accident.',
+    descriptionNight: 'The shelter is the same at night as in the day — the basement has no day or night, just the stripe of light from the window going dark. When the window goes dark the room is fully dark. You bring your own light.',
+    shortDescription: 'A basement shelter that survived the fire — bedding, canned goods, a camp stove, and a journal hung deliberately on the wall.',
+    exits: {
+      up: 'em_11_char_fields',
+    },
+    richExits: {
+      up: {
+        destination: 'em_11_char_fields',
+        hidden: true,
+        discoverSkill: 'perception',
+        discoverDc: 13,
+        discoverMessage: 'A steel hatch in the ash — its edges just visible, the handle flush to the surface. A cellar.',
+        descriptionVerbose: 'the steel hatch up to the char fields',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['bedding', 'supplies', 'cans', 'stove', 'clothesline'],
+        description: 'The supply inventory, such as it is: six cans still sealed (no labels, the paper having gone at some point), four opened and stacked. A camp stove with its fuel canister run dry — but the stove itself is good, clean, maintained. A clothesline with wooden clips still on it — three clips. Three things were hung to dry and then taken. The bedding in the corner is a sleeping bag and a folded wool blanket. The sleeping bag zipper is open. Whoever slept here left it that way. As if they expected to return.',
+      },
+      {
+        keywords: ['journal', 'bag', 'nail', 'waterproof', 'south wall'],
+        description: 'The journal is in a zipper-seal bag, the kind used for waterproofing gear. Hung from a nail with a loop of cord. It was not left by accident — it was placed deliberately, at eye height, on the wall you face when you\'re in the bedding. Whoever wrote it wanted it found. You take it down.',
+      },
+      {
+        keywords: ['window', 'light', 'stripe', 'ground level'],
+        description: 'The window is a standard basement window, now at ground level — the ash outside has built up enough over years to bring the ground surface nearly flush with the window frame. Light comes through in a stripe that moves slowly through the day. At the right hour it falls directly on the nail where the journal hangs. This may be intentional. It may be the kind of thing you notice in spaces where the only light comes from one direction.',
+      },
+      {
+        keywords: ['hatch', 'door', 'access', 'entrance'],
+        description: 'The hatch is heavy, the warped corner requiring force to seat properly. You practice closing and opening it twice before you\'re satisfied with the angle. Old habit: knowing your exit. Whoever lived here did the same thing — the hatch mechanism shows wear in the specific places that specific-angle operation produces.',
+      },
+    ],
+    npcSpawns: [],
+    itemSpawns: [
+      {
+        entityId: 'burn_shelter_journal',
+        spawnChance: 1.0,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.75, max: 0.95 },
+        groundDescription: 'A journal in a waterproof bag, hung from a nail on the south wall at eye height.',
+        depletion: { cooldownMinutes: { min: 99999, max: 99999 }, respawnChance: 0.0 },
+      },
+      {
+        entityId: 'boiled_rations',
+        spawnChance: 0.40,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.5, max: 0.9 },
+        groundDescription: 'Sealed cans without labels — no way to know what\'s inside until you open them.',
+        depletion: { cooldownMinutes: { min: 720, max: 1440 }, respawnChance: 0.10 },
+      },
+    ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The silence down here is different from the silence above. Complete. The fire didn\'t reach this.', chance: 0.25 },
+        { line: 'The stripe of light from the window shifts half an inch. The day is moving.', chance: 0.20, time: ['day'] },
+        { line: 'Something settles in the ash above — weight on the hatch, then gone. You wait.', chance: 0.15 },
+        { line: 'The camp stove. Clean. Maintained by someone who expected to need it again.', chance: 0.20 },
+      ],
+    },
+    personalLossEchoes: {
+      community: 'Someone lived here after everyone else was gone. Fed themselves from cans with no labels. Hung their clothes to dry. Left the sleeping bag open as if they\'d be back. Whatever community this was, it ended here, in a basement under ash.',
+      identity: 'The name torn from the journal. A person who survived and recorded the survival and then took their name with them. Identity is portable. Sometimes it\'s all that is.',
+    },
+    narrativeNotes: 'Hidden room — Perception DC 13 to find the hatch from char fields. Safe rest, no combat. The journal is the key lore item. Whoever was here knew something about the fire and its origin. Mood room: aftermath of survival, not danger.',
+  },
+
+  // ----------------------------------------------------------
+  // EM-16: Loading Dock
+  // ----------------------------------------------------------
+  {
+    id: 'em_16_loading_dock',
+    name: 'The Ember — Loading Dock',
+    zone: 'the_ember',
+    act: 2,
+    difficulty: 4,
+    visited: false,
+    flags: { scavengingZone: true },
+    description: 'The loading dock is at the rear of the factory complex — the functional back end, where the building turns from production to logistics. Three cargo bays face the rail spur: massive rolling doors, the steel tracks still in place, the doors themselves hanging at angles where the rollers failed or the frames warped in the heat. One door is fully closed. One is fully open. One is frozen at about waist height, which makes the bay it serves accessible only by crawling or climbing. The rail spur runs east from the dock along a concrete pad and then ends — the tracks simply stopping where the connection to the main line was severed, or where the main line itself was taken for salvage, or where whatever came for the last shipment didn\'t come back. The dock itself: loading equipment, mostly intact — hand trucks, pallet jacks, the steel frames rusted but the geometries correct. Tie-down anchor points along the dock walls at regular intervals. The space under the open dock door has been used recently — ash disturbed, surfaces touched, the particular arrangement of things that someone has been through and is likely to come back to. The Hollow here cluster in the enclosed bays. The space suits them in a way that open ground doesn\'t.',
+    descriptionNight: 'The loading dock at night. The open bay is a hole in the building with no light inside. The closed bay and the half-open bay are shapes. The rail spur goes east into dark. You cannot see where it ends.',
+    shortDescription: 'Rear of the complex — three cargo bays, a rail spur that goes nowhere, and a Hollow cluster in the enclosed space.',
+    exits: {
+      west: 'em_12_collapsed_factory_floor',
+    },
+    richExits: {},
+    items: [],
+    enemies: ['remnant', 'brute'],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.50,
+      timeModifier: { day: 0.8, dusk: 1.2, night: 1.6, dawn: 1.0 },
+      threatPool: [
+        { type: 'remnant', weight: 40, quantity: { min: 1, max: 3, distribution: 'bell' } },
+        { type: 'brute', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 20, quantity: { min: 1, max: 3, distribution: 'bell' } },
+        { type: 'screamer', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.2, awarePassive: 0.25, awareAggressive: 0.55 },
+      activityPool: {
+        remnant: [
+          { desc: 'clusters near the closed bay door in a group of three, standing with the compressed stillness of things that have found a space and decided it belongs to them', weight: 3 },
+          { desc: 'moves along the dock wall in a slow circuit, its path worn into the ash — it has been doing this long enough to make a track', weight: 2 },
+        ],
+        brute: [
+          { desc: 'occupies the half-open bay, its mass filling the crawl-space entrance. It doesn\'t move until you\'re close. Then it moves fast.', weight: 3 },
+        ],
+        screamer: [
+          { desc: 'perches on the dock\'s upper loading framework, visible only from certain angles, its attention on you before you see it', weight: 2 },
+        ],
+      },
+      noiseModifier: 1.6,
+    },
+    extras: [
+      {
+        keywords: ['cargo bays', 'doors', 'rolling', 'tracks'],
+        description: 'The three bays were designed to handle full pallet loads — the floor level precisely matched to truck-bed height, the tracks wide enough for powered loading equipment. The bay that\'s open gives you the interior: empty, the far wall faintly visible, a few wooden pallet fragments. The bay that\'s closed may contain something or may be empty — the door is sealed in its distorted frame and would require significant force to open. The half-open bay is the interesting one. The ash in front of it has been disturbed from both directions.',
+        skillCheck: { skill: 'mechanics', dc: 12, successAppend: 'The fully closed bay door has a manual release handle on the inside — visible through the gap at the bottom. The handle is in the released position, which means the door is held shut only by the warped frame, not the locking mechanism. With the right tool and leverage point, you could get it open.' },
+      },
+      {
+        keywords: ['rail spur', 'tracks', 'east', 'train', 'end'],
+        description: 'The rail spur ends about forty meters east of the dock at a point where the tracks were cut — not broken by the fire but cut, the metal sheared cleanly, the cut edges still showing the fresh-ish silver of a cleaner break than time and heat would produce. Someone took the rails. Salvage, probably, but recent-ish salvage — the broken ends haven\'t rusted to the color of the rest of the track yet. The last car that sat on this spur left whatever it was carrying before the fire and went somewhere, or left carrying what it was supposed to carry and that was that.',
+        skillCheck: { skill: 'tracking', dc: 13, successAppend: 'The concrete pad beside the cut tracks shows vehicle marks — wide tires, heavy load. A truck or loader. The marks are old enough to have been partially filled by ash drift, but the depth of the original impression was substantial. This happened in the period immediately after the fire, when the facility was still accessible, when salvage teams were still moving through. Someone organized and resourced enough to bring cutting equipment. Not scavengers. Something more deliberate.' },
+      },
+      {
+        keywords: ['pallet jack', 'hand trucks', 'equipment', 'loading'],
+        description: 'The pallet jacks are still functional — the hydraulic systems survived the fire better than the structural elements, the seals dried but not failed. If you pump the handle, the forks rise. Slowly, with resistance, but they rise. Pre-Collapse logistics equipment built to outlast almost anything. These would be worth something to a settlement with freight to move. They are also very heavy to carry out.',
+      },
+      {
+        keywords: ['ash', 'disturbed', 'tracks', 'recent', 'used'],
+        description: 'The ash near the half-open bay has been disturbed by repeated passage — a path worn through it from the bay interior to the dock edge and back. The path is not from the Hollow, whose passage through ash leaves a different signature — heavier, more random. Something with a more deliberate gait used this path. Not recently enough to matter and recently enough to matter. You stand on the dock and feel the particular alertness of spaces that are being watched from an angle you haven\'t found yet.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'scavenger_rival',
+        spawnChance: 0.30,
+        spawnType: 'wanderer',
+        activityPool: [
+          { desc: 'A scavenger works the pallet jacks with evident frustration — they\'re trying to move one out and the weight is defeating them.', weight: 2 },
+          { desc: 'A scavenger emerges from the half-open bay on hands and knees, pack first, something heavy inside. They see you and go very still.', weight: 3 },
+          { desc: 'A scavenger stands at the end of the rail spur, looking east along the tracks toward where they were cut, working through something.', weight: 1 },
+        ],
+        dispositionRoll: { friendly: 0.05, neutral: 0.25, wary: 0.50, hostile: 0.20 },
+        dialogueTree: 'em_scavenger_rival_dock',
+        narrativeNotes: 'High tension encounter. The scavenger has been working this dock and considers it their site. The Hollow presence means both parties have a shared threat but not necessarily a shared interest.',
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'scrap_metal',
+        spawnChance: 0.55,
+        quantity: { min: 1, max: 3, distribution: 'bell' },
+        conditionRoll: { min: 0.3, max: 0.7 },
+        groundDescription: 'Steel loading frames and dock equipment — structural steel in salvageable lengths.',
+        depletion: { cooldownMinutes: { min: 480, max: 960 }, respawnChance: 0.35 },
+      },
+      {
+        entityId: 'wire_coil',
+        spawnChance: 0.30,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.4, max: 0.8 },
+        groundDescription: 'A coil of heavy-gauge tie-down cable — the fiber core gone but the steel braid intact.',
+        depletion: { cooldownMinutes: { min: 480, max: 960 }, respawnChance: 0.20 },
+      },
+      {
+        entityId: 'crafting_components',
+        spawnChance: 0.25,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.3, max: 0.7 },
+        groundDescription: 'Hydraulic fittings and fasteners spilled from a collapsed parts rack near the dock wall.',
+        depletion: { cooldownMinutes: { min: 360, max: 720 }, respawnChance: 0.25 },
+      },
+    ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'Movement in the closed bay — something settling, or something that was still choosing to move. The sound doesn\'t repeat.', chance: 0.25 },
+        { line: 'The rail tracks creak in the temperature change. Metal remembers its original tension.', chance: 0.15 },
+        { line: 'Wind through the open bay door produces a low, resonant note — the dock as instrument, unintentional.', chance: 0.15 },
+        { line: 'The half-open bay door registers on your peripheral vision as movement every time the light changes. It does not move.', chance: 0.20 },
+        { line: 'The pallet jack hydraulics hold the load for three seconds after you stop pumping, then settle. Still functional. Still useful, if you can get it out.', chance: 0.10 },
+      ],
+    },
+    narrativeNotes: 'Act II high-difficulty room. Highest hollow density in the zone. The rail spur cut is a mystery thread — who took the rails and why, in the period immediately after the fire. Scavenger encounter is tense, potentially hostile. Good loot for players who can clear the hollows.',
+  },
 ]

@@ -1577,6 +1577,43 @@ export const ITEMS: Record<string, Item> = {
     loreText: 'To the Council — I am writing this knowing I will not send it. You don\'t want philosophy from your castellans. You want yield numbers. Yield is up 12% since I implemented the color-coded scheduling system. The voluntary intake rate has held at 34%. I tell myself these are good numbers. I tell myself the ones in Ward A made a choice. I tell myself that a world that needs us to do this is the world that made us necessary. I am writing this because I need to say, somewhere, that I know what we are. I have known since the first week. I choose it anyway. I choose it because the alternative is chaos and chaos kills more. This is what I tell myself in the dark. It works less than it used to. — R.',
   },
 
+  burn_shelter_journal: {
+    id: 'burn_shelter_journal',
+    name: 'Burn Shelter Journal',
+    description: 'A water-stained notebook recovered from a basement shelter in the industrial district. The handwriting changes partway through.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'Day 1 in the shelter. The fire is still moving north. I can hear it through the floor — not crackling, more like breathing. The basement held. I have food for maybe two weeks if I ration. Day 9. The smell has changed. Not smoke anymore. Something chemical from the tank farm. Day 21. I went upstairs today for the first time. The street is glass in places. The factory is open sky. I came back down. Day 34. Someone has been in the tank farm — I can see footprints in the ash from the upper window. They didn\'t come here. Day 41. Leaving tomorrow. The footprints are gone. I don\'t know who made them or if they made it out. I am writing this so whoever finds this place knows: I was here, I survived, and I don\'t know why the fire started either. — [name torn away]',
+  },
+
+  // ----------------------------------------------------------
+  // Lore Items — The Pine Sea
+  // ----------------------------------------------------------
+
+  lore_hermit_bark_maps: {
+    id: 'lore_hermit_bark_maps',
+    name: 'Hermit\'s Bark Maps',
+    description: 'Strips of pine bark with routes scratched into the surface using a nail or sharp stone. The lines are precise despite the medium.',
+    type: 'lore',
+    weight: 1,
+    value: 15,
+    usable: true,
+    loreText: 'Seven panels of bark, fitted together. The complete route from the tree line to the Scar, with hazard notes in tiny handwriting: "DO NOT camp here — morning fog conceals drop"; "water here, safe, cold"; "Hollow sign — move through fast after dark"; "the big tree — bearing 312, three hundred paces, do not lose this bearing." At the bottom of the last panel: "The forest knows you\'re here. Walk like you belong and it won\'t tell anyone else."',
+  },
+
+  lore_precollapse_survey: {
+    id: 'lore_precollapse_survey',
+    name: 'Pre-Collapse Forest Survey — San Juan National Forest Sector 7',
+    description: 'A printed survey document in a waterproof map case, the paper still readable despite years in the field.',
+    type: 'lore',
+    weight: 1,
+    value: 20,
+    usable: true,
+    loreText: 'USDA Forest Service, 2027. Sector 7 old-growth inventory. Tree ages confirmed by core sample: seventeen specimens over 400 years, three specimens over 600 years, one specimen — grid reference 7-NW-14 — estimated 890 years old. Pre-Collapse notes in the margin: "Protect at all costs — last stand old-growth in region." Below that, in different handwriting, post-Collapse: "It protected itself. We just stayed out of the way." And below that, a third hand: "The coast is accessible from the northwest approach if you follow the survey grid. Nobody has mapped it since the Collapse. Nobody knows what\'s out there."',
+  },
+
   blood_type_chart: {
     id: 'blood_type_chart',
     name: 'Blood Type Efficiency Chart',

@@ -296,10 +296,11 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
     description: 'A clearing in the upper forest holds a camp that has been here for years: a fire ring with a grill grate, a canvas lean-to shelter angled to catch the south sun, a water collection system from the nearest seep, a stacked firewood supply that speaks to someone who understands winter. The hermit is here. They\'ve been here for at least three seasons. They know the mountains with the intimacy that only comes from living in them continuously, and they know the Scar valley — have been watching it from the ridge, have been to it twice, have a story that is yours if you ask the right way.',
     descriptionNight: 'At night the camp fire burns low and orange. The hermit keeps it small — old habit, or knowledge. The darkness above the camp has more stars per square inch than any place you\'ve been. The hermit tells you what they saw in the valley. They\'ve been waiting to tell someone.',
     shortDescription: 'Hermit\'s camp. Lore dump. Directions to the Scar.',
-    exits: { south: 'ps_04_waterfall', east: 'ps_08_scar_overlook' },
+    exits: { south: 'ps_04_waterfall', east: 'ps_08_scar_overlook', north: 'ps_09_old_growth_heart' },
     richExits: {
       south: { destination: 'ps_04_waterfall', descriptionVerbose: 'south toward the waterfall' },
       east: { destination: 'ps_08_scar_overlook', descriptionVerbose: 'east toward the Scar overlook' },
+      north: { destination: 'ps_09_old_growth_heart', descriptionVerbose: 'north, deeper into the forest — the trees get bigger' },
     },
     items: [],
     enemies: [],
@@ -452,5 +453,315 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       ],
     },
     narrativeNotes: 'Climactic room. Point of no return is stated explicitly but gently. The "learning something about yourself from how long you hold it" line is the room\'s thesis. Cycle 3 gate to proceed. The four extras build toward the descent.',
+  },
+
+  {
+    id: 'ps_09_old_growth_heart',
+    name: 'The Old Growth Heart',
+    zone: 'the_pine_sea',
+    act: 3,
+    difficulty: 3,
+    visited: false,
+    flags: { dark: true, scavengingZone: false },
+    cycleGate: 3,
+    description: 'The forest changes here so completely that you stop walking. The trees are enormous — not tall-tree enormous but ancient-world enormous, the trunks wider than rooms, the bark deeply furrowed and dark with centuries of moisture. Five people couldn\'t link hands around the nearest one. Light does not reach the forest floor. The canopy above is a closed system, the understory a permanent twilight regardless of the hour. Sound is different here. Time feels different here, in the way that high-altitude snowfields feel removed from time — this place has been doing what it does since before the Collapse, before the state, before the first road. It will continue long after. You are a very brief event in a very long history.',
+    descriptionNight: 'At night the Old Growth Heart is total darkness — the canopy filters even starlight to nothing. You navigate by touch: bark against your palms, the soft resistance of deep duff under your feet. Something moves, ahead and to your left, in the dark. Something that has been in this dark a long time and has learned to prefer it.',
+    descriptionDawn: 'At dawn a single shaft of light enters through a gap in the canopy — the oldest tree has lost a major limb and the opening admits the first horizontal light of the day. The shaft is dense with particulate: pollen, spore, something older. It illuminates nothing useful. It illuminates everything important.',
+    shortDescription: 'Ancient old growth. Total canopy cover. Time moves differently.',
+    exits: { south: 'ps_06_shepherds_camp', east: 'ps_11_bone_grove', west: 'ps_12_coastal_approach' },
+    richExits: {
+      south: { destination: 'ps_06_shepherds_camp', descriptionVerbose: 'south, back toward the hermit\'s camp and familiar forest' },
+      east: { destination: 'ps_11_bone_grove', descriptionVerbose: 'east, where the trees thin slightly around what looks like a clearing' },
+      west: { destination: 'ps_12_coastal_approach', descriptionVerbose: 'west, where the canopy begins to lighten and something on the air smells different — salt, or distance' },
+      north: {
+        destination: 'ps_10_hermit_deep_camp',
+        descriptionVerbose: 'north, but there is no trail — only a bearing and a gap between two root buttresses that might be deliberate',
+        hidden: true,
+        skillGate: {
+          skill: 'tracking',
+          dc: 13,
+          failMessage: 'You lose the thread in the dark. The root systems all look the same. You circle back.',
+        },
+        discoverSkill: 'tracking',
+        discoverDc: 11,
+        discoverMessage: 'A strip of bark has been peeled from a root — deliberately, at knee height. A trail marker, barely legible, for someone who knows to look.',
+      },
+    },
+    items: [],
+    enemies: ['remnant'],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['trees', 'trunks', 'old growth', 'bark', 'ancient'],
+        description: 'The bark of the oldest tree has been growing since before European contact with this continent. You put your hand on it and feel the deep furrowing — each groove a decade, the patterns a record of centuries of drought and wet and fire and regrowth. The tree survived the Collapse the same way it survived everything else: by being a tree, which means being extraordinarily patient and extraordinarily good at one thing.',
+        skillCheck: { skill: 'survival', dc: 10, successAppend: 'The tree ring record visible at a blown-down neighbor suggests this stand has survived at least three major regional fire events, each one that should have cleared this slope. The old growth survived because the trees are far enough apart, and the undergrowth is moist enough, and something about this hollow draws cold air that suppresses the worst burns. The forest engineered its own survival. You\'re inside the mechanism.' },
+      },
+      {
+        keywords: ['light', 'dark', 'canopy', 'shadow', 'twilight'],
+        description: 'The canopy closure is complete — the interlocked crowns of twelve adjacent trees create a continuous ceiling of needles and branch that reduces the light below to perhaps five percent of what falls above. Plants that survive here are specialists: deep-shade ferns, fungi, lichens that grow on the north faces of the buttress roots. The ecosystem is calibrated to the specific dark. You are a large diurnal mammal in a world that was built around your absence.',
+      },
+      {
+        keywords: ['time', 'silence', 'quiet', 'feeling', 'presence'],
+        description: 'The silence in the Old Growth Heart is qualitatively different from any silence you have experienced since the Collapse. It is not absence — absence has a flat quality, a lack. This is a full silence, the silence of something that does not need to make noise because it is not waiting for anything. You stand in it and understand why the hermit chose to live near here. Some places are good for certain kinds of thinking.',
+      },
+      {
+        keywords: ['hollow', 'shape', 'movement', 'dark'],
+        description: 'Something moves at the edge of where you can see — peripheral, slow, with the wrong quality of movement. Not shuffler-wrong: this is a different kind of wrong, the wrongness of something that has been in this specific dark for a very long time and absorbed something of its patience. It isn\'t moving toward you. It is moving around you. There is a difference.',
+        skillCheck: { skill: 'perception', dc: 12, successAppend: 'There are two of them. They\'ve been here long enough that the duff has adapted — the forest floor around their usual paths is compressed and darkened. Years of movement. They\'re part of this place the way the fungi are part of this place. They could be aggressive. They are choosing not to be. The choosing is the strange part.' },
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.18,
+      timeModifier: { day: 0.8, night: 1.8, dawn: 1.0, dusk: 1.4 },
+      threatPool: [
+        { type: 'remnant', weight: 60, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'whisperer', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.3, awarePassive: 0.5, awareAggressive: 0.2 },
+      noiseModifier: -0.3,
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The forest breathes. You are aware of this suddenly and cannot stop being aware of it.', chance: 0.30, time: null },
+        { line: 'Something large moves far above in the canopy. A branch shift. Then stillness.', chance: 0.20, time: null },
+        { line: 'The temperature is several degrees cooler here than in the surrounding forest. Cold air pools in the oldest hollows.', chance: 0.15, time: ['dawn', 'night'] },
+      ],
+      ambientSoundPool: {
+        day: [
+          { sound: 'Somewhere far above: wind. Down here: nothing.', weight: 3 },
+          { sound: 'A branch settles with a sound like a question.', weight: 2 },
+          { sound: null, weight: 2 },
+        ],
+        night: [
+          { sound: 'Total dark. Total quiet. Something breathing that is not you.', weight: 2 },
+          { sound: null, weight: 3 },
+        ],
+      },
+      ambientCount: { min: 1, max: 2, distribution: 'flat' },
+    },
+    narrativeNotes: 'Act 3 beauty-and-dread room. The Hollow here are old and strange — not aggressive by default. The dark flag means players without light sources are at a disadvantage. The hidden north exit to the hermit\'s deep camp rewards tracking skill. Tone: awe edging toward unease.',
+  },
+
+  {
+    id: 'ps_10_hermit_deep_camp',
+    name: 'The Hermit\'s Deep Camp',
+    zone: 'the_pine_sea',
+    act: 3,
+    difficulty: 2,
+    visited: false,
+    flags: { safeRest: true, questHub: true, hiddenRoom: true, campfireAllowed: true },
+    cycleGate: 3,
+    description: 'The camp at the end of the hidden trail is different from the one by the waterfall — older, quieter, more embedded in the forest itself. The shelter is not canvas but a structure built into the root buttresses of the largest tree: a frame of found timber, bark-shingled, the gaps moss-caulked. A fire that has been burning in some form for at least a decade; the hearth ring is blackened eight inches deep. Maps cover the inner walls — not paper maps, bark maps, dozens of them, fitted together to form a complete picture of the Pine Sea from the tree line to the coast. The hermit is here more often than they\'re at the other camp. This is where they come when they need to think.',
+    descriptionNight: 'At night the deep camp fire is the only light in the Old Growth Heart — a warm pinpoint at the base of the largest tree, visible through the dark for perhaps thirty yards. The hermit tends it with care. The fire has been burning long enough that it knows what it\'s doing.',
+    shortDescription: 'Hermit\'s true home. Bark maps. A decade of fire. Hidden.',
+    exits: { south: 'ps_09_old_growth_heart' },
+    richExits: {
+      south: { destination: 'ps_09_old_growth_heart', descriptionVerbose: 'south, back through the root gap into the old growth' },
+    },
+    items: ['lore_hermit_bark_maps'],
+    enemies: [],
+    npcs: ['shepherd_hermit'],
+    npcSpawns: [
+      {
+        npcId: 'shepherd_hermit',
+        spawnChance: 0.70,
+        spawnType: 'anchored',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'The hermit sits cross-legged before the fire, scratching something onto a new strip of bark with a nail. They don\'t look up when you arrive. "You found it. Not many do." They keep scratching.', weight: 3 },
+          { desc: 'The hermit is adding to the bark map wall, fitting a new panel into the larger picture with precise care. They step back, squint, adjust it slightly. "The coast shifts. The maps have to shift with it."', weight: 2 },
+          { desc: 'The hermit is asleep against the root buttress. The fire doesn\'t go out. You have the impression the fire would not dare.', weight: 1, timeRestrict: ['night'] },
+        ],
+        dispositionRoll: { friendly: 0.6, neutral: 0.35, wary: 0.05 },
+        dialogueTree: 'shepherd_hermit_deep',
+        questGiver: ['pine_sea_coast_route', 'hermit_fire_keeper_story'],
+        narrativeNotes: 'The hermit here is more open than at the accessible camp — finding this place is a proof of capability they respect. Deeper lore available: the coast, what\'s beyond the forest, and why the hermit stays.',
+      },
+    ],
+    extras: [
+      {
+        keywords: ['maps', 'bark maps', 'wall', 'routes'],
+        description: 'The bark map panels cover the north-facing wall of the shelter completely. Fitted together, they describe every route through the Pine Sea from the tree line to the coast — dozens of trails, hazard notations, seasonal variations. Some panels are old and dark, the scratch-lines faded. Some are fresh. The complete map is a life\'s work, or close to it. No copies. This is the only one.',
+        skillCheck: { skill: 'lore', dc: 10, successAppend: 'The oldest panels are dated. The hermit began mapping in Year 1 of the Collapse, within the first months. They\'ve been at this for seven years. The coastal sections are the most recent and the most detailed — the hermit has been spending more time there. One panel is blank except for a hand-drawn question mark at its center and a compass bearing: 285 degrees. Due west, roughly. Into the sea.' },
+      },
+      {
+        keywords: ['fire', 'hearth', 'decade', 'embers'],
+        description: 'The hearth ring is blackened eight inches deep into the soil. A fire has been burning here continuously — or nearly continuously — for a very long time. The hermit feeds it with specific wood from a specific stack: seasoned pine, split small, added with the timing of someone who has learned the fire\'s metabolism. The fire is the oldest thing at this camp that isn\'t a tree.',
+      },
+      {
+        keywords: ['shelter', 'structure', 'root', 'tree', 'home'],
+        description: 'The shelter is built into the root buttress the way a bird builds into a cliff face: using the structure that was already there, not imposing on it. The frame timber is pegged, not nailed — no metal except the nail for scratching maps. The bark shingles overlap correctly. Rain doesn\'t get in. Nothing about this place is improvised. All of it is earned.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.03,
+      timeModifier: { day: 0.2, night: 0.5, dawn: 0.3, dusk: 0.4 },
+      threatPool: [
+        { type: 'remnant', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The fire pops. A knot in the wood. The sound is the loudest thing in the old growth.', chance: 0.35, time: null },
+        { line: 'Wind moves somewhere far above in the canopy. Down here: nothing. The fire does not flicker.', chance: 0.20, time: null },
+      ],
+    },
+    narrativeNotes: 'Skill-gated hidden room rewarding tracking investment. The hermit here is more forthcoming — this is the lore unlock for the coastal approach and whatever is beyond the forest. The bark maps and decade-old fire are the room\'s visual anchors. The blank panel with a question mark is a planted mystery.',
+  },
+
+  {
+    id: 'ps_11_bone_grove',
+    name: 'The Bone Grove',
+    zone: 'the_pine_sea',
+    act: 3,
+    difficulty: 3,
+    visited: false,
+    flags: { scavengingZone: false, noCombat: false },
+    cycleGate: 3,
+    description: 'The forest opens into a clearing that isn\'t meadow — there\'s no grass, only compressed earth and dry pine duff, and in the center of it: bones. Something enormous died here long ago. The skeleton is too large for any animal you can name: a ribcage that could shelter four people standing, vertebrae the size of wheel hubs, a skull with teeth that are wrong in ways that take a moment to categorize. Pre-Collapse megafauna, maybe, or something the Collapse made. The bones are bleached and old and undisturbed. The Hollow don\'t come here. You can tell from the absence of their sign — no compressed trails, no territorial markings, nothing. This place is avoided. The hermit leaves it alone for different reasons. Both reactions are probably correct.',
+    descriptionNight: 'At night the bones are pale against the dark clearing. They catch moonlight in a way the surrounding forest doesn\'t. The ribcage creates a skeletal architecture that is somehow more disturbing at night than in daylight — the gaps between the ribs frame pieces of sky. The clearing has a specific quality of emptiness that feels less like absence and more like something cleared deliberately.',
+    shortDescription: 'Pre-collapse bones. Something enormous died here. Hollow avoid it.',
+    exits: { west: 'ps_09_old_growth_heart' },
+    richExits: {
+      west: { destination: 'ps_09_old_growth_heart', descriptionVerbose: 'west, back into the old growth' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['bones', 'skeleton', 'skull', 'ribcage', 'creature'],
+        description: 'The skeleton doesn\'t match any species in the pre-Collapse record that you know. The proportions are wrong — the limb ratios are off, the skull has orbital sockets facing forward like a predator but a jaw adapted for something else entirely. Large enough that it couldn\'t have been hiding — this animal existed in the open, which means either it existed before records were thorough, or it came after. You look at the teeth again. You stop looking at the teeth.',
+        skillCheck: { skill: 'survival', dc: 12, successAppend: 'The bone density is consistent with something that grew slowly over a very long time — these are old bones from an old animal, not something recent. Pre-Collapse, then. Which means it was here before the Collapse and undocumented. The San Juan range is large and the pre-Collapse survey records were incomplete. Something this size could exist in the roadless areas for decades without systematic documentation. The absence of evidence is not evidence of absence. Was not.' },
+      },
+      {
+        keywords: ['hollow', 'avoid', 'empty', 'sign', 'tracks'],
+        description: 'The forest floor around the clearing has Hollow sign everywhere — compressed trails through the duff, the faint territorial marks they leave on bark. The clearing itself has none. The avoidance is precise: the sign stops at the tree line around the clearing as if there\'s a wall. You walk the perimeter and confirm it. Every entry point: Hollow sign. Inside the tree line: nothing. They go around. They have been going around for a while.',
+        skillCheck: { skill: 'tracking', dc: 11, successAppend: 'The avoidance pattern has a gradient: the Hollow who approach closest are the oldest-established ones — long-duration remnants with years of territory. The newer, more aggressive shufflers avoid from farther away. Whatever the clearing is putting into the air, the older Hollow have learned to recognize it as a signal to stop. Not fear, exactly — a deep biological instruction, like the instruction that keeps them from crossing fast water. Something in the bones.' },
+      },
+      {
+        keywords: ['hermit', 'leave', 'avoid', 'alone', 'reasons'],
+        description: 'If you\'ve spoken to the hermit, they mentioned this place. They said they leave it alone. When asked why, they were quiet for longer than was comfortable, then said: "I came here when I first arrived in the forest. I sat here for an hour. I don\'t remember what I thought about. When I left I walked differently for two days. I don\'t come back because I can\'t tell if that\'s a good thing or a bad thing and I don\'t want to find out." You stand in the clearing and try to notice if anything is different about your thinking. You\'re not sure.',
+        questGate: 'shepherd_hermit_met',
+      },
+      {
+        keywords: ['teeth', 'jaw', 'mouth', 'skull'],
+        description: 'You look at the teeth. They are the wrong shape — not worn-wrong or damaged-wrong but structurally, taxonomically wrong for anything you can place in a category. You\'ve seen enough animal skulls in the backcountry to know what wrong looks like. This is it. You stop examining them because continuing to examine them requires you to develop a framework for what you\'re seeing, and you\'re not sure you want that framework.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.02,
+      timeModifier: { day: 0.2, night: 0.3, dawn: 0.2, dusk: 0.3 },
+      threatPool: [
+        { type: 'remnant', weight: 100, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.8, awarePassive: 0.15, awareAggressive: 0.05 },
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'Wind crosses the clearing without moving anything. The bones are too heavy to move.', chance: 0.25, time: null },
+        { line: 'A bird flies over the clearing without landing. It changes course at the tree line.', chance: 0.20, time: ['day', 'dawn'] },
+        { line: 'You become aware that you have been here longer than you intended.', chance: 0.30, time: null },
+      ],
+    },
+    narrativeNotes: 'Mystery room — the bones are deliberately uncategorizable. The Hollow avoidance is unusual and suggestive of something in the environment or the bones themselves. The hermit\'s account (quest-gated) adds a subjective dimension: the clearing affects people in ways they can\'t explain. Lowest Hollow encounter in the zone by design — the avoidance applies to players too, atmospherically.',
+  },
+
+  {
+    id: 'ps_12_coastal_approach',
+    name: 'The Coastal Approach',
+    zone: 'the_pine_sea',
+    act: 3,
+    difficulty: 3,
+    visited: false,
+    flags: { fastTravelWaypoint: false, scavengingZone: true },
+    cycleGate: 3,
+    description: 'The forest thins here. Not meadow-thins — the trees don\'t stop, they just get smaller and farther apart, the understory opening, light returning in quantities you\'d forgotten about. And on the air: salt. Real salt, ocean salt, the specific compound of spray and distance that means sea is close. The Pacific is somewhere west of here — you\'re not sure how far — but the smell says closer than any map suggests. The last survey document here is pinned to a tree with a rusted nail: a USDA Forest Service coastal boundary marker from 2019, its printed text mostly legible. The world was mapped once. The maps were correct once. This is the edge of where they stopped.',
+    descriptionNight: 'At night the coastal approach shows the sky in a way the rest of the Pine Sea doesn\'t — more open, stars visible in larger patches. The sound of the sea is clearer at night, when the wind from the west brings it unobstructed. You haven\'t heard ocean since before the Collapse. You had forgotten what you were forgetting.',
+    descriptionDawn: 'At dawn the coastal approach catches the first light from the east and sends it back — the thin trees are illuminated, the trunks pale in the horizontal light. The sea smell is strongest at dawn, when the temperature differential drives an onshore breeze. If you stand still and let the light and the smell arrive together, it is briefly the most alive you\'ve felt since the Collapse.',
+    shortDescription: 'Forest thins. Salt air. Edge of the mapped world.',
+    exits: { east: 'ps_09_old_growth_heart' },
+    richExits: {
+      east: { destination: 'ps_09_old_growth_heart', descriptionVerbose: 'east, back into the deep old growth' },
+      west: {
+        destination: 'coast_01_sea_cliff',
+        descriptionVerbose: 'west — the forest ends in perhaps a quarter mile. What\'s beyond it is the coast. Whether the coast is navigable, populated, or something else entirely is not in any map you\'ve seen.',
+        cycleGate: 4,
+        skillGate: {
+          skill: 'survival',
+          dc: 14,
+          failMessage: 'The coastal terrain beyond the forest edge is broken and difficult. Without the right knowledge of the terrain, pushing forward risks getting pinned against the sea cliff. You pull back.',
+        },
+      },
+    },
+    items: ['lore_precollapse_survey'],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['salt', 'smell', 'sea', 'ocean', 'air'],
+        description: 'The salt in the air is real — not the mineral salt of dry lowland dust but marine salt, the compound of ocean spray carried on prevailing westerlies across however many miles of forest and terrain. You breathe it deliberately, the way you\'ve learned to breathe good things deliberately, because good things end. The smell says the sea is closer than any surviving map indicates. The maps were made before and the coast has its own timeline.',
+      },
+      {
+        keywords: ['survey', 'document', 'usda', 'boundary', 'marker'],
+        description: 'The USDA Forest Service document pinned to the tree is a coastal boundary marker — the administrative edge of the San Juan National Forest, circa 2019. The printed text details what\'s outside the boundary: "unincorporated coastal parcels, private land, coastal highway right-of-way." Private land. Coastal highway. Those categories no longer have legal content. What they describe still exists, presumably, in some physical form. What form is the question.',
+        skillCheck: { skill: 'lore', dc: 9, successAppend: 'The boundary coordinates on the marker locate you precisely — you\'re approximately two miles from the coast road, which by now is either impassable, reclaimed by vegetation, or both. If any pre-Collapse coastal infrastructure survived — roads, structures, habitation — it would be off every post-Collapse map because no one has come this far to check. No faction has territory this far west. The coast is genuinely unknown.' },
+      },
+      {
+        keywords: ['trees', 'thin', 'open', 'light', 'edge'],
+        description: 'The transition from old growth to coastal scrub happens over about three hundred yards — a gradient, not a line. The trees get younger as you move west: the old growth runs out of whatever condition it needs and gives way to smaller, more recent growth. Second-growth, maybe, or post-fire regrowth from before the Collapse. The undergrowth is denser here, low shrubs you don\'t recognize from the alpine zone. New plants for a new elevation. The ecosystem is doing what it does.',
+      },
+      {
+        keywords: ['beyond', 'coast', 'west', 'unknown', 'question'],
+        description: 'The question that brings lore-seekers to the Pine Sea: what\'s past the forest? The hermit has been to the forest edge and back. They didn\'t say what they saw there. The survey document ends at the administrative boundary. Your own knowledge ends here, at the tree line, with the salt in the air and the light in the west. Every faction has a story about the coast — the Drifters say there are boats, the Kindling say there\'s a signal station, the Reclaimers say there\'s infrastructure worth salvaging. The stories contradict each other. None of them come from someone who\'s actually been.',
+        skillCheck: { skill: 'lore', dc: 11, successAppend: 'There is one consistent thread in all the coastal stories: the people who went looking didn\'t come back in a way that ended the question. They came back changed, or they sent word back, or they simply dropped out of the Drifter networks — not dead, just gone west. Seven years of the Collapse rearranges where people want to be. The coast may simply be where some people went when they decided that everything east of it was something they were done with.' },
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.10,
+      timeModifier: { day: 0.6, night: 1.4, dawn: 0.8, dusk: 1.1 },
+      threatPool: [
+        { type: 'shuffler', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'screamer', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.5, awarePassive: 0.35, awareAggressive: 0.15 },
+    },
+    itemSpawns: [
+      {
+        entityId: 'lore_precollapse_survey',
+        spawnChance: 0.80,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.6, max: 0.95 },
+        groundDescription: 'A document in a waterproof map case is pinned to a large pine with a rusted nail.',
+        depletion: { cooldownMinutes: { min: 720, max: 1440 }, respawnChance: 0.0 },
+      },
+    ],
+    environmentalRolls: {
+      ambientSoundPool: {
+        day: [
+          { sound: 'The wind from the west carries the salt smell in pulses — present, then absent, then present again.', weight: 3 },
+          { sound: 'A gull, somewhere west, calling once. Then nothing.', weight: 2 },
+          { sound: null, weight: 2 },
+        ],
+        night: [
+          { sound: 'The sea sound is clearer at night. You can hear it if you listen. You listen.', weight: 3 },
+          { sound: null, weight: 2 },
+        ],
+        dawn: [
+          { sound: 'The onshore breeze at dawn is the strongest wind you\'ve felt since the mountains. It smells like the world is larger than you\'ve been living in.', weight: 4 },
+          { sound: null, weight: 1 },
+        ],
+      },
+      ambientCount: { min: 1, max: 2, distribution: 'flat' },
+      flavorLines: [
+        { line: 'The salt smell is stronger now. The coast is close enough to pull at you.', chance: 0.30, time: null },
+        { line: 'You think about the Drifter stories. You think about the people who went west and didn\'t come back east.', chance: 0.20, time: null },
+      ],
+    },
+    narrativeNotes: 'The liminal edge room — the literal boundary of the known world. The west exit to coast_01_sea_cliff is Cycle 4 and skill-gated to control pacing into the next zone. The lore items and extras plant seeds for coastal zone content. The tone is wonder tinged with vertigo: this is as far as anyone has been, and what\'s past it is genuinely open.',
   },
 ]

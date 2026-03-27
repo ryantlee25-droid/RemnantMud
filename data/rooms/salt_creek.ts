@@ -24,6 +24,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     exits: {
       east: 'rr_12_covenant_outskirts',
       west: 'sc_02_kill_zone',
+      south: 'sc_15_creek_ford',
     },
     richExits: {},
     items: [],
@@ -271,6 +272,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     exits: {
       south: 'sc_04_the_yard',
       east: 'sc_07_warlords_command',
+      west: 'sc_20_mess_hall',
     },
     richExits: {},
     items: [],
@@ -459,6 +461,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     shortDescription: 'The best weapons in the Four Corners, maintained to military standard by someone who considers it a moral obligation.',
     exits: {
       south: 'sc_09_the_pit',
+      east: 'sc_16_armory_annex',
     },
     richExits: {
       south: {
@@ -581,6 +584,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     shortDescription: 'Four containers stacked to a platform with a view south to The Dust and the faint shine of the Animas.',
     exits: {
       down: 'sc_07_warlords_command',
+      north: 'sc_18_lookout_bluff',
     },
     richExits: {},
     items: [],
@@ -643,6 +647,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     shortDescription: 'Two trucks, one mechanic, a deadline from Briggs, and the smell of diesel that means someone is keeping something running.',
     exits: {
       east: 'sc_04_the_yard',
+      west: 'sc_19_mechanics_workshop',
     },
     richExits: {},
     items: [],
@@ -706,6 +711,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     shortDescription: 'Three cells, two prisoners, one unhappy guard, and a moral question Briggs has handed to someone else to resolve.',
     exits: {
       north: 'sc_09_the_pit',
+      west: 'sc_17_the_brig',
     },
     richExits: {},
     items: [],
@@ -839,6 +845,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     shortDescription: 'The south wall — facing The Dust, showing its maintenance gaps, and with more engagement incidents than anywhere else.',
     exits: {
       north: 'sc_04_the_yard',
+      east: 'sc_15_creek_ford',
     },
     richExits: {},
     items: [],
@@ -895,6 +902,419 @@ export const SALT_CREEK_ROOMS: Room[] = [
         conditionRoll: { min: 0.7, max: 1.0 },
         groundDescription: 'A loose cluster of shotgun shells sits by the firing port — left by the last shift.',
         depletion: { cooldownMinutes: { min: 60, max: 180 }, respawnChance: 0.35 },
+      },
+    ],
+  },
+
+  // ----------------------------------------------------------
+  // SC-15: Creek Ford
+  // ----------------------------------------------------------
+  {
+    id: 'sc_15_creek_ford',
+    name: 'Salt Creek — Creek Ford',
+    zone: 'salt_creek',
+    act: 1,
+    difficulty: 2,
+    visited: false,
+    flags: { waterSource: true },
+    description: 'The creek here is shallow enough to cross on foot — ankle-deep in dry season, thigh-deep and treacherous in rain, when the current comes off the mesa with an urgency that has claimed vehicles and unprepared people both. The ford is marked with painted stakes on each bank. The Salters charge a toll at this crossing: two pennies per person, five per cart, more if they think they can get it. A patrol walks the bank in a slow circuit, watching both the crossing and the high ground east, where the road from the river meets the creek. The stones on the ford floor are slick and unevenly spaced. Even a confident crossing requires attention. An inattentive crossing is a story someone tells about you afterward.',
+    descriptionNight: 'The ford at night is sound first — the creek moving over stone in the dark, the particular quality of water-noise that carries. The patrol works the bank with a red-filtered lantern, dim enough not to ruin night vision, bright enough to see the toll ledger. The current sounds louder than it is. You notice this and then you are not sure it is true.',
+    shortDescription: 'A shallow creek crossing with marked stakes, a Salter toll post, and a patrol walking the bank.',
+    exits: {
+      north: 'sc_01_outer_perimeter',
+      west: 'sc_14_south_wall',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.12,
+      timeModifier: { day: 0.4, dusk: 1.5, night: 2.5, dawn: 0.8 },
+      threatPool: [
+        { type: 'shuffler', weight: 60, quantity: { min: 1, max: 3, distribution: 'bell' } },
+        { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'sanguine_feral', weight: 15, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.4, awarePassive: 0.3, awareAggressive: 0.3 },
+      noiseModifier: 1.5,
+    },
+    extras: [
+      {
+        keywords: ['ford', 'crossing', 'creek', 'stakes', 'water'],
+        description: 'The ford stakes are painted alternating red and white, spaced roughly a meter apart in two lines — follow between them and you hit the shallowest path. Go outside the stakes in rain season and the ledge drops to three feet in two steps. Briggs had the stakes installed after a supply cart was lost in the second spring. The loss was the cart, two crates of ammunition, and the driver\'s confidence in this particular creek.',
+      },
+      {
+        keywords: ['toll', 'pennies', 'payment', 'ledger'],
+        description: 'The toll ledger is kept in an oilskin wrap at the patrol post — every crossing logged with date, direction, party size, what they paid, and a one-word description of disposition. The categories: COOPERATIVE, RELUCTANT, ARGUED, WAIVED. The WAIVED entries are rare and in a different color ink, which means someone above the patrol made the call. Most of the WAIVED entries have a small notation: B, which means Briggs.',
+        skillCheck: { skill: 'perception', dc: 10, successAppend: 'Three WAIVED entries in the last two weeks, all for parties traveling south without cargo. B notation on all three. Briggs is moving people through without logging what they\'re doing.' },
+      },
+      {
+        keywords: ['current', 'rain', 'flood', 'treacherous'],
+        description: 'The high-water mark is visible on the east bank stake: two feet above the current level, stained dark by sediment. At that level, the current is strong enough to take a person off their feet. The mark has been painted over once, higher, and the original mark is still faintly visible beneath the new paint. The creek has risen beyond even the adjusted mark at least once.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'salter_perimeter_guard',
+        spawnChance: 0.95,
+        spawnType: 'patrol',
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        activityPool: [
+          { desc: 'A Salter patrol works the bank in a circuit, eyes moving between the ford and the high ground east. They stop when they see you and wait for you to explain yourself.', weight: 4 },
+          { desc: 'The patrol is at the toll post, logging an entry in the crossing ledger. One hand stays near a sidearm while the other writes. They look up without hurry.', weight: 3 },
+        ],
+        dispositionRoll: { friendly: 0.0, neutral: 0.3, wary: 0.5, hostile: 0.2 },
+        dialogueTree: 'sc_ford_toll_patrol',
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'water_container_clean',
+        spawnChance: 0.30,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.7, max: 1.0 },
+        groundDescription: 'A discarded water container, left by a traveler who refilled and moved on.',
+        depletion: { cooldownMinutes: { min: 120, max: 360 }, respawnChance: 0.20 },
+      },
+    ],
+  },
+
+  // ----------------------------------------------------------
+  // SC-16: Armory Annex
+  // ----------------------------------------------------------
+  {
+    id: 'sc_16_armory_annex',
+    name: 'Salt Creek — Armory Annex',
+    zone: 'salt_creek',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { noCombat: true },
+    description: 'The armory annex is a secondary storage container attached to the main armory by a welded passage — smaller, older, and considerably less organized. This is where the weapons that didn\'t make the quality cut live, alongside the repair tools, the parts bins, and a locked cage in the back corner where the Salters keep confiscated weapons from travelers who tried to bring them through the toll without declaring or who couldn\'t pay the crossing and had their gear taken as settlement. The cage has a padlock that has seen better decades. A handwritten inventory on the door lists everything inside, with the date seized and a column labeled DISPOSITION that is mostly blank. Someone is supposed to decide what to do with these weapons. That someone has not decided.',
+    descriptionNight: 'The annex at night is unlit. If you\'re in here after dark, you found your own way in, and you should know that Reyes does a nightly count on the cage padlock and can tell by the scratches if someone has had tools near it.',
+    shortDescription: 'Secondary weapons storage — older gear, repair tools, and a padlocked cage of confiscated arms from travelers who didn\'t pay.',
+    exits: {
+      west: 'sc_08_armory',
+    },
+    richExits: {
+      west: {
+        destination: 'sc_08_armory',
+        reputationGate: { faction: 'salters', minLevel: 2 },
+        descriptionVerbose: 'the armory annex — Trusted Salter standing required',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['cage', 'confiscated', 'locked', 'padlock', 'inventory'],
+        description: 'The cage inventory: one hunting rifle, barrel cracked, seized from a Drifter party three weeks ago. Two sidearms, different calibers, seized from a traveler who crossed without declaring — the notation says TRIED TO BLUFF REYES, which is annotated with a single word: AMUSING. A machete, good condition. A pre-Collapse military knife in a belt sheath, no name on the blade but a serial number Reyes has partially decoded. She thinks it\'s Navy. The DISPOSITION column says: UNKNOWN — AWAIT COMMAND DECISION.',
+        skillCheck: { skill: 'lockpicking', dc: 13, successAppend: 'The padlock is old but not hopeless. It would take time and quiet. Both of those things are in shorter supply than the skill.' },
+      },
+      {
+        keywords: ['repair tools', 'tools', 'parts', 'bins'],
+        description: 'The repair station is a folding table loaded with gunsmithing tools — punches, drifts, a barrel vice, several types of files. The parts bins are sorted by caliber and type, the labels hand-written in the same precise print as everything in the main armory. Someone has been working here recently: a disassembled bolt-action on the table, parts laid out in order, a cloth underneath to catch springs.',
+        skillCheck: { skill: 'marksmanship', dc: 9, successAppend: 'The work on the disassembled rifle is good — careful, unhurried. The parts are in proper disassembly order. Whoever is working on this knows what they\'re doing.' },
+      },
+      {
+        keywords: ['older', 'worn', 'second tier', 'reject'],
+        description: 'The weapons rack in the annex tells a history of what the Salters started with before the main armory matured: bolt-actions of uncertain provenance, a lever-action with a repaired stock, a shotgun with a barrel that someone has shortened without sufficient attention to why barrels are the length they are. Not bad weapons. Not weapons you\'d pick if you had the armory next door to choose from instead.',
+      },
+    ],
+    npcSpawns: [],
+    itemSpawns: [
+      {
+        entityId: 'salvaged_firearm_part',
+        spawnChance: 0.45,
+        quantity: { min: 1, max: 3, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.3, max: 0.7 },
+        groundDescription: 'A small parts bin near the repair table contains loose firearm components.',
+        depletion: { cooldownMinutes: { min: 240, max: 720 }, respawnChance: 0.25 },
+      },
+    ],
+  },
+
+  // ----------------------------------------------------------
+  // SC-17: The Brig (Holding Block)
+  // ----------------------------------------------------------
+  {
+    id: 'sc_17_the_brig',
+    name: 'Salt Creek — The Brig',
+    zone: 'salt_creek',
+    act: 1,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: true },
+    description: 'The detention block is the part of the brig the Salters don\'t advertise — a second container run off the main cell block, used when the primary cells are occupied or when Briggs wants someone held without it going in the formal log. The container has been fitted with a single heavy bar across the exterior latch and ventilation cuts in the roof panels, the minimum specification for keeping someone alive in the high desert heat. The floor is bare metal. There\'s a bucket. The lighting is a strip of wire with a single bulb on a pull cord. This room does not answer to the Accord\'s detention standards. The Salters are aware of this. They consider it a feature, not a gap.',
+    descriptionNight: 'At night, the holding block has a particular quality — the sounds of the compound reduced to distant and the occupant\'s own breathing very present. The guard checks the exterior bar every two hours. The interval is regular enough to count by.',
+    shortDescription: 'An unofficial holding container with a bar latch, a bucket, and no connection to the Accord\'s justice system.',
+    exits: {
+      east: 'sc_12_the_brig',
+    },
+    richExits: {},
+    items: [],
+    enemies: ['sanguine_feral'],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.04,
+      timeModifier: { day: 0.5, dusk: 1.5, night: 2.0, dawn: 1.0 },
+      threatPool: [
+        { type: 'remnant', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'sanguine_feral', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.3, awarePassive: 0.4, awareAggressive: 0.3 },
+    },
+    extras: [
+      {
+        keywords: ['bar', 'latch', 'door', 'exterior'],
+        description: 'The exterior bar is a length of rebar set in two welded brackets — not sophisticated, not escapable without tools or someone on the other side. The brackets are welded with more care than anything else in the room. Briggs had someone do that specifically.',
+        skillCheck: { skill: 'lockpicking', dc: 15, successAppend: 'From inside, there\'s no play in the bar. From outside, you could lift it in two seconds. The security design assumes the threat is inside wanting out, not outside wanting in.' },
+      },
+      {
+        keywords: ['bucket', 'floor', 'metal', 'bare', 'conditions'],
+        description: 'The floor of the container holds the heat of the day well into the night and loses it quickly before dawn — you\'d be cold in the early hours and baking by midday. The bucket has been used and emptied recently enough that the smell is present. On the wall, at approximately sitting height, someone has scratched marks: tallies, thirty-seven of them. You do not know how long thirty-seven means.',
+      },
+      {
+        keywords: ['tallies', 'scratches', 'wall', 'marks'],
+        description: 'Thirty-seven tally marks in four groups of nine and one of one. Below them, barely legible, two words scratched with what must have been a sharp edge worked at patiently: STILL HERE. You cannot tell if it was a declaration of survival or a lament.',
+        questGate: 'sc_brig_moral_choice',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'shed_guard',
+        spawnChance: 0.70,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'The guard sits on an overturned crate outside the holding container, a rifle across his knees, expression suggesting this post was not what he trained for.', weight: 3 },
+          { desc: 'The guard checks the exterior bar, grips it, tests it, logs the check in a small notebook, and returns to his crate. He has done this twenty times today. He will do it again.', weight: 3 },
+        ],
+        dispositionRoll: { friendly: 0.1, neutral: 0.5, wary: 0.3, hostile: 0.1 },
+        dialogueTree: 'sc_brig_exterior_guard',
+      },
+    ],
+    itemSpawns: [],
+  },
+
+  // ----------------------------------------------------------
+  // SC-18: Lookout Bluff
+  // ----------------------------------------------------------
+  {
+    id: 'sc_18_lookout_bluff',
+    name: 'Salt Creek — Lookout Bluff',
+    zone: 'salt_creek',
+    act: 1,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: false },
+    description: 'The bluff rises sharply north of the compound — a natural sandstone shelf that adds twelve meters of elevation in fifty of horizontal distance, and from the top opens a sight line north that covers the river road to the horizon and everything between. The Salters did not build this position, only claimed it: a low stone parapet along the leading edge, a sandbag emplacement at the northeast corner where the road angle is most acute, and a notched log seat that has been there long enough to go silver-gray in the desert sun. The cold here is not seasonal — the bluff catches the wind coming off the mesa year-round, and the wind at this elevation has an edge that the compound below doesn\'t feel. A Salter sniper works this post when Briggs has reason to want extended-range observation. The rest of the time it\'s a watch post with a good view and a very cold seat.',
+    descriptionNight: 'At night, the bluff has the particular dark of being elevated above the light sources below — the compound\'s minimal lanterns a soft glow to the south, the river road a line in the moonlight. The wind makes it impossible to hear anything subtle. Subtle threats would know this.',
+    shortDescription: 'A sandstone bluff north of the compound with long sight lines toward river road and a wind that cuts through everything.',
+    exits: {
+      south: 'sc_10_watchtower',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.08,
+      timeModifier: { day: 0.3, dusk: 1.5, night: 2.8, dawn: 0.8 },
+      threatPool: [
+        { type: 'remnant', weight: 50, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 35, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'sanguine_feral', weight: 15, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.5, awarePassive: 0.3, awareAggressive: 0.2 },
+      noiseModifier: 0.6,
+    },
+    extras: [
+      {
+        keywords: ['sight line', 'north', 'river road', 'view', 'horizon'],
+        description: 'From the parapet\'s northeast corner, the river road is visible as a gray-brown line for perhaps eighteen miles before it bends behind the ridge. At ten miles out, a vehicle would be visible as a dust trail for several minutes before the vehicle itself resolved. At five miles, you\'d have a silhouette. At two, individual figures. This is the geometry of early warning, and someone thought carefully about it when they established this position.',
+        skillCheck: { skill: 'perception', dc: 10, successAppend: 'There\'s movement at approximately seven miles north. Not dust — something intermittent and low, at the road\'s edge. Could be an animal working the verge. Could be a person who knows that the road surface leaves tracks and the grass doesn\'t.' },
+      },
+      {
+        keywords: ['parapet', 'sandbags', 'emplacement', 'nest'],
+        description: 'The sandbag emplacement is old enough that the bags have begun to degrade, leaking sand where the fabric has thinned. The shooting surface is worn smooth in an oval where elbows have rested in the sniper\'s prone position — the worn area tells you something about sight geometry and what this position was designed to cover. It was designed to cover the road junction.',
+        skillCheck: { skill: 'marksmanship', dc: 11, successAppend: 'The emplacement angles put the optimal shooting position covering the junction where the river road meets the creek ford approach. Anyone coming from the north who turns south toward Salt Creek enters this arc at under a thousand meters. Whoever built this understood the route convergence.' },
+      },
+      {
+        keywords: ['wind', 'cold', 'seat', 'log'],
+        description: 'The log seat has been there long enough to have the worn-smooth quality of heavy regular use, but no one stays on it longer than they have to. The wind at this elevation changes direction unpredictably — it comes from the northwest for an hour, then north, then northeast, never settling. The sniper who works this position has noted this in the logbook: WIND UNPREDICTABLE. DO NOT TRUST FIRST READING. GET THREE.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'watchtower_sniper',
+        spawnChance: 0.40,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'A Salter sniper lies prone at the emplacement, scope up, scanning the road north in slow deliberate passes. The wind pulls at a loose edge of their jacket. They don\'t adjust for it.', weight: 3 },
+          { desc: 'The sniper sits on the log seat with a thermos and a spotter\'s scope, watching the northern approach with the patient attention of someone who has internalized that nothing happening is the normal condition.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.0, neutral: 0.5, wary: 0.4, hostile: 0.1 },
+        dialogueTree: 'sc_lookout_bluff_sniper',
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'ammo_762',
+        spawnChance: 0.25,
+        quantity: { min: 2, max: 4, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.8, max: 1.0 },
+        groundDescription: 'A small stack of rounds left by the previous watch, tucked behind the sandbags out of the wind.',
+        depletion: { cooldownMinutes: { min: 120, max: 360 }, respawnChance: 0.20 },
+      },
+    ],
+  },
+
+  // ----------------------------------------------------------
+  // SC-19: Mechanic's Workshop
+  // ----------------------------------------------------------
+  {
+    id: 'sc_19_mechanics_workshop',
+    name: 'Salt Creek — Mechanic\'s Workshop',
+    zone: 'salt_creek',
+    act: 1,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: true, questHub: true },
+    description: 'The workshop is the overflow space for work that can\'t happen in the motor pool bay — detailed fabrication, parts salvage, and the kind of extended mechanical problem that requires spreading components across a large surface and living with the mess for days. A long workbench runs the south wall, covered in projects at various stages of resolution. Against the north wall, a generator that predates the Collapse is being kept alive by what appears to be pure mechanical stubbornness: welded cracks in the housing, a replacement governor made from a different engine\'s parts, a fuel line that has been spliced twice and sealed three times. Cutter calls this generator Brenda. This is not a joke. He has opinions about Brenda\'s reliability, her temperament, and what she needs to keep running, and he will share them. Torque does the detail work that Cutter\'s hands are too decisive for — the precision threading, the tolerance fitting, the repairs that require patience over force.',
+    descriptionNight: 'The workshop at night is Torque\'s domain — Cutter sleeps early when there isn\'t a deadline. Torque works by a headlamp clipped to their collar, making small adjustments to components in a pool of light while the generator makes its characteristic sound: a slight unevenness in the rhythm that Torque describes as a skip and Cutter describes as a personality.',
+    shortDescription: 'Salvage fabrication space, a living work-in-progress generator named Brenda, and two mechanics with strong opinions about machinery.',
+    exits: {
+      east: 'sc_11_motor_pool',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['generator', 'brenda', 'power', 'running'],
+        description: 'Brenda: a pre-Collapse commercial generator, 15kW rated capacity, currently running at about 9kW due to the governor replacement and the fuel supply constraints. The welded cracks in the housing are structural — whoever did them understood load distribution. The governor is the creative part: sourced from a tractor engine, modified to fit, recalibrated by feel because the original specs were on a manual that burned in the first year. She runs. Cutter says she\'ll keep running because she knows he needs her to.',
+        skillCheck: { skill: 'mechanics', dc: 10, successAppend: 'The skip in the generator rhythm is a fuel flow issue — there\'s a partial blockage somewhere in the feed line. It\'s manageable now. In high-load conditions it could cause a stall. Torque knows this. They\'re managing it deliberately while sourcing the right fitting.' },
+      },
+      {
+        keywords: ['workbench', 'projects', 'parts', 'salvage'],
+        description: 'The workbench inventory, left to right: a disassembled pump mechanism, purpose unclear. Four fuel injectors from a diesel engine, three of which are being cleaned and one of which is apparently hopeless. A length of heavy chain with a custom-fabricated hook, designed for vehicle recovery. A box of electrical components that look like they came from several different decades and at least three different applications. Notes in two different handwriting styles — Cutter\'s is large and certain, Torque\'s is small and annotated.',
+      },
+      {
+        keywords: ['torque', 'cutter', 'mechanics', 'team'],
+        description: 'Cutter and Torque have the working dynamic of people who communicate primarily through what they don\'t need to say. Cutter takes apart and diagnoses. Torque reassembles and refines. When one is wrong, the other corrects without commentary. When both are wrong, which Torque says happens twice a year, they argue in a professional register until one of them finds the actual problem. They have been working together for three years. The generator has been running for two and a half of those years.',
+        skillCheck: { skill: 'mechanics', dc: 8, successAppend: 'Torque notices you understood what they\'re working on. "Finally," they say. "Someone who doesn\'t need an explanation of why this matters."' },
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'mechanic_cutter',
+        spawnChance: 0.50,
+        spawnType: 'wanderer',
+        activityPool: [
+          { desc: 'Cutter is at the generator with a wrench and a look of focused concentration, making an adjustment he\'s been planning for twenty minutes and executing in two seconds.', weight: 3 },
+          { desc: 'Cutter is at the workbench sorting through salvaged components, holding each to the light, the keep-or-discard decision made instantly and without visible deliberation.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.2, neutral: 0.5, wary: 0.3, hostile: 0.0 },
+        dialogueTree: 'sc_cutter_workshop',
+        questGiver: ['sc_motor_pool_fuel'],
+      },
+      {
+        npcId: 'mechanic_torque',
+        spawnChance: 0.75,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'Torque is at the workbench with a headlamp and calipers, measuring a component tolerance with the focused precision of someone for whom close enough is a moral failure.', weight: 4 },
+          { desc: 'Torque adjusts a fitting on the generator\'s fuel line with a small wrench, listening to the change in rhythm, adjusting again.', weight: 3 },
+        ],
+        dispositionRoll: { friendly: 0.15, neutral: 0.60, wary: 0.20, hostile: 0.05 },
+        dialogueTree: 'sc_torque_workshop',
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'salvaged_engine_part',
+        spawnChance: 0.50,
+        quantity: { min: 1, max: 3, distribution: 'bell' },
+        conditionRoll: { min: 0.4, max: 0.9 },
+        groundDescription: 'A bin of salvaged mechanical components sits under the workbench, sorted by approximate usefulness.',
+        depletion: { cooldownMinutes: { min: 180, max: 480 }, respawnChance: 0.35 },
+      },
+    ],
+    narrativeNotes: 'Generator Brenda is a narrative asset — keeping her running is a mechanic-class quest hook. If Brenda dies, certain compound functions degrade.',
+  },
+
+  // ----------------------------------------------------------
+  // SC-20: The Mess Hall (Enlisted Common)
+  // ----------------------------------------------------------
+  {
+    id: 'sc_20_mess_hall',
+    name: 'Salt Creek — Enlisted Common',
+    zone: 'salt_creek',
+    act: 1,
+    difficulty: 1,
+    visited: false,
+    flags: { noCombat: true, safeRest: true },
+    description: 'The enlisted common is the room the Salters built for themselves, as opposed to the formal mess hall that Briggs designed for function. Where the mess hall is efficiency and intel, this is the room where the mask comes off — a converted storage bay with mismatched seating pulled from everywhere, a card table that has been in use since month two, a shelf of salvaged entertainment (three novels, a board game with pieces from two different games filling the gaps, a guitar missing one string), and a cork board covered in personal items: photographs, a child\'s drawing, a page torn from a magazine. The conversations here are different from the mess hall. Louder. More personal. More likely to include opinions about Briggs that would be expressed differently if Briggs were listening. He is not currently listening, which is why they\'re being expressed.',
+    descriptionNight: 'The common at night is the active social hour — two shifts worth of off-duty Salters compressed into one room. Card games at the table, at least one argument in progress, someone attempting guitar in the corner with the particular confidence of a person who doesn\'t know how bad they are. The best time to hear something you weren\'t supposed to.',
+    shortDescription: 'The Salters\' unofficial gathering space — where the mask comes off and conversations happen that don\'t happen in the formal mess.',
+    exits: {
+      east: 'sc_05_barracks',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['card table', 'game', 'cards', 'gambling'],
+        description: 'The card table is occupied at most hours with a rotating cast. The current game is a variant of poker using a nonstandard deck — someone added hand-drawn cards to replace what was lost, and the replacements have inside-joke values that require knowing the rules as they\'ve evolved in this room. Strangers are sometimes invited in. The invitation carries hidden information about your standing.',
+        skillCheck: { skill: 'perception', dc: 9, successAppend: 'The table conversation: one of the players mentions a patrol that went south three days ago with four people and came back with three. They say it quietly, and the others shift in their seats. Nobody asks the obvious follow-up. You note the missing name.' },
+      },
+      {
+        keywords: ['cork board', 'photographs', 'personal', 'drawing'],
+        description: 'The cork board is the record of who these people were before they were Salters. A photograph of a family at a beach, the colors faded to almost-sepia. A child\'s drawing of a house and four stick figures, labeled MOM DAD ME JAKE in crayon. A page from a cooking magazine, a recipe for something complicated and impractical, pinned without explanation. One card, blank on the face, written on the back in small letters: I\'m sorry. Nobody has taken it down.',
+      },
+      {
+        keywords: ['guitar', 'music', 'string', 'missing', 'entertainment'],
+        description: 'The guitar is a six-string with five strings, the low E long gone and never replaced. The person playing it has adapted to this limitation with the pragmatism of someone who learned their instrument in a world that no longer has guitar shops. They play around the gap. The resulting sound is not standard and not bad. A few people are listening.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'salter_off_duty',
+        spawnChance: 0.90,
+        spawnType: 'wanderer',
+        quantity: { min: 2, max: 5, distribution: 'bell' },
+        activityPool: [
+          { desc: 'A Salter is at the card table, hand fanned close to their chest, watching the other players with a neutral expression that is doing a lot of work.', weight: 3 },
+          { desc: 'Two Salters are in low conversation in the corner — not secretive, just private, the body language of people who work together and have things to discuss that aren\'t operational.', weight: 3 },
+          { desc: 'A Salter is looking at the cork board with the still attention of someone revisiting something familiar. They don\'t acknowledge you.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.2, neutral: 0.5, wary: 0.2, hostile: 0.1 },
+        dialogueTree: 'sc_enlisted_common_salter',
+      },
+      {
+        npcId: 'salter_mess_cook',
+        spawnChance: 0.30,
+        spawnType: 'wanderer',
+        activityPool: [
+          { desc: 'The mess cook is off-shift, sitting with a bowl of something they made and eating it with the satisfied focus of someone finally getting to eat their own food rather than serve it.', weight: 3 },
+        ],
+        dispositionRoll: { friendly: 0.3, neutral: 0.5, wary: 0.2, hostile: 0.0 },
+        dialogueTree: 'sc_mess_cook_offduty',
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'salted_rations',
+        spawnChance: 0.25,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.7, max: 1.0 },
+        groundDescription: 'A half-eaten meal left at the card table, abandoned when a hand got interesting.',
+        depletion: { cooldownMinutes: { min: 90, max: 240 }, respawnChance: 0.30 },
       },
     ],
   },

@@ -882,7 +882,7 @@ export const CROSSROADS_ROOMS: Room[] = [
     visited: false,
     flags: { safeRest: false, noCombat: true, waterSource: true },
     description:
-      'A hand-pump well sunk into the hardpan, surrounded by a ring of flat stones where people queue with containers. The water is clean — someone tests it weekly, or claims to. A Drifter attendant manages the line and collects the fee: one Penny per liter. No exceptions. A wooden sign reads: CLEAN WATER IS LIFE. THEFT IS DEATH. The line is never long, but it\'s never empty either.',
+      'A hand-pump well sunk into the hardpan, the cast iron handle worn to a dull shine by ten thousand hands. Flat sandstones ring the pump in a rough circle, smoothed by the feet of people who wait here with jugs and bottles and repurposed bleach containers. The water comes up cold and clear and tastes like iron and limestone — the taste of the aquifer a hundred feet below, where the Collapse never reached. A Drifter attendant manages the line and collects the fee: one Penny per liter. No exceptions, no credit, no argument. A wooden sign reads: CLEAN WATER IS LIFE. THEFT IS DEATH. The tally marks beneath it are not reassuring.',
     descriptionNight:
       'The pump stands silent. No one draws water at night. The attendant\'s stool is empty. The sign is a pale rectangle in the dark.',
     shortDescription:
@@ -1111,7 +1111,7 @@ export const CROSSROADS_ROOMS: Room[] = [
     visited: false,
     flags: { safeRest: false, noCombat: true },
     description:
-      'A corrugated metal shed behind the market, padlocked and windowless. This is where the Drifter council stores Crossroads\' emergency supplies — the reserve that keeps the market running when caravans are late or the weather turns. An arbiter is always within eyeline. The shed itself is unremarkable, but what it represents is everything. This is the last safety net in the Four Corners.',
+      'A corrugated metal shed behind the market, the kind that held lawn mowers in another life. The padlock on the door is military surplus, heavy enough to use as a weapon. No windows. The metal walls are dented from the outside — someone tried to get in once, and the pry-bar marks are still visible, along with what might be a bloodstain at the base of the door. This is where the Drifter council stores Crossroads\' emergency supplies: the seed corn, the last antibiotics, the reserve ammunition that keeps the arbiters armed. An arbiter is always within eyeline, sitting with the specific patience of someone who has been given permission to kill. The shed is the most unremarkable building in the Four Corners and the most important.',
     descriptionNight:
       'The shed is a dark metal box reflecting lantern light. The padlock gleams. An arbiter sits on a crate nearby, rifle across her lap.',
     shortDescription:

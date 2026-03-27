@@ -513,6 +513,10 @@ export const THE_SCAR_ROOMS: Room[] = [
     visited: false,
     flags: { dark: false },
     cycleGate: 3,
+    personalLossEchoes: {
+      identity: 'You watch the Sanguine pace their enclosure and the recognition is physical. Something made them into what they are, and they have spent years trying to understand what is left of what they were. You know this feeling. You live inside it.',
+      community: 'One person, alone, in a space designed to contain them. You think of the people you lost and the walls that used to hold you all together. The vivarium is just a room with no one else in it. You know what that is.',
+    },
     description: 'One-way glass, twelve feet wide, looking into an enclosure. The observation corridor is standard — the observation lab design language of the mid-century, clinical and cold. The enclosure itself: large, perhaps a hundred by hundred feet, climate controlled, with features that suggest it was designed for extended habitation rather than short-term observation. And inside: a Sanguine, moving slowly through the space with a rhythm that has worn paths in the floor. Claw marks on the inside of the glass, very old, from a period before they stopped trying to leave. They\'ve been here since MERIDIAN was built. The experiment never ended. They\'re still in it.',
     descriptionNight: 'The Sanguine in the enclosure moves at night with more energy — the photosensitivity concern doesn\'t apply here, no UV light reaches Level 2. At night they\'re watching the glass more directly. They may be able to see you through it.',
     shortDescription: 'The Vivarium. One-way glass. Sanguine test subject. Claw marks.',
@@ -689,24 +693,53 @@ export const THE_SCAR_ROOMS: Room[] = [
     npcs: [],
     extras: [
       {
-        keywords: ['cure', 'terminal', 'heal', 'reverse'],
+        keywords: ['cure', 'terminal a', 'heal', 'reverse'],
         description: 'THE CURE: Deploy R-1 in modified form to reverse CHARON-7 infection in Hollow hosts. Restore human cognition. Eliminate the Hollow threat. Side effect: the same modification eliminates the Sanguine enhancement. The Sanguine don\'t consent. They can\'t be asked in time. The cure works on everyone it touches. It doesn\'t ask what they want to be.',
+        skillCheck: {
+          skill: 'lore',
+          dc: 4,
+          successAppend: 'You press your hand to the terminal and the screen accepts the input. The facility hums — a deep, subsonic vibration you feel in your teeth and your spine. Somewhere below you, the synthesis chambers are waking. R-1 modified begins its slow assembly, molecule by molecule, building the thing that will undo what CHARON-7 made. The Hollow will return to themselves and find seven years missing. The Sanguine will lose everything the virus gave them and keep everything it cost. Nobody asked them. You decided for everyone. The terminal displays a single word: DEPLOYED. The hum fades. The world is already different, and doesn\'t know it yet.',
+        },
+        questFlagOnSuccess: [{ flag: 'charon_choice', value: 'cure' }, { flag: 'game_ending', value: true }],
       },
       {
-        keywords: ['weapon', 'terminal', 'kill', 'eliminate'],
+        keywords: ['weapon', 'terminal b', 'kill', 'eliminate'],
         description: 'THE WEAPON: Deploy a targeted pathogen that destroys CHARON-7 in all carriers. Hollow and Sanguine alike. Every infected individual dies within 30 days — cleanly, without suffering, but without choice. Sixty percent of the remaining human population carries some level of CHARON-7 from environmental exposure. The math is merciless.',
+        skillCheck: {
+          skill: 'lore',
+          dc: 4,
+          successAppend: 'You press your hand to the terminal. The screen flares white, then red, then settles into a steady pulse. The weapon is elegant in the way that terrible things are elegant — a targeted pathogen that finds CHARON-7 wherever it hides in living tissue and dismantles the host cell by cell. Painless, the data says. Thirty days, the data says. The Hollow will stop. The Sanguine will stop. The carriers who never showed symptoms will stop. You can hear the ventilation system cycling the pathogen into the facility\'s output ducts, and from there to the wind, and from there to everywhere. The terminal displays: RELEASED. The Accord wins its war. The quiet afterward will last a very long time.',
+        },
+        questFlagOnSuccess: [{ flag: 'charon_choice', value: 'weapon' }, { flag: 'game_ending', value: true }],
       },
       {
-        keywords: ['seal', 'terminal', 'destroy', 'close'],
+        keywords: ['seal', 'terminal c', 'destroy', 'close'],
         description: 'THE SEAL: Trigger MERIDIAN\'s built-in self-destruct. The data, the samples, the facility, and everything in it becomes rubble. No cure. No weapon. No future research. The world stays exactly as broken as it is, and must find its own way from here. The broadcaster called this option "the wisest and the quietest." They didn\'t say which one they recommend.',
+        skillCheck: {
+          skill: 'lore',
+          dc: 4,
+          successAppend: 'You press your hand to the terminal and feel the building shudder. Not violently — gently, like something settling into a decision it made a long time ago. The self-destruct is a controlled demolition: shaped charges in the walls, thermite in the server rooms, a cascade that will turn seven years of research into calcium powder and slag. You have four minutes to reach the exit. The broadcaster, somewhere behind you in the facility, does not move. The terminal displays: SEALED. You chose to leave the world its own problem. Some doors should stay closed, and you closed this one.',
+        },
+        questFlagOnSuccess: [{ flag: 'charon_choice', value: 'seal' }, { flag: 'game_ending', value: true }],
       },
       {
-        keywords: ['throne', 'terminal', 'control', 'power'],
+        keywords: ['throne', 'terminal d', 'control', 'power'],
         description: 'THE THRONE: Secure MERIDIAN. Take control of the data and the samples. Become the gatekeeper of what happens to CHARON-7 and everything it makes. Every faction serves or fights you. The information you hold gives you leverage that no one person should have. You will have it anyway. The loneliness of the Throne terminal has a different texture than the loneliness of the others.',
+        skillCheck: {
+          skill: 'lore',
+          dc: 4,
+          successAppend: 'You press your hand to the terminal and the facility recognizes you. Access codes cascade across the screen — server rooms, synthesis chambers, communication arrays, the full architecture of MERIDIAN laid bare and yours. The broadcaster watches from the doorway and says nothing. They knew someone would choose this. The facility locks itself around you like a fist closing. The data is yours. The formula is yours. The factions will learn what you hold, and they will come — to bargain, to beg, to fight. You are the gatekeeper now. The terminal displays: SECURED. The loneliest seat in the world, and you sat down in it.',
+        },
+        questFlagOnSuccess: [{ flag: 'charon_choice', value: 'throne' }, { flag: 'game_ending', value: true }],
       },
       {
-        keywords: ['weight', 'choice', 'decide', 'understand'],
+        keywords: ['weight', 'decide', 'understand'],
         description: 'You stand at the center of the four terminals and hold three cycles of learning in your hands. The factions. The people. The Sanguine who have been alive longer than this country. The Hollow who were people and aren\'t and might be again. The survivors who built something from nothing and are building still. Everything you know is in this room with you. The game is not going to tell you which terminal to choose. It is not going to tell you that any of them are right. It is going to let you choose, and live with it.',
+      },
+      {
+        keywords: ['result', 'after', 'done', 'chosen'],
+        description: 'You look at the terminals. If you have already made your choice, the room knows. If you haven\'t, it waits.',
+        questGate: 'charon_choice',
       },
     ],
     narrativeNotes: 'The most important room in the game. No combat. No enemies. Four terminals, each clearly described. The fifth extra (the weight of knowing) is the room\'s thesis. The game does not ask "are you sure?" after a terminal is activated. The choice is permanent.',
@@ -747,7 +780,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
       {
         keywords: ['matters', 'left', 'final'],
-        description: 'What\'s left is what matters.',
+        description: 'You came here because a radio signal asked you to. You crossed the Four Corners, learned its factions and its griefs, died and came back, and walked into the place where the world broke. You made a choice in the dark, and now you are standing in the light with that choice behind you. The world will not thank you for it. The world will not know, for a while, what you did. But you know. And the knowing is enough, because what\'s left is what matters.',
       },
     ],
     environmentalRolls: {

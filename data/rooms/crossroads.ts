@@ -596,8 +596,12 @@ export const CROSSROADS_ROOMS: Room[] = [
     difficulty: 1,
     visited: false,
     flags: { safeRest: true, campfireAllowed: true },
+    personalLossEchoes: {
+      promise: 'The firelight catches a face across the camp and for a half-second you see someone you made a promise to. Then they turn and they are nobody you know.',
+      community: 'People sitting around a fire, sharing food, telling stories. You had this once. The shape of it is so familiar it makes your chest tight.',
+    },
     description:
-      'West of the market, a flat clearing serves as camp for travelers who can\'t afford indoor stays. Fire rings made from stacked stones dot the ground, most cold, a few smoldering. Bedrolls and lean-tos scatter without pattern. The view west is open desert and sky — a reminder of how big the empty world is.',
+      'West of the market, a flat clearing of packed red earth serves as camp for travelers who can\'t afford indoor stays or don\'t trust walls. Fire rings made from stacked sandstone dot the ground in clusters — most cold, a few still smoldering, one putting out a thin column of juniper smoke that smells like the old world\'s idea of a candle. Bedrolls and lean-tos scatter without pattern, personal kingdoms of three square feet defended by proximity and custom. The view west is open desert and sky, the mesa line going purple in the distance, and above it the kind of sunset that makes you understand why people painted cave walls.',
     descriptionNight:
       'Three fires burn in the campground. Around the largest, a group shares a bottle and stories in low voices. Around the second, a solitary figure sharpens a blade. The third fire is untended but recent — whoever lit it is nearby, in the dark, watching.',
     shortDescription:
@@ -663,6 +667,10 @@ export const CROSSROADS_ROOMS: Room[] = [
     difficulty: 1,
     visited: false,
     flags: { safeRest: true, campfireAllowed: true },
+    personalLossEchoes: {
+      child: 'The view is the kind of thing you would have pointed out to them. Look how far you can see. They would have loved this. You stand here alone with that thought and let it pass.',
+      partner: 'You reach for a hand that isn\'t there. The gesture is automatic — you always reached for them at high places. The wind fills the space where they would have been standing.',
+    },
     description:
       'A rocky rise twenty feet above the campground, flat on top, with a view that justifies the climb. From here you can see the full layout of Crossroads — the tire wall, the market canopy, the campfire dots — and beyond it, the skeleton of the old world stretching in every direction. To the north, the blue-gray wall of the San Juan Mountains where Covenant and harder places wait. The wind is stronger up here. It smells like sage and distance.',
     descriptionNight:
@@ -968,6 +976,10 @@ export const CROSSROADS_ROOMS: Room[] = [
     difficulty: 1,
     visited: false,
     flags: { safeRest: true, campfireAllowed: true },
+    personalLossEchoes: {
+      child: 'The woman teaching the teenager to clean a rifle. The patience in her hands. You remember teaching someone small how to do something difficult, and the memory arrives without warning and stays longer than you want it to.',
+      community: 'It\'s almost a neighborhood, these lean-tos and fire rings and card games. You recognize the architecture of people deciding to stay. You had one of these once, and it looked different and felt exactly the same.',
+    },
     description:
       'The south end of the campground is where the long-timers set up — people who\'ve been \'passing through\' for weeks or months. The lean-tos here are more permanent, with walls of scavenged plywood and roofs of layered tarps. A woman is teaching a teenager to clean a rifle. Two old men play a card game with a deck held together by tape. It\'s almost a neighborhood.',
     descriptionNight:
@@ -1029,6 +1041,10 @@ export const CROSSROADS_ROOMS: Room[] = [
     difficulty: 1,
     visited: false,
     flags: { safeRest: false },
+    personalLossEchoes: {
+      partner: 'Three crosses with no names. You wonder if there is a cross like this somewhere with their name on it, or no cross at all, which is worse.',
+      promise: 'The three unmarked graves pull at something in you. A promise is a debt to the living. You wonder if the dead under these crosses had debts like yours, and whether dying canceled them.',
+    },
     description:
       'The south edge of Crossroads, where the tire wall meets open scrubland. A gap in the wall serves as a secondary exit — no gate, no arbiter, just a gap wide enough for one person. The locals call it the Back Door. It faces Highway 550 south. Beyond it, the road drops into a valley and the first red-rock formations of The Breaks are visible on the horizon. Three wooden crosses stand in the hardpan outside the wall. No names.',
     descriptionNight:

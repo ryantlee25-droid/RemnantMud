@@ -15,6 +15,8 @@ import type {
   StatBlock,
   TimeOfDay,
   QuantityConfig,
+  FactionType,
+  CharacterClass,
 } from '@/types/game'
 import { CLASS_DEFINITIONS } from '@/types/game'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
@@ -25,8 +27,8 @@ import { quantityRoll, computePressure, pressureModifier } from '@/lib/spawn'
 import type { EngineCore } from '@/lib/actions/types'
 import { handleMove, handleLook, exitsLine, npcsLine, enemiesLine } from '@/lib/actions/movement'
 import { handleAttack, handleFlee } from '@/lib/actions/combat'
-import { handleTake, handleDrop, handleEquip, handleUnequip, handleUse, handleStash, handleUnstash, handleStashList } from '@/lib/actions/items'
-import { handleTalk, handleSearch } from '@/lib/actions/social'
+import { handleTake, handleDrop, handleEquip, handleUnequip, handleUse, handleStash, handleUnstash, handleStashList, handleRead, handleJournal } from '@/lib/actions/items'
+import { handleTalk, handleSearch, handleRep, handleQuests } from '@/lib/actions/social'
 import { handleStats, handleInventory, handleHelp } from '@/lib/actions/system'
 import { handleExamineExtra } from '@/lib/actions/examine'
 
@@ -55,6 +57,11 @@ function combatMsg(text: string): GameMessage {
 function computeTimeOfDay(actionsTaken: number): TimeOfDay {
   const TIMES: TimeOfDay[] = ['dawn', 'day', 'dusk', 'night']
   return TIMES[Math.floor(actionsTaken / 20) % 4]!
+}
+
+/** Public accessor for time-of-day — used by action handlers. */
+export function getTimeOfDay(actionsTaken: number): TimeOfDay {
+  return computeTimeOfDay(actionsTaken)
 }
 
 // ------------------------------------------------------------
@@ -178,6 +185,19 @@ export class GameEngine implements EngineCore {
   // Save player position + HP to Supabase
   // ----------------------------------------------------------
 
+  /** Pick the time-appropriate room description. */
+  private _getRoomDescriptionForTime(room: Room, actionsTaken: number): string {
+    const tod = computeTimeOfDay(actionsTaken)
+    if (tod === 'night' && room.descriptionNight) return room.descriptionNight
+    if (tod === 'dawn' && room.descriptionDawn) return room.descriptionDawn
+    if (tod === 'dusk' && room.descriptionDusk) return room.descriptionDusk
+    return room.description
+  }
+
+  // ----------------------------------------------------------
+  // Save player position + HP to Supabase
+  // ----------------------------------------------------------
+
   async _savePlayer(): Promise<void> {
     const { player } = this.state
     if (!player) return
@@ -279,6 +299,8 @@ export class GameEngine implements EngineCore {
       cycle: 1,
       total_deaths: 0,
       is_dead: false,
+      faction_reputation: {},
+      quest_flags: {},
     }
 
     const { error } = await supabase.from('players').insert(playerRow)
@@ -315,11 +337,23 @@ export class GameEngine implements EngineCore {
       cycle: 1,
       totalDeaths: 0,
       isDead: false,
+      factionReputation: {},
+      questFlags: {},
     }
 
     const rawStartRoom = await getRoom(startRoomId, user.id)
     if (!rawStartRoom) throw new Error('Start room not found after world generation')
     const startRoom = this._applyPopulation(rawStartRoom)
+
+    const classFlavorLines: Record<CharacterClass, string> = {
+      enforcer: "Your hands remember what to do. They've always been better at this than your head.",
+      scout: "First thing: check the exits. Second thing: check them again.",
+      wraith: "Nobody saw you come in. That's exactly how you like it.",
+      shepherd: "You note the wounded first. Then the dying. Then everybody else.",
+      reclaimer: "Something in here is still useful. It's always something.",
+      warden: "The terrain reads like a sentence. You already know the last word.",
+      broker: "Everyone here wants something. The question is who's most honest about it.",
+    }
 
     this._setState({
       player,
@@ -332,7 +366,8 @@ export class GameEngine implements EngineCore {
       stash: [],
       log: [
         systemMsg('Character created. The world stirs.'),
-        msg(startRoom.description),
+        msg(this._getRoomDescriptionForTime(startRoom, 0)),
+        msg(classFlavorLines[characterClass]),
         msg(exitsLine(startRoom)),
         ...npcsLine(startRoom) ? [msg(npcsLine(startRoom))] : [],
       ],
@@ -389,6 +424,8 @@ export class GameEngine implements EngineCore {
       cycle: number | null
       total_deaths: number | null
       is_dead: boolean | null
+      faction_reputation: Partial<Record<FactionType, number>> | null
+      quest_flags: Record<string, boolean | number> | null
     }
 
     const player: Player = {
@@ -414,6 +451,8 @@ export class GameEngine implements EngineCore {
       cycle: row.cycle ?? 1,
       totalDeaths: row.total_deaths ?? 0,
       isDead: row.is_dead ?? false,
+      factionReputation: (row.faction_reputation as Partial<Record<FactionType, number>>) ?? {},
+      questFlags: (row.quest_flags as Record<string, boolean | number>) ?? {},
     }
 
     const [rawCurrentRoom, inventory] = await Promise.all([
@@ -461,7 +500,7 @@ export class GameEngine implements EngineCore {
       ledger,
       log: [
         systemMsg(`Welcome back, ${player.name}.`),
-        msg(currentRoom.visited ? currentRoom.shortDescription : currentRoom.description),
+        msg(currentRoom.visited ? currentRoom.shortDescription : this._getRoomDescriptionForTime(currentRoom, player.actionsTaken)),
         msg(exitsLine(currentRoom)),
         ...npcsLine(currentRoom) ? [msg(npcsLine(currentRoom))] : [],
         ...enemiesLine(currentRoom) ? [combatMsg(enemiesLine(currentRoom))] : [],
@@ -642,6 +681,82 @@ export class GameEngine implements EngineCore {
   }
 
   // ----------------------------------------------------------
+  // Faction reputation
+  // ----------------------------------------------------------
+
+  private static readonly REPUTATION_LABELS: Record<number, string> = {
+    [-3]: 'Hunted',
+    [-2]: 'Hostile',
+    [-1]: 'Wary',
+    [0]: 'Unknown',
+    [1]: 'Recognized',
+    [2]: 'Trusted',
+    [3]: 'Blooded',
+  }
+
+  async adjustReputation(faction: FactionType, delta: number): Promise<void> {
+    const { player } = this.state
+    if (!player) return
+
+    const oldRep = (player.factionReputation ?? {})[faction] ?? 0
+    const newRep = Math.max(-3, Math.min(3, oldRep + delta))
+    if (newRep === oldRep) return
+
+    const newFactionRep = { ...(player.factionReputation ?? {}), [faction]: newRep }
+    const updatedPlayer: Player = { ...player, factionReputation: newFactionRep }
+    this._setState({ player: updatedPlayer })
+
+    // Persist
+    const supabase = createSupabaseBrowserClient()
+    await supabase
+      .from('players')
+      .update({ faction_reputation: newFactionRep })
+      .eq('id', player.id)
+
+    // Display name for the faction
+    const FACTION_NAMES: Record<string, string> = {
+      accord: 'the Accord',
+      salters: 'the Salters',
+      drifters: 'the Drifters',
+      kindling: 'the Kindling',
+      reclaimers: 'the Reclaimers',
+      covenant_of_dusk: 'the Covenant of Dusk',
+      red_court: 'the Red Court',
+      ferals: 'the Ferals',
+      lucid: 'the Lucid',
+    }
+    const fName = FACTION_NAMES[faction] ?? faction
+
+    // Check if we crossed a threshold
+    const oldLabel = GameEngine.REPUTATION_LABELS[oldRep] ?? 'Unknown'
+    const newLabel = GameEngine.REPUTATION_LABELS[newRep] ?? 'Unknown'
+    if (oldLabel !== newLabel) {
+      this._appendMessages([msg(`${fName} now know you as ${newLabel}.`)])
+    } else {
+      this._appendMessages([msg(`Your standing with ${fName} shifts.`)])
+    }
+  }
+
+  // ----------------------------------------------------------
+  // Quest flags
+  // ----------------------------------------------------------
+
+  async setQuestFlag(flag: string, value: string | boolean | number): Promise<void> {
+    const { player } = this.state
+    if (!player) return
+
+    const newFlags = { ...(player.questFlags ?? {}), [flag]: value }
+    const updatedPlayer: Player = { ...player, questFlags: newFlags }
+    this._setState({ player: updatedPlayer })
+
+    const supabase = createSupabaseBrowserClient()
+    await supabase
+      .from('players')
+      .update({ quest_flags: newFlags })
+      .eq('id', player.id)
+  }
+
+  // ----------------------------------------------------------
   // Main dispatcher
   // ----------------------------------------------------------
 
@@ -680,6 +795,10 @@ export class GameEngine implements EngineCore {
         break
       case 'use':      await handleUse(this, action.noun)
         break
+      case 'read':     await handleRead(this, action.noun)
+        break
+      case 'journal':  await handleJournal(this)
+        break
       case 'stats':    await handleStats(this)
         break
       case 'inventory': await handleInventory(this)
@@ -696,6 +815,10 @@ export class GameEngine implements EngineCore {
       case 'stash':    if (action.noun === 'list') { await handleStashList(this) } else { await handleStash(this, action.noun) }
         break
       case 'unstash':  await handleUnstash(this, action.noun)
+        break
+      case 'rep':      await handleRep(this)
+        break
+      case 'quests':   await handleQuests(this)
         break
       default:         this._appendMessages([{ id: crypto.randomUUID(), text: `Unknown command. Type "help" for a list of commands.`, type: 'error' }])
     }

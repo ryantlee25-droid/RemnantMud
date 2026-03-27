@@ -144,8 +144,10 @@ export interface RoomExtra {
   description?: string
   descriptionPool?: Array<{ desc: string; weight: number; cycleGate?: number }>
   skillCheck?: { skill: SkillType; dc: number; successAppend: string }
+  questFlagOnSuccess?: { flag: string; value: string | boolean | number } | Array<{ flag: string; value: string | boolean | number }>
   cycleGate?: number
   questGate?: string
+  reputationGrant?: { faction: FactionType; delta: number }
 }
 
 // ------------------------------------------------------------
@@ -460,6 +462,7 @@ export interface Room {
   cycleGate?: number               // minimum cycle to access
   questGate?: string               // quest flag required
   act?: 1 | 2 | 3
+  personalLossEchoes?: Partial<Record<PersonalLossType, string>>
   narrativeNotes?: string          // implementation notes, not player-facing
   population?: PopulatedRoom       // in-memory only, not persisted
 }
@@ -517,7 +520,7 @@ export interface Player {
   // Faction reputations: stored as JSON in DB
   factionReputation?: Partial<Record<FactionType, number>>
   // Quest flags: stored as JSON in DB
-  questFlags?: Record<string, boolean | number>
+  questFlags?: Record<string, string | boolean | number>
 }
 
 // ------------------------------------------------------------
@@ -564,6 +567,12 @@ export interface CombatState {
   playerGoesFirst: boolean
   turn: number
   active: boolean
+  // Hollow type special state
+  bruteCharged?: boolean        // brute has used its charge attack
+  bruteCooldownTurn?: number    // turn when brute last charged (skips next attack)
+  whispererDebuff?: number      // combat roll penalty from whisperer this round
+  additionalEnemies?: Enemy[]   // extra enemies summoned (e.g. by screamer)
+  lastRoomId?: string           // room before combat started (for flee escape)
 }
 
 export interface CombatResult {

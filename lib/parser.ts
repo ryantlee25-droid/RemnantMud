@@ -77,6 +77,11 @@ const SYSTEM_VERBS: Record<string, string> = {
   save: 'save',
   quit: 'quit',
   exit: 'quit',
+  rep: 'rep',
+  reputation: 'rep',
+  standing: 'rep',
+  quest: 'quests',
+  quests: 'quests',
 }
 
 // Multi-word surface forms, checked before single-word splitting.
@@ -144,9 +149,14 @@ export function parseCommand(input: string): Action {
     return { verb: LOOK_VERBS[first]!, noun: undefined, raw }
   }
 
-  // --- Read (alias for use, for lore items) ---
+  // --- Read (dedicated lore verb) ---
   if (first === 'read') {
-    return { verb: 'use', noun: rest || undefined, raw }
+    return { verb: 'read', noun: rest || undefined, raw }
+  }
+
+  // --- Journal / Codex / Notes ---
+  if (first === 'journal' || first === 'codex' || first === 'notes') {
+    return { verb: 'journal', noun: undefined, raw }
   }
 
   // --- Inventory ---

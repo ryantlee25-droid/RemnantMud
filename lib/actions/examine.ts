@@ -4,8 +4,9 @@
 // ============================================================
 
 import type { EngineCore } from '@/lib/actions/types'
-import type { Player } from '@/types/game'
+import type { Player, SkillType } from '@/types/game'
 import { weightedRoll } from '@/lib/spawn'
+import { getClassSkillBonus } from '@/lib/skillBonus'
 
 // ------------------------------------------------------------
 // Local message helpers
@@ -20,7 +21,7 @@ function errorMsg(text: string) {
 }
 
 // ------------------------------------------------------------
-// Map skill to player stat
+// Map skill to player stat + class bonus
 // ------------------------------------------------------------
 
 function getStatForSkill(skill: string, player: Player | null): number | null {
@@ -47,7 +48,9 @@ function getStatForSkill(skill: string, player: Player | null): number | null {
     mesmerize: player.presence,
     vigor: player.vigor,
   }
-  return map[skill] ?? null
+  const base = map[skill] ?? null
+  if (base === null) return null
+  return base + getClassSkillBonus(player.characterClass, skill as SkillType)
 }
 
 // ------------------------------------------------------------
@@ -109,7 +112,27 @@ export async function handleExamineExtra(engine: EngineCore, keyword?: string): 
       const roll = Math.floor(Math.random() * 10) + 1 + playerStat
       if (roll >= dc) {
         engine._appendMessages([msg(successAppend)])
+
+        // Set quest flag(s) on successful skill check if configured
+        if (match.questFlagOnSuccess) {
+          const flags = Array.isArray(match.questFlagOnSuccess) ? match.questFlagOnSuccess : [match.questFlagOnSuccess]
+          for (const { flag, value } of flags) {
+            await engine.setQuestFlag(flag, value)
+          }
+        }
+        // Grant reputation on successful skill check if configured
+        if (match.reputationGrant) {
+          await engine.adjustReputation(match.reputationGrant.faction, match.reputationGrant.delta)
+        }
       }
+    }
+  }
+
+  // Set quest flag(s) on examine if no skill check required
+  if (!match.skillCheck && match.questFlagOnSuccess) {
+    const flags = Array.isArray(match.questFlagOnSuccess) ? match.questFlagOnSuccess : [match.questFlagOnSuccess]
+    for (const { flag, value } of flags) {
+      await engine.setQuestFlag(flag, value)
     }
   }
 }

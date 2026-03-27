@@ -2,16 +2,17 @@
 // lib/actions/movement.ts — handleMove, handleLook, handleExamine
 // ============================================================
 
-import type { GameMessage, Room, Direction, Player } from '@/types/game'
+import type { GameMessage, Room, Direction, Player, SkillType, TimeOfDay } from '@/types/game'
 import type { EngineCore } from './types'
 import { getRoom, canMove, markVisited, getExits } from '@/lib/world'
 import { getItem } from '@/data/items'
 import { getEnemy } from '@/data/enemies'
 import { getNPC } from '@/data/npcs'
+import { getClassSkillBonus } from '@/lib/skillBonus'
+import { getTimeOfDay } from '@/lib/gameEngine'
 
 // ------------------------------------------------------------
-// Map skill to player stat (mirrors examine.ts — kept local to
-// avoid circular imports)
+// Map skill to player stat + class bonus
 // ------------------------------------------------------------
 
 function getStatForSkill(skill: string, player: Player | null): number | null {
@@ -38,7 +39,9 @@ function getStatForSkill(skill: string, player: Player | null): number | null {
     mesmerize: player.presence,
     vigor: player.vigor,
   }
-  return map[skill] ?? null
+  const base = map[skill] ?? null
+  if (base === null) return null
+  return base + getClassSkillBonus(player.characterClass, skill as SkillType)
 }
 
 // ------------------------------------------------------------
@@ -55,6 +58,19 @@ function errorMsg(text: string): GameMessage {
 
 function combatMsg(text: string): GameMessage {
   return { id: crypto.randomUUID(), text, type: 'combat' }
+}
+
+function reputationLabel(level: number): string {
+  const labels: Record<number, string> = {
+    [-3]: 'Hunted',
+    [-2]: 'Hostile',
+    [-1]: 'Wary',
+    [0]: 'Unknown',
+    [1]: 'Recognized',
+    [2]: 'Trusted',
+    [3]: 'Blooded',
+  }
+  return labels[level] ?? 'Unknown'
 }
 
 // ------------------------------------------------------------
@@ -89,6 +105,38 @@ export function enemiesLine(room: Room): string {
     .map((id) => getEnemy(id)?.name ?? id)
     .join(', ')
   return `${names} lurks nearby.`
+}
+
+// ------------------------------------------------------------
+// Time-of-day room description
+// ------------------------------------------------------------
+
+function getRoomDescription(room: Room, timeOfDay: TimeOfDay): string {
+  if (timeOfDay === 'night' && room.descriptionNight) return room.descriptionNight
+  if (timeOfDay === 'dawn' && room.descriptionDawn) return room.descriptionDawn
+  if (timeOfDay === 'dusk' && room.descriptionDusk) return room.descriptionDusk
+  return room.description
+}
+
+// ------------------------------------------------------------
+// Ambient sound helper
+// ------------------------------------------------------------
+
+function rollAmbientSound(room: Room, actionsTaken: number): string | null {
+  const pool = room.environmentalRolls?.ambientSoundPool
+  if (!pool) return null
+  const tod = getTimeOfDay(actionsTaken)
+  const entries = pool[tod] ?? pool.day ?? []
+  if (entries.length === 0) return null
+  // Weighted roll
+  const totalWeight = entries.reduce((s, e) => s + e.weight, 0)
+  if (totalWeight <= 0) return null
+  let r = Math.random() * totalWeight
+  for (const entry of entries) {
+    r -= entry.weight
+    if (r <= 0) return entry.sound
+  }
+  return null
 }
 
 // ------------------------------------------------------------
@@ -137,6 +185,25 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
         return
       }
     }
+    // Reputation gate — check faction standing
+    if (richExit.reputationGate) {
+      const { faction, minLevel } = richExit.reputationGate
+      const rep = (player.factionReputation ?? {})[faction] ?? 0
+      if (rep < minLevel) {
+        const label = reputationLabel(rep)
+        const required = reputationLabel(minLevel)
+        engine._appendMessages([msg(`The ${faction} don't know you well enough. You're ${label} — need to be ${required}.`)])
+        return
+      }
+    }
+    // Quest gate
+    if (richExit.questGate) {
+      const flags = player.questFlags ?? {}
+      if (!flags[richExit.questGate]) {
+        engine._appendMessages([msg(`Something is missing. You're not ready for this path.`)])
+        return
+      }
+    }
     // Locked exit — check if player holds the required key item
     if (richExit.locked) {
       const { inventory } = engine.getState()
@@ -158,9 +225,10 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
   engine._setState({ player: updatedPlayer, currentRoom: nextRoom })
 
   const messages: GameMessage[] = []
+  const tod = getTimeOfDay(player.actionsTaken)
 
   if (!nextRoom.visited) {
-    messages.push(msg(nextRoom.description))
+    messages.push(msg(getRoomDescription(nextRoom, tod)))
     await markVisited(nextRoomId, player.id)
   } else {
     messages.push(msg(nextRoom.shortDescription))
@@ -170,6 +238,16 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
   if (npcsLine(nextRoom)) messages.push(msg(npcsLine(nextRoom)))
   if (enemiesLine(nextRoom)) messages.push(combatMsg(enemiesLine(nextRoom)))
   if (itemsLine(nextRoom)) messages.push(msg(itemsLine(nextRoom)))
+
+  // Personal loss echoes — intrusive thoughts tied to the player's loss
+  const playerLoss = updatedPlayer.personalLossType
+  if (playerLoss && nextRoom.personalLossEchoes?.[playerLoss]) {
+    messages.push(msg(nextRoom.personalLossEchoes[playerLoss]))
+  }
+
+  // Ambient sound roll
+  const ambientSound = rollAmbientSound(nextRoom, player.actionsTaken)
+  if (ambientSound) messages.push(msg(ambientSound))
 
   // Memory bleeds — triggered at Cycle 4+, 5% base chance
   const playerCycle = engine.getState().player?.cycle ?? 1
@@ -249,13 +327,19 @@ export async function handleLook(engine: EngineCore, target: string | undefined)
   }
 
   // General look
+  const player = engine.getState().player
+  const tod = getTimeOfDay(player?.actionsTaken ?? 0)
   const messages: GameMessage[] = [
-    msg(currentRoom.description),
+    msg(getRoomDescription(currentRoom, tod)),
     msg(exitsLine(currentRoom)),
   ]
   if (itemsLine(currentRoom)) messages.push(msg(itemsLine(currentRoom)))
   if (npcsLine(currentRoom)) messages.push(msg(npcsLine(currentRoom)))
   if (enemiesLine(currentRoom)) messages.push(combatMsg(enemiesLine(currentRoom)))
+
+  // Ambient sound roll
+  const ambientSound = rollAmbientSound(currentRoom, player?.actionsTaken ?? 0)
+  if (ambientSound) messages.push(msg(ambientSound))
 
   engine._appendMessages(messages)
 }

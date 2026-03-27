@@ -12,6 +12,7 @@ import { DUSKHOLLOW_ROOMS }  from './duskhollow'
 import { THE_DEEP_ROOMS }    from './the_deep'
 import { THE_PINE_SEA_ROOMS } from './the_pine_sea'
 import { THE_SCAR_ROOMS }    from './the_scar'
+import { THE_PENS_ROOMS }    from './the_pens'
 
 export {
   CROSSROADS_ROOMS,
@@ -26,6 +27,7 @@ export {
   THE_DEEP_ROOMS,
   THE_PINE_SEA_ROOMS,
   THE_SCAR_ROOMS,
+  THE_PENS_ROOMS,
 }
 
 export const ALL_ROOMS: Room[] = [
@@ -41,4 +43,5 @@ export const ALL_ROOMS: Room[] = [
   ...THE_DEEP_ROOMS,
   ...THE_PINE_SEA_ROOMS,
   ...THE_SCAR_ROOMS,
+  ...THE_PENS_ROOMS,
 ]

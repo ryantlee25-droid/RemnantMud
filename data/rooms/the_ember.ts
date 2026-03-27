@@ -1,7 +1,7 @@
 import type { Room } from '@/types/game'
 
 // ============================================================
-// THE EMBER — 10 Rooms
+// THE EMBER — 20 Rooms
 // The Kindling's religious settlement. Converted cathedral. Fire motifs. Act I–II.
 // ============================================================
 
@@ -502,6 +502,7 @@ export const EMBER_ROOMS: Room[] = [
     shortDescription: 'Ash on the ground, hardy wildflowers growing through it, and dozens of stones bearing the names of the Purification dead in one person\'s handwriting.',
     exits: {
       north: 'em_03_the_nave',
+      east: 'em_17_ruined_annex',
     },
     richExits: {},
     items: [],
@@ -866,6 +867,7 @@ export const EMBER_ROOMS: Room[] = [
     shortDescription: 'Rows of storage tanks, some sealed, some ruptured and leaking something wrong. The smell. This is where the fire started.',
     exits: {
       south: 'em_12_collapsed_factory_floor',
+      north: 'em_18_cooling_towers',
     },
     richExits: {
       south: {
@@ -1119,6 +1121,8 @@ export const EMBER_ROOMS: Room[] = [
     shortDescription: 'Rear of the complex — three cargo bays, a rail spur that goes nowhere, and a Hollow cluster in the enclosed space.',
     exits: {
       west: 'em_12_collapsed_factory_floor',
+      east: 'em_19_rail_yard',
+      south: 'em_20_the_incinerator',
     },
     richExits: {},
     items: [],
@@ -1219,5 +1223,434 @@ export const EMBER_ROOMS: Room[] = [
       ],
     },
     narrativeNotes: 'Act II high-difficulty room. Highest hollow density in the zone. The rail spur cut is a mystery thread — who took the rails and why, in the period immediately after the fire. Scavenger encounter is tense, potentially hostile. Good loot for players who can clear the hollows.',
+  },
+
+  // ----------------------------------------------------------
+  // EM-17: The Ruined Annex
+  // ----------------------------------------------------------
+  {
+    id: 'em_17_ruined_annex',
+    name: 'The Ember — The Ruined Annex',
+    zone: 'the_ember',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { noCombat: false },
+    description: 'The annex was the cathedral\'s community hall — a flat-roofed addition built sometime in the 1960s, the architectural afterthought of a parish that outgrew its sanctuary. The fire took the roof completely: the steel joists are bare overhead, twisted into a lattice of black angles against the sky, and the interior walls are exposed brick scorched to a uniform dark charcoal that absorbs light rather than reflecting it. Folding tables are still stacked along the south wall, their metal legs fused together by the heat into a single sculpture of collapsed purpose. A kitchen pass-through window connects to a serving area where industrial pots hang from a ceiling rack that no longer has a ceiling. The tile floor is buckled in waves — the substrate failed beneath it — and in the low places between the waves, rainwater has collected and gone stagnant, breeding a green film that is the only color in the room. On the east wall, someone has spray-painted in large unsteady letters: WE STAYED TOO LONG. The paint is newer than the fire.',
+    descriptionNight: 'The annex at night is a roofless room under whatever sky exists. The twisted joists frame stars or clouds. The stagnant puddles between floor tiles catch any ambient light and hold it as a faint sick green. The spray-painted text on the east wall is invisible in the dark. You know it is there.',
+    shortDescription: 'A roofless parish hall — twisted joists, fused tables, stagnant water in the buckled floor, and a spray-painted message newer than the fire.',
+    exits: {
+      west: 'em_09_garden_of_ashes',
+      north: 'em_11_char_fields',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.25,
+      timeModifier: { day: 0.6, dusk: 1.3, night: 2.0, dawn: 0.8 },
+      threatPool: [
+        { type: 'shuffler', weight: 45, quantity: { min: 1, max: 3, distribution: 'bell' } },
+        { type: 'remnant', weight: 35, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'whisperer', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.3, awarePassive: 0.35, awareAggressive: 0.35 },
+      activityPool: {
+        shuffler: [
+          { desc: 'moves between the fused tables in a circuit that approximates the path a person serving food would take, the muscle memory of hospitality reduced to geometry', weight: 3 },
+        ],
+        whisperer: [
+          { desc: 'stands at the kitchen pass-through, speaking into the empty serving area in a voice that sounds like someone calling an order, the words almost but not quite intelligible', weight: 2 },
+        ],
+      },
+    },
+    extras: [
+      {
+        keywords: ['tables', 'fused', 'metal', 'stacked', 'sculpture'],
+        description: 'The folding tables were aluminum-framed, the kind used in every church basement and community center in the country. The fire melted the joints where the frames touched and the stack became a single mass — thirty or forty tables bonded into a structure that is no longer furniture and has become something architectural. You can see individual table surfaces inside the mass, some still showing the fake wood-grain laminate, the plastic having survived in pockets where the heat was blocked by the layers above.',
+      },
+      {
+        keywords: ['graffiti', 'paint', 'spray', 'message', 'stayed'],
+        description: 'WE STAYED TOO LONG. The letters are about eighteen inches high, the spray can\'s pressure having been inconsistent — the W is bold and the G trails off into a thin line. The paint is red, or was red, now faded to a rust-brown that is difficult to distinguish from the scorched brick underneath. Someone came here after the fire. Someone stood in this room and looked at what had happened and put the one thought that survived intact onto the wall.',
+        skillCheck: { skill: 'tracking', dc: 11, successAppend: 'The paint drip pattern and the height of the letters — this was written by someone standing, not crouching, someone between five-eight and five-eleven, right-handed, writing quickly. The can was nearly empty when they started. They didn\'t come here to write. They came here for another reason and the writing happened because the room required it.' },
+      },
+      {
+        keywords: ['kitchen', 'serving', 'pots', 'pass-through', 'window'],
+        description: 'The kitchen behind the pass-through window is small and institutional — a three-basin sink, a commercial range with the burner grates still in place, and the hanging pot rack overhead with six pots remaining, the copper bottoms oxidized to a dark verdigris. The pots survived because copper doesn\'t burn the way steel does. They hang in the open air now, the ceiling gone, and when the wind crosses the roofless annex they move slightly and ring against each other with a sound like a clock that has lost its mechanism.',
+        skillCheck: { skill: 'scavenging', dc: 10, successAppend: 'Behind the range, a cabinet door hangs open. Inside: institutional-size containers of salt and baking soda, both sealed, both viable. In this economy, sealed cooking supplies have a value that the people who used this kitchen would have found absurd.' },
+      },
+      {
+        keywords: ['water', 'puddles', 'green', 'stagnant', 'tile', 'floor'],
+        description: 'The standing water in the floor depressions is shallow — an inch at the deepest — and the green film on the surface is algae, the ordinary kind that grows anywhere water sits long enough in light. But the color is wrong for ordinary algae. It has a blue-green component that you\'ve seen before, in the river, in the Deep Pool, in places where CHARON-7 has entered the water table. The contamination is in the groundwater here. The annex is drawing it up through the cracked foundation.',
+        skillCheck: { skill: 'field_medicine', dc: 13, successAppend: 'The blue-green bioluminescence is faint but present — visible if you shade the puddle from direct light. CHARON-7 trace contamination. Not at infectious concentration, not dangerous to touch, but present. The groundwater under the Ember district carries the virus in dilute form. The fire didn\'t sterilize the soil. Nothing sterilizes CHARON-7.' },
+      },
+      {
+        keywords: ['joists', 'roof', 'sky', 'twisted', 'lattice'],
+        description: 'The steel joists overhead twisted when the roof membrane burned — the fire removed the load and the heat deformed the steel simultaneously, and the result is a pattern that has the quality of calligraphy, of strokes made by a hand that was not human. From below, looking up through the joist lattice at the sky, the effect is a frame that changes what it frames. The clouds move through the lattice and are divided into segments. Birds cross and are briefly caged. The building is no longer a building. It is a lens.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'kindling_faithful',
+        spawnChance: 0.30,
+        spawnType: 'wanderer',
+        activityPool: [
+          { desc: 'A Kindling faithful stands at the east wall, reading the spray-painted message with the absorbed attention of someone who has read it before and has not finished processing it.', weight: 3 },
+          { desc: 'A Kindling faithful collects rainwater from the floor depressions into a sealed container, working carefully, not touching the green-filmed surface water directly.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.2, neutral: 0.5, wary: 0.3, hostile: 0.0 },
+        dialogueTree: 'em_annex_faithful',
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'scrap_metal',
+        spawnChance: 0.40,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.2, max: 0.5 },
+        groundDescription: 'Aluminum table frames at the edge of the fused mass — a few pieces still separable.',
+        depletion: { cooldownMinutes: { min: 480, max: 960 }, respawnChance: 0.25 },
+      },
+      {
+        entityId: 'boiled_rations',
+        spawnChance: 0.25,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.4, max: 0.8 },
+        groundDescription: 'A sealed institutional-size container behind the kitchen range, overlooked by previous scavengers.',
+        depletion: { cooldownMinutes: { min: 720, max: 1440 }, respawnChance: 0.10 },
+      },
+    ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The hanging pots ring against each other in a gust — a sound like a bell with no conviction.', chance: 0.25 },
+        { line: 'The green water in the floor ripples without visible cause. Subsurface movement, probably. Probably.', chance: 0.15 },
+        { line: 'A bird crosses the lattice of twisted joists and for a moment its shadow moves across the scorched brick like handwriting.', chance: 0.20, time: ['day', 'dawn'] },
+        { line: 'The smell shifts — the base note of char giving way to something organic, vegetal, the algae in the standing water metabolizing whatever the groundwater carries.', chance: 0.20 },
+      ],
+    },
+    narrativeNotes: 'Transitional room connecting the sacred (Garden of Ashes) to the industrial (Char Fields). The CHARON-7 contamination in the groundwater is a quiet revelation. The spray-painted message is a human moment. The kitchen scavenging check rewards practical players.',
+  },
+
+  // ----------------------------------------------------------
+  // EM-18: The Cooling Towers
+  // ----------------------------------------------------------
+  {
+    id: 'em_18_cooling_towers',
+    name: 'The Ember — The Cooling Towers',
+    zone: 'the_ember',
+    act: 2,
+    difficulty: 4,
+    visited: false,
+    flags: { noCombat: false },
+    description: 'Two hyperboloid cooling towers stand at the north edge of the industrial complex, their concrete shells intact in a way that nothing else in the district is intact. The fire didn\'t touch them because the fire couldn\'t — the towers are poured concrete and rebar, built for thermal endurance, and the heat that destroyed the factory and the neighborhood and the annex passed over these structures the way weather passes over geology. They stand sixty feet high and forty feet across at the base, open at the top, the interiors dark and resonant. The southern tower has a steel access door hanging from one hinge. Inside: the fill media — corrugated plastic sheets stacked in layers from floor to about thirty feet up — has partially collapsed, creating a terrain of angular ridges and hollows that the Hollow have colonized with the instinct of things that seek enclosed dark spaces. The northern tower is sealed. Its access door is welded shut from the outside, the bead visible even under the grime, and the weld is not factory — it was done by hand, by someone with a MIG welder and a reason. Whatever is inside the northern tower, someone decided it should stay inside.',
+    descriptionNight: 'The towers at night are columns of deeper dark against the sky. The southern tower\'s interior produces sounds — the plastic fill media settling, or the Hollow moving through it, or both. The northern tower is silent. It has been silent since whoever welded it shut.',
+    shortDescription: 'Two concrete cooling towers — one colonized by Hollow in its collapsed fill media, one welded shut by someone with a reason.',
+    exits: {
+      south: 'em_13_chemical_tank_farm',
+    },
+    richExits: {
+      north: {
+        destination: 'em_18_cooling_towers',
+        hidden: true,
+        locked: true,
+        lockedBy: 'hand_tools_basic',
+        discoverSkill: 'mechanics',
+        discoverDc: 14,
+        discoverMessage: 'The weld on the northern tower\'s door is hand-done — a single pass, no grinding. With the right tools you could cut through the bead at the hinge side where the heat-affected zone is weakest.',
+        descriptionVerbose: 'the welded-shut door of the northern cooling tower',
+      },
+    },
+    items: [],
+    enemies: ['brute', 'shuffler'],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.45,
+      timeModifier: { day: 0.7, dusk: 1.4, night: 2.2, dawn: 0.9 },
+      threatPool: [
+        { type: 'shuffler', weight: 40, quantity: { min: 2, max: 4, distribution: 'bell' } },
+        { type: 'brute', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 25, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'screamer', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.15, awarePassive: 0.30, awareAggressive: 0.55 },
+      activityPool: {
+        shuffler: [
+          { desc: 'emerges from the collapsed fill media in the southern tower like something born from the wreckage, plastic sheeting draped over its shoulders in a parody of clothing', weight: 3 },
+        ],
+        brute: [
+          { desc: 'stands at the base of the southern tower\'s interior, head tilted back, staring up through sixty feet of dark concrete at the circle of sky above — waiting for something or remembering something or both', weight: 2 },
+        ],
+      },
+      noiseModifier: 1.8,
+    },
+    extras: [
+      {
+        keywords: ['southern tower', 'open', 'fill', 'media', 'plastic', 'collapsed'],
+        description: 'The fill media was designed to maximize surface area for heat exchange — hundreds of corrugated plastic sheets stacked in a lattice pattern from floor to the thirty-foot mark. The collapse was partial and uneven: some sections still stacked correctly, some folded like cards, some creating hollow pockets large enough for a person — or a Hollow — to shelter inside. The plastic is fire-resistant by specification but has degraded in the UV exposure from the open top. It crumbles at the edges when you touch it. The Hollow don\'t touch the edges. They move through the center where the structure is still sound.',
+        skillCheck: { skill: 'stealth', dc: 13, successAppend: 'You can navigate the collapsed fill media without disturbing it — the trick is weight distribution across the corrugated ridges rather than stepping into the hollows. The Hollow in here are distributed in the pockets, three or four of them, and they don\'t move unless sound reaches them. You map their positions by breathing patterns. You can get through without waking them. Whether you should is a separate question.' },
+      },
+      {
+        keywords: ['northern tower', 'sealed', 'welded', 'door', 'weld'],
+        description: 'The weld bead on the northern tower\'s door is continuous — one pass, no stop-starts, laid down by someone who knew what they were doing and was doing it with urgency rather than craftsmanship. The bead is slightly convex, slightly irregular, the work of a MIG welder running hot. The door itself is heavy-gauge steel, the frame cast into the concrete shell. Whatever is inside this tower, the person who sealed it made the decision quickly and executed it competently and did not leave a note explaining why.',
+        skillCheck: { skill: 'mechanics', dc: 14, successAppend: 'The heat-affected zone along the hinge side of the weld is where the bead is thinnest — the welder was running out of wire or running out of time. A cutting tool applied at the right angle could open a gap in under ten minutes. You mark the spot. You do not open it yet.' },
+      },
+      {
+        keywords: ['concrete', 'shell', 'towers', 'structure', 'hyperbolic'],
+        description: 'The hyperboloid geometry is beautiful in the way that engineering is beautiful when it solves a problem so completely that the solution becomes a shape. The towers narrow at the waist and flare at the top and bottom, the concrete poured in a continuous curve that has no flat surface anywhere. The acoustics inside the southern tower are extraordinary — sound reflects off the curved walls and arrives at the center from every direction simultaneously. A whisper at the base reaches the open top. The Hollow know this. They are very quiet inside the tower. They have learned that sound here is dangerous.',
+      },
+      {
+        keywords: ['sound', 'resonance', 'echo', 'acoustics', 'interior'],
+        description: 'You drop a small piece of fill media from waist height. The sound of it hitting the floor travels up the tower\'s interior in a spiral that takes three full seconds to dissipate. Every Hollow in the southern tower heard that. You know this because the silence after the echo is a different quality of silence than the silence before — it is the silence of things that are now listening. You do not drop anything else.',
+        skillCheck: { skill: 'survival', dc: 12, successAppend: 'The acoustics work both ways. You stand at the tower\'s base and listen: the fill media settling, the wind across the open top producing a low bass note, and underneath it, from the northern sealed tower, something else. A rhythmic sound. Mechanical. Regular. Something inside the sealed tower is running. Has been running. The weld was not to keep something out.' },
+      },
+    ],
+    npcSpawns: [],
+    itemSpawns: [
+      {
+        entityId: 'electronics_salvage',
+        spawnChance: 0.30,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.3, max: 0.7 },
+        groundDescription: 'A control panel at the base of the southern tower, its housing cracked open, the circuit boards inside still mounted.',
+        depletion: { cooldownMinutes: { min: 720, max: 1440 }, respawnChance: 0.15 },
+      },
+      {
+        entityId: 'chemicals_basic',
+        spawnChance: 0.25,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.2, max: 0.6 },
+        groundDescription: 'A water treatment chemical drum at the tower\'s base — the biocide system\'s last charge, never depleted.',
+        depletion: { cooldownMinutes: { min: 720, max: 1440 }, respawnChance: 0.10 },
+      },
+    ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The wind crosses the open top of the southern tower and produces a bass note that you feel in your chest before you hear it.', chance: 0.25 },
+        { line: 'A piece of fill media falls somewhere inside the tower. The echo takes three seconds. Nothing else moves.', chance: 0.20 },
+        { line: 'The sealed northern tower is silent. You listen for the mechanical sound. It is there, barely, if you hold your breath.', chance: 0.15 },
+        { line: 'The shadow of the towers moves across the concrete pad in a slow arc. You are standing in it. The temperature drops.', chance: 0.15, time: ['day'] },
+        { line: 'Something inside the southern tower shifts — fill media compressing under a weight that was not there a moment ago.', chance: 0.20, time: ['dusk', 'night'] },
+      ],
+    },
+    narrativeNotes: 'Act II high-difficulty room. The sealed northern tower is a mystery — something mechanical is running inside, and someone welded the door shut. This connects to the broader Ember industrial conspiracy. The southern tower is a dangerous Hollow nest with acoustic hazards. The stealth check rewards careful players.',
+  },
+
+  // ----------------------------------------------------------
+  // EM-19: The Rail Yard
+  // ----------------------------------------------------------
+  {
+    id: 'em_19_rail_yard',
+    name: 'The Ember — The Rail Yard',
+    zone: 'the_ember',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { scavengingZone: true },
+    description: 'The rail spur from the loading dock opens into a small marshaling yard — three parallel tracks fanning out from the single approach line, the switches still in place, the ballast stone between the rails gray with ash. Two rail cars sit on the middle track: a boxcar with its sliding door open and a tanker car with government markings stenciled on its flank in the particular shade of olive drab that means military logistics. The boxcar is empty in the way that emptied things are empty — the floor shows the scuff marks and compression dents of heavy freight, and the walls have shipping labels still glued to the interior, the text too faded to read. The tanker car is not empty. You know this because the car sits lower on its springs than an empty tanker should, and because the access hatch on top is padlocked, and because someone has painted on the tanker\'s side in the same red spray paint you saw in the annex: DON\'T OPEN. The yard is exposed on three sides — the tracks run east into open ground where the ash fields meet scrub, and the wind crosses without interruption.',
+    descriptionNight: 'The rail yard at night. The cars are silhouettes on the tracks, the tanker\'s bulk lower and heavier than the boxcar beside it. The government markings are invisible. The DON\'T OPEN is invisible. The wind is the same at night. The weight on the tanker\'s springs is the same at night.',
+    shortDescription: 'A small marshaling yard — a boxcar emptied of its freight and a government tanker car that is not empty and says DON\'T OPEN.',
+    exits: {
+      west: 'em_16_loading_dock',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.18,
+      timeModifier: { day: 0.5, dusk: 1.2, night: 1.8, dawn: 0.7 },
+      threatPool: [
+        { type: 'shuffler', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 35, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'screamer', weight: 15, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.35, awarePassive: 0.35, awareAggressive: 0.30 },
+      activityPool: {
+        shuffler: [
+          { desc: 'walks the track ballast in a slow patrol, feet finding the rail ties with the regularity of someone who once walked this route as part of a job', weight: 3 },
+        ],
+        remnant: [
+          { desc: 'stands in the open boxcar door, framed by the rectangle of the opening, staring out at the yard with an attention that has no object', weight: 2 },
+        ],
+      },
+    },
+    extras: [
+      {
+        keywords: ['tanker', 'government', 'military', 'olive', 'markings'],
+        description: 'The stenciled markings on the tanker: a unit designation you don\'t recognize, a contract number that matches the format from the foreman\'s production schedule, and the words HAZMAT — CLASS 3 — FLAMMABLE LIQUID. The tanker was here before the fire. It was loaded before the fire. It did not leave before the fire, which means either it couldn\'t leave or it wasn\'t supposed to leave or someone made a decision about it that they executed with a padlock and a spray-painted warning rather than with the logistics chain that brought it here.',
+        skillCheck: { skill: 'lore', dc: 13, successAppend: 'The contract number on the tanker matches the government contract line from the foreman\'s production schedule — the one that was still running at full capacity when every other line had shut down. This tanker was carrying the output of that contract. The output was a Class 3 flammable liquid produced under government contract in the months before the Collapse. The tanker is still full. The fire started in the tank farm. The tanker is still here.' },
+        questFlagOnSuccess: { flag: 'em_rail_tanker_investigated', value: true },
+      },
+      {
+        keywords: ['boxcar', 'empty', 'labels', 'freight', 'scuff'],
+        description: 'The boxcar interior: shipping labels on the walls, the adhesive stronger than the paper, leaving fragments with partial words. You read what you can: MERIDIAN SUPPLY — LOT, and BIOHAZARD PACKING — SPEC, and a partial address that includes a state abbreviation you recognize as the state you\'re in. The boxcar was a supply run to MERIDIAN. The freight it carried went somewhere — into the factory, into the tank farm, into the production line that was still running when the world ended. The boxcar was emptied and left on the siding and never collected because the collection was never going to happen.',
+        skillCheck: { skill: 'scavenging', dc: 11, successAppend: 'Under the boxcar floor, a maintenance compartment — standard on freight cars, usually empty. This one contains a canvas tool roll with railroad maintenance equipment: spike hammer, rail tongs, a track gauge, and a sealed tin of track lubricant. Specialized tools, worth something to the right buyer. The spike hammer alone is a formidable weapon.' },
+      },
+      {
+        keywords: ['paint', 'spray', 'don\'t open', 'red', 'warning'],
+        description: 'DON\'T OPEN. The same hand as the annex — the same can, perhaps, the same pressure inconsistency, the same rust-brown that was once red. The person who wrote WE STAYED TOO LONG also wrote DON\'T OPEN. They came to the annex and the rail yard and left messages in both places. They knew what was in the tanker. They knew what had been in the boxcar. They understood the connection between the factory and MERIDIAN and the fire, and their response was not to document it or report it but to write warnings on the things that could still hurt someone. Practical. Desperate. The handwriting of someone running out of paint and time.',
+        skillCheck: { skill: 'tracking', dc: 12, successAppend: 'The paint drips on the tanker are directional — the writer moved from the annex to the rail yard, west to east. The footprints in the ash around the tanker are the same size and gait as the tracks near the annex wall. One person. One route. They wrote both messages in a single trip and then left in a direction the ash has since erased.' },
+      },
+      {
+        keywords: ['tracks', 'switches', 'rails', 'ballast', 'yard'],
+        description: 'The three-track fan is standard light-industrial marshaling — enough capacity for short consists, a few cars at a time, the kind of yard that services a single factory rather than a network. The switch mechanisms are manual — lever-operated, the levers still in position, the middle track selected. Whoever set the switches last set them for the track the tanker and boxcar sit on. The other two tracks are empty, the rails rusting uniformly, undisturbed since the fire. Only the middle track was in use at the end.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'scavenger_rival',
+        spawnChance: 0.20,
+        spawnType: 'wanderer',
+        activityPool: [
+          { desc: 'A scavenger circles the tanker car at a careful distance, studying the markings, not touching anything, the body language of someone who has read the DON\'T OPEN and is deciding whether to believe it.', weight: 3 },
+          { desc: 'A scavenger sits on the boxcar floor with their legs dangling from the open door, eating something from a tin, watching the yard with the proprietary alertness of someone who considers this their find.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.10, neutral: 0.35, wary: 0.45, hostile: 0.10 },
+        dialogueTree: 'em_scavenger_rail_yard',
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'scrap_metal',
+        spawnChance: 0.50,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.3, max: 0.7 },
+        groundDescription: 'Rail hardware — tie plates and spikes scattered in the ballast where the track joints have failed.',
+        depletion: { cooldownMinutes: { min: 480, max: 960 }, respawnChance: 0.30 },
+      },
+      {
+        entityId: 'hand_tools_basic',
+        spawnChance: 0.30,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.4, max: 0.8 },
+        groundDescription: 'A railroad maintenance tool roll in the boxcar\'s underfloor compartment.',
+        depletion: { cooldownMinutes: { min: 720, max: 1440 }, respawnChance: 0.10 },
+      },
+    ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The tanker car settles on its springs with a low metallic groan. The weight inside shifts. Liquid.', chance: 0.25 },
+        { line: 'Wind crosses the open yard and the boxcar door rattles on its track — a hollow industrial sound that carries.', chance: 0.20 },
+        { line: 'The ash between the rails drifts in the wind, exposing the ballast stone underneath. Gray on gray.', chance: 0.15 },
+        { line: 'A rail tie creaks underfoot — the wood preserved by creosote, the creosote preserved by chemistry, both outlasting the world that made them.', chance: 0.15 },
+        { line: 'The DON\'T OPEN catches your eye again. You weren\'t looking at it. You were looking at it.', chance: 0.20 },
+      ],
+    },
+    narrativeNotes: 'Act II investigation room. The tanker connects to the foreman\'s government contract, the MERIDIAN supply chain, and the Ember fire conspiracy. The spray-paint writer links to the annex\'s WE STAYED TOO LONG. Quest flag feeds into the broader mystery. Exposed position makes it feel vulnerable.',
+  },
+
+  // ----------------------------------------------------------
+  // EM-20: The Incinerator
+  // ----------------------------------------------------------
+  {
+    id: 'em_20_the_incinerator',
+    name: 'The Ember — The Incinerator',
+    zone: 'the_ember',
+    act: 2,
+    difficulty: 4,
+    visited: false,
+    flags: { noCombat: false },
+    description: 'The incinerator building is set apart from the main factory — a squat concrete structure with a single tall chimney stack, the stack rising forty feet and still blackened at the top from its last use, whenever that was. The building\'s purpose is legible in its architecture: the reinforced walls, the ventilation louvers along the roofline, the heavy-gauge steel door with its panic bar and its radiation trefoil warning sign — not the biohazard symbol, the radiation symbol, which is a different conversation. Inside: the burn chamber dominates the space, a refractory-lined steel cylinder large enough to stand in, its loading door open, the interior scaled with vitrified ash that has the glassy quality of material burned at temperatures that exceed what industrial waste requires. A control panel on the west wall has gauges for temperature, airflow, and a third parameter labeled only SPEC COMPLIANCE, the needle frozen in the red zone. The floor around the burn chamber is clean — not fire-clean but swept-clean, recently, the broom marks still visible in the thin dust. Someone has been here. Someone is maintaining this space.',
+    descriptionNight: 'The incinerator at night. The chimney stack is a column of black against stars. Inside, the burn chamber\'s open loading door is a circle of deeper dark. The control panel gauges are unlit. The swept floor is the same at night. The broom marks don\'t care about the hour.',
+    shortDescription: 'A concrete incinerator building with a radiation warning sign, a burn chamber lined with vitrified ash, and a floor that someone has been sweeping.',
+    exits: {
+      north: 'em_16_loading_dock',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.20,
+      timeModifier: { day: 0.5, dusk: 1.0, night: 2.0, dawn: 0.7 },
+      threatPool: [
+        { type: 'remnant', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'whisperer', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 20, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+      ],
+      awarenessRoll: { unaware: 0.25, awarePassive: 0.40, awareAggressive: 0.35 },
+      activityPool: {
+        remnant: [
+          { desc: 'stands at the control panel with one hand on the SPEC COMPLIANCE gauge, turning it back and forth in a gesture that has the quality of a remembered task performed by something that no longer understands tasks', weight: 3 },
+        ],
+        whisperer: [
+          { desc: 'sits inside the burn chamber with its back against the refractory wall, speaking softly in a voice that echoes off the vitrified interior and comes back as something that sounds like a name you almost recognize', weight: 2 },
+        ],
+      },
+    },
+    extras: [
+      {
+        keywords: ['radiation', 'trefoil', 'sign', 'warning', 'symbol'],
+        description: 'The radiation trefoil is standard signage — magenta on yellow, the international standard. It is not the biohazard symbol. Biohazard means biological agents. Radiation means ionizing energy or radioactive material. An industrial waste incinerator does not require radiation signage. A medical waste incinerator does not require radiation signage. The list of things that require radiation signage on an incinerator is short and none of the entries are comforting.',
+        skillCheck: { skill: 'lore', dc: 14, successAppend: 'The signage is post-installation — affixed with mechanical fasteners over the original hazard placard, which was the standard industrial waste diamond. Someone changed the classification of what this incinerator was burning. The new classification required radiation protocols. CHARON-7 is not radioactive. But the treatment compounds developed to combat it — the experimental ones, the ones that didn\'t work, the ones that the government contract was producing — some of those involved isotope-tagged markers. The incinerator was burning failed treatments. It was burning the evidence of how many times they got it wrong.' },
+        questFlagOnSuccess: { flag: 'em_incinerator_radiation_investigated', value: true },
+      },
+      {
+        keywords: ['burn chamber', 'refractory', 'vitrified', 'ash', 'cylinder'],
+        description: 'The vitrified ash inside the burn chamber has a glassy surface that catches light and throws it in unexpected directions. Vitrification requires temperatures above 1,200 degrees Celsius — far beyond standard industrial waste disposal. Whatever was burned here was burned at temperatures designed to destroy it completely, molecularly, to reduce it past ash to glass. The chamber interior is coated in this glass-ash from floor to the loading door rim. It is beautiful in the way that destruction at sufficient thoroughness becomes beautiful. You don\'t touch it.',
+        skillCheck: { skill: 'field_medicine', dc: 15, successAppend: 'You hold a piece of vitrified ash to the light. Embedded in the glass matrix: fragments that are not mineral. Organic inclusions — bone fragments, specifically, calcined and vitrified but identifiable by structure. This incinerator burned biological material at temperatures that turned bone to glass. The radiation sign. The SPEC COMPLIANCE gauge. The vitrified bone. You are standing in the place where the failed treatments and their recipients were disposed of. The Purification dead whose names are in the Garden of Ashes — this is where the bodies went.' },
+        questFlagOnSuccess: { flag: 'em_incinerator_bone_found', value: true },
+      },
+      {
+        keywords: ['control panel', 'gauges', 'spec compliance', 'temperature'],
+        description: 'The control panel is industrial — heavy-gauge steel housing, analog gauges, physical switches. Temperature gauge: frozen at 1,340 degrees Celsius, which is above vitrification threshold. Airflow: frozen at a reading you cannot interpret without the engineering spec. SPEC COMPLIANCE: the needle is in the red zone, past a line labeled THRESHOLD. The implication is that whatever specification the incinerator was supposed to comply with, it was not complying at the time of its last recorded operation. It was running too hot, or too long, or burning something it was not rated for.',
+        skillCheck: { skill: 'electronics', dc: 12, successAppend: 'The control panel has a data logger — a simple mechanical recorder with a paper drum, the kind used in industrial applications before digital. The drum still has paper on it. The trace shows the last operational cycle: temperature ramping over ninety minutes to 1,340 degrees, holding for four hours, then a sudden drop to ambient. The four-hour hold is ten times longer than any standard waste cycle. Whatever was being burned required four hours at vitrification temperature to satisfy whoever was watching the gauges.' },
+      },
+      {
+        keywords: ['swept', 'floor', 'clean', 'broom', 'maintained'],
+        description: 'The broom marks are real. The floor has been swept — not perfectly, but deliberately, the marks of a push broom moving in long strokes from the burn chamber toward the door. The dust that was swept is gone, carried out or dispersed. The sweeping happened within the last week, based on the dust accumulation since. Someone comes here. Someone tends this space the way the Kindling tends the coal pit and the Garden of Ashes — with regularity and purpose. The incinerator has a caretaker who has not been introduced to you and who has decided that this building, of all buildings, deserves maintenance.',
+        skillCheck: { skill: 'tracking', dc: 13, successAppend: 'The broom marks overlap in a pattern that reveals the sweeper\'s path: they start at the burn chamber, move outward in expanding arcs, and exit through the main door. The footprints beneath the broom marks — partially erased but readable — are a size and gait consistent with the spray-paint writer from the annex and the rail yard. The same person who wrote WE STAYED TOO LONG and DON\'T OPEN is the person who sweeps the incinerator floor. They are still here. They are still tending the evidence of what happened.' },
+        questFlagOnSuccess: { flag: 'em_incinerator_sweeper_tracked', value: true },
+      },
+      {
+        keywords: ['chimney', 'stack', 'tall', 'blackened'],
+        description: 'The chimney stack is the tallest structure in the Ember district — visible from the char fields, from the factory floor, from the approach road. It was designed to disperse combustion products at altitude, diluting them into the upper air column where they would dissipate rather than settle. The blackening at the top extends down about six feet from the rim. The soot composition, if you could analyze it, would tell you exactly what was burned and when. Standing at the base, looking up the interior, you see the sky as a perfect circle sixty feet above, framed by soot-black concrete. The effect is like looking up through a well. A well that goes up instead of down.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'kindling_torch_tender',
+        spawnChance: 0.15,
+        spawnType: 'patrol',
+        activityPool: [
+          { desc: 'A Kindling torch tender stands at the incinerator door, looking in but not entering, their expression unreadable — the face of someone at a threshold they have decided not to cross today.', weight: 3 },
+        ],
+        dispositionRoll: { friendly: 0.1, neutral: 0.4, wary: 0.4, hostile: 0.1 },
+        dialogueTree: 'em_incinerator_faithful',
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'chemicals_basic',
+        spawnChance: 0.30,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.3, max: 0.7 },
+        groundDescription: 'A container of accelerant compound on a shelf near the control panel — the incinerator\'s fuel additive, still sealed.',
+        depletion: { cooldownMinutes: { min: 720, max: 1440 }, respawnChance: 0.10 },
+      },
+      {
+        entityId: 'electronics_salvage',
+        spawnChance: 0.20,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.2, max: 0.5 },
+        groundDescription: 'The data logger\'s paper drum mechanism — the recorder itself is salvageable electronics.',
+        depletion: { cooldownMinutes: { min: 720, max: 1440 }, respawnChance: 0.05 },
+      },
+    ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The burn chamber ticks as metal contracts in the temperature differential between inside and outside. The sound is regular. Almost rhythmic.', chance: 0.20 },
+        { line: 'A draft through the chimney stack pulls air across the loading door and the sound it makes is a low moan that lasts exactly as long as the gust.', chance: 0.25 },
+        { line: 'The vitrified ash catches a shift in light and for a moment the interior of the burn chamber glitters like something precious.', chance: 0.15, time: ['dawn', 'day'] },
+        { line: 'The swept floor. The broom marks. Someone was here. Someone will be here again.', chance: 0.20 },
+        { line: 'The radiation trefoil on the door. You look at it every time you pass it. It does not change. Your understanding of it does.', chance: 0.15 },
+      ],
+    },
+    personalLossEchoes: {
+      child: 'The vitrified bone in the burn chamber. Someone\'s child was burned here. The Garden of Ashes has their name. The incinerator has what remains of what remained.',
+      community: 'The SPEC COMPLIANCE gauge in the red. The four-hour burn cycle. This was systematic — not one body, not one failure, but a process. A community of the failed, reduced to glass.',
+    },
+    narrativeNotes: 'Act II climax investigation room. The incinerator connects the Purification dead, the government contract, and the MERIDIAN supply chain. The bone fragments in the vitrified ash are the darkest revelation in the zone. The mystery sweeper ties to the spray-paint writer from em_17 and em_19. Quest flags feed into the Ember fire conspiracy. High narrative weight, high difficulty.',
   },
 ]

@@ -1,7 +1,7 @@
 import type { Room } from '@/types/game'
 
 // ============================================================
-// THE BREAKS — 16 Rooms
+// THE BREAKS — 20 Rooms
 // Canyon wilderness. No faction. Pure survival. Act I–II.
 // Entry from cr_01_approach (south) — Survival 5 gate.
 // ============================================================
@@ -631,6 +631,7 @@ export const BREAKS_ROOMS: Room[] = [
     exits: {
       north: 'br_10_dry_spring',
       west: 'br_07_canyon_crossroads',
+      south: 'br_17_wind_carved_passage',
     },
     richExits: {},
     items: [],
@@ -857,6 +858,7 @@ export const BREAKS_ROOMS: Room[] = [
     shortDescription: 'A flat-topped mesa with 360-degree view, a Forest Service weather station, and a radio receiver still picking up a signal from the north.',
     exits: {
       down: 'br_07_canyon_crossroads',
+      east: 'br_18_the_chimney',
     },
     richExits: {},
     items: [],
@@ -916,6 +918,7 @@ export const BREAKS_ROOMS: Room[] = [
     shortDescription: 'Where canyon country ends and Duskhollow territory begins — the in-between space, three miles from the manor, no canyon walls behind you.',
     exits: {
       north: 'br_13_canyon_rim_east',
+      west: 'br_19_bleached_mesa_edge',
     },
     richExits: {},
     items: [],
@@ -961,5 +964,343 @@ export const BREAKS_ROOMS: Room[] = [
       },
     ],
     itemSpawns: [],
+  },
+
+  // ----------------------------------------------------------
+  // BR-17: Wind-Carved Passage
+  // ----------------------------------------------------------
+  {
+    id: 'br_17_wind_carved_passage',
+    name: 'The Breaks — Wind-Carved Passage',
+    zone: 'the_breaks',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: {},
+    description: 'The passage runs between two walls of sandstone that the wind has shaped into something the rock never intended. The forms are aerodynamic — smooth concavities at ground level, fluted ridges at head height, the entire corridor sculpted by centuries of prevailing current into a gallery of erosion. The wind is constant here and directional, funneled by the canyon geometry into a steady draw from the south that dries the skin on your face and carries the smell of dust and something mineral and sharp. The floor is bare rock, scoured clean of sand and debris by the same current that shaped the walls. Every loose thing that was ever here has been moved somewhere else. What remains is architecture: clean, curved, and stripped to the specific beauty of things that survive by having nothing left to lose.',
+    descriptionNight: 'The wind does not stop at night. It changes pitch — lower, steadier, the temperature drop making the air denser and the sound deeper. The passage becomes a wind instrument, the fluted walls producing a tone that is not quite a whistle and not quite a moan, sustained and unbroken. You move through it the way you move through sound: aware that it is everywhere and that you are inside it.',
+    shortDescription: 'A wind-sculpted corridor of bare rock and fluted walls — the air constant, directional, carrying dust and the mineral smell of a canyon that has been refining itself for centuries.',
+    exits: {
+      north: 'br_11_feral_kill_site',
+      east: 'br_19_bleached_mesa_edge',
+      up: 'br_18_the_chimney',
+    },
+    richExits: {
+      up: {
+        destination: 'br_18_the_chimney',
+        skillGate: { skill: 'climbing', dc: 11, failMessage: 'The chimney walls are smooth from wind polish. You can see the holds, but the sequence requires a confidence in vertical movement that you haven\'t earned yet.' },
+        descriptionVerbose: 'a vertical chimney in the rock, climbing up — Climbing DC 11',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.18,
+      timeModifier: { day: 0.5, dusk: 1.5, night: 3.0, dawn: 1.0 },
+      threatPool: [
+        { type: 'shuffler', weight: 50, quantity: { min: 1, max: 3, distribution: 'bell' } },
+        { type: 'remnant', weight: 35, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'screamer', weight: 15, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.3, awarePassive: 0.3, awareAggressive: 0.4 },
+      noiseModifier: -3,
+    },
+    extras: [
+      {
+        keywords: ['wind', 'air', 'current', 'sound', 'noise'],
+        description: 'The wind is a consistent twelve to fifteen miles per hour — enough to affect sound propagation, enough to carry scent in one direction and deny it in the other. You are downwind of everything to the south and upwind of everything to the north, which is tactically significant in a way that the canyon makes you learn: anything approaching from the south will smell you long before you hear it. Anything approaching from the north, you will hear through the wind and it will not smell you at all. The canyon has opinions about which direction is safer.',
+        skillCheck: { skill: 'survival', dc: 10, successAppend: 'The wind pattern tells you something about this corridor\'s weather behavior: in a storm, the funneling effect would triple the wind speed. Flash weather in this passage means forty-five-mile-per-hour gusts in a corridor barely wider than your wingspan. The scour marks on the walls confirm this. You do not want to be here when the weather changes.' },
+      },
+      {
+        keywords: ['walls', 'fluted', 'sculpted', 'erosion', 'carved'],
+        description: 'The wall surfaces are a textbook of aeolian erosion — the smooth concavities at ground level are ventifacts, carved by centuries of sand-laden wind. The fluted ridges higher up are where the airflow separates and accelerates, cutting deeper channels into the less resistant strata. You run your hand along one of the ridges: silk-smooth, the grain of the sandstone polished to a finish that no tool could replicate. The canyon spent longer on this wall than human civilization has existed.',
+      },
+      {
+        keywords: ['floor', 'rock', 'bare', 'scoured', 'clean'],
+        description: 'The floor is wind-polished bedrock, the surface showing the ripple texture of the underlying formation. Nothing accumulates here — no sand, no debris, no organic material. The wind cleans this corridor the way a river cleans its channel: constantly and without discrimination. Any tracks you leave will be gone by morning. Any tracks left by something else are already gone. The passage keeps no record of who moves through it.',
+        skillCheck: { skill: 'tracking', dc: 13, successAppend: 'Not entirely true. At the base of the east wall, in a sheltered concavity where the wind eddies rather than scours, you find a partial print. Narrow foot, deep ball impression, minimal heel — the same gait signature as the feral kill site to the north. The Sanguine uses this passage. The sheltered print is recent.' },
+      },
+      {
+        keywords: ['smell', 'mineral', 'sharp', 'dust', 'air quality'],
+        description: 'The mineral smell is specific: calcium sulfate, the breakdown product of gypsum deposits somewhere in the canyon system to the south. The sharpness is ozone — the friction of wind against stone produces it in trace amounts, the same phenomenon that makes the air before a thunderstorm taste electric. Breathing here is breathing the canyon\'s chemistry directly. Your lungs register it as dry and clean and very slightly abrasive, the air equivalent of drinking water with high mineral content.',
+      },
+    ],
+    npcSpawns: [],
+    itemSpawns: [
+      {
+        entityId: 'mineral_sample',
+        spawnChance: 0.25,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.8, max: 1.0 },
+        groundDescription: 'A chunk of gypsum crystal, wind-exposed in the wall, loosened enough to extract.',
+        depletion: { cooldownMinutes: { min: 180, max: 480 }, respawnChance: 0.30 },
+      },
+    ],
+  },
+
+  // ----------------------------------------------------------
+  // BR-18: The Chimney
+  // ----------------------------------------------------------
+  {
+    id: 'br_18_the_chimney',
+    name: 'The Breaks — The Chimney',
+    zone: 'the_breaks',
+    act: 2,
+    difficulty: 4,
+    visited: false,
+    flags: { scavengingZone: true },
+    description: 'The chimney is a natural vertical shaft in the canyon rock, fifteen feet in diameter and sixty feet tall, open at the top to a circle of sky that frames the weather like a lens. The interior walls are layered sandstone in alternating bands of rust and cream, each band a different hardness, the softer layers eroded into horizontal shelves that serve as the only way up or down. Halfway up, a ledge wide enough to stand on holds the remains of a pre-Collapse climbing anchor — bolted steel, the expansion bolt still solid in the rock, the carabiner gate rusted open. Someone established this route formally. The rope is gone. At the base of the chimney, in a depression that collects what the wind drops from above: bird bones, feathers, the desiccated remains of a pack rat midden, and a human femur, standing upright in the debris like a post. It fell from somewhere above. Everything here fell from somewhere above.',
+    descriptionNight: 'The chimney at night is a well of darkness with a circle of stars at the top. The acoustic properties change — sounds from above echo down with a clarity that makes the distance uncertain. A coyote call from the rim sounds like it\'s in the shaft with you. Your own breathing comes back to you from the walls.',
+    shortDescription: 'A sixty-foot vertical shaft, open sky at the top, climbing anchors halfway up, and everything at the bottom arrived by falling.',
+    exits: {
+      down: 'br_17_wind_carved_passage',
+      west: 'br_15_mesa_top',
+    },
+    richExits: {
+      down: {
+        destination: 'br_17_wind_carved_passage',
+        descriptionVerbose: 'down the chimney to the wind-carved passage below',
+      },
+      west: {
+        destination: 'br_15_mesa_top',
+        descriptionVerbose: 'west along the rim trail to the mesa top',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.15,
+      timeModifier: { day: 0.6, dusk: 1.8, night: 2.5, dawn: 1.0 },
+      threatPool: [
+        { type: 'remnant', weight: 55, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'shuffler', weight: 30, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'brute', weight: 15, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.2, awarePassive: 0.3, awareAggressive: 0.5 },
+      noiseModifier: -4,
+    },
+    extras: [
+      {
+        keywords: ['anchor', 'bolt', 'climbing', 'carabiner', 'route'],
+        description: 'The climbing anchor is a three-bolt station, drilled and set with expansion bolts rated for lead climbing falls. Pre-Collapse recreational installation — someone climbed this chimney for fun, in the era when fun was a category of activity that people planned weekends around. The bolts are solid. The hangers are corroded but functional. The carabiner is frozen open, which means it\'s a display piece now, not hardware. The anchor tells you this route was climbed regularly enough to justify a permanent installation.',
+        skillCheck: { skill: 'mechanics', dc: 10, successAppend: 'The bolt placement is textbook — equalized, redundant, oriented to hold an outward pull. The second bolt from the left has a hairline crack in the surrounding rock that wasn\'t there at installation. Load-bearing capacity is reduced but not compromised. You would use bolts one and three and skip two. You note this the way you note all structural assessments: automatically and without choosing to.' },
+      },
+      {
+        keywords: ['femur', 'bone', 'human', 'upright', 'debris'],
+        description: 'The femur is adult, fully bleached, standing in the debris at an angle that gravity and the debris pile conspired to produce — it wasn\'t placed, it landed. The fall from the chimney rim to the base is sixty feet. You look up and consider the angles. A person fell, or was dropped, and the soft tissue decomposed here at the chimney base while the bones distributed according to the physics of decomposition in an enclosed vertical space. The femur is the largest surviving fragment at the surface. There may be more beneath the midden.',
+        skillCheck: { skill: 'field_medicine', dc: 11, successAppend: 'The bone shows no perimortem fracture at the visible end — no spiral break from the fall impact, which means the bone you\'re seeing separated from the skeleton post-mortem. The fall was not necessarily the cause of death. Someone could have been dead before they went over the edge. That distinction matters less to the dead person than it does to your assessment of what happens at the top of this chimney.' },
+      },
+      {
+        keywords: ['walls', 'layers', 'bands', 'sandstone', 'shelves'],
+        description: 'The alternating bands are a geological core sample turned vertical: the rust layers are iron-rich sandstone, harder, forming the shelves you climb on. The cream layers are calcium-rich, softer, eroding inward to create the horizontal gaps between shelves. The pattern repeats with the regularity of a thing that took forty million years to establish. Each shelf is between six inches and two feet deep — enough for a handhold, enough for a foothold, not enough for comfort. The chimney was not designed for climbing. The climbing is a consequence of the geology, not a feature of it.',
+      },
+      {
+        keywords: ['sky', 'circle', 'top', 'above', 'opening'],
+        description: 'The circle of sky at the chimney top is fifteen feet across and sixty feet up. It frames weather systems as discrete events — a cloud passes through the circle like a slide in a projector. Birds cross it occasionally: ravens, mostly, their silhouettes the specific ragged-wing shape that distinguishes them from everything else at altitude. One raven lands on the rim and looks down at you with the patient assessment of something that has evolved to recognize opportunity in things that can\'t climb out.',
+      },
+      {
+        keywords: ['midden', 'pack rat', 'feathers', 'bird bones', 'debris pile'],
+        description: 'The pack rat midden at the chimney base is a compressed history of everything that fell or was carried here: juniper twigs, bird bones, feathers in stages of decomposition from recent to ancient, small mammal bones, seed casings, and the human remains distributed through the upper layer. The midden is three feet deep at its center. Beneath the organic layer: sand, stone fragments, and at the very bottom, if you dig, the polished bedrock of the chimney floor. Everything above the bedrock is deposit. The chimney collects.',
+        skillCheck: { skill: 'scavenging', dc: 9, successAppend: 'In the midden, lodged between compressed debris layers: a waterproof stuff sack, faded red, containing a pre-Collapse first aid kit in fair condition. Someone\'s climbing pack, separated from its owner at the chimney top and deposited here by the same gravity that deposited everything else.' },
+      },
+    ],
+    npcSpawns: [],
+    itemSpawns: [
+      {
+        entityId: 'first_aid_kit_basic',
+        spawnChance: 0.35,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.3, max: 0.7 },
+        groundDescription: 'A faded red stuff sack wedged in the debris pile at the chimney base — a climber\'s first aid kit, separated from its owner.',
+        depletion: { cooldownMinutes: { min: 480, max: 1440 }, respawnChance: 0.15 },
+      },
+      {
+        entityId: 'scrap_metal',
+        spawnChance: 0.40,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.4, max: 0.8 },
+        groundDescription: 'Corroded climbing hardware scattered in the debris — carabiners, a piton, fragments of a cam device.',
+        depletion: { cooldownMinutes: { min: 360, max: 720 }, respawnChance: 0.20 },
+      },
+    ],
+  },
+
+  // ----------------------------------------------------------
+  // BR-19: Bleached Mesa Edge
+  // ----------------------------------------------------------
+  {
+    id: 'br_19_bleached_mesa_edge',
+    name: 'The Breaks — Bleached Mesa Edge',
+    zone: 'the_breaks',
+    act: 2,
+    difficulty: 4,
+    visited: false,
+    flags: {},
+    description: 'The mesa edge is where the land runs out of argument. The sandstone shelf extends south and then stops, a clean vertical drop of a hundred and twenty feet to the broken talus field below, the edge worn smooth by the specific patience of weather applied to stone without interruption. The rock here is bleached pale — almost white in direct sun, the iron content leached out by millennia of exposure, leaving a calcium-white surface that reflects heat and light with equal indifference. The edge itself is fractured in places, hairline cracks running perpendicular to the drop, each crack a future where the mesa is smaller than it is now. A juniper tree grows at the edge, its root system visibly gripping the fractured rock in a display of botanical stubbornness that would be admirable if it weren\'t also holding together the section of edge you\'re standing on.',
+    descriptionNight: 'The mesa edge at night is a line between the pale rock at your feet and the void beyond it. The drop is invisible — you know it\'s there because you saw it in daylight. The juniper is a dark shape against the stars. The talus field below produces occasional sounds: the thermal contraction of rock, the movement of things that prefer the dark, the specific silence of a hundred and twenty feet of empty air.',
+    shortDescription: 'A bleached shelf of white stone ending at a hundred-and-twenty-foot drop — fractured edge, one stubborn juniper, and the talus field far below.',
+    exits: {
+      west: 'br_17_wind_carved_passage',
+      east: 'br_16_south_exit',
+      down: 'br_20_seep_grotto',
+    },
+    richExits: {
+      down: {
+        destination: 'br_20_seep_grotto',
+        hidden: true,
+        discoverSkill: 'perception',
+        discoverDc: 12,
+        discoverMessage: 'Behind the juniper\'s root mass, where the edge fracture has opened a gap in the rock face, you notice airflow — cool and damp, rising from below. A narrow chimney descends into darkness. It\'s passable.',
+        skillGate: { skill: 'climbing', dc: 12, failMessage: 'The descent is a tight chimney with minimal holds. You can feel the damp air rising from below but the route down requires more skill than you currently possess.' },
+        descriptionVerbose: 'a narrow chimney behind the juniper roots, descending — Perception DC 12 to discover, Climbing DC 12 to descend',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.14,
+      timeModifier: { day: 0.4, dusk: 1.5, night: 2.5, dawn: 1.0 },
+      threatPool: [
+        { type: 'remnant', weight: 45, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'shuffler', weight: 35, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'brute', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.3, awarePassive: 0.3, awareAggressive: 0.4 },
+    },
+    extras: [
+      {
+        keywords: ['edge', 'drop', 'cliff', 'vertical', 'fall'],
+        description: 'You approach the edge on your stomach for the last two meters, which is the correct approach. The drop is clean — vertical sandstone, the face showing the same alternating rust-and-cream banding as the chimney, but at a scale that turns geological layers into a wall you could spend minutes reading. At the base: talus, the broken rock of previous collapses, a field of boulders ranging from car-sized to house-sized. The distance down is the kind of distance that your body processes before your mind does. Your hands grip the rock harder without being told to.',
+        skillCheck: { skill: 'survival', dc: 11, successAppend: 'The crack pattern at the edge tells you something specific: this section of mesa is in active recession. The hairline fractures are frost-wedge cracks — water enters, freezes, expands, and the rock separates a fraction of a millimeter per cycle. The juniper section has perhaps a decade before the fracture network isolates it completely. You make a note to not stand on the juniper section longer than necessary.' },
+      },
+      {
+        keywords: ['juniper', 'tree', 'roots', 'edge', 'grip'],
+        description: 'The juniper is a Utah juniper, Juniperus osteosperma, and it has been growing at this edge for what the trunk diameter suggests is two hundred years. Its root system is visible where the edge erosion has exposed it — a network of woody tendrils gripping the fractured rock the way fingers grip a ledge. The tree is alive and healthy in the way that junipers are healthy: slowly, stubbornly, without visible enthusiasm. Its canopy extends over the drop, casting shade on nothing. The berries on its lower branches are ripe — small, blue-purple, aromatic with the specific gin-botanical smell of juniper oil.',
+        skillCheck: { skill: 'field_medicine', dc: 9, successAppend: 'Juniper berries: antimicrobial, diuretic, the active compounds useful in a field medicine context for urinary tract infections and as a mild antiseptic wash. You collect a handful. They\'re also edible in small quantities, which is the kind of information that\'s trivial until it isn\'t.' },
+      },
+      {
+        keywords: ['bleached', 'white', 'pale', 'rock', 'calcium', 'surface'],
+        description: 'The bleaching is chemical: iron oxide leached from the sandstone by long-term water exposure, leaving the calcium carbonate matrix visible. The effect is striking — a white shelf amid the surrounding red-orange canyon country, visible from distance and from below. The surface is reflective enough in direct sun to produce a glare that makes the edge harder to judge, which is a design flaw in an already dangerous geography. The rock is warm to the touch even at dusk, the thermal mass of a light-colored stone that has been absorbing sunlight all day.',
+      },
+      {
+        keywords: ['talus', 'below', 'boulders', 'field', 'base'],
+        description: 'The talus field at the base of the drop is the accumulated evidence of the mesa\'s erosion history — every boulder down there was once part of the edge you\'re standing on. The largest blocks are house-sized, their flat faces showing the same bleached white as the mesa top, their impact sites visible as depressions in the surrounding debris. The field extends south for a hundred meters before the terrain levels. Among the boulders: shadow, shelter, and the specific quality of spaces that things use to hide. You watch the shadows for movement. The shadows do not move. This is not the same as nothing being there.',
+        skillCheck: { skill: 'tracking', dc: 12, successAppend: 'Movement. Southeast quadrant of the talus field, in the shadow between two car-sized blocks. Not Hollow — the movement pattern is too fast, too deliberate. A figure, bipedal, moving between cover points with the practiced efficiency of something that knows this terrain. Sanguine, or human. At this distance you cannot distinguish. It does not look up.' },
+      },
+    ],
+    npcSpawns: [],
+    itemSpawns: [
+      {
+        entityId: 'wild_herbs',
+        spawnChance: 0.40,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.7, max: 1.0 },
+        groundDescription: 'Wild sage and juniper berries growing at the mesa edge, accessible if you don\'t mind the proximity to the drop.',
+        depletion: { cooldownMinutes: { min: 180, max: 480 }, respawnChance: 0.45 },
+      },
+    ],
+  },
+
+  // ----------------------------------------------------------
+  // BR-20: The Seep Grotto
+  // ----------------------------------------------------------
+  {
+    id: 'br_20_seep_grotto',
+    name: 'The Breaks — The Seep Grotto',
+    zone: 'the_breaks',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { hiddenRoom: true, safeRest: true, waterSource: true, campfireAllowed: true },
+    description: 'The chimney descent opens into a space that the canyon has been keeping to itself. A grotto carved into the mesa\'s interior by water that is still here — seeping from three separate points in the domed ceiling, running in slow threads down walls coated in mineral deposit and living moss, collecting in a stone basin at the room\'s center that is clear and cold and deep enough to submerge your hands to the wrists. The light is indirect, entering through the chimney above and through a horizontal crack in the south wall that admits a blade of daylight across the basin surface. The air is fifteen degrees cooler than outside and carries the green smell of wet stone and growing things. On the grotto walls, where the mineral deposits have built up in flowstone curtains: the preserved tracks of water\'s patient work, each ripple in the flowstone a year, each curtain a century. Someone has been here before you — a fire ring near the south wall, a carved shelf in the softer stone holding a sealed tin, and on the wall beside it, scratched in careful letters: DRINK. REST. LEAVE IT BETTER.',
+    descriptionNight: 'The grotto at night is unchanged by the hour — the light from the chimney shifts from daylight to starlight, the horizontal crack goes dark, and the seep water continues without reference to any schedule. With a fire in the ring, the flowstone walls catch the light and the mineral deposits glow amber and white, the grotto becoming something that looks designed rather than discovered. The water sounds are louder in the dark. The temperature holds.',
+    shortDescription: 'A hidden grotto inside the mesa — seep water, moss, flowstone walls, a fire ring, and a carved message that says everything necessary in six words.',
+    exits: {
+      up: 'br_19_bleached_mesa_edge',
+    },
+    richExits: {
+      up: {
+        destination: 'br_19_bleached_mesa_edge',
+        descriptionVerbose: 'up the chimney to the bleached mesa edge',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.05,
+      timeModifier: { day: 0.5, dusk: 1.0, night: 1.5, dawn: 0.5 },
+      threatPool: [
+        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
+    },
+    extras: [
+      {
+        keywords: ['water', 'basin', 'seep', 'pool', 'drink'],
+        description: 'The basin is natural — a depression in the bedrock floor, widened and deepened by centuries of water dissolving the softer stone. The water is clear to the bottom, which is about eighteen inches down. You can see the mineral deposits on the basin floor: white calcite, a faint green tinge from copper trace. The water is cold enough to numb your fingers in ten seconds. It tastes clean — mineral, slightly sweet, with none of the organic taint that surface water in canyon country carries. This is filtered through a hundred feet of sandstone. It is the best water you have encountered in The Breaks.',
+        skillCheck: { skill: 'survival', dc: 7, successAppend: 'The flow rate from the three ceiling seeps is consistent — approximately a liter per hour combined. The basin overflows through a crack in the south wall, which means the water level is self-regulating. You could fill every container you have and the basin would recover by morning. This is a permanent, reliable water source. You understand immediately why someone carved a message asking you to leave it better than you found it.' },
+      },
+      {
+        keywords: ['flowstone', 'mineral', 'walls', 'deposits', 'curtains'],
+        description: 'The flowstone is spectacular in the clinical sense — each curtain is a record of mineral-laden water depositing its calcium carbonate load over decades. The oldest curtains near the floor are thick and opaque, the calcite dense and layered. The newer ones near the ceiling seeps are translucent, thin enough in places to see the rock behind them. Where the firelight or daylight hits them, they glow: amber in the thicker sections, white where the calcite is purest, a faint green where copper compounds have infiltrated the deposit. You are inside a geological process that is still running.',
+        skillCheck: { skill: 'lore', dc: 11, successAppend: 'The flowstone growth rate tells you this grotto has been actively seeping for at least eight thousand years. The thickest curtain near the floor is a continuous record of water chemistry stretching back to when this canyon was a different climate entirely — wetter, colder, the mesa above covered in pine forest rather than juniper scrub. The grotto remembers a world that no longer exists. It is not the only thing in the Four Corners with that quality.' },
+      },
+      {
+        keywords: ['tin', 'sealed', 'shelf', 'cache', 'carved shelf'],
+        description: 'The sealed tin is a pre-Collapse tobacco tin, repurposed as a cache container. Inside: a packet of water purification tablets, a small coil of fishing line, three waterproof matches, and a folded note. The note reads: This grotto is shared. Take what you need. Replace what you can. The next person is you in a different body. Unsigned. The handwriting is neat and unhurried. The items are in good condition. Someone maintains this cache the way someone maintains the cairn at the canyon crossroads — quietly, consistently, for reasons that don\'t require explanation.',
+        skillCheck: { skill: 'scavenging', dc: 8, successAppend: 'Behind the tin, wedged into the back of the carved shelf: a second container, smaller, wrapped in oilcloth. Inside, a hand-drawn map of The Breaks on treated paper, more detailed than any you\'ve seen. It marks the grotto, the chimney route, the wind passage, water sources, Hollow density zones, and — in red ink — a circuit marked FERAL RANGE with estimated dates. Someone has been studying the Sanguine\'s hunting pattern from this grotto. The map is recent.' },
+      },
+      {
+        keywords: ['moss', 'green', 'growing', 'life', 'plants'],
+        description: 'The moss is a deep green that looks wrong against the desert context of everything outside this room. It grows wherever the seep water touches the wall — thick cushions of it, the kind of moss that requires consistent moisture and stable temperature. You touch it and your finger comes away damp and smelling of chlorophyll and wet earth. In the cracks where the moss is thickest, small ferns — maidenhair, by the frond shape — grow in the perpetual mist of the seep. This room is a microclimate, a pocket of temperate biology inside an arid mesa, sustained by geology and indifferent to the desert ten feet above it.',
+      },
+      {
+        keywords: ['fire ring', 'fire', 'message', 'carved', 'scratched', 'letters'],
+        description: 'The fire ring is small and carefully built — flat stones set in a circle barely a foot across, sized for a cooking fire, not a warming fire. The smoke staining on the ceiling above it is channeled toward the chimney by the natural airflow, which means someone tested the ventilation before building the ring here. The carved message beside the shelf: DRINK. REST. LEAVE IT BETTER. Six words in letters an inch tall, cut into the stone with the depth of someone who intended them to outlast their author. The message has been obeyed. The grotto is clean. The cache is maintained. Someone is listening to the carved words, even now.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'breaks_wanderer_at_rest',
+        spawnChance: 0.15,
+        spawnType: 'wanderer',
+        activityPool: [
+          { desc: 'A figure sits beside the basin with their boots off and their feet in the water, eyes closed, breathing the cool air with the specific gratitude of someone who has been in the canyon heat for too long. They open their eyes when you arrive but don\'t reach for a weapon. The grotto has that effect.', weight: 3 },
+        ],
+        dispositionRoll: { friendly: 0.4, neutral: 0.5, wary: 0.1, hostile: 0.0 },
+        dialogueTree: 'br_overhang_shelter_traveler',
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'fresh_water_container',
+        spawnChance: 0.70,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.9, max: 1.0 },
+        groundDescription: 'Clear, cold water collected in the natural stone basin from three ceiling seeps.',
+        depletion: { cooldownMinutes: { min: 30, max: 90 }, respawnChance: 0.80 },
+      },
+      {
+        entityId: 'purification_tabs',
+        spawnChance: 0.50,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.8, max: 1.0 },
+        groundDescription: 'A packet of water purification tablets left in the cache tin on the carved shelf.',
+        depletion: { cooldownMinutes: { min: 1440, max: 4320 }, respawnChance: 0.40 },
+      },
+      {
+        entityId: 'tinder_bundle',
+        spawnChance: 0.35,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.6, max: 0.9 },
+        groundDescription: 'A small bundle of dry tinder left beside the fire ring by a previous visitor.',
+        depletion: { cooldownMinutes: { min: 240, max: 720 }, respawnChance: 0.35 },
+      },
+    ],
   },
 ]

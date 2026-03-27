@@ -248,10 +248,16 @@ export const THE_STACKS_ROOMS: Room[] = [
     description: 'A room that earns its name. The Reclaimers have been collecting books, hard drives, printed documents, and academic papers for years — floor-to-ceiling shelves, a card catalog rebuilt from scratch, and three reading tables with good light. The organization is a small miracle: Dewey Decimal for the physical books, folder taxonomy for the digital archive, handwritten index cards for the documents that don\'t fit either system. This is the most human room in the Stacks.',
     descriptionNight: 'The library at night is quiet in a way that feels chosen rather than accidental. The reading lamps are on over two of the tables. A researcher reads slowly, making notes in a small book. Another sleeps with their head on folded arms, a technical manual still open beneath them.',
     shortDescription: 'The Stacks library. Salvaged books and drives. Lore.',
-    exits: { east: 'st_07_comm_center', south: 'st_10_roof_observatory' },
+    exits: { east: 'st_07_comm_center', south: 'st_10_roof_observatory', down: 'st_15_preservation_vault', west: 'st_16_reading_room' },
     richExits: {
       east: { destination: 'st_07_comm_center', descriptionVerbose: 'east to the comm center' },
       south: { destination: 'st_10_roof_observatory', descriptionVerbose: 'stairs up to the roof observatory' },
+      down: {
+        destination: 'st_15_preservation_vault',
+        descriptionVerbose: 'down a reinforced stairwell into the preservation vault',
+        skillGate: { skill: 'lockpicking', dc: 10, failMessage: 'The vault door has a mechanical combination lock. You can\'t crack it yet.' },
+      },
+      west: { destination: 'st_16_reading_room', descriptionVerbose: 'west into the old reading room' },
     },
     items: ['lore_reclaimer_field_notes'],
     enemies: [],
@@ -729,7 +735,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     descriptionNight: 'At night the collapsed roof gaps become windows to the stars. Enough light comes through to navigate by. The marble reflects it faintly, the floor glowing a pale blue in the dark. The desk is a black shape. The directory is unreadable without a light. Something about the scale — the ceilings that were meant to make you feel the building\'s importance — makes the dark feel more absolute.',
     descriptionDawn: 'Dawn sends light through the eastern collapse gaps at a low angle that crosses the marble floor in orange bars. The building directory catches it and one name on the tenant list is briefly illuminated before the angle shifts: MERIDIAN SYSTEMS INC — FLOORS 14-22.',
     shortDescription: 'Former office tower atrium. Marble under rubble. Directory still readable.',
-    exits: { west: 'st_11_upper_stacks', up: 'st_11_upper_stacks', down: 'st_12_server_room_remnant', north: 'st_13_underpass', east: 'st_01_approach' },
+    exits: { west: 'st_11_upper_stacks', up: 'st_11_upper_stacks', down: 'st_12_server_room_remnant', north: 'st_13_underpass', east: 'st_01_approach', south: 'st_18_shelving_canyon' },
     richExits: {
       west: {
         destination: 'st_11_upper_stacks',
@@ -755,6 +761,10 @@ export const THE_STACKS_ROOMS: Room[] = [
       east: {
         destination: 'st_01_approach',
         descriptionVerbose: 'east through the rubble field toward the Stacks approach',
+      },
+      south: {
+        destination: 'st_18_shelving_canyon',
+        descriptionVerbose: 'south through a gap in the rubble into a corridor of collapsed shelving',
       },
     },
     items: ['lore_meridian_funding_data'],
@@ -830,5 +840,430 @@ export const THE_STACKS_ROOMS: Room[] = [
       ],
     },
     narrativeNotes: 'Hub room for the outer Stacks geography. The building directory is a key MERIDIAN discovery — confirms corporate presence in this city pre-Collapse. The reception desk skill check (the security memo) implies Meridian was preparing for something two months before the Collapse. The stairwell down to the server room remnant is hidden — requires perception to find. Dawn description text illuminating the Meridian plaque is a passive lore delivery that rewards early-morning play.',
+  },
+
+  {
+    id: 'st_15_preservation_vault',
+    name: 'The Stacks — Preservation Vault',
+    zone: 'the_stacks',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { dark: true, noCombat: true },
+    description: 'Below the library, sealed behind a combination lock that the Reclaimers never changed from its factory setting, the preservation vault maintains a steady fifty-five degrees and eighteen percent humidity through a desiccant system that someone understood well enough to rebuild from industrial parts. The room is narrow and deep — twenty feet by sixty — with climate-controlled cases lining both walls and a central aisle barely wide enough for two people to pass. Inside the cases: pre-Collapse manuscripts, university press runs, government documents in acid-free folders, and a sealed glass cabinet at the far end containing three items that Lev considers more valuable than anything else in the Stacks. The silence here has a specific quality — the silence of a room designed to preserve things that outlast the people who made them.',
+    descriptionNight: 'The vault at night is identical to the vault at any other hour — no external light reaches it, no ambient sound penetrates. The desiccant system clicks through its cycle. The climate cases hold steady. The three items in the sealed cabinet at the far end catch the beam of your light and hold it the way old paper holds ink: completely.',
+    shortDescription: 'Preservation vault. Climate-controlled. Rare documents. Sealed cabinet.',
+    exits: { up: 'st_06_library' },
+    richExits: {
+      up: { destination: 'st_06_library', descriptionVerbose: 'up the stairs to the library' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    itemSpawns: [
+      { entityId: 'lore_meridian_r1_research', spawnChance: 0.40, quantity: { min: 1, max: 1, distribution: 'single' } },
+      { entityId: 'chemicals_basic', spawnChance: 0.30, quantity: { min: 1, max: 1, distribution: 'single' } },
+    ],
+    extras: [
+      {
+        keywords: ['cases', 'documents', 'manuscripts', 'collection'],
+        description: 'The cases are repurposed commercial display units, retrofitted with gasket seals and silica gel packs that someone replaces on a rotating schedule — you can see the replacement log taped inside each case, dates going back four years. The documents inside span three centuries of printed material. Most of it is academic: biology, virology, genetic modification, public health policy. The collection isn\'t random. Someone built a research library for the end of the world and knew exactly which subjects would matter.',
+        skillCheck: { skill: 'lore', dc: 10, successAppend: 'The collection has a bias. Eighty percent of the material is directly relevant to CHARON-7 research — virology, gain-of-function debate, military biodefense programs, and a complete run of the Journal of Emerging Infectious Diseases from 2025 to 2031. Lev didn\'t build a general archive. Lev built the bibliography for a specific question.' },
+      },
+      {
+        keywords: ['cabinet', 'sealed', 'glass', 'three', 'items', 'valuable'],
+        description: 'The sealed glass cabinet at the far end is newer than everything else in the vault — built specifically for these three items. Inside: a leather-bound journal with no title, a USB drive in a static-proof case labeled CS-R1 SEQUENCING DATA — COMPLETE, and a sealed envelope addressed to no one, with the MERIDIAN PROJECT seal on the flap. The journal\'s pages are visible through the glass. Dense handwriting. Diagrams. The handwriting matches Lev\'s.',
+        skillCheck: { skill: 'electronics', dc: 12, successAppend: 'The USB drive label is specific: CS-R1, not CS-R8. R-1 is the Sanguine strain — the prototype, the success. Complete sequencing data for the virus that made the Sanguine what they are. This is the single most valuable scientific artifact in the Four Corners and it is sitting in a glass case in a basement because Lev does not trust it to be anywhere else.' },
+        questFlagOnSuccess: { flag: 'found_r1_sequencing_data', value: true },
+      },
+      {
+        keywords: ['humidity', 'climate', 'desiccant', 'temperature', 'system'],
+        description: 'The climate system is elegant in its simplicity — passive desiccant canisters on a rotation cycle, insulation rated for underground installation, and a single low-draw electric fan that circulates air through the desiccant bed. The system consumes almost no power. It could run for decades. That\'s the point. Whoever designed this was building for the possibility that no one would maintain it.',
+        skillCheck: { skill: 'mechanics', dc: 9, successAppend: 'The desiccant canisters are military surplus — the same type used in long-term weapons storage. The insulation is spray-foam rated for nuclear bunker specification. Someone with very specific procurement access built this vault before the Stacks was the Stacks. The vault was here first. The Reclaimers found it and built around it.' },
+      },
+      {
+        keywords: ['envelope', 'sealed', 'letter', 'MERIDIAN'],
+        description: 'The envelope is heavy stock, cream-colored, sealed with the MERIDIAN PROJECT embossed wax seal — the caduceus-and-helix design you\'ve seen elsewhere. No addressee. No return address. The paper has yellowed slightly at the edges but the seal is intact. Whatever is inside has not been read since it was sealed. Lev has not opened it. That restraint tells you something about Lev.',
+      },
+    ],
+    narrativeNotes: 'The vault is a significant lore cache. The R-1 sequencing data USB is one of the most important items in the game — it connects to the Sanguine questline and the MERIDIAN endgame. The sealed envelope is a deliberate mystery object. The vault-was-here-first detail (mechanics check) implies MERIDIAN pre-positioned this archive before the Collapse.',
+  },
+
+  {
+    id: 'st_16_reading_room',
+    name: 'The Stacks — Reading Room',
+    zone: 'the_stacks',
+    act: 2,
+    difficulty: 2,
+    visited: false,
+    flags: { safeRest: true, campfireAllowed: true },
+    description: 'A former conference room converted into something gentler — six mismatched reading desks arranged around a central lamp, each desk occupied by the evidence of ongoing study. Open books weighted with river stones, annotated printouts in neat stacks, pencils in jars, a thermos that still smells like chicory substitute. The carpet is industrial gray but someone laid a woven rug over the worst of it, and the effect is a room that feels inhabited in a way the rest of the Stacks does not. People don\'t just work here. They stay. There are blankets folded on two of the chairs. Someone sleeps here rather than go to assigned quarters, and nobody has told them not to.',
+    descriptionNight: 'At night the reading room is the quietest place in the Stacks — the central lamp runs low, casting a warm circle that doesn\'t reach the walls. A researcher sleeps in the corner chair with a blanket pulled to their chin and a book open on their chest. The room holds the specific domestic warmth of a place where people have decided to be comfortable despite everything.',
+    shortDescription: 'Reading room. Warm. Occupied. Safe rest.',
+    exits: { east: 'st_06_library', south: 'st_17_data_archive' },
+    richExits: {
+      east: { destination: 'st_06_library', descriptionVerbose: 'east back to the main library' },
+      south: { destination: 'st_17_data_archive', descriptionVerbose: 'south into the data archive annex' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    npcSpawns: [
+      {
+        npcId: 'reclaimer_technician',
+        spawnChance: 0.60,
+        spawnType: 'anchored',
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        activityPool: [
+          { desc: 'A researcher reads with the focused intensity of someone who believes the answer is in the next paragraph.', weight: 3 },
+          { desc: 'A Reclaimer sits at the desk making careful pencil notes in the margin of a photocopied technical paper, their handwriting small and precise.', weight: 3 },
+          { desc: 'A technician sleeps in the corner chair, their breathing slow and even, a dog-eared virology textbook still open in their lap.', weight: 2, timeRestrict: ['night', 'dusk'] },
+        ],
+        dispositionRoll: { friendly: 0.35, neutral: 0.55, wary: 0.10 },
+      },
+    ],
+    itemSpawns: [
+      { entityId: 'boiled_rations', spawnChance: 0.50, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      { entityId: 'water_bottle_sealed', spawnChance: 0.40, quantity: { min: 1, max: 1, distribution: 'single' } },
+    ],
+    extras: [
+      {
+        keywords: ['desks', 'books', 'study', 'work', 'reading'],
+        description: 'Six desks, six ongoing research projects. One is cross-referencing pre-Collapse CDC outbreak reports with the CHARON-7 timeline. Another is reconstructing a water treatment protocol from fragments of three different engineering manuals. A third has nothing but personal diaries stacked in chronological order with small colored tabs marking specific entries. The work here is slow and careful and human. It is the opposite of the Collapse.',
+        skillCheck: { skill: 'lore', dc: 8, successAppend: 'The diary project catches your eye. The tabs are color-coded: red for Collapse-day entries, blue for first sightings of the Hollow, green for first contact with the Sanguine. Someone is building a civilian timeline of the end of the world, one personal account at a time. The project has been running for two years.' },
+      },
+      {
+        keywords: ['rug', 'blankets', 'comfort', 'home', 'warmth'],
+        description: 'The woven rug is handmade — someone in the Stacks knows how to weave. The blankets are clean, folded carefully, the kind of care people take with soft things when soft things are rare. The thermos on the center desk has a chip in the rim and someone has written LEV\'S — DO NOT WASH on the bottom in permanent marker. The reading room is what happens when people build a library and then decide it isn\'t enough — they needed a home inside the home.',
+      },
+      {
+        keywords: ['thermos', 'chicory', 'drink', 'coffee'],
+        description: 'Chicory root, roasted and ground, brewed strong. The smell is close enough to coffee that your body responds before your brain corrects it. The Reclaimers grow chicory in their small greenhouse — one of the few luxuries they maintain. Lev\'s thermos is refilled daily. It is, by some measures, the most human artifact in the entire Stacks.',
+      },
+      {
+        keywords: ['lamp', 'light', 'central', 'glow'],
+        description: 'The lamp is a repurposed industrial work light with a dimmer switch wired in by someone who understood that not all light needs to be bright. At its lowest setting it produces the warm amber glow of something that existed before LEDs, before fluorescents, before the particular harshness of light designed for productivity. This light was designed for reading. Someone thought about that.',
+        skillCheck: { skill: 'electronics', dc: 7, successAppend: 'The dimmer is hand-soldered — clean work, the kind that suggests the person who did it could have built something more impressive but chose to build something kind instead. The lamp draws twelve watts. In a facility that generates kilowatts, that\'s nothing. But someone still took the time.' },
+      },
+    ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The reading room is warm. The lamp hums at its lowest setting. For a moment, nothing is wrong.', chance: 0.30, time: ['night'] },
+        { line: 'Someone turns a page. The sound is impossibly loud in the silence, and then it isn\'t.', chance: 0.25, time: null },
+      ],
+    },
+    narrativeNotes: 'Safe rest room in the Stacks zone. The warmth and domesticity are deliberate contrast to the facility\'s clinical tone. The diary research project is a lore thread. Lev\'s thermos is a character detail. This room exists to make the player feel something specific about the Reclaimers: they are people first.',
+  },
+
+  {
+    id: 'st_17_data_archive',
+    name: 'The Stacks — Data Archive Annex',
+    zone: 'the_stacks',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { scavengingZone: true, dark: true },
+    description: 'The annex was a storage room before the Reclaimers converted it, and the conversion shows — bare cinderblock walls, no windows, a single overhead strip light that flickers at a frequency designed to produce migraines. The shelves here hold hard drives, tape backups, optical media, and a section of hand-labeled floppy disks that somebody recovered from a government office and hasn\'t been able to read yet because the drives don\'t exist anymore. The Reclaimers estimate they have recovered twelve terabytes of pre-Collapse data and have processed roughly nine percent of it. The other ninety-one percent waits on these shelves, each drive a sealed room full of things that might matter enormously or might be someone\'s vacation photographs.',
+    descriptionNight: 'The archive at night is darker than the rest of the Stacks — the strip light dies at eleven and nobody has fixed the timer. In the dark the drives are just shapes on shelves. The data they contain is the same whether the light works or not, which is either a comfort or a philosophical problem depending on how long you\'ve been down here.',
+    shortDescription: 'Data archive. Twelve terabytes of unprocessed history.',
+    exits: { north: 'st_16_reading_room', east: 'st_20_map_room' },
+    richExits: {
+      north: { destination: 'st_16_reading_room', descriptionVerbose: 'north back to the reading room' },
+      east: {
+        destination: 'st_20_map_room',
+        descriptionVerbose: 'east through a connecting passage to the map room',
+        hidden: true,
+        discoverSkill: 'perception',
+        discoverDc: 10,
+        discoverMessage: 'Behind the last shelf unit, the cinderblock wall has a section that doesn\'t match — newer mortar, different color. Someone bricked over a doorway. The mortar is crumbling. The doorway is accessible.',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    npcSpawns: [
+      {
+        npcId: 'reclaimer_technician',
+        spawnChance: 0.35,
+        spawnType: 'anchored',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'A technician works at a portable terminal connected to a drive cradle, scrolling through file directories with the patient intensity of an archaeologist.', weight: 3 },
+          { desc: 'A Reclaimer catalogues drives by hand, writing index cards with a pencil stub, checking each label twice before shelving.', weight: 2 },
+        ],
+        dispositionRoll: { neutral: 0.6, friendly: 0.3, wary: 0.1 },
+      },
+    ],
+    itemSpawns: [
+      { entityId: 'electronics_salvage', spawnChance: 0.65, quantity: { min: 1, max: 3, distribution: 'weighted_low' }, conditionRoll: { min: 0.3, max: 0.8 } },
+      { entityId: 'signal_decode_partial', spawnChance: 0.30, quantity: { min: 1, max: 1, distribution: 'single' } },
+      { entityId: 'wire_coil', spawnChance: 0.40, quantity: { min: 1, max: 1, distribution: 'flat' } },
+      { entityId: 'crafting_components', spawnChance: 0.35, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+    ],
+    extras: [
+      {
+        keywords: ['drives', 'hard drives', 'storage', 'data', 'shelves'],
+        description: 'The drives are organized by source location: CROSSROADS MUNICIPAL, HOSPITAL EAST, UNIVERSITY CS DEPT, MERIDIAN METRO OFFICE (3 drives, flagged with red tape), NM STATE POLICE, CDC FIELD OFFICE (2 drives, also flagged). The flagged drives are on a separate shelf with a sign: DO NOT PROCESS WITHOUT LEV PRESENT. The distinction implies some data is dangerous to know without context.',
+        skillCheck: { skill: 'electronics', dc: 11, successAppend: 'You check the directory listing on the CDC field office drive. The files are partially corrupted but the folder structure is intact: /outbreak_tracking/, /personnel_deployment/, /meridian_liaison/, and a folder called /contingency_orders/ that is encrypted with a key length that suggests whoever locked it expected it to stay locked. The Reclaimers haven\'t cracked it. Nobody has.' },
+        questFlagOnSuccess: { flag: 'found_cdc_encrypted_files', value: true },
+      },
+      {
+        keywords: ['floppy', 'disks', 'government', 'old', 'media'],
+        description: 'Thirty-seven floppy disks in a sealed bag, each labeled in government shorthand: DOE-MRDN-01 through DOE-MRDN-37. Department of Energy, MERIDIAN series. The drives that read these haven\'t been manufactured since 2015. The Reclaimers have been looking for a working unit for two years. Whatever is on these disks is old enough to predate CHARON-7 by a decade. That makes it either irrelevant or foundational, and in Lev\'s estimation, the latter.',
+      },
+      {
+        keywords: ['tape', 'backups', 'optical', 'media types'],
+        description: 'The tape backups are LTO-8 format — enterprise grade, high-density. Each tape holds twelve terabytes compressed. The Reclaimers have four functional tape drives and a queue of eighty-three tapes waiting to be read. At current processing speed, the queue will take six years. The data will outlast the people reading it. That\'s the fundamental problem of preservation: you can save everything and still not have enough time.',
+      },
+      {
+        keywords: ['light', 'flicker', 'strip', 'overhead'],
+        description: 'The strip light flickers because the ballast is dying — a known issue, replacement parts sourced but not yet installed. The Reclaimers have priorities and a flickering light in a storage room is not one of them. The frequency of the flicker is roughly eight hertz, which is close enough to the photosensitive seizure threshold that a warning sign has been taped to the door. Someone thought about that. Someone thinks about everything here.',
+        skillCheck: { skill: 'mechanics', dc: 8, successAppend: 'You could fix this in ten minutes with the parts on the shelf by the door. The ballast is standard T8 fluorescent, common enough that three spares are sitting in a bin labeled LIGHTING. Nobody has fixed it because nobody has had ten free minutes. That tells you everything about the Reclaimers\' workload.' },
+      },
+    ],
+    narrativeNotes: 'Scavenging hub for electronics and data. The CDC encrypted files are a significant lore gate — the contingency orders folder connects to the military questline. The DOE floppy disks predate CHARON-7 and imply Department of Energy involvement in MERIDIAN\'s origins. The hidden passage to the map room rewards exploration.',
+  },
+
+  {
+    id: 'st_18_shelving_canyon',
+    name: 'Collapsed Shelving Canyon',
+    zone: 'the_stacks',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { scavengingZone: true, dark: true },
+    description: 'The public library wing of the complex collapsed unevenly — the ceiling buckled but held, the walls bowed inward, and the industrial metal shelving units that once held the municipal collection fell in a domino pattern that created a narrow canyon of steel and paper. The passage through them is single-file, bent at angles where the shelves met obstacles and folded rather than toppled. Books are everywhere — compressed into strata, pulped by water damage, fused into bricks of paper by years of humidity and pressure. The smell is mildew and rust and the particular sweetness of decomposing cellulose. Somewhere in the compressed mass, spines are still legible. Titles surface like fossils in sediment.',
+    descriptionNight: 'At night the shelving canyon is absolute dark. Your light catches the metal edges of shelf frames and the pallid surfaces of compressed paper. The shadows move when you move. The canyon makes sounds at night — the slow complaint of metal under sustained load, the papery whisper of compressed books settling deeper into their own weight.',
+    shortDescription: 'Collapsed shelving. Narrow passage. Books compressed into strata.',
+    exits: { north: 'st_14_collapsed_lobby', south: 'st_19_basement_records', east: 'st_20_map_room' },
+    richExits: {
+      north: { destination: 'st_14_collapsed_lobby', descriptionVerbose: 'north through the canyon back to the collapsed lobby' },
+      south: {
+        destination: 'st_19_basement_records',
+        descriptionVerbose: 'south, down through a buckled floor section into the basement records',
+        skillGate: { skill: 'climbing', dc: 9, failMessage: 'The floor section is unstable. You can see the basement below but can\'t find safe footing to descend.' },
+      },
+      east: { destination: 'st_20_map_room', descriptionVerbose: 'east through a cleared passage toward the map room' },
+    },
+    items: [],
+    enemies: ['shuffler'],
+    npcs: [],
+    itemSpawns: [
+      { entityId: 'scrap_metal', spawnChance: 0.70, quantity: { min: 1, max: 3, distribution: 'flat' } },
+      { entityId: 'textiles', spawnChance: 0.45, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+      { entityId: 'lore_precollapse_survey', spawnChance: 0.25, quantity: { min: 1, max: 1, distribution: 'single' } },
+    ],
+    extras: [
+      {
+        keywords: ['books', 'titles', 'spines', 'collection', 'paper'],
+        description: 'You read the spines you can reach: Introduction to Molecular Biology. Desert Ecology of the American Southwest. The Complete Works of someone whose name is water-damaged beyond recovery. A children\'s picture book, the cover illustration still bright — a rabbit in a garden, impossibly cheerful. The municipal collection was for everyone. The everyone it was for is mostly gone.',
+        skillCheck: { skill: 'scavenging', dc: 9, successAppend: 'You work a book free from the compressed mass without tearing it — a hardcover, intact, titled CHARON PROJECT: ETHICAL REVIEW BOARD PROCEEDINGS, 2029. Not CHARON-7. Just CHARON. The project had a name before it had a number. This book predates the public record by two years. Lev would want this.' },
+        questFlagOnSuccess: { flag: 'found_charon_ethics_proceedings', value: true },
+      },
+      {
+        keywords: ['shelves', 'metal', 'steel', 'frames', 'canyon'],
+        description: 'The shelving units are heavy-gauge steel, bolted to the floor and ceiling — or they were. The bolts held in some places and sheared in others, creating the angular topple pattern that formed the canyon. The metal is sound. The Reclaimers haven\'t salvaged it because extraction would collapse the passage. The shelves are structural now. Remove them and the ceiling follows.',
+        skillCheck: { skill: 'mechanics', dc: 10, successAppend: 'The load distribution is precarious but calculable. Three specific shelf units are bearing the ceiling\'s weight. The rest are deadfall. With the right tools you could extract the non-load-bearing units for steel salvage — roughly four hundred pounds of clean angle iron. Someone has already marked two of them with chalk. A Reclaimer engineer came to the same conclusion.' },
+      },
+      {
+        keywords: ['smell', 'mildew', 'water', 'damage', 'decay'],
+        description: 'The decomposition smell is strongest in the center section where a roof leak has been feeding the paper mass for years. The water damage created a microecology — mold colonies in visible patches of blue-green and black, the paper turning to mulch where the moisture is worst. The biology is active. This section of the canyon is, in a real sense, composting. The municipal library is becoming soil.',
+        skillCheck: { skill: 'field_medicine', dc: 9, successAppend: 'The black mold is Stachybotrys — toxic spore load, respiratory hazard with prolonged exposure. The blue-green is Penicillium, which is less dangerous and more interesting. A Shepherd or a medic with the right equipment could culture the Penicillium into something useful. The apocalypse grows its own medicine if you know where to look.' },
+      },
+      {
+        keywords: ['passage', 'narrow', 'path', 'squeeze'],
+        description: 'The passage through the canyon is eighteen inches wide at its narrowest — sideways only, gear catching on shelf edges, the compressed paper walls close enough to feel their damp exhalation on your face. Claustrophobia is a luxury you cannot afford. The passage opens and closes as the shelf angles shift. Two hundred feet of it. The Reclaimers marked the route with reflective tape at ankle height, visible only if you\'re looking down, which in a passage this narrow you are.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.25,
+      timeModifier: { day: 0.7, night: 1.5, dawn: 0.9, dusk: 1.2 },
+      threatPool: [
+        { type: 'shuffler', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'screamer', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.3, awarePassive: 0.3, awareAggressive: 0.4 },
+      noiseModifier: 1.4,
+      activityPool: {
+        shuffler: [
+          { desc: 'A shuffler stands wedged between two shelf frames, motionless, paper debris clinging to its clothes.', weight: 3 },
+          { desc: 'A shuffler pushes through the narrow passage ahead of you, dislodging books that fall with soft wet sounds.', weight: 2 },
+        ],
+      },
+    },
+    environmentalRolls: {
+      ambientSoundPool: {
+        day: [
+          { sound: 'Metal groans somewhere in the shelf structure — the slow adjustment of weight, ongoing, never quite finished.', weight: 4 },
+          { sound: 'A book falls from somewhere above, landing with a flat thud. Then silence.', weight: 3 },
+          { sound: null, weight: 3 },
+        ],
+        night: [
+          { sound: 'The canyon speaks at night — steel contracting in the cold, paper settling, the architecture of the collapse still finding its final shape.', weight: 5 },
+          { sound: 'Something moves deeper in the shelves. The sound carries oddly — close, then not close.', weight: 3 },
+        ],
+      },
+      ambientCount: { min: 1, max: 1, distribution: 'single' },
+    },
+    narrativeNotes: 'The shelving canyon is the exploration-oriented room of the new set. The CHARON ethics proceedings book (predating CHARON-7 by two years) is a significant lore find. The Penicillium detail connects to the Shepherd/medic questlines. The narrow passage creates atmospheric tension.',
+  },
+
+  {
+    id: 'st_19_basement_records',
+    name: 'Basement Records',
+    zone: 'the_stacks',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { dark: true, scavengingZone: true },
+    description: 'The basement of the municipal complex stored what basements always store — the things that matter but not enough to see daylight. Filing cabinets in rows that extend beyond your light, standing in four inches of black water that came in through a crack in the foundation and never left. The water is cold and still and the smell is the mineral smell of standing groundwater and the iron smell of rusting steel. The filing cabinets are labeled by department and year, the labels printed on card stock that has curled and yellowed but remains legible. Public Works. Health Department. City Planning. Police. And at the far end of the third row, a cabinet that has been pried open recently — the water around it disturbed, the lock drilled out with a precision that suggests battery-powered tools and a specific purpose.',
+    descriptionNight: 'The basement records don\'t change at night. The water is the same temperature. The dark is the same dark. Your light finds the same filing cabinets in their same patient rows, waiting to be read by a civilization that has other priorities now. The drilled cabinet at the far end is the only evidence that someone has been here since the water came in.',
+    shortDescription: 'Flooded basement. Filing cabinets. Someone drilled one open recently.',
+    exits: { up: 'st_18_shelving_canyon' },
+    richExits: {
+      up: {
+        destination: 'st_18_shelving_canyon',
+        descriptionVerbose: 'up through the buckled floor into the shelving canyon',
+      },
+    },
+    items: [],
+    enemies: ['shuffler'],
+    npcs: [],
+    itemSpawns: [
+      { entityId: 'scrap_metal', spawnChance: 0.50, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      { entityId: 'meridian_personnel_file_partial', spawnChance: 0.30, quantity: { min: 1, max: 1, distribution: 'single' } },
+      { entityId: 'bandages', spawnChance: 0.25, quantity: { min: 1, max: 1, distribution: 'single' } },
+    ],
+    extras: [
+      {
+        keywords: ['cabinets', 'files', 'records', 'departments', 'labels'],
+        description: 'The filing cabinets are government-issue steel, four-drawer, built to outlast the bureaucracy that filled them. Most drawers still open, though the water has fused some of the contents into solid blocks. The Health Department files are the most damaged — bottom drawers submerged entirely. The City Planning files on the upper drawers are mostly dry. The mundane records of a city that functioned: zoning permits, building inspections, water main repair schedules. The normalcy of it is the hardest part.',
+        skillCheck: { skill: 'scavenging', dc: 10, successAppend: 'The City Planning upper drawers contain building permits. You find one dated 2027, stamped APPROVED — EXPEDITED REVIEW: MERIDIAN SYSTEMS INC — SUBTERRANEAN FACILITY, SCAR VALLEY, NM. The permit is signed by a city official and counter-signed by someone from the Department of Defense. A weapons lab approved through a municipal building permit process. The mundane bureaucracy of atrocity.' },
+        questFlagOnSuccess: { flag: 'found_meridian_building_permit', value: true },
+      },
+      {
+        keywords: ['drilled', 'cabinet', 'pried', 'opened', 'lock'],
+        description: 'The drilled cabinet is in the Police Department section, third row, second from the end. The lock was removed with a hole saw — clean, circular cut, professional work. Inside: the cabinet is empty. Every folder removed, the hanging file rails bare. Someone came down here with tools and a plan and took everything. The water disturbance around the cabinet suggests it happened within the last few weeks. The drill dust hasn\'t been washed away yet.',
+        skillCheck: { skill: 'tracking', dc: 11, successAppend: 'Boot prints in the silt around the cabinet. Two people — one heavy, one lighter. The heavier one stood watch while the lighter one worked. The boot treads are distinctive: military surplus, the same brand the Salters issue. Warlord Briggs\'s people were here. They took the police files. The question is what was in the police files that Briggs needed to disappear.' },
+      },
+      {
+        keywords: ['water', 'flooding', 'standing', 'cold', 'crack'],
+        description: 'The water entered through a foundation crack on the east wall — you can see the mineral staining where the flow was heaviest. The crack is old. The water level has stabilized at four inches, a permanent feature now. Your feet go numb after ten minutes. The filing cabinets were not designed for submersion but the steel is holding. Another decade and they won\'t be. The rust is patient.',
+        skillCheck: { skill: 'survival', dc: 8, successAppend: 'The water is groundwater, not surface runoff — it\'s clean enough to filter and drink in an emergency. The mineral content is high but not dangerous. The temperature is a steady forty-eight degrees. In a crisis, this basement is a water source. Cold, inconvenient, but real.' },
+      },
+      {
+        keywords: ['police', 'department', 'law', 'enforcement'],
+        description: 'The Police Department section occupies the entire third row — decades of case files, incident reports, personnel records. The pre-Collapse law enforcement archive of a small city that had normal problems before it had extraordinary ones. Most of the files are water-damaged beyond recovery. The ones that survived are on the upper drawers, and someone went through them recently — not the Salters, a different disturbance pattern. The Reclaimers, probably. Looking for the same things the Salters took.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.20,
+      timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
+      threatPool: [
+        { type: 'shuffler', weight: 80, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.25, awarePassive: 0.35, awareAggressive: 0.40 },
+      activityPool: {
+        shuffler: [
+          { desc: 'A shuffler stands in the water between rows, facing a cabinet, one hand resting on the handle. It hasn\'t opened it. It can\'t. It tries anyway.', weight: 3 },
+          { desc: 'A shuffler wades slowly through the black water, the splashing sound preceding it by several seconds in the echo.', weight: 2 },
+        ],
+      },
+    },
+    environmentalRolls: {
+      ambientSoundPool: {
+        day: [
+          { sound: 'Water laps against the filing cabinets when you move. The echo makes the room feel larger than it is.', weight: 4 },
+          { sound: 'A drawer somewhere in the dark slides open on its own — thermal expansion, or the building settling, or something you don\'t want to name.', weight: 3 },
+          { sound: null, weight: 3 },
+        ],
+        night: [
+          { sound: 'The water is perfectly still. Your reflection in it is a stranger looking up from a dark floor.', weight: 4 },
+          { sound: 'Dripping. Slow. Regular. The foundation crack is still feeding the room.', weight: 4 },
+        ],
+      },
+      ambientCount: { min: 1, max: 1, distribution: 'single' },
+    },
+    narrativeNotes: 'The basement records room delivers two key revelations: the MERIDIAN building permit (municipal approval with DOD co-signature) and the Salters\' theft of police files (Briggs covering tracks). The standing water creates atmosphere and a minor survival resource. The Hollow activity detail (trying to open a cabinet) is a specific human-remnant behavior that reinforces the tragedy.',
+  },
+
+  {
+    id: 'st_20_map_room',
+    name: 'The Stacks — Map Room',
+    zone: 'the_stacks',
+    act: 2,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: true, questHub: true },
+    description: 'Someone turned a storage closet into a cartography station and then the cartography station consumed two adjacent rooms. The walls are covered in maps — USGS topographic surveys, county road maps, hand-drawn route charts, satellite imagery printed on the Reclaimers\' plotter, and a massive central map of the Four Corners region with every known settlement, route, danger zone, and resource cache marked in a color-coded system that represents years of accumulated field intelligence. Pins with colored heads cluster at key locations. String connects related sites. The map is a living document, updated as new information arrives, and it is the single best picture of the post-Collapse world that exists anywhere.',
+    descriptionNight: 'The map room at night is where the planners work — the people who think in distances and supply lines and travel times. A reading lamp illuminates the central map. Someone has added three new pins since this morning. The world keeps changing. The map tries to keep up.',
+    shortDescription: 'Cartography station. The best map of the Four Corners.',
+    exits: { west: 'st_18_shelving_canyon', north: 'st_17_data_archive' },
+    richExits: {
+      west: { destination: 'st_18_shelving_canyon', descriptionVerbose: 'west back through the shelving canyon' },
+      north: {
+        destination: 'st_17_data_archive',
+        descriptionVerbose: 'north through the connecting passage to the data archive',
+        hidden: true,
+        discoverSkill: 'perception',
+        discoverDc: 10,
+        discoverMessage: 'The north wall has a section of newer drywall — behind it, a passage to the data archive. The Reclaimers know about it but haven\'t formalized the connection.',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    npcSpawns: [
+      {
+        npcId: 'reclaimer_craftsperson',
+        spawnChance: 0.50,
+        spawnType: 'anchored',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'A Reclaimer cartographer updates the central map with new data, moving pins with the deliberate precision of someone who knows that a pin in the wrong place could get someone killed.', weight: 3 },
+          { desc: 'A craftsperson traces a route on the central map with their finger, calculating distances by counting grid squares under their breath.', weight: 2 },
+        ],
+        dispositionRoll: { neutral: 0.5, friendly: 0.4, wary: 0.1 },
+        narrativeNotes: 'The cartographer is a potential source of route information and zone discovery hints. Friendly disposition can provide free map data.',
+      },
+    ],
+    itemSpawns: [
+      { entityId: 'lore_precollapse_survey', spawnChance: 0.55, quantity: { min: 1, max: 1, distribution: 'single' } },
+      { entityId: 'meridian_tunnel_map', spawnChance: 0.15, quantity: { min: 1, max: 1, distribution: 'single' } },
+    ],
+    extras: [
+      {
+        keywords: ['central', 'map', 'four corners', 'pins', 'routes'],
+        description: 'The central map is hand-drawn on plotter paper at approximately 1:50,000 scale — large enough to fill a wall, detailed enough to show individual buildings in settlements. The color code is posted beside it: GREEN = safe route, verified. RED = danger, confirmed Hollow presence. BLUE = water source. YELLOW = cache/supply. BLACK = do not enter. The black pins cluster in three locations: the Scar valley, the Deep mine entrance, and a third location in the Dust that you haven\'t visited yet.',
+        skillCheck: { skill: 'lore', dc: 9, successAppend: 'The third black-pin cluster in the Dust is labeled in small handwriting: MERIDIAN SECONDARY SITE — FIELD STATION ECHO. Not on any other map you\'ve seen. Not mentioned in any document you\'ve read. The Reclaimers know about a second MERIDIAN facility and haven\'t told anyone. The pin was placed by Lev.' },
+        questFlagOnSuccess: { flag: 'discovered_field_station_echo', value: true },
+      },
+      {
+        keywords: ['USGS', 'topographic', 'surveys', 'geological'],
+        description: 'The USGS surveys are pre-Collapse, printed on heavy stock, covering the full Four Corners region in overlapping quadrangles. The geological data is still valid — the Collapse didn\'t change the topography, only what lives on it. Someone has annotated the survey overlaying the Scar valley with new contour lines showing the crater depression. The before and after, in cartographic language, is a circle that wasn\'t there before.',
+      },
+      {
+        keywords: ['satellite', 'imagery', 'printed', 'plotter', 'aerial'],
+        description: 'The satellite imagery is the most recent data available — captured before the Collapse by commercial imaging satellites, printed at high resolution on the Reclaimers\' plotter. The imagery shows the Four Corners as it was: a functional landscape, roads intact, settlements lit. Comparing it to the hand-drawn current map is an exercise in loss quantification. Everything that\'s dark now was lit then. Everything that\'s red-pinned now was green.',
+        skillCheck: { skill: 'perception', dc: 10, successAppend: 'The pre-Collapse satellite imagery of the Scar valley shows something the current map can\'t: construction activity at the MERIDIAN site, captured mid-build. Heavy equipment, cleared forest, a road that doesn\'t exist on any public map. The construction was significant — military scale. And in the corner of the image, barely visible at this resolution, a second cleared area three miles northwest. Field Station Echo.' },
+      },
+      {
+        keywords: ['hand-drawn', 'route', 'charts', 'field', 'intelligence'],
+        description: 'The hand-drawn route charts are the practical heart of the map room — sketched by field teams who walked the routes and noted every landmark, hazard, water source, and shelter point. Each chart is signed and dated. The oldest is from five years ago. The most recent is from last week. The accumulated knowledge of hundreds of trips through dangerous territory, distilled into pencil lines on graph paper. This is how the Reclaimers stay alive.',
+      },
+      {
+        keywords: ['string', 'connections', 'related', 'sites', 'network'],
+        description: 'The strings on the central map connect related locations — supply routes, communication lines, faction territories, Hollow migration patterns. One set of strings, in red, connects five locations in a pattern that converges on the Scar valley: the Stacks, the Dust radio tower, Duskhollow, the Deep mine, and Crossroads. Five origins, one destination. The convergence pattern is labeled in Lev\'s handwriting: ALL ROADS.',
+      },
+    ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'Someone has added a new pin to the central map. You don\'t recognize the location. Someone does.', chance: 0.25, time: ['day'] },
+        { line: 'The plotter runs in the corner, printing a new route chart. The sound is the sound of preparation.', chance: 0.20, time: null },
+      ],
+    },
+    narrativeNotes: 'The map room is the strategic intelligence hub of the Stacks zone. Field Station Echo is a major new lore reveal — a second MERIDIAN facility that opens future quest content. The "ALL ROADS" convergence detail on the central map is a meta-narrative moment, showing the player that all zones point to the same destination. The satellite imagery pre/post comparison is an emotional beat.',
   },
 ]

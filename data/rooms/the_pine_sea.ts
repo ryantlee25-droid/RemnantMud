@@ -137,9 +137,10 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
     description: 'A timber cabin set back from a logging road that last saw a truck in 2030. The cabin is built to last — squared logs, tight chinking, metal roof that has weathered well. The door is unlocked, the interior dry and functional: a potbelly stove, a cot frame with a folded canvas mattress, supply shelves stocked by previous occupants with the informal reciprocity of the backcountry tradition. You take what you need. You leave what you can. The log book on the shelf has thirty-eight entries from thirty-eight different visitors over seven years. You are thirty-nine.',
     descriptionNight: 'At night the cabin holds heat and the dark outside is complete. The stove crackles if you\'ve lit it. Outside: wind in pines, the faraway sound of the meadow. Inside: warmth, quiet, the log book waiting on the shelf with its thirty-eight signatures.',
     shortDescription: 'Backcountry cabin. Safe rest. Stash location.',
-    exits: { west: 'ps_01_tree_line' },
+    exits: { west: 'ps_01_tree_line', north: 'ps_13_fungal_hollow' },
     richExits: {
       west: { destination: 'ps_01_tree_line', descriptionVerbose: 'west back to the tree line' },
+      north: { destination: 'ps_13_fungal_hollow', descriptionVerbose: 'north, where the logging road bends into shadow and the canopy thickens' },
     },
     items: ['lore_cabin_logbook'],
     enemies: [],
@@ -296,11 +297,12 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
     description: 'A clearing in the upper forest holds a camp that has been here for years: a fire ring with a grill grate, a canvas lean-to shelter angled to catch the south sun, a water collection system from the nearest seep, a stacked firewood supply that speaks to someone who understands winter. The hermit is here. They\'ve been here for at least three seasons. They know the mountains with the intimacy that only comes from living in them continuously, and they know the Scar valley — have been watching it from the ridge, have been to it twice, have a story that is yours if you ask the right way.',
     descriptionNight: 'At night the camp fire burns low and orange. The hermit keeps it small — old habit, or knowledge. The darkness above the camp has more stars per square inch than any place you\'ve been. The hermit tells you what they saw in the valley. They\'ve been waiting to tell someone.',
     shortDescription: 'Hermit\'s camp. Lore dump. Directions to the Scar.',
-    exits: { south: 'ps_04_waterfall', east: 'ps_08_scar_overlook', north: 'ps_09_old_growth_heart' },
+    exits: { south: 'ps_04_waterfall', east: 'ps_08_scar_overlook', north: 'ps_09_old_growth_heart', west: 'ps_15_collapsed_fire_tower' },
     richExits: {
       south: { destination: 'ps_04_waterfall', descriptionVerbose: 'south toward the waterfall' },
       east: { destination: 'ps_08_scar_overlook', descriptionVerbose: 'east toward the Scar overlook' },
       north: { destination: 'ps_09_old_growth_heart', descriptionVerbose: 'north, deeper into the forest — the trees get bigger' },
+      west: { destination: 'ps_15_collapsed_fire_tower', descriptionVerbose: 'west, uphill through thinning pines toward something metal catching the light' },
     },
     items: [],
     enemies: [],
@@ -624,9 +626,10 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
     description: 'The forest opens into a clearing that isn\'t meadow — there\'s no grass, only compressed earth and dry pine duff, and in the center of it: bones. Something enormous died here long ago. The skeleton is too large for any animal you can name: a ribcage that could shelter four people standing, vertebrae the size of wheel hubs, a skull with teeth that are wrong in ways that take a moment to categorize. Pre-Collapse megafauna, maybe, or something the Collapse made. The bones are bleached and old and undisturbed. The Hollow don\'t come here. You can tell from the absence of their sign — no compressed trails, no territorial markings, nothing. This place is avoided. The hermit leaves it alone for different reasons. Both reactions are probably correct.',
     descriptionNight: 'At night the bones are pale against the dark clearing. They catch moonlight in a way the surrounding forest doesn\'t. The ribcage creates a skeletal architecture that is somehow more disturbing at night than in daylight — the gaps between the ribs frame pieces of sky. The clearing has a specific quality of emptiness that feels less like absence and more like something cleared deliberately.',
     shortDescription: 'Pre-collapse bones. Something enormous died here. Hollow avoid it.',
-    exits: { west: 'ps_09_old_growth_heart' },
+    exits: { west: 'ps_09_old_growth_heart', east: 'ps_16_spore_field' },
     richExits: {
       west: { destination: 'ps_09_old_growth_heart', descriptionVerbose: 'west, back into the old growth' },
+      east: { destination: 'ps_16_spore_field', descriptionVerbose: 'east, past the bone field where the undergrowth resumes in strange patterns' },
     },
     items: [],
     enemies: [],
@@ -683,9 +686,10 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
     descriptionNight: 'At night the coastal approach shows the sky in a way the rest of the Pine Sea doesn\'t — more open, stars visible in larger patches. The sound of the sea is clearer at night, when the wind from the west brings it unobstructed. You haven\'t heard ocean since before the Collapse. You had forgotten what you were forgetting.',
     descriptionDawn: 'At dawn the coastal approach catches the first light from the east and sends it back — the thin trees are illuminated, the trunks pale in the horizontal light. The sea smell is strongest at dawn, when the temperature differential drives an onshore breeze. If you stand still and let the light and the smell arrive together, it is briefly the most alive you\'ve felt since the Collapse.',
     shortDescription: 'Forest thins. Salt air. Edge of the mapped world.',
-    exits: { east: 'ps_09_old_growth_heart' },
+    exits: { east: 'ps_09_old_growth_heart', south: 'ps_19_windbreak_ruin' },
     richExits: {
       east: { destination: 'ps_09_old_growth_heart', descriptionVerbose: 'east, back into the deep old growth' },
+      south: { destination: 'ps_19_windbreak_ruin', descriptionVerbose: 'south, along the thinning edge where something angular shows through the trees' },
       west: {
         destination: 'coast_01_sea_cliff',
         descriptionVerbose: 'west — the forest ends in perhaps a quarter mile. What\'s beyond it is the coast. Whether the coast is navigable, populated, or something else entirely is not in any map you\'ve seen.',
@@ -763,5 +767,626 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       ],
     },
     narrativeNotes: 'The liminal edge room — the literal boundary of the known world. The west exit to coast_01_sea_cliff is Cycle 4 and skill-gated to control pacing into the next zone. The lore items and extras plant seeds for coastal zone content. The tone is wonder tinged with vertigo: this is as far as anyone has been, and what\'s past it is genuinely open.',
+  },
+
+  // ============================================================
+  // ps_13 through ps_20 — Pine Sea expansion
+  // ============================================================
+
+  {
+    id: 'ps_13_fungal_hollow',
+    name: 'The Fungal Hollow',
+    zone: 'the_pine_sea',
+    act: 2,
+    difficulty: 2,
+    visited: false,
+    flags: { scavengingZone: true },
+    cycleGate: 2,
+    description: 'The logging road descends into a depression where the canopy closes like a lid and the air changes from pine to something older and wetter. The hollow is a bowl of rotting timber and deep duff, the accumulated deadfall of decades composting in a microclimate that holds moisture the surrounding forest doesn\'t. Every horizontal surface carries fungus: shelf brackets in overlapping tiers on standing deadwood, morels pushing through the duff in dark clusters, and something luminescent — faintly, greenly — growing in the crevices of a nurse log the size of a truck. The smell is not unpleasant. It is the specific smell of a world disassembling itself into components that will become something else.',
+    descriptionNight: 'At night the bioluminescent fungi glow with enough conviction to cast shadows. Green-white, cold, the light of organisms that have never needed the sun and don\'t miss it. You navigate by it. It is enough. It is also deeply, specifically wrong — the color is too close to the CHARON-7 luminescence you\'ve seen in the lowlands. Whether that connection is real or your pattern recognition is overworking itself is a question you carry out of the hollow.',
+    shortDescription: 'Rotting timber hollow. Bioluminescent fungi. Wet and strange.',
+    exits: { south: 'ps_03_loggers_cabin', north: 'ps_14_still_creek' },
+    richExits: {
+      south: { destination: 'ps_03_loggers_cabin', descriptionVerbose: 'south, back up to the cabin and the logging road' },
+      north: { destination: 'ps_14_still_creek', descriptionVerbose: 'north, where the depression flattens and water collects' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    itemSpawns: [
+      {
+        entityId: 'chemicals_basic',
+        spawnChance: 0.35,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.4, max: 0.7 },
+        groundDescription: 'A glass jar of something chemical is half-buried in the duff near the nurse log, left by a previous visitor.',
+        depletion: { cooldownMinutes: { min: 180, max: 360 }, respawnChance: 0.25 },
+      },
+    ],
+    extras: [
+      {
+        keywords: ['fungi', 'mushrooms', 'luminescent', 'glow', 'bioluminescent'],
+        description: 'The luminescent growth on the nurse log is not a species you can place. It has the structural form of a bracket fungus but the bioluminescence is unusual for the elevation and latitude — green-spectrum light emission at this intensity typically means a chemical substrate in the wood. The nurse log is old enough that whatever chemical reached it did so through the soil, years ago, from a source uphill or upstream. You file this away. The pattern is not conclusive. The pattern is not nothing.',
+        skillCheck: { skill: 'survival', dc: 10, successAppend: 'The luminescence follows the root paths of the nurse log\'s original tree — the mycelium has colonized the dead root network and the glow traces it underground like a map of something buried. The chemical substrate is consistent with trace concentrations of compounds you\'ve seen in CHARON-7 documentation. Not the virus itself. The industrial byproducts of whatever process created it, leached into the watershed from the Scar site over seven years.' },
+      },
+      {
+        keywords: ['nurse log', 'deadfall', 'timber', 'rot'],
+        description: 'The nurse log is a Douglas fir that fell perhaps thirty years ago — the size and decomposition state suggest a pre-Collapse windthrow event. It has been feeding the hollow\'s ecosystem since before the world ended: seedlings rooted in its bark, moss blanketing its upper surface, the fungal colony inside converting cellulose to soil at the patient speed of chemistry. Something fell. Everything else grew from it. You recognize the metaphor. You\'re standing in it.',
+      },
+      {
+        keywords: ['morels', 'edible', 'food', 'forage'],
+        description: 'The morels are legitimate — Morchella elata, black morels, the prize of any forager who knows what they\'re looking for. A dozen clusters within easy reach. Dried, they\'re a trade commodity at any settlement. Fresh, they\'re the best meal you\'ll have in the Pine Sea. The ecosystem here produces them reliably, which means the hollow\'s chemistry is stable and the moisture consistent. Someone has been harvesting here: a few stems show clean cuts from a knife rather than the ragged pull of animal foraging.',
+        skillCheck: { skill: 'survival', dc: 8, successAppend: 'The harvest cuts are recent — within the week. Someone who knows this place comes regularly. The cutting pattern leaves the mycelium intact, which is correct practice and suggests a forager who plans to return. The hermit, probably, or someone the hermit taught.' },
+      },
+      {
+        keywords: ['air', 'smell', 'wet', 'moisture'],
+        description: 'The air in the hollow is ten degrees cooler than the surrounding forest and saturated with moisture — a microclimate created by the depression\'s geometry and the canopy closure overhead. Your lungs register the difference immediately. The humidity carries spore, pollen, the volatile compounds of active decomposition. Not decay. Transformation. The distinction matters to the organisms doing it.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.07,
+      timeModifier: { day: 0.4, night: 1.4, dawn: 0.6, dusk: 1.0 },
+      threatPool: [
+        { type: 'shuffler', weight: 75, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
+    },
+    environmentalRolls: {
+      ambientSoundPool: {
+        day: [
+          { sound: 'Water drips from somewhere in the canopy into the duff with irregular rhythm.', weight: 3 },
+          { sound: 'A woodpecker works a standing snag — three quick strikes, then silence.', weight: 2 },
+          { sound: null, weight: 2 },
+        ],
+        night: [
+          { sound: 'The fungi glow. You watch it pulse, faintly, on a cycle you can almost count.', weight: 3 },
+          { sound: null, weight: 2 },
+        ],
+      },
+      ambientCount: { min: 1, max: 2, distribution: 'flat' },
+    },
+    narrativeNotes: 'Transitional room between the cabin and the creek. The bioluminescent fungi connect thematically to CHARON-7 contamination in the watershed without confirming it — the ambiguity is deliberate. Scavenging zone for chemicals and foraged food. The morel detail rewards survival investment.',
+  },
+
+  {
+    id: 'ps_14_still_creek',
+    name: 'The Still Creek',
+    zone: 'the_pine_sea',
+    act: 2,
+    difficulty: 2,
+    visited: false,
+    flags: { waterSource: true, campfireAllowed: true },
+    cycleGate: 2,
+    description: 'The depression bottoms out at a creek that has stopped moving. Not dammed — there\'s no structure — but the gradient is so flat here that the water has spread into a wide, shallow pool no deeper than your shin, the surface unbroken by current, reflecting the canopy above with a fidelity that makes you look down and see the sky. The creek bed is gravel and sand, the water tea-dark from tannins, cold from altitude. Something has been drinking here: elk tracks in the soft margin, and something else — a handprint in the mud at the water\'s edge, five-fingered, pressed deep, the fingers too long. It is three days old. You drink upstream of it.',
+    descriptionNight: 'At night the still creek is a mirror laid flat in the forest — stars reflected in water that does not move, the boundary between air and surface invisible until your boot breaks it. The handprint at the margin is not visible in this light. The thing that left it could be anywhere in the dark around you, or nowhere. Both possibilities occupy the same space.',
+    shortDescription: 'Shallow creek pool. Elk tracks. A handprint that is wrong.',
+    exits: { south: 'ps_13_fungal_hollow', west: 'ps_15_collapsed_fire_tower' },
+    richExits: {
+      south: { destination: 'ps_13_fungal_hollow', descriptionVerbose: 'south, back up through the fungal hollow' },
+      west: { destination: 'ps_15_collapsed_fire_tower', descriptionVerbose: 'west, where the ground rises and something metal shows above the tree line' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['handprint', 'print', 'hand', 'mud', 'fingers'],
+        description: 'The handprint is five-fingered, human in structure, wrong in proportion. The fingers are approximately twenty percent longer than they should be for the palm width. The press depth is consistent with significant weight — more than a human hand would exert when drinking. The mud has preserved it well: three days old, based on the drying pattern and the insect activity at the edge. Whatever made it was here recently enough to make recently a word with consequences.',
+        skillCheck: { skill: 'tracking', dc: 11, successAppend: 'The print belongs to a Hollow — a long-duration variant whose skeletal structure has been modified by years of CHARON-7 activity. The elongated fingers are consistent with the deep-forest remnants the hermit has mentioned: Hollow that have been in the Pine Sea since the first year of the Collapse, changing slowly, adapting to the terrain the way the fungi adapted to the nurse log. Not aggressive by default. Not safe by any definition you trust.' },
+      },
+      {
+        keywords: ['water', 'creek', 'drink', 'pool', 'surface'],
+        description: 'The water is cold and tannin-dark and, upstream of the handprint, safe by every field test you can run. You cup it and drink. The taste is clean with the specific mineral signature of snowmelt that has traveled through granite — iron, calcium, the faintest sweet finish. You drink more than you need to because it is good and because good things should be consumed completely when they present themselves.',
+      },
+      {
+        keywords: ['elk', 'tracks', 'animals', 'margin'],
+        description: 'The elk tracks are fresh — this morning\'s water visit, based on the sharpness of the hoof edges in the mud. A cow and calf, the calf\'s smaller prints overlapping the mother\'s in places. They came from the north, drank, left heading east. The herd uses this water regularly. The handprint doesn\'t seem to have deterred them, which is either reassuring or means the elk have made a decision about the thing that left it that you haven\'t reached yet.',
+        skillCheck: { skill: 'tracking', dc: 9, successAppend: 'The elk tracks show no fear response — no skidding, no sudden direction changes. Whatever left the handprint, the elk don\'t register it as a predator. That is unusual. Hollow typically trigger a flight response in ungulates. Either this Hollow has been here long enough to stop being perceived as a threat, or it has changed enough to stop being one. Neither explanation is comfortable.' },
+      },
+      {
+        keywords: ['reflection', 'mirror', 'sky', 'surface'],
+        description: 'The still water holds the canopy reflection with photographic precision — every branch, every needle cluster, the gaps where sky shows through. You look down and see the forest from below, inverted, complete. The effect is disorienting in a way that has nothing to do with danger: it is the disorientation of beauty in a world that has mostly stopped producing it on purpose. The beauty here is accidental, which makes it more reliable.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.10,
+      timeModifier: { day: 0.5, night: 1.6, dawn: 0.7, dusk: 1.2 },
+      threatPool: [
+        { type: 'remnant', weight: 50, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'whisperer', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.5, awarePassive: 0.35, awareAggressive: 0.15 },
+    },
+    environmentalRolls: {
+      ambientSoundPool: {
+        day: [
+          { sound: 'A dipper bird walks the creek bottom, fully submerged, hunting.', weight: 2 },
+          { sound: 'The water does not move. Nothing moves.', weight: 3 },
+          { sound: null, weight: 2 },
+        ],
+        night: [
+          { sound: 'Something drinks at the far end of the pool. You hear it but cannot see it.', weight: 2 },
+          { sound: null, weight: 3 },
+        ],
+      },
+      ambientCount: { min: 1, max: 2, distribution: 'flat' },
+      flavorLines: [
+        { line: 'The reflection in the water is so precise that for a moment you mistake down for up.', chance: 0.25, time: ['day', 'dawn'] },
+        { line: 'You notice the handprint again. You notice it differently this time.', chance: 0.20, time: null },
+      ],
+    },
+    narrativeNotes: 'Water source with atmospheric dread. The handprint is the room\'s thesis: something is in this forest that doesn\'t match any category the player has. The elk not fearing it complicates the expected reaction. The whisperer in the spawn pool aligns with the forest\'s deep-Hollow population.',
+  },
+
+  {
+    id: 'ps_15_collapsed_fire_tower',
+    name: 'The Collapsed Fire Tower',
+    zone: 'the_pine_sea',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { scavengingZone: true },
+    cycleGate: 2,
+    description: 'The forest service fire tower fell sometime in the first winter after the Collapse — wind load on an unmaintained structure, the bolts corroding in the mountain weather without anyone to check them. The cab landed forty feet from the base, intact enough to recognize: windows shattered, the instrument panel face-down in the duff, the radio still mounted in its bracket. The steel lattice tower itself is a tangle of bent struts and guy wire, half-buried in seven years of needle fall. From the rubble you can see the stump of the platform where someone once sat and watched for smoke across ten thousand acres of forest. The forest grew past the tower. The tower fell. That is how those stories end.',
+    descriptionNight: 'At night the collapsed tower is geometry in the dark — angles that don\'t belong in a forest, the straight lines of steel against the organic curves of everything else. The cab is a shadow within shadows. If you brought a light you\'d see what the instrument panel says. You\'re not sure you want to read it.',
+    shortDescription: 'Collapsed forest service fire tower. Scavengeable.',
+    exits: { east: 'ps_06_shepherds_camp', south: 'ps_14_still_creek' },
+    richExits: {
+      east: { destination: 'ps_06_shepherds_camp', descriptionVerbose: 'east, downhill toward the hermit\'s camp' },
+      south: { destination: 'ps_14_still_creek', descriptionVerbose: 'south, descending toward the still creek' },
+    },
+    items: [],
+    enemies: ['shuffler'],
+    npcs: [],
+    itemSpawns: [
+      {
+        entityId: 'electronics_salvage',
+        spawnChance: 0.50,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.2, max: 0.6 },
+        groundDescription: 'Circuit boards and wiring are exposed in the wreckage of the cab\'s instrument panel.',
+        depletion: { cooldownMinutes: { min: 360, max: 720 }, respawnChance: 0.15 },
+      },
+      {
+        entityId: 'wire_coil',
+        spawnChance: 0.40,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.3, max: 0.7 },
+        groundDescription: 'A length of guy wire can be cut free from the collapsed lattice.',
+      },
+      {
+        entityId: 'scrap_metal',
+        spawnChance: 0.60,
+        quantity: { min: 1, max: 3, distribution: 'bell' },
+        groundDescription: 'Usable steel from the tower\'s lattice structure.',
+      },
+    ],
+    extras: [
+      {
+        keywords: ['cab', 'cabin', 'instrument', 'panel', 'radio'],
+        description: 'The fire lookout cab is crumpled but recognizable — a ten-by-ten wooden room with windows on all four sides, the Osborne Fire Finder still bolted to the central pedestal though the pedestal is now horizontal. The radio is a USFS-standard VHF unit, the handset still in its cradle. The last log entry, written in grease pencil on a slate board that survived the fall: "Sept 14 2031. Smoke visible all quadrants. No response from dispatch. No response from anyone. Closing the tower. God help us all." The entry is signed with initials you can\'t read.',
+        skillCheck: { skill: 'electronics', dc: 10, successAppend: 'The VHF radio is damaged but the components are salvageable — the crystal oscillator is intact, which is the expensive part. A Reclaimer or anyone with radio knowledge could use it to build a field-operable VHF set. The frequency it\'s tuned to is not the standard forest service channel. Someone changed it before they left. The new frequency is in the range the MERIDIAN signal broadcasts on.' },
+      },
+      {
+        keywords: ['tower', 'lattice', 'steel', 'structure', 'collapsed'],
+        description: 'The tower was a standard forty-foot steel lattice lookout — the kind the CCC built in the 1930s and the Forest Service maintained until funding ran out, which happened before the Collapse and was therefore not the tower\'s fault. The collapse pattern is consistent with wind shear on corroded bolts: the northeast legs gave first, the tower folded southwest, the cab separated on impact. Structural forensics at the end of the world. You\'re reading the corpse of a building.',
+      },
+      {
+        keywords: ['log', 'entry', 'slate', 'last', 'message'],
+        description: 'The slate board with the final log entry is cracked but legible. "Sept 14 2031. Smoke visible all quadrants." The fires in the first weeks of the Collapse were everywhere — infrastructure burning without response, wildfire burning without suppression, the whole system of fire management collapsing along with everything else. The lookout saw it from the best vantage point in the Pine Sea: every direction, smoke. No one answering the radio. The decision to leave was correct. The decision to write it down first was something else — a refusal to let the last human act at this station be silent.',
+        skillCheck: { skill: 'lore', dc: 9, successAppend: 'The date is significant: September 14, 2031 — three weeks after Patient Zero in the Four Corners region. The Collapse was already in full cascade by then: FEMA overwhelmed, National Guard redeployed, civilian infrastructure failing. The lookout would have seen the fires and known, from the silence on the radio, that no one was coming. The initials on the entry might match Forest Service personnel records if anyone still had those records. Lev might.' },
+      },
+      {
+        keywords: ['view', 'vista', 'overlook', 'clearing'],
+        description: 'The tower\'s elevated position, even at ground level, provides a partial vista through the gap the collapse tore in the canopy. To the east: the upper forest, the shepherd\'s camp smoke visible on clear days. To the west: the ridge where the trees thin toward the coast. To the north: the dark mass of the old growth. The lookout chose this site because it sees everything. The tower fell but the sight lines remain. The forest is already closing the gap — young trees are growing in the light the collapse admitted. In another decade the vista will be gone.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.12,
+      timeModifier: { day: 0.6, night: 1.5, dawn: 0.8, dusk: 1.2 },
+      threatPool: [
+        { type: 'shuffler', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 35, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.5, awarePassive: 0.35, awareAggressive: 0.15 },
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'Wind catches a loose panel on the cab and it creaks — a sound like a door opening that never opens.', chance: 0.30, time: null },
+        { line: 'The grease pencil entry catches the light through the broken window. You read it again without meaning to.', chance: 0.20, time: ['day'] },
+      ],
+    },
+    narrativeNotes: 'Scavenging location with strong emotional weight. The final log entry is the room\'s core — a person recording the end of the world from the best seat in the house. The radio tuned to the MERIDIAN frequency is a lore breadcrumb. Electronics skill check rewards Reclaimer-aligned players.',
+  },
+
+  {
+    id: 'ps_16_spore_field',
+    name: 'The Spore Field',
+    zone: 'the_pine_sea',
+    act: 3,
+    difficulty: 3,
+    visited: false,
+    flags: { scavengingZone: false },
+    cycleGate: 3,
+    description: 'East of the bone grove the forest floor is carpeted in something that is not moss and not lichen and not any groundcover you have a category for. It grows in radiating patterns from the base of every tree, pale grey-green, soft to the touch with a texture like wet paper. When you step on it the surface gives slightly and releases a puff of white particulate that hangs in the still air for ten seconds before settling. Spores, presumably. The trees here are alive but changed — the bark has a mottled quality, lighter in patches, as if something is growing under the surface. The air tastes like cold metal. Nothing is moving. The absence of movement is the most notable thing about this place: no birds, no insects, no wind in the branches. A silence that is different from the old growth\'s silence. This is the silence of something that has already happened.',
+    descriptionNight: 'At night the spore field is faintly luminescent — the same green-spectrum glow as the fungal hollow, but broader, more diffuse, covering the forest floor like a second sky beneath the canopy. You walk through it and your footprints glow behind you, the crushed organisms emitting light as they die. The trail you leave is visible for minutes. Anything following you would not need to track.',
+    shortDescription: 'Strange groundcover. Spores. No wildlife. Contamination zone.',
+    exits: { west: 'ps_11_bone_grove', north: 'ps_17_quarantine_camp' },
+    richExits: {
+      west: { destination: 'ps_11_bone_grove', descriptionVerbose: 'west, back toward the bone grove and the old growth' },
+      north: { destination: 'ps_17_quarantine_camp', descriptionVerbose: 'north, where something has been built among the affected trees' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['spores', 'particulate', 'puff', 'white', 'air'],
+        description: 'The particulate released by the groundcover when compressed hangs in the air with unnatural persistence — ten seconds, sometimes longer, the white particles catching whatever light filters through the canopy. Your breathing instinct tells you to cover your mouth. Your rational mind tells you that if the spores were immediately dangerous you\'d have known by now. Both responses have merit. Neither feels adequate.',
+        skillCheck: { skill: 'field_medicine', dc: 12, successAppend: 'The particulate is biological — spore bodies, consistent with a fungal organism, but the cellular structure under close inspection is not standard. The spore walls are reinforced with a protein matrix you\'ve seen described in Reclaimer documentation on CHARON-7 secondary effects: the virus doesn\'t just affect animals. It affects the fungal networks they share ecosystems with. This groundcover is a fungal colony that has been modified by the same agent that created the Hollow. You are breathing it. The concentration is low. You should not stay long.' },
+      },
+      {
+        keywords: ['trees', 'bark', 'mottled', 'changed', 'patches'],
+        description: 'The lighter patches on the bark are growing from within — not surface growth but something that has colonized the cambium layer, the living tissue under the bark. The trees are alive by every external indicator: green needles, structural integrity, seasonal growth rings visible at a broken branch. But something inside them has changed. The patches follow the tree\'s vascular system, rising in vertical lines like veins made visible.',
+        skillCheck: { skill: 'survival', dc: 11, successAppend: 'The modified trees are still photosynthesizing, still growing, still functioning as trees. But the fungal symbiont in their root systems — the mycorrhizal network every pine depends on — has been replaced by whatever this organism is. The trees haven\'t died because the replacement organism is performing the same function. Better, possibly. The trees here are growing faster than their neighbors outside the spore field. Something is feeding them.' },
+      },
+      {
+        keywords: ['silence', 'quiet', 'no birds', 'no insects', 'empty'],
+        description: 'The absence of animal life is total and precise. You stand still and listen: no birdsong, no insect hum, no rustle in the undergrowth. The forest here supports trees and the groundcover and nothing between. The food web has been simplified to two tiers: the fungal colony and the trees it colonizes. Everything else has left or been replaced. You are the most complex organism in this clearing and you feel it the way you feel altitude — in the body, before the mind catches up.',
+      },
+      {
+        keywords: ['groundcover', 'carpet', 'growth', 'texture', 'floor'],
+        description: 'You kneel and examine the groundcover closely. It is a single organism — or a colony behaving as one, the boundaries between individual growths invisible, the surface continuous across the forest floor. It thins at the tree bases and thickens between them. The radiating pattern suggests it grows outward from the trees, following the root networks underground, surfacing where conditions allow. The texture is uniform and vaguely organic in a way that resists further description. It is the texture of something that is not finished becoming what it will be.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.15,
+      timeModifier: { day: 0.7, night: 1.6, dawn: 0.9, dusk: 1.3 },
+      threatPool: [
+        { type: 'remnant', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'whisperer', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 20, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+      ],
+      awarenessRoll: { unaware: 0.3, awarePassive: 0.4, awareAggressive: 0.3 },
+      noiseModifier: -0.2,
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'You step and the spores rise. You breathe and they enter. The transaction is simple.', chance: 0.30, time: null },
+        { line: 'Your footprints glow behind you. The trail is very clear. You walk faster.', chance: 0.25, time: ['night', 'dusk'] },
+        { line: 'The silence here is not the absence of sound. It is the presence of listening.', chance: 0.20, time: null },
+      ],
+    },
+    narrativeNotes: 'The spore field is the Pine Sea\'s contamination reveal — CHARON-7 isn\'t just affecting humans and animals. It\'s in the fungal networks, which means it\'s in the trees, which means it\'s in the entire forest ecosystem. The field_medicine check is the key revelation. Higher difficulty and encounter rates signal danger. The luminescent footprints at night are a specific tactical concern for stealth-focused players.',
+  },
+
+  {
+    id: 'ps_17_quarantine_camp',
+    name: 'The Quarantine Camp',
+    zone: 'the_pine_sea',
+    act: 3,
+    difficulty: 3,
+    visited: false,
+    flags: { scavengingZone: true },
+    cycleGate: 3,
+    description: 'Someone tried to study this. The camp is pre-Collapse scientific — you can tell from the equipment grade and the systematic layout: four tents in a line, a sample collection station with labeled containers, a weather station on a tripod, all of it wrapped in orange BIOHAZARD tape that has faded to the color of old skin. The team left in a hurry. Tent three is collapsed, its stakes pulled, the fabric torn on one side. Tent four is still standing, sealed, the zipper closed from outside. Inside tent four: nothing living. A cot, a sleeping bag, a personal effects bag, and a notebook. The notebook is the reason you came in. The notebook is the reason the team left.',
+    descriptionNight: 'At night the quarantine camp is a geometry of failed containment — the orange tape catches your light source and throws it back in warning colors that no longer warn anyone. Tent four\'s sealed zipper reflects a small point of light. You think about what\'s inside the tent. You think about who sealed it from outside.',
+    shortDescription: 'Abandoned research camp. Biohazard tape. A sealed tent.',
+    exits: { south: 'ps_16_spore_field', east: 'ps_18_root_cathedral' },
+    richExits: {
+      south: { destination: 'ps_16_spore_field', descriptionVerbose: 'south, back through the spore field' },
+      east: { destination: 'ps_18_root_cathedral', descriptionVerbose: 'east, where the affected trees grow larger and the canopy closes again' },
+    },
+    items: [],
+    enemies: ['remnant'],
+    npcs: [],
+    itemSpawns: [
+      {
+        entityId: 'bandages',
+        spawnChance: 0.55,
+        quantity: { min: 1, max: 2, distribution: 'flat' },
+        conditionRoll: { min: 0.6, max: 0.9 },
+        groundDescription: 'Medical supplies are scattered in the sample collection station.',
+        depletion: { cooldownMinutes: { min: 240, max: 480 }, respawnChance: 0.20 },
+      },
+      {
+        entityId: 'chemicals_basic',
+        spawnChance: 0.45,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.5, max: 0.8 },
+        groundDescription: 'Sealed sample containers with preserved reagents sit in a rack at the collection station.',
+      },
+    ],
+    extras: [
+      {
+        keywords: ['notebook', 'research', 'notes', 'tent four', 'sealed'],
+        description: 'The notebook is a field research journal, USDA Forest Service/CDC joint header. The entries span six days in October 2031 — three weeks after the Collapse. The team was studying the fungal anomaly: growth rates, spore analysis, soil chemistry. Day four\'s entry changes tone: "Sample 14 shows protein structures consistent with Dr. Osei\'s CHARON-7 secondary vector model. The fungal network is carrying the virus. Not the virus itself — a modified instruction set, delivered by spore. The forest is the vector." Day six, the final entry, is one sentence: "Torres is symptomatic. Sealing tent four. Evacuating."',
+        skillCheck: { skill: 'lore', dc: 11, successAppend: 'Dr. Osei — the name appears in Lucid faction communications. She\'s alive, or was recently. The CDC/USDA joint team was studying CHARON-7 environmental spread before the institutional collapse made that impossible. Their data confirms what the Reclaimers suspect: the virus has entered the fungal ecology. The Pine Sea isn\'t just a forest. It\'s a delivery system. The spores you\'ve been breathing are carrying modified instructions into every organism they contact. Including you.' },
+      },
+      {
+        keywords: ['tents', 'camp', 'equipment', 'station', 'biohazard'],
+        description: 'The camp was professional — four-season expedition tents, hardened sample cases, a portable spectrometer in a pelican case that still powers on. The biohazard tape was applied after the team arrived, which means they didn\'t know what they were walking into until they were in it. The sample collection station has twenty-four numbered slots. Eighteen are filled. Six are empty — either unused or taken when the team evacuated. They took the most important samples with them. What they left behind was important enough to catalog but not important enough to carry.',
+        skillCheck: { skill: 'scavenging', dc: 10, successAppend: 'The spectrometer still has cached readings. The last analysis: a spore sample showing a protein shell that matches CHARON-7\'s outer envelope structure but with a modified receptor binding domain. The virus has been adapted — by evolution or by design — to use fungal spores as a secondary transmission vector. Airborne. Persistent. Already in the watershed. The data is worth significant trade value to the Reclaimers or anyone studying the infection.' },
+      },
+      {
+        keywords: ['Torres', 'symptomatic', 'person', 'cot', 'sleeping bag'],
+        description: 'Torres. The cot in tent four is undisturbed — the sleeping bag is zipped, the personal effects bag is beside it, a pair of boots sits at the foot of the cot with the laces tucked inside the way a careful person stores them. Torres was careful. Torres went to sleep and woke up wrong and the team sealed the tent and left. The zipper is closed from outside. Seven years of sealed air. You stand outside the tent and think about opening it and decide that knowing what happened to Torres will not help you and knowing that you chose not to look will not stop mattering.',
+      },
+      {
+        keywords: ['weather station', 'tripod', 'instruments', 'data'],
+        description: 'The weather station is a standard automated unit — temperature, humidity, wind speed, barometric pressure — running on a solar panel that has kept it operational for seven years. The data logger is full. Seven years of continuous weather data from the Pine Sea interior, recorded by a machine that doesn\'t know its operators never came back for it. The data has value: climate patterns, seasonal shifts, the empirical record of a post-Collapse forest. The machine doesn\'t know the value of what it\'s holding. It just kept measuring.',
+      },
+      {
+        keywords: ['tape', 'orange', 'biohazard', 'warning'],
+        description: 'The biohazard tape is standard CDC-issue, the BIOHAZARD trefoil printed in repeating sequence. It has faded from seven years of UV exposure but the color is still recognizable — the specific orange that means don\'t touch this, don\'t breathe this, don\'t be here. The tape was applied around the entire camp perimeter, which means the team considered the whole site contaminated. You are inside the perimeter. You have been inside the perimeter since you entered the spore field.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.14,
+      timeModifier: { day: 0.7, night: 1.5, dawn: 0.8, dusk: 1.2 },
+      threatPool: [
+        { type: 'remnant', weight: 55, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'shuffler', weight: 30, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'whisperer', weight: 15, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.35, awarePassive: 0.4, awareAggressive: 0.25 },
+    },
+    narrativeNotes: 'The quarantine camp is the Pine Sea\'s lore payoff room — the CDC/USDA notebook confirms that CHARON-7 has entered the forest ecology. Dr. Osei\'s name connects to the Lucid faction. Torres in the sealed tent is a moral/emotional beat: do you look? The five extras are justified by the room\'s narrative density. The spectrometer data is a trade-value item for Reclaimer-aligned players.',
+  },
+
+  {
+    id: 'ps_18_root_cathedral',
+    name: 'The Root Cathedral',
+    zone: 'the_pine_sea',
+    act: 3,
+    difficulty: 3,
+    visited: false,
+    flags: { dark: true, noCombat: false },
+    cycleGate: 3,
+    description: 'The trees here have done something that trees should not do. Their root systems, massive and surface-exposed on the thin mountain soil, have grown upward — arching from the ground in buttresses that meet overhead, creating a vaulted space beneath them that reads, unmistakably, as architecture. The ceiling is living wood. The pillars are roots. The floor is the compressed earth between them, worn smooth by water and time and something that has been walking here regularly enough to polish the stone beneath the soil. The space is perhaps forty feet across and twenty feet high at the center, the light filtering through gaps in the root canopy in shafts that move as the wind moves the trees above. It looks like a cathedral. It feels like a cathedral. You are aware that this is a projection — your pattern recognition finding human meaning in biological structure — and you are equally aware that the awareness does not diminish the effect.',
+    descriptionNight: 'At night the root cathedral is the darkest space in the Pine Sea — the interlocking roots above admit no light at all, the darkness total, the acoustics changed by the enclosed space so that your own breathing returns to you with a half-second delay. You hear your heartbeat. You hear the roots above you creaking with the wind in the canopy. You hear something else — a low, sustained vibration, felt more than heard, coming from the ground beneath your feet. The roots are conducting sound from somewhere underground.',
+    shortDescription: 'Root structures forming a vaulted space. Cathedral geometry. Something underneath.',
+    exits: { west: 'ps_17_quarantine_camp', south: 'ps_20_hollow_nest' },
+    richExits: {
+      west: { destination: 'ps_17_quarantine_camp', descriptionVerbose: 'west, back through the affected zone toward the quarantine camp' },
+      south: {
+        destination: 'ps_20_hollow_nest',
+        descriptionVerbose: 'south, down through a gap in the root floor where something has been descending regularly',
+        skillGate: {
+          skill: 'stealth',
+          dc: 12,
+          failMessage: 'The gap narrows and the darkness below it is complete. Something moves in the dark — something aware of you. You pull back before it becomes aware that you\'re aware of it.',
+        },
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['roots', 'arch', 'vault', 'ceiling', 'structure'],
+        description: 'The root architecture is not random. You trace the growth patterns: each major root follows a load-bearing trajectory, the arch geometry distributing the weight of the trees above across the vault space below. This is structural engineering performed by organisms that don\'t know engineering, and the result is more efficient than most human buildings you\'ve been in. The wood is alive and growing — the arches will continue to develop, the space will change shape over decades, the cathedral will never be finished because the builders don\'t have a blueprint. They have chemistry. That appears to be enough.',
+        skillCheck: { skill: 'survival', dc: 12, successAppend: 'The root growth pattern is not typical of any documented mycorrhizal network behavior. The arching is too regular, too structurally sound, too obviously functional. Something is directing the root growth — the same modified fungal network you\'ve been walking through since the spore field. The CHARON-7 derivative in the soil isn\'t just colonizing the trees. It\'s reorganizing them. Building with them. The cathedral isn\'t an accident of biology. It\'s an act of construction by an organism that uses trees the way humans use lumber.' },
+      },
+      {
+        keywords: ['floor', 'polished', 'worn', 'smooth', 'walking'],
+        description: 'The floor of the cathedral space is stone — granite, exposed by the thin soil, polished to a dull shine by years of contact. The polish follows a path: a worn track that enters from the east, circles the center of the space, and descends through a gap in the root floor to the south. Something has been walking this circuit for years. The wear pattern is consistent with a single entity making the same journey repeatedly, the way the Hollow walk their territory routes. But the route here is circular, purposeful, almost ritualistic. You stand in the center and the wear track circles you.',
+      },
+      {
+        keywords: ['light', 'shafts', 'gaps', 'canopy'],
+        description: 'The light enters through five gaps in the root canopy — not randomly distributed but spaced with an evenness that would be intentional in a human building and is therefore either coincidental or something else entirely in an organism. The shafts of light move through the space as the sun moves, and at certain times — you can tell from the bleaching patterns on the stone — all five converge on the center of the floor. Whatever significance that has is not a significance you can assign. You note it. You note that noting it changes nothing about the fact.',
+      },
+      {
+        keywords: ['vibration', 'sound', 'hum', 'ground', 'below'],
+        description: 'You place your palm flat on the stone floor and feel it: a sustained low-frequency vibration, not rhythmic but continuous, the kind of sound that large root systems produce when they transport water at volume. Except the frequency is wrong — too low for hydraulic transport, too regular for wind stress. Something beneath the root cathedral is generating this vibration. The roots are conducting it upward the way a speaker cone conducts the signal from its coil. You are inside an instrument. You don\'t know who is playing it.',
+        skillCheck: { skill: 'perception', dc: 13, successAppend: 'The vibration has a pattern you can almost resolve: a slow oscillation, perhaps a ninety-second cycle, the frequency rising and falling in a wave that your inner ear registers as something between discomfort and recognition. It is not random. It is not mechanical. It has the quality of a biological process — respiration, circulation, something metabolic — operating at a scale that doesn\'t correspond to any single organism. The root network is breathing. The entire fungal colony, connected through the forest, is breathing as one organism. You are standing on its lung.' },
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.18,
+      timeModifier: { day: 0.8, night: 1.8, dawn: 1.0, dusk: 1.4 },
+      threatPool: [
+        { type: 'whisperer', weight: 40, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'brute', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.25, awarePassive: 0.4, awareAggressive: 0.35 },
+      noiseModifier: -0.4,
+    },
+    environmentalRolls: {
+      ambientSoundPool: {
+        day: [
+          { sound: 'The roots creak overhead. Settling, or growing. The distinction is academic.', weight: 3 },
+          { sound: 'A shaft of light moves across the floor like a hand reaching for something.', weight: 2 },
+          { sound: null, weight: 2 },
+        ],
+        night: [
+          { sound: 'The vibration beneath you shifts frequency. Your body notices before your mind does.', weight: 3 },
+          { sound: 'Absolute dark. The cathedral breathes.', weight: 2 },
+          { sound: null, weight: 1 },
+        ],
+      },
+      ambientCount: { min: 1, max: 2, distribution: 'flat' },
+      flavorLines: [
+        { line: 'You stand in the center of the space and the light converges on you. Coincidence, or geometry you cannot refuse.', chance: 0.20, time: ['day'] },
+        { line: 'The wear track in the stone is beneath your feet. You are walking it without having decided to.', chance: 0.25, time: null },
+      ],
+    },
+    narrativeNotes: 'The root cathedral is the Pine Sea\'s climax room for the contamination thread. The survival check reveals that CHARON-7 is not just infecting but building — using the fungal network to reorganize living trees into structures. The perception check on the vibration is the zone\'s biggest revelation: the entire forest is becoming a single organism. The south exit to the hollow nest is skill-gated to control difficulty progression.',
+  },
+
+  {
+    id: 'ps_19_windbreak_ruin',
+    name: 'The Windbreak Ruin',
+    zone: 'the_pine_sea',
+    act: 3,
+    difficulty: 2,
+    visited: false,
+    flags: { safeRest: true, scavengingZone: true, campfireAllowed: true },
+    cycleGate: 3,
+    description: 'A pre-Collapse structure, partially standing — stone foundation, timber frame, the west wall intact and the east wall a memory. The building was a ranger station or a rural homestead, the distinction eroded by seven years of weather and the specific violence that mountain winters do to unheated structures. What remains is useful: the standing wall blocks the prevailing westerly wind, the stone foundation holds heat from a fire, the partial roof covers enough ground to sleep dry. Someone has been maintaining it — the debris has been cleared from the interior, a fire ring sits against the west wall where the thermal mass makes it effective, a small cache of split firewood is stacked under the surviving eave. The care is evident and anonymous. You don\'t know who. You benefit anyway.',
+    descriptionNight: 'At night the windbreak ruin is warmth and shelter in the specific way that matters at altitude — the west wall stops the wind, the fire ring holds coals, the partial roof frames a rectangle of stars directly above your head. You lie down and the stars are the ceiling. The cold is outside and you are inside and the distinction between those two states is the entire definition of civilization at this elevation.',
+    shortDescription: 'Ruined ranger station. Windbreak. Safe rest.',
+    exits: { north: 'ps_12_coastal_approach', east: 'ps_20_hollow_nest' },
+    richExits: {
+      north: { destination: 'ps_12_coastal_approach', descriptionVerbose: 'north, toward the thinning forest and the salt air' },
+      east: {
+        destination: 'ps_20_hollow_nest',
+        descriptionVerbose: 'east, into the deep forest where the trees grow wrong and the ground hums',
+        skillGate: {
+          skill: 'survival',
+          dc: 11,
+          failMessage: 'The forest east of here is dense and the undergrowth resists passage. You\'d need better knowledge of the terrain to push through safely.',
+        },
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    itemSpawns: [
+      {
+        entityId: 'emergency_rations',
+        spawnChance: 0.45,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.5, max: 0.85 },
+        groundDescription: 'Supplies have been left in a small cache under the surviving eave.',
+        depletion: { cooldownMinutes: { min: 120, max: 240 }, respawnChance: 0.30 },
+      },
+      {
+        entityId: 'juniper_firewood',
+        spawnChance: 0.70,
+        quantity: { min: 1, max: 2, distribution: 'flat' },
+        groundDescription: 'Split firewood is stacked against the west wall.',
+      },
+    ],
+    extras: [
+      {
+        keywords: ['wall', 'stone', 'foundation', 'structure', 'building'],
+        description: 'The west wall is fieldstone, dry-stacked in the old mountain style — no mortar, the stones fitted by someone who understood how gravity and friction cooperate. It has survived seven winters of freeze-thaw cycling without significant movement, which is a testament to the builder\'s craft. The timber frame above it is less fortunate: the east side has collapsed entirely, the roof joists broken at the wall plate. What remains is a half-building. In the post-Collapse, a half-building is a miracle of infrastructure.',
+      },
+      {
+        keywords: ['fire ring', 'fire', 'coals', 'heat', 'warmth'],
+        description: 'The fire ring is placed against the west wall with deliberate intelligence — the stone absorbs heat during the burn and radiates it for hours after. Whoever built this ring understood thermal mass. The ash in the ring is layered: many fires, many visitors, the same good idea repeated by different people. The most recent fire was perhaps a week ago. The coals at the bottom of the ash bed are still faintly warm when you dig into them. At this altitude, in this wind, that means someone burned a serious amount of wood.',
+        skillCheck: { skill: 'tracking', dc: 9, successAppend: 'The most recent visitor left light sign — a boot print in the ash at the ring\'s edge, size ten, the tread pattern consistent with military-issue hiking boots. Not Drifter footwear. Not hermit footwear. Someone from one of the organized factions has been using this shelter. The print is heading east, into the deep forest. Toward the contamination zone. Someone is investigating the same thing you are.' },
+      },
+      {
+        keywords: ['cache', 'supplies', 'firewood', 'maintained', 'anonymous'],
+        description: 'The maintenance follows the same backcountry protocol as the logger\'s cabin — take what you need, leave what you can, the system works because everyone who uses it contributes. The firewood is split to a consistent size, the kindling bundled separately, the supply cache protected from weather and animals. The care is anonymous but not impersonal. Someone is investing regular effort into keeping this place functional. The hermit, possibly, or the person whose boot prints you found, or someone else entirely. The Pine Sea has more inhabitants than it admits.',
+      },
+      {
+        keywords: ['roof', 'sky', 'stars', 'sleep', 'shelter'],
+        description: 'The partial roof covers perhaps sixty percent of the foundation — enough for a sleeping area and a fire ring, the open section admitting weather and sky. The surviving rafters are hand-hewn, the ax marks visible, the wood species a dense heartwood that has resisted rot. Lying beneath them and looking up through the open section, you see the sky framed by the broken edge of the roof. The frame makes the sky into a composition. It is beautiful in the way that unintended things are sometimes beautiful.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.08,
+      timeModifier: { day: 0.4, night: 1.2, dawn: 0.6, dusk: 0.9 },
+      threatPool: [
+        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.55, awarePassive: 0.3, awareAggressive: 0.15 },
+    },
+    environmentalRolls: {
+      ambientSoundPool: {
+        day: [
+          { sound: 'Wind against the west wall. The wall holds. That is its entire purpose and it is fulfilling it.', weight: 3 },
+          { sound: 'A hawk circles above the open roof section, visible for three passes, then gone.', weight: 2 },
+          { sound: null, weight: 2 },
+        ],
+        night: [
+          { sound: 'The fire pops. The stone wall radiates warmth. The wind is someone else\'s problem.', weight: 3 },
+          { sound: null, weight: 2 },
+        ],
+      },
+      ambientCount: { min: 1, max: 2, distribution: 'flat' },
+      flavorLines: [
+        { line: 'The coals glow against the stone wall and the warmth reaches you in waves.', chance: 0.30, time: ['night', 'dusk'] },
+        { line: 'The salt wind from the coast carries through the open section. The sea is close.', chance: 0.20, time: null },
+      ],
+    },
+    narrativeNotes: 'Safe rest location on the western Pine Sea circuit. The military boot print connects to the quarantine camp narrative — someone from an organized faction is investigating the contamination zone. The windbreak shares the logger\'s cabin\'s backcountry reciprocity ethic. Lower difficulty than surrounding rooms as a deliberate respite.',
+  },
+
+  {
+    id: 'ps_20_hollow_nest',
+    name: 'The Hollow Nest',
+    zone: 'the_pine_sea',
+    act: 3,
+    difficulty: 4,
+    visited: false,
+    flags: { dark: true, noCombat: false },
+    cycleGate: 3,
+    description: 'You find them in the place where the roots go deepest. A depression beneath the root cathedral, accessed through a gap in the living wood, the space below larger than the gap suggests — a chamber carved from earth and stone by something that digs with purpose and patience. They are here: eight, maybe ten, Hollow that have stopped being Hollow in any way that matches the word. They are still. They are arranged in a circle, seated, their modified hands resting on their knees, their elongated fingers interlaced with the fine root tendrils that penetrate the chamber from above. Their eyes are open and silver and they are looking at nothing. Their chests rise and fall in unison, synchronized, the same ninety-second cycle as the vibration in the cathedral above. They are breathing with the forest. They are part of it now. You understand, standing here, that the Hollow are not the end of CHARON-7\'s process. They are a stage.',
+    descriptionNight: 'At night the chamber is lit by the Hollow themselves — a faint bioluminescence in the modified skin of their hands and faces, the same green spectrum as the spore field, the fungi, the nurse log. They glow. The roots glow. The chamber glows. The boundary between the organisms in this room is not clear. The Hollow and the forest and the fungal network are continuous here. One system. Breathing. You are the only discrete thing in the room.',
+    shortDescription: 'Underground chamber. Modified Hollow integrated with the root network. A stage, not an end.',
+    exits: { north: 'ps_18_root_cathedral', west: 'ps_19_windbreak_ruin' },
+    richExits: {
+      north: { destination: 'ps_18_root_cathedral', descriptionVerbose: 'up, through the root gap, back to the cathedral' },
+      west: { destination: 'ps_19_windbreak_ruin', descriptionVerbose: 'west, a narrow passage through the root system emerging near the windbreak ruin' },
+    },
+    items: [],
+    enemies: ['remnant', 'whisperer'],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['hollow', 'circle', 'seated', 'still', 'arranged'],
+        description: 'The Hollow are arranged in a circle of ten. Their posture is identical: seated cross-legged, hands on knees, spines straight. The arrangement is deliberate — the spacing is even, the orientation consistent, each one facing the center of the circle where the thickest root tendril descends from the ceiling and penetrates the earth. They have been here for a long time. The earth around them is compressed and darkened. Their clothing has partially decomposed. Their bodies have not. Whatever CHARON-7 is doing to them, it is preserving them in this state: alive, modified, integrated, still.',
+        skillCheck: { skill: 'lore', dc: 13, successAppend: 'This is the third expression. The Reclaimers theorized it: Hollow as failed optimization, Sanguine as successful predatory optimization, and a third path — integration. Not individual. Not predatory. Symbiotic. These Hollow have been absorbed into the fungal network as nodes in a distributed system. Their brains are still active — the silver eyes are tracking something internal, some signal in the root network. They are thinking. Not as humans. As components of something larger. The forest is using their neural tissue the way it uses the trees. CHARON-7 didn\'t just create monsters. It created an organism that builds itself from whatever biological material is available. Including people.' },
+      },
+      {
+        keywords: ['roots', 'tendrils', 'fingers', 'interlaced', 'connected'],
+        description: 'The root tendrils are fine — hair-thin, pale, entering the chamber through a thousand small channels in the ceiling and walls. They connect to the Hollow at the hands, primarily: the elongated fingers you\'ve seen in the handprints and the deep-forest variants are an adaptation for this — more surface area for root contact, more connection points. The interface between root and skin is seamless. The tendrils don\'t penetrate. They merge. The boundary between plant tissue and human tissue has dissolved at the contact points. You are looking at a join between two kingdoms of life.',
+        skillCheck: { skill: 'field_medicine', dc: 13, successAppend: 'The tissue merger at the contact points is a true chimera — plant and animal cells coexisting, the cellular membranes bridged by something that is neither plant nor animal. The CHARON-7 derivative in the fungal network has created a molecular bridge between kingdoms. This is not infection. This is synthesis. The virus is building a new category of organism from existing parts: human neural tissue for processing, fungal networks for communication, tree vascular systems for energy. The engineering is elegant. The implications are the largest thing you have ever stood next to.' },
+      },
+      {
+        keywords: ['breathing', 'synchronized', 'cycle', 'unison'],
+        description: 'You watch the breathing and you count. Ninety seconds: inhale, hold, exhale. All ten, simultaneously, the rhythm matched to the vibration in the root cathedral above. The breathing is not autonomous — it is conducted, timed by a signal in the root network that synchronizes every connected node. The Hollow are not choosing to breathe in unison. They are being breathed. The forest is respiring through them. You stand and watch and the rhythm begins to pull at your own breathing, your body wanting to sync with the room\'s cycle. You resist. You resist specifically.',
+      },
+      {
+        keywords: ['eyes', 'silver', 'looking', 'nothing', 'tracking'],
+        description: 'The silver eyes of the ten Hollow are open and unfocused — not blind, not vacant, but attending to something that is not in this room. The eye movement is synchronized like the breathing: all ten pairs tracking the same invisible point, moving together, pausing together. Whatever they\'re seeing is carried by the root network, not the light in the chamber. They are seeing what the forest sees. Ten perspectives replaced by one distributed perspective. The eyes are still human eyes. They are no longer being used for human seeing.',
+        skillCheck: { skill: 'perception', dc: 14, successAppend: 'One of the Hollow is aware of you. Not in the predatory sense — in the observational sense. Its eyes haven\'t moved to track you. Its breathing hasn\'t changed. But something in the root network near your feet has shifted: a tendril, hair-thin, has oriented toward your boot. The forest knows you\'re here because one of its nodes is still human enough to notice a stranger. The Hollow didn\'t react. The forest reacted through it. The distinction is the most important thing you\'ve learned in the Pine Sea.' },
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.25,
+      timeModifier: { day: 1.0, night: 1.5, dawn: 1.0, dusk: 1.2 },
+      threatPool: [
+        { type: 'whisperer', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 35, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'brute', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.15, awarePassive: 0.35, awareAggressive: 0.50 },
+      noiseModifier: -0.5,
+    },
+    environmentalRolls: {
+      ambientSoundPool: {
+        day: [
+          { sound: 'The breathing. Ten chests. One rhythm. You count to ninety and it starts again.', weight: 3 },
+          { sound: 'A root tendril near your foot shifts. You didn\'t touch it.', weight: 2 },
+          { sound: null, weight: 1 },
+        ],
+        night: [
+          { sound: 'The glow pulses with the breathing cycle. The chamber is a heart.', weight: 3 },
+          { sound: 'Something moves in the root network overhead. Not a Hollow. Something carried by the roots themselves.', weight: 2 },
+          { sound: null, weight: 1 },
+        ],
+      },
+      ambientCount: { min: 1, max: 2, distribution: 'flat' },
+      flavorLines: [
+        { line: 'You realize you have been breathing in the ninety-second cycle for several minutes. You stop. You start your own rhythm.', chance: 0.35, time: null },
+        { line: 'The tendril near your foot has not moved again. It is pointing at you. It has been pointing at you.', chance: 0.25, time: null },
+        { line: 'One of the Hollow opens its mouth and a sound comes out that is not a word and is not not a word.', chance: 0.15, time: ['night'] },
+      ],
+    },
+    personalLossEchoes: {
+      child: 'One of the Hollow is young. Was young. The face is smooth in a way the others aren\'t. You look away fast. Not fast enough.',
+      partner: 'The Hollow nearest you has a ring on the elongated finger — a wedding band, the metal cutting into the changed flesh, the finger grown around it. Someone made a promise to this person once.',
+      community: 'Ten people in a circle, together, connected, belonging to each other in a way that has nothing to do with choice. You recognize the shape of community. You recognize what it cost.',
+    },
+    narrativeNotes: 'The Pine Sea\'s ultimate revelation room. The Hollow nest reveals the "third expression" of CHARON-7: not failure (Hollow), not predatory success (Sanguine), but symbiotic integration with the forest ecosystem. The lore check is the zone\'s climax: the forest is building a new kind of organism from available biological material. Difficulty 4, highest Hollow encounter in the zone, aggressive awareness — this room is dangerous. The personal loss echoes add emotional weight to the discovery. The room\'s thesis: CHARON-7 is not a disease. It is a process. And the process is not finished.',
   },
 ]

@@ -467,4 +467,368 @@ export const THE_STACKS_ROOMS: Room[] = [
     },
     narrativeNotes: 'Climactic observatory scene. The MERIDIAN light is a key visual payoff. The telescope check is one of the most significant single skill checks in Act II — confirming MERIDIAN is inhabited.',
   },
+
+  {
+    id: 'st_11_upper_stacks',
+    name: 'The Upper Stacks',
+    zone: 'the_stacks',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { scavengingZone: true },
+    description: 'The collapse folded two skyscrapers into each other and left the upper floors at ground level — a connected elevated platform of concrete slab and steel beam, accessible by a rubble ramp that takes some nerve to climb. Up here the city opens. You can see the full sweep of The Stacks\' geography: the twisted grid of streets buried under debris, the punctuation of standing walls, and at the northern edge, the smudge of the Dust horizon. The wind is stronger. The footing is uncertain. And you are visible to anything for half a mile.',
+    descriptionNight: 'At night the Upper Stacks is a different kind of exposed — the open sky above, every source of light below highlighted by the darkness. The Stacks facility glows to the south. Crossroads emits a faint orange smear to the east. You are a silhouette up here. Anything that looks this way will see you before you see it.',
+    descriptionDawn: 'Dawn from the Upper Stacks turns the rubble gold. The light comes from the east and catches every broken edge and shattered pane, the wreckage briefly beautiful before the day makes it just wreckage again.',
+    shortDescription: 'The Upper Stacks platform. Elevated. Exposed. Wide views.',
+    exits: { down: 'st_01_approach', east: 'st_14_collapsed_lobby' },
+    richExits: {
+      down: {
+        destination: 'st_01_approach',
+        descriptionVerbose: 'down the rubble ramp to the approach',
+        skillGate: { skill: 'climbing', dc: 8, failMessage: 'The ramp shifts under your weight. You catch yourself but don\'t make it. Try again when you\'re steadier.' },
+      },
+      east: {
+        destination: 'st_14_collapsed_lobby',
+        descriptionVerbose: 'east along the elevated platform toward the collapsed lobby',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    itemSpawns: [
+      { entityId: 'electronics_salvage', spawnChance: 0.55, quantity: { min: 1, max: 2, distribution: 'weighted_low' }, conditionRoll: { min: 0.3, max: 0.7 } },
+      { entityId: 'scrap_metal', spawnChance: 0.70, quantity: { min: 1, max: 3, distribution: 'flat' } },
+      { entityId: 'old_binoculars', spawnChance: 0.20, quantity: { min: 1, max: 1, distribution: 'single' }, conditionRoll: { min: 0.2, max: 0.6 } },
+    ],
+    extras: [
+      {
+        keywords: ['view', 'city', 'ruins', 'horizon', 'skyline'],
+        description: 'The view is the most comprehensive picture of the collapse you\'ve seen — the city\'s structure still readable in the rubble, the grid of streets identifiable by the valleys between debris fields, the former towers now measuring their height in horizontal distance. This was a dense urban center. A hundred thousand people, maybe. The silence is proportional.',
+        skillCheck: { skill: 'perception', dc: 10, successAppend: 'You track movement below — two figures, moving fast, carrying something between them. Not Hollow. Scavengers. They\'re heading for the underpass on the north side of the collapsed lobby. They know something about this zone that you don\'t yet.' },
+      },
+      {
+        keywords: ['ramp', 'rubble', 'approach', 'climb'],
+        description: 'The rubble ramp is a natural formation — a fortunate angle of collapse that left a gradable incline. Someone has driven rebar stakes into it at intervals, not quite enough for a fixed handline but enough to suggest this isn\'t the first time someone has made this climb. The stakes are old. The Reclaimers, probably. They catalog everything.',
+      },
+      {
+        keywords: ['wind', 'exposed', 'sight', 'lines'],
+        description: 'You are visible from a long way. That is the tradeoff of high ground: you see more, and more sees you. The wind reads from the northwest, cold, with a chemical undertone that the Reclaimers attribute to outgassing from whatever happened in the Scar valley. Up here you catch it more clearly. It smells like something that was once a laboratory.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.10,
+      timeModifier: { day: 0.5, night: 1.2, dawn: 0.7, dusk: 1.0 },
+      threatPool: [
+        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.3, awarePassive: 0.4, awareAggressive: 0.3 },
+      noiseModifier: 1.3,
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'A gust hits the platform. Loose debris rattles and skips off the edge into the rubble below.', chance: 0.35, time: null },
+        { line: 'Something moves far below — too slow for a person, too deliberate for debris settling.', chance: 0.20, time: ['night', 'dusk'] },
+        { line: 'The city grid is visible from here if you know how to read it. The streets ran east-west and north-south. Some of them still do, underground.', chance: 0.25, time: ['day', 'dawn'] },
+      ],
+    },
+    narrativeNotes: 'Elevated observation point outside the Stacks facility. Accessible via climbing check. Connects to the collapsed lobby zone. The wind detail (chemical smell from the Scar) links to the MERIDIAN atmospheric lore seeded in the observatory room.',
+  },
+
+  {
+    id: 'st_12_server_room_remnant',
+    name: 'Server Room Remnant',
+    zone: 'the_stacks',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { dark: true, scavengingZone: true },
+    description: 'Forty feet underground, reached by a stairwell the collapse partially spared, the data center survived because it was built to survive — reinforced concrete, dual power feeds, fire suppression still intact. The suppression foam has long since dried to a crust over everything. Rack after rack of dead servers stands in rows, screens black, indicator lights dark — except for three units in the northeast corner, where a backup UPS still draws power from somewhere and something hums. Not the equipment. Something in the equipment. A system that was never meant to be shut down running on the last of its reserves, processing something no one has asked it to process in seven years.',
+    descriptionNight: 'The server room doesn\'t know it\'s night. The three humming units in the northeast corner put out a faint amber light that is the only illumination. In that amber glow, in the silence, the processing sounds almost like breathing.',
+    shortDescription: 'Pre-collapse data center. Mostly dead. Three units still hum.',
+    exits: { up: 'st_14_collapsed_lobby' },
+    richExits: {
+      up: {
+        destination: 'st_14_collapsed_lobby',
+        descriptionVerbose: 'up the stairwell to the collapsed lobby',
+      },
+    },
+    items: [],
+    enemies: ['shuffler'],
+    npcs: [],
+    npcSpawns: [
+      {
+        npcId: 'reclaimer_signal_tech',
+        spawnChance: 0.25,
+        spawnType: 'wanderer',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'A Reclaimer technician works by headlamp, tracing cable runs through the foam crust with a thin probe, taking notes.', weight: 3 },
+          { desc: 'A signal tech sits cross-legged before the three live units, headphones on, recording something from the audio out.', weight: 2 },
+        ],
+        dispositionRoll: { neutral: 0.5, friendly: 0.3, wary: 0.2 },
+        narrativeNotes: 'Reclaimers know about this room. They visit but haven\'t extracted everything yet — the data is partially corrupted and reconstruction takes time.',
+      },
+    ],
+    itemSpawns: [
+      { entityId: 'electronics_salvage', spawnChance: 0.80, quantity: { min: 2, max: 4, distribution: 'flat' }, conditionRoll: { min: 0.2, max: 0.6 } },
+      { entityId: 'crafting_components', spawnChance: 0.60, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
+      { entityId: 'signal_decode_partial', spawnChance: 0.45, quantity: { min: 1, max: 1, distribution: 'single' } },
+      { entityId: 'wire_coil', spawnChance: 0.50, quantity: { min: 1, max: 2, distribution: 'flat' } },
+    ],
+    extras: [
+      {
+        keywords: ['servers', 'racks', 'hardware', 'equipment'],
+        description: 'Pre-Collapse enterprise hardware — the same generation as the Reclaimers\' salvaged equipment, but this was here from the start. The suppression foam preserved it from fire and slowed oxidation. Most of it is non-functional. Some of it is recoverable with the right tools. All of it is interesting to anyone who knows what they\'re looking at.',
+        skillCheck: { skill: 'electronics', dc: 11, successAppend: 'Two of the dead racks are recoverable — the components are intact, just unpowered. If you had a way to transport and power them, the Reclaimers would pay significantly for the hardware. More interesting: the rack labels. This isn\'t a corporate data center. The labels read: MERIDIAN EDGE NODE — METRO DISTRIBUTION — DO NOT DECOMMISSION WITHOUT AUTHORIZATION. This was part of the MERIDIAN network.' },
+      },
+      {
+        keywords: ['hum', 'active', 'units', 'power', 'running'],
+        description: 'The three active units draw from a UPS bank that should have died years ago — someone replaced the batteries. Recently, from the casing condition. The active units are running a process you can\'t identify from the indicator lights alone. Whatever it\'s doing, it hasn\'t stopped doing it. The UPS has maybe six months left before those batteries fail too.',
+        skillCheck: { skill: 'electronics', dc: 13, successAppend: 'You jack a terminal into the maintenance port. The system is running a single job: data integrity verification across a distributed archive. It\'s been running since 2031. The progress bar reads 94.7%. It has been at 94.7% for three years. Something in the remaining 5.3% is corrupted beyond local repair — the system is looping on it, unable to complete, unable to stop. The archive it\'s verifying is labeled: MERIDIAN CORE — PERSONNEL AND RESEARCH.' },
+        questFlagOnSuccess: { flag: 'found_meridian_edge_node', value: true },
+      },
+      {
+        keywords: ['suppression', 'foam', 'crust', 'fire'],
+        description: 'The fire suppression system discharged fully at some point — the foam is everywhere, dried to an off-white crust that crunches underfoot. It preserved the hardware from a fire that must have started above and never reached this level. The foam also preserved something else: footprints, dried into the crust, from multiple people. Old. Some of the prints are bare feet. That detail is hard to contextualize in a way that doesn\'t unsettle you.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.20,
+      timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
+      threatPool: [
+        { type: 'shuffler', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'screamer', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.2, awarePassive: 0.3, awareAggressive: 0.5 },
+      activityPool: {
+        shuffler: [
+          { desc: 'A shuffler stands motionless in the server aisle, facing the humming units, as if listening.', weight: 3 },
+          { desc: 'A shuffler moves between the racks in the dark, following the aisle, then turning, then following again.', weight: 2 },
+        ],
+      },
+    },
+    environmentalRolls: {
+      ambientSoundPool: {
+        day: [
+          { sound: 'The three active units hum. The sound is regular. Almost rhythmic.', weight: 5 },
+          { sound: 'Somewhere in the dead server racks, a relay ticks. Once. Silence.', weight: 2 },
+          { sound: null, weight: 3 },
+        ],
+        night: [
+          { sound: 'The hum from the northeast corner fills the silence. Down here, you can\'t tell what time it is.', weight: 5 },
+          { sound: 'A ticking from somewhere in the foam crust — thermal expansion, maybe, or something moving under it.', weight: 3 },
+        ],
+      },
+      ambientCount: { min: 1, max: 1, distribution: 'single' },
+    },
+    narrativeNotes: 'MERIDIAN edge node discovery. The corrupted archive detail connects to the Reclaimers\' server room and the MERIDIAN questline. The bare footprints in the foam are a creepy environmental detail — Hollow were here and stood looking at the humming servers. The quest flag connects to Lev\'s research.',
+  },
+
+  {
+    id: 'st_13_underpass',
+    name: 'The Underpass',
+    zone: 'the_stacks',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { dark: true },
+    description: 'A parking structure collapsed cleanly across a city block and left a tunnel. Not engineered — fortunate. The ceiling is the underside of a concrete deck with rebar hanging through it in places, close enough to touch. The floor is the original street surface, now permanently damp from groundwater that found a new path when the building came down. The smell is standing water and mildew and something else: the particular sour-mineral smell of Hollow. They use this route. The passage is narrow enough that you move single file, and the darkness at the far end doesn\'t resolve until you\'re already committed.',
+    descriptionNight: 'The Underpass at night is the same as the Underpass at any other time — no light penetrates from either end after dark. The sounds change: outside ambience drops to zero and you hear only the drip of water, the compression of the damp floor underfoot, and whatever is sharing the tunnel with you.',
+    shortDescription: 'A tunnel through collapsed parking structure. Hollow territory. Shortcut.',
+    exits: { north: 'st_01_approach', south: 'st_14_collapsed_lobby' },
+    richExits: {
+      north: {
+        destination: 'st_01_approach',
+        descriptionVerbose: 'north through the tunnel toward the Stacks approach',
+        hidden: true,
+        discoverSkill: 'perception',
+        discoverDc: 10,
+        discoverMessage: 'You notice disturbed debris at the base of the rubble wall — a gap, more than a gap, an entrance. Someone has widened it. The edges are worn smooth from use.',
+      },
+      south: {
+        destination: 'st_14_collapsed_lobby',
+        descriptionVerbose: 'south through the tunnel toward the collapsed lobby',
+      },
+    },
+    items: [],
+    enemies: ['shuffler', 'remnant'],
+    npcs: [],
+    itemSpawns: [
+      { entityId: 'scrap_metal', spawnChance: 0.40, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      { entityId: 'ammo_22lr', spawnChance: 0.25, quantity: { min: 2, max: 6, distribution: 'bell' } },
+      { entityId: 'torn_note_fragment', spawnChance: 0.35, quantity: { min: 1, max: 1, distribution: 'single' } },
+    ],
+    extras: [
+      {
+        keywords: ['water', 'drip', 'damp', 'groundwater', 'puddle'],
+        description: 'The water is ankle-deep in one section and the source is a slow weep through a crack in the concrete above — groundwater displaced when the structure fell. It\'s cold and clear, not potable without treatment. The bottom is original asphalt, faded lane markings still visible under the water. You are walking on a road that is now the floor of a tunnel that shouldn\'t exist.',
+      },
+      {
+        keywords: ['rebar', 'ceiling', 'concrete', 'hanging'],
+        description: 'The rebar hanging from the deck above is a navigation hazard. Some of the longer pieces have been bent upward at their tips — by hand, carefully. Someone maintains this passage. Not the Hollow — the Hollow don\'t do careful. A scavenger with regular business in this tunnel has been trimming the hazards down to survivable.',
+        skillCheck: { skill: 'perception', dc: 9, successAppend: 'One of the bent rebar pieces has a strip of cloth tied to it — orange, faded, fraying. A trail marker. There are more of them, at irregular intervals, all the way to the south end. Someone is marking a path through this tunnel for people who need to move fast in the dark.' },
+      },
+      {
+        keywords: ['smell', 'hollow', 'scent', 'tracks', 'signs'],
+        description: 'The Hollow smell here is unmistakable — the sour biological signature that means they pass through regularly. The tracks in the damp floor are consistent with shuffler movement patterns: the drag-step, the occasional full stop where one stood for a while. They use this shortcut. They may use it right now.',
+        skillCheck: { skill: 'tracking', dc: 10, successAppend: 'The track patterns are instructive. Most Hollow movement goes south-to-north — into the zone, not through it. One set of tracks goes north-to-south and is different: longer stride, no drag. A remnant. Moving with purpose, not shuffling. Remnants retain more direction. This one was going somewhere specific to the south.' },
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.45,
+      timeModifier: { day: 0.8, night: 1.4, dawn: 1.0, dusk: 1.2 },
+      threatPool: [
+        { type: 'shuffler', weight: 55, quantity: { min: 1, max: 3, distribution: 'bell' } },
+        { type: 'remnant', weight: 35, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'brute', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.15, awarePassive: 0.25, awareAggressive: 0.60 },
+      noiseModifier: 1.5,
+      activityPool: {
+        shuffler: [
+          { desc: 'A shuffler stands in the middle of the tunnel, facing away from you, unmoving. The dripping water is the only sound.', weight: 3 },
+          { desc: 'Two shufflers move in single file through the passage, headed north, not yet aware of you.', weight: 2 },
+        ],
+        remnant: [
+          { desc: 'A remnant crouches beside the waterlogged section of floor, touching the surface with one hand, head tilted.', weight: 2 },
+        ],
+      },
+    },
+    environmentalRolls: {
+      ambientSoundPool: {
+        day: [
+          { sound: 'Water drips from the ceiling. The interval is irregular. Somewhere ahead, something moves.', weight: 4 },
+          { sound: 'The tunnel carries sound from both ends — you can hear the Stacks approach faintly to the north, the lobby space to the south. You can also hear something closer.', weight: 3 },
+          { sound: null, weight: 3 },
+        ],
+        night: [
+          { sound: 'Total dark. The water sounds are louder. Something at the far end stops moving.', weight: 5 },
+          { sound: 'A low moan, distant, carries through the tunnel with the acoustics of a cathedral. It bounces once and dies.', weight: 3 },
+        ],
+      },
+      ambientCount: { min: 1, max: 1, distribution: 'single' },
+      flavorLines: [
+        { line: 'The concrete overhead settles — a deep pop, then silence. The structure is still moving, slowly, the way large things do.', chance: 0.25, time: null },
+        { line: 'The orange cloth markers are barely visible in the dark. You follow them anyway.', chance: 0.20, time: ['night'] },
+      ],
+    },
+    narrativeNotes: 'The underpass is the high-danger shortcut of the zone. North exit is hidden — requires perception to find. Hollow encounter chance is high. The trail markers (perception check) imply a regular scavenger user — potentially a quest hook or recurring NPC. The remnant tracking detail hints at directed Hollow behavior.',
+  },
+
+  {
+    id: 'st_14_collapsed_lobby',
+    name: 'Collapsed Lobby',
+    zone: 'the_stacks',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { scavengingZone: true },
+    description: 'The atrium of a former office tower, thirty feet high at its peak and now half that, the upper floors driven down through the interior by the collapse. The scale is still legible — a grand entrance hall designed to impress people arriving for meetings that no longer exist. Marble flooring, most of it intact under a layer of rubble, catches light from the gaps in the collapsed roof. The reception desk is half-buried, the laminate surface split but the structure standing. Behind the desk, a building directory board hangs at an angle. Most of the tenant plaques are still in their slots. You can read some of them.',
+    descriptionNight: 'At night the collapsed roof gaps become windows to the stars. Enough light comes through to navigate by. The marble reflects it faintly, the floor glowing a pale blue in the dark. The desk is a black shape. The directory is unreadable without a light. Something about the scale — the ceilings that were meant to make you feel the building\'s importance — makes the dark feel more absolute.',
+    descriptionDawn: 'Dawn sends light through the eastern collapse gaps at a low angle that crosses the marble floor in orange bars. The building directory catches it and one name on the tenant list is briefly illuminated before the angle shifts: MERIDIAN SYSTEMS INC — FLOORS 14-22.',
+    shortDescription: 'Former office tower atrium. Marble under rubble. Directory still readable.',
+    exits: { west: 'st_11_upper_stacks', up: 'st_11_upper_stacks', down: 'st_12_server_room_remnant', north: 'st_13_underpass', east: 'st_01_approach' },
+    richExits: {
+      west: {
+        destination: 'st_11_upper_stacks',
+        descriptionVerbose: 'west along the elevated debris platform toward the upper stacks',
+      },
+      up: {
+        destination: 'st_11_upper_stacks',
+        descriptionVerbose: 'up onto the elevated platform',
+        skillGate: { skill: 'climbing', dc: 8, failMessage: 'The rubble face shifts as you try to climb. You don\'t make it. The ramp is more stable.' },
+      },
+      down: {
+        destination: 'st_12_server_room_remnant',
+        descriptionVerbose: 'down the stairwell into the basement server room',
+        hidden: true,
+        discoverSkill: 'perception',
+        discoverDc: 11,
+        discoverMessage: 'Behind the reception desk, mostly buried by debris, a stairwell door. The door is open — not forced, just open, the way a door left open in an emergency stays open. Below: the dark, and a faint hum.',
+      },
+      north: {
+        destination: 'st_13_underpass',
+        descriptionVerbose: 'north into the underpass tunnel',
+      },
+      east: {
+        destination: 'st_01_approach',
+        descriptionVerbose: 'east through the rubble field toward the Stacks approach',
+      },
+    },
+    items: ['lore_meridian_funding_data'],
+    enemies: [],
+    npcs: [],
+    npcSpawns: [
+      {
+        npcId: 'reclaimer_craftsperson',
+        spawnChance: 0.20,
+        spawnType: 'wanderer',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'A Reclaimer craftsperson picks through the rubble near the desk, bagging salvage with methodical efficiency.', weight: 3 },
+          { desc: 'A craftsperson photographs the building directory with a small camera, noting something in a field journal.', weight: 2 },
+        ],
+        dispositionRoll: { neutral: 0.5, friendly: 0.4, wary: 0.1 },
+      },
+      {
+        npcId: 'scavenger_rival',
+        spawnChance: 0.30,
+        spawnType: 'wanderer',
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        activityPool: [
+          { desc: 'A scavenger works the rubble near the back wall, prying up marble tiles that aren\'t going anywhere useful but trying anyway.', weight: 2 },
+          { desc: 'Two scavengers argue in low voices over something pulled from the debris — a bag between them, contents not visible.', weight: 2 },
+        ],
+        dispositionRoll: { neutral: 0.3, wary: 0.5, hostile: 0.2 },
+      },
+    ],
+    itemSpawns: [
+      { entityId: 'lore_meridian_funding_data', spawnChance: 0.60, quantity: { min: 1, max: 1, distribution: 'single' } },
+      { entityId: 'scrap_metal', spawnChance: 0.65, quantity: { min: 1, max: 3, distribution: 'flat' } },
+      { entityId: 'electronics_salvage', spawnChance: 0.35, quantity: { min: 1, max: 2, distribution: 'weighted_low' }, conditionRoll: { min: 0.1, max: 0.5 } },
+      { entityId: 'discarded_flyer', spawnChance: 0.50, quantity: { min: 1, max: 2, distribution: 'flat' } },
+      { entityId: 'border_patrol_log', spawnChance: 0.20, quantity: { min: 1, max: 1, distribution: 'single' } },
+    ],
+    extras: [
+      {
+        keywords: ['directory', 'board', 'tenants', 'plaques', 'names'],
+        description: 'The building directory is a grid of brass plaques, most intact, listing company names and floor ranges. Law firms. Consulting companies. An accounting firm that occupied four floors. Financial services. The pre-Collapse economy, reduced to a list of who had nice offices. And near the top: MERIDIAN SYSTEMS INC — FLOORS 14-22. Nine floors. That\'s not a small office. That\'s a headquarters.',
+        skillCheck: { skill: 'lore', dc: 9, successAppend: 'Meridian Systems. You\'ve heard the name in fragmented contexts — the broadcast, Lev\'s files, the comm center map. Seeing it on an office directory is different. They were here. In this city. In this building. Floors fourteen through twenty-two are now distributed horizontally across approximately four city blocks.' },
+        questFlagOnSuccess: { flag: 'found_meridian_office_directory', value: true },
+      },
+      {
+        keywords: ['desk', 'reception', 'counter', 'surface'],
+        description: 'The reception desk is a long curve of engineered wood and laminate, the surface cracked down the middle by a falling beam that didn\'t quite reach the floor. Behind it, a cubbyhole system for key cards and messages, most empty, a few with envelopes still in them — never delivered. The envelopes are sealed. The names on them are pre-Collapse names of people who aren\'t coming back.',
+        skillCheck: { skill: 'scavenging', dc: 10, successAppend: 'One of the envelopes has a keycard taped to the outside — security access, corporate-style, demagnetized by now. But the envelope beneath it contains a printed memo: FROM: MERIDIAN SYSTEMS SECURITY. TO: BUILDING MANAGEMENT. RE: ADDITIONAL SECURITY PROTOCOLS FLOOR 14+. The memo is dated two months before the Collapse. They were worried about something.' },
+      },
+      {
+        keywords: ['marble', 'floor', 'tiles', 'stone'],
+        description: 'Real marble — not composite, not imitation. The floor of this lobby was an expense that communicated something specific about the company behind the desk. Most of it survived the collapse intact, protected by the weight of the rubble above it. The patterns are still visible: geometric, precise. This cost money. Meridian Systems had money.',
+      },
+      {
+        keywords: ['gaps', 'roof', 'light', 'collapse'],
+        description: 'The collapsed upper floors created a broken ceiling that lets in light in bars and patches. Some of the steel beams are still attached at one end and angle down at forty-five degrees, creating an accidental architecture. The space is dangerous — the structure is not stable — but the light makes it navigable. For now.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.15,
+      timeModifier: { day: 0.6, night: 1.3, dawn: 0.8, dusk: 1.0 },
+      threatPool: [
+        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.4, awarePassive: 0.35, awareAggressive: 0.25 },
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The marble floor amplifies every footstep. In this space, you sound larger than you are.', chance: 0.30, time: null },
+        { line: 'A beam shifts somewhere overhead — a low groan, a trickle of dust, then stillness.', chance: 0.20, time: null },
+        { line: 'Dawn light catches the building directory at an angle and briefly illuminates the Meridian Systems plaque.', chance: 0.40, time: ['dawn'] },
+        { line: 'At night, the lobby gaps show stars. The atrium was designed to inspire. It still does, just differently.', chance: 0.35, time: ['night'] },
+      ],
+    },
+    narrativeNotes: 'Hub room for the outer Stacks geography. The building directory is a key MERIDIAN discovery — confirms corporate presence in this city pre-Collapse. The reception desk skill check (the security memo) implies Meridian was preparing for something two months before the Collapse. The stairwell down to the server room remnant is hidden — requires perception to find. Dawn description text illuminating the Meridian plaque is a passive lore delivery that rewards early-morning play.',
+  },
 ]

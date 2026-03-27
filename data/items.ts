@@ -1513,6 +1513,80 @@ export const ITEMS: Record<string, Item> = {
     usable: true,
     loreText: 'Scratched into the floor beside the bunk. \'Day 1 they took blood. Day 7 I could hear the others. Not through the walls. Just — hear them. Day 14 I stopped needing to sleep. Day 21 I stopped being afraid. I don\'t know if that\'s better or worse.\'',
   },
+
+  // ----------------------------------------------------------
+  // Lore Items — MERIDIAN Interior (scar_16–scar_28)
+  // ----------------------------------------------------------
+
+  lore_charon7_failure_notebook: {
+    id: 'lore_charon7_failure_notebook',
+    name: 'CHARON-7 Failure Research Notebook — Wing A',
+    description: 'A clinical notebook, the cover stamped CHARON-7 VECTOR — CONTAINMENT FAILURE. The handwriting changes partway through.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'The first entries are controlled and optimistic. R-8 divergence identified Day 14. Corrective measures proposed. By Day 30: \'corrective measures insufficient.\' By Day 60: \'subjects displaying terminal behavioral degradation.\' By Day 90: \'containment protocol initiated.\' The last entry, different handwriting: \'Dr. Harlow was the one who noticed first. She\'s gone now. I don\'t know if gone means dead or gone means left. I can\'t ask anyone.\'',
+  },
+
+  lore_augmentation_protocol_alpha: {
+    id: 'lore_augmentation_protocol_alpha',
+    name: 'MERIDIAN Augmentation Protocol — Alpha Series Results',
+    description: 'A bound report, marked ALPHA SERIES — CONTROLLED TRIAL OUTCOMES. The tone is entirely different from the Wing A materials.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'Eleven Alpha Series subjects. R-1 integration successful in nine of eleven. Metrics: sensory acuity increased 340%. Physical regeneration rate 12x baseline. Thermal output reduced — subjects run cold. Cognitive function: preserved, with modifications to social instinct architecture that subjects describe as \'clarity.\' Two of eleven: R-1 integrated but verbal cognition partially suppressed. Classified as near-miss. The nine who succeeded are listed by first name only. You have met at least one of them.',
+  },
+
+  broadcasters_recording: {
+    id: 'broadcasters_recording',
+    name: 'Broadcaster\'s Recording — The Antechamber',
+    description: 'A small audio device, the kind used for field notes. A handwritten label on the side: PLAY ME. IF YOU MADE IT HERE, THIS IS FOR YOU.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'The recording is not what you expected. No justifications. No explanations. No blame assigned. What it says, in a voice that is tired in the way that people get tired after years of carrying something alone: \'I don\'t know who you are. I don\'t know what you found, or what you believe about what happened here. I know you made it this far, which means you wanted to know the truth badly enough to come looking for it. The truth is in the rooms you already walked through. What\'s in that room ahead is a choice. It\'s not mine to make. It was never mine to make — I just built the place where someone else could make it. I am sorry for what happened here. I am not sorry that you found it. Those are different things. They are both true. I\'m sorry for that too.\'',
+  },
+
+  // ----------------------------------------------------------
+  // Lore Items — The Pens
+  // ----------------------------------------------------------
+
+  patient_intake_form: {
+    id: 'patient_intake_form',
+    name: 'Patient Intake Form',
+    description: 'A clipboard with a printed form, filled out in careful block letters.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'INTAKE FORM — FACILITY 7 (MERCY GENERAL REPURPOSING). Name: [REDACTED]. Blood Type: O-negative. Age estimate: 30–35. Condition on arrival: ambulatory, mild dehydration. Yield classification: Premium. Ward assignment: A (voluntary). Extraction schedule: bi-weekly. Notes: Cooperative. No restraint necessary. Wristband: YELLOW. Signature of processing officer: [illegible]. The paper is clean. The boxes are all filled in. The horror is that nothing about it is sloppy.',
+  },
+
+  rooks_letter: {
+    id: 'rooks_letter',
+    name: 'Rook\'s Letter (Unsent)',
+    description: 'A letter written on Red Court letterhead, folded but never sealed.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'To the Council — I am writing this knowing I will not send it. You don\'t want philosophy from your castellans. You want yield numbers. Yield is up 12% since I implemented the color-coded scheduling system. The voluntary intake rate has held at 34%. I tell myself these are good numbers. I tell myself the ones in Ward A made a choice. I tell myself that a world that needs us to do this is the world that made us necessary. I am writing this because I need to say, somewhere, that I know what we are. I have known since the first week. I choose it anyway. I choose it because the alternative is chaos and chaos kills more. This is what I tell myself in the dark. It works less than it used to. — R.',
+  },
+
+  blood_type_chart: {
+    id: 'blood_type_chart',
+    name: 'Blood Type Efficiency Chart',
+    description: 'A laminated reference chart mounted on the wall near a workstation.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'EXTRACTION EFFICIENCY BY BLOOD TYPE — Internal Reference Only. O-neg: highest demand, lowest yield per draw, 10-day recovery minimum. A-pos: moderate demand, good yield, 7-day recovery. B-pos: specialized applications only, flag for research queue. AB-neg: PRIORITY — contact facility coordinator immediately upon intake. Wristband color codes: YELLOW=voluntary/O-neg, BLUE=voluntary/A-pos, RED=involuntary (any), WHITE=research queue. Recovery nutrition targets by type listed on reverse. The chart has been laminated. Someone updated it in pen at least twice. It is a living document.',
+  },
 }
 
 export function getItem(id: string): Item | undefined {

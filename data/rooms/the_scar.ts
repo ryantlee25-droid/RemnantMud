@@ -138,11 +138,12 @@ export const THE_SCAR_ROOMS: Room[] = [
     description: 'The automated systems are still running. UV strips cycle on as you enter. A chemical mist activates — the nozzles spray something that smells like isopropyl and ozone, a decontamination protocol running the same cycle it\'s been running, presumably, for seven years. Nobody updated the decontamination system when the facility went dark. It doesn\'t know the facility went dark. It greets you with institutional efficiency and the specific eerie functionality of a machine that has outlasted its purpose.',
     descriptionNight: 'The UV strips are blue-white and harsh. The decon mist is cold. The automated welcome is the same at 3am.',
     shortDescription: 'Automated decontamination. Still running. Eerie.',
-    exits: { west: 'scar_02_main_entrance', east: 'scar_04_level1_corridor', south: 'dp_12_sealed_door' },
+    exits: { west: 'scar_02_main_entrance', east: 'scar_04_level1_corridor', south: 'dp_12_sealed_door', north: 'scar_16_decontamination_corridor' },
     richExits: {
       west: { destination: 'scar_02_main_entrance', descriptionVerbose: 'back to the main entrance' },
       east: { destination: 'scar_04_level1_corridor', descriptionVerbose: 'through decon into the facility' },
       south: { destination: 'dp_12_sealed_door', descriptionVerbose: 'south to the mine utility corridor' },
+      north: { destination: 'scar_16_decontamination_corridor', descriptionVerbose: 'north into the personnel corridor' },
     },
     items: [],
     enemies: [],
@@ -693,10 +694,11 @@ export const THE_SCAR_ROOMS: Room[] = [
     description: 'The Core lab is a round room with four interactive terminals arranged at the compass points, each labeled with a simple phrase. CURE. WEAPON. SEAL. THRONE. The room is clean — someone has been cleaning it. The terminals are powered, have been powered, will be powered until you use one. The weight in this room is not dramatic. It is not orchestral. It is the specific weight of having come a long way and learned enough to understand what you\'re deciding, and now needing to decide it. The broadcaster said: it is yours. The four terminals say: choose.',
     descriptionNight: 'The terminal screens glow in the dark of the Core. Four options, lit. The room is the same at 3am as at noon. It will wait. It has waited.',
     shortDescription: 'The Core. Four terminals. Four endings. The choice.',
-    exits: { west: 'scar_13_broadcast_room', east: 'scar_15_the_exit' },
+    exits: { west: 'scar_13_broadcast_room', east: 'scar_15_the_exit', down: 'scar_28_junction' },
     richExits: {
       west: { destination: 'scar_13_broadcast_room', descriptionVerbose: 'west back to the broadcast room' },
       east: { destination: 'scar_15_the_exit', descriptionVerbose: 'east, the way out', hidden: true },
+      down: { destination: 'scar_28_junction', descriptionVerbose: 'down to the facility junction level' },
     },
     items: [],
     enemies: [],
@@ -801,5 +803,696 @@ export const THE_SCAR_ROOMS: Room[] = [
       ],
     },
     narrativeNotes: 'Final room. Difficulty 1 — nothing can hurt you here. The four extras bring closure without resolution: the choice is made, the world takes time, the broadcaster stays, what\'s left is what matters. The crow from du_01 appearing here is a deliberate callback. Final line of the game is the final extra keyword response: "What\'s left is what matters."',
+  },
+
+  // ─── SCAR-16: Decontamination Corridor ─────────────────────────────────────
+  {
+    id: 'scar_16_decontamination_corridor',
+    name: 'MERIDIAN — Personnel Decontamination Corridor',
+    zone: 'the_scar',
+    act: 3,
+    difficulty: 4,
+    visited: false,
+    flags: {},
+    cycleGate: 3,
+    description: 'A secondary decontamination corridor, longer than the main airlock — personnel coming from the lab wings passed through here before accessing shared areas. The sprayers are empty, the reservoirs depleted years ago, but the nozzles remain in their ceiling mounts, still angled for the bodies that used to walk under them. Personnel badge slots line the east wall, one per staff member, a physical check-in record for who was where. The last shifts are still in the slots. Nobody came back to clock out.',
+    descriptionNight: 'The badge slots hold their ghosts at night too. The corridor feels narrower in the dark. You know it isn\'t.',
+    shortDescription: 'Personnel decon corridor. Badge slots. The last shifts, still clocked in.',
+    exits: { south: 'scar_03_decontamination', east: 'scar_28_junction' },
+    richExits: {
+      south: { destination: 'scar_03_decontamination', descriptionVerbose: 'south back to the main decon airlock' },
+      east: { destination: 'scar_28_junction', descriptionVerbose: 'east into the facility junction' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['badges', 'slots', 'check-in', 'personnel'],
+        description: 'Forty-three badge slots, most occupied. Names printed on laminated cards: DR. HARLOW, CHEN W., VASQUEZ-REYES M., OKONKWO T. — the roll call of the last day. Cross-referencing the slot contents with the time stamps: twenty-two people checked in on the day of the bombing. None checked out. The bombing happened at 14:00. The last badge was swiped at 13:47.',
+        skillCheck: { skill: 'lore', dc: 10, successAppend: 'One badge is out of place — checked in but filed in the wrong slot, as if done in a hurry. It belongs to someone who was not scheduled to be here that day. An unscheduled visit, on the day of the bombing. Someone who came in from outside. Someone who knew what was coming and came to say something, or do something, before it happened.' },
+        questFlagOnSuccess: { flag: 'found_sanguine_origin', value: true },
+      },
+      {
+        keywords: ['sprayers', 'nozzles', 'decontamination', 'empty'],
+        description: 'The decon reservoirs are dry — the main system drew from the shared supply and this corridor\'s dedicated tank wasn\'t on the priority circuit. Unlike the main airlock, which kept running, this one ran dry within the first year. Whoever has been living in the facility knew which systems to maintain and which to let fail. This one they let fail.',
+      },
+      {
+        keywords: ['corridor', 'length', 'narrow', 'passage'],
+        description: 'The corridor is longer than it needs to be — a deliberate design. The length ensured full-body exposure to the decon cycle. It also meant that anyone walking it had forty feet to think about what they were about to do. Every scientist who ever walked into the lab wings walked this corridor first. Forty feet of institutional awareness, repeating.',
+      },
+      {
+        keywords: ['dates', 'timestamps', 'last', 'day'],
+        description: 'The badge timestamps on the day of the bombing cluster in two groups: a morning rush between 07:00 and 09:00, and a final cluster between 11:00 and 13:47. The afternoon cluster is smaller — seven people. Whatever those seven came back for, they came back for it after the morning shift had already arrived. The separation suggests something happened between morning and afternoon that changed what the afternoon people needed to do.',
+        skillCheck: { skill: 'electronics', dc: 11, successAppend: 'The badge reader logs each entry with the destination wing — a feature you almost missed. The afternoon seven: four went to Lab Wing A, two went to Lab Wing B, one went to the Core. One person came to the Core, alone, in the last hours before the bombing. The Core is scar_14. Someone was there before you.' },
+      },
+      {
+        keywords: ['ceiling', 'ventilation', 'air', 'system'],
+        description: 'The corridor ventilation is sealed differently from the rest of the facility — positive pressure, maintained, the air flow going outward from the lab wings rather than inward. A contamination containment design. The air in the lab wings was never supposed to reach the personnel areas without filtering. Someone cared about keeping the researchers separate from the thing they were making.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.20,
+      timeModifier: { day: 1.0, night: 1.2, dawn: 1.0, dusk: 1.0 },
+      threatPool: [
+        { type: 'remnant', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'shuffler', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+      ],
+      awarenessRoll: { unaware: 0.3, awarePassive: 0.4, awareAggressive: 0.3 },
+    },
+    narrativeNotes: 'Entry point into the new wing. The badge slots are the archaeology of the last day. The unscheduled visitor who came on the day of the bombing is an unresolved thread. The afternoon group going to the Core is a key revelation for attentive players.',
+  },
+
+  // ─── SCAR-17: Lab Wing A Entrance ──────────────────────────────────────────
+  {
+    id: 'scar_17_lab_wing_a_entrance',
+    name: 'MERIDIAN — Lab Wing A Entrance',
+    zone: 'the_scar',
+    act: 3,
+    difficulty: 4,
+    visited: false,
+    flags: { questHub: true },
+    description: 'The signage is still mounted above the door: CHARON-7 VECTOR RESEARCH — CLEARANCE LEVEL 3 REQUIRED. The door stands open, held by a door stop someone placed years ago. The notebooks nearest the entrance are the early ones — the optimistic ones, before the descent started. Grant proposals. Promising trial data. A whiteboard still showing the original project timeline, which predicted completion of Phase 1 within eighteen months. Phase 1 was not completed in eighteen months.',
+    descriptionNight: 'The open door lets the lab\'s emergency red lighting spill into the corridor. Wing A at night looks like something on fire, slowly.',
+    shortDescription: 'Lab Wing A entrance. CHARON-7 research. The failure that made the Hollow.',
+    exits: { west: 'scar_28_junction', east: 'scar_18_lab_wing_a_interior' },
+    richExits: {
+      west: { destination: 'scar_28_junction', descriptionVerbose: 'west back to the junction' },
+      east: { destination: 'scar_18_lab_wing_a_interior', descriptionVerbose: 'deeper into Lab Wing A' },
+    },
+    items: ['lore_charon7_failure_notebook'],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['sign', 'CHARON-7', 'clearance', 'vector'],
+        description: 'CHARON-7 VECTOR RESEARCH. The naming convention: CHARON, Greek ferryman of the dead, the entity that carries you across the boundary. The naming was intentional — the research director had a classical education and a taste for apt metaphors. The vector is what carries the passenger. CHARON-7 carries a passenger across a biological boundary. The researchers named it for what it does. They knew what it did.',
+        skillCheck: { skill: 'lore', dc: 9, successAppend: 'The seventh CHARON iteration — six failures before this one. The research notebooks cover CHARON-1 through CHARON-6 in summary form: each reached a different stage of failure. CHARON-7 was the version that worked. R-1 worked. R-8 was what emerged when it worked imperfectly, which is different from not working at all.' },
+        questFlagOnSuccess: { flag: 'found_hollow_origin', value: true },
+      },
+      {
+        keywords: ['notebooks', 'early', 'optimistic', 'timeline'],
+        description: 'The early notebooks are marked with excited annotations — exclamation points in the margins, circled results, the specific enthusiasm of researchers who believe they are making something important. The handwriting is confident. Lab Wing A notebooks document the descent from that confidence to something else: the annotations get smaller, the exclamation points disappear, the circles become question marks. The last notebook before the containment protocol has no annotations at all. Someone stopped responding to what they were reading.',
+      },
+      {
+        keywords: ['timeline', 'whiteboard', 'phase', 'schedule'],
+        description: 'The original project timeline: Phase 1 (vector development), 18 months. Phase 2 (controlled trials), 12 months. Phase 3 (deployment framework), 6 months. Total: 36 months. Someone has drawn a single diagonal line across the whole board in a different color marker, dated at 14 months in. The diagonal line means something went wrong at month 14 that made the rest of the timeline irrelevant. A single diagonal line is how you cancel a plan.',
+      },
+      {
+        keywords: ['grant', 'proposal', 'funding', 'promises'],
+        description: 'A bound grant proposal near the entrance: \'CHARON-7 represents an unprecedented opportunity to develop a targeted behavioral-modification vector with applications in conflict de-escalation, population stabilization, and long-term societal management.\' Societal management. The words are chosen carefully — not \'control,\' not \'domination,\' not anything that sounds like what it is. The gap between \'societal management\' and \'the Collapse\' is seventeen base pairs and one word chosen instead of another.',
+      },
+      {
+        keywords: ['door stop', 'open', 'held', 'wedge'],
+        description: 'The door stop is a corner of a concrete block, placed deliberately. Someone wanted this door to stay open. Whether that was for ventilation, for access, or because they couldn\'t stand the idea of closing it is impossible to know. The door stop is worn — the concrete has been in place long enough to indent the floor slightly. Years. Someone placed this years ago and nobody moved it.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.25,
+      timeModifier: { day: 1.0, night: 1.2, dawn: 1.0, dusk: 1.1 },
+      threatPool: [
+        { type: 'remnant', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'shuffler', weight: 35, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
+      ],
+      awarenessRoll: { unaware: 0.25, awarePassive: 0.4, awareAggressive: 0.35 },
+    },
+    narrativeNotes: 'The lore_charon7_failure_notebook item is found here. The naming of CHARON (ferryman of the dead) grounds the horror in pre-existing symbol. The diagonal line canceling the timeline is a human moment of decision-making made visible.',
+  },
+
+  // ─── SCAR-18: Lab Wing A Interior ──────────────────────────────────────────
+  {
+    id: 'scar_18_lab_wing_a_interior',
+    name: 'MERIDIAN — Lab Wing A Interior',
+    zone: 'the_scar',
+    act: 3,
+    difficulty: 5,
+    visited: false,
+    flags: { dark: true },
+    description: 'Deep Wing A. The containment cells are twelve in number, arranged in two rows, each a sealed transparent enclosure with a pass-through airlock for feeding and sampling. Eleven cells are empty, their doors standing open. One cell is still sealed. The thing inside cell 7-A has been in there for seven years and it has degraded past anything you have a name for. The shuffler stage, the remnant stage, the brute stage — it has moved through all of these and emerged as something the researchers would have called terminal degradation and would have been wrong about. It\'s still moving.',
+    descriptionNight: 'The sealed cell\'s emergency lighting is out. You can only tell something is inside by the movement — a rhythmic, slow scraping against the containment wall that never stops.',
+    shortDescription: 'Wing A containment cells. Eleven empty. One sealed. One very old, very wrong thing inside.',
+    exits: { west: 'scar_17_lab_wing_a_entrance' },
+    richExits: {
+      west: { destination: 'scar_17_lab_wing_a_entrance', descriptionVerbose: 'west back to Wing A entrance' },
+    },
+    items: [],
+    enemies: ['meridian_ancient_hollow'],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['cell 7-A', 'sealed', 'containment', 'inside'],
+        description: 'Cell 7-A is sealed with a physical lock in addition to the electronic containment system — someone added the physical lock after lockdown, from the outside. The thing inside has been here since before the evacuation. It was already in containment when the bombing happened. When everyone left. When the years started passing. The scraping against the wall has worn visible grooves into the containment surface. Years of it. It hasn\'t stopped.',
+        skillCheck: { skill: 'field_medicine', dc: 12, successAppend: 'The biological profile of terminal R-8 degradation should end in cellular collapse within eighteen to twenty-four months of onset. Something in cell 7-A has been alive for seven years past that point. The degradation isn\'t killing it. It\'s changing it. The grooves in the containment wall aren\'t random. The spacing is consistent. Methodical. Whatever is in there is still making decisions, of a kind.' },
+      },
+      {
+        keywords: ['cells', 'empty', 'open', 'eleven'],
+        description: 'Eleven empty cells, doors open. The opening mechanisms are on the outside — standard containment protocol. Someone opened them, one by one, during the evacuation or after. The cell logs would tell you when. The cell logs are on the terminal at the Wing A entrance, and the last recorded event for each cell is: SUBJECT RELEASED — AUTHORIZED. One after another. But not cell 7-A. Cell 7-A: AUTHORIZATION PENDING. Seven years of pending.',
+      },
+      {
+        keywords: ['scraping', 'sound', 'noise', 'movement'],
+        description: 'The scraping stops when you move, then resumes when you\'re still. The thing in the cell can hear you, or sense you through some mechanism that isn\'t hearing. The pause when you move is too brief to be coincidence. It knows something changed in the room. It\'s assessing. Whatever the R-8 degradation took from it, the capacity to detect and assess has remained.',
+      },
+      {
+        keywords: ['lock', 'physical', 'added', 'outside'],
+        description: 'The padlock on the cell is different from everything else in MERIDIAN — it\'s civilian hardware, not facility issue. Someone brought it here. Scavenged it, or brought it from the surface. Someone added this lock after the bombing, from the outside, to supplement the failing electronic containment. Someone who knew what was in this cell and made sure it stayed in. Someone who has been living in this facility for seven years made a deliberate choice to keep this sealed.',
+        skillCheck: { skill: 'lore', dc: 11, successAppend: 'The broadcaster keeps this sealed. After seven years, they know every corner of this facility. They chose to lock this rather than release it, or end it. That choice tells you something about who the broadcaster is — someone who preserves rather than destroys, even when destruction would be easier and kinder. Or someone who believes in evidence. In bearing witness. In not erasing what happened here.' },
+        questFlagOnSuccess: { flag: 'found_broadcaster_identity', value: true },
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.95,
+      timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
+      threatPool: [
+        { type: 'remnant', weight: 100, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.0, awarePassive: 0.05, awareAggressive: 0.95 },
+    },
+    narrativeNotes: 'Boss encounter room. The ancient hollow in 7-A is not released — the fight triggers if the player opens the cell or the containment fails on approach. The broadcaster\'s decision to lock rather than release is a character revelation. Hardest standard combat in the game.',
+  },
+
+  // ─── SCAR-19: Lab Wing B Entrance ──────────────────────────────────────────
+  {
+    id: 'scar_19_lab_wing_b_entrance',
+    name: 'MERIDIAN — Lab Wing B Entrance',
+    zone: 'the_scar',
+    act: 3,
+    difficulty: 4,
+    visited: false,
+    flags: { questHub: true },
+    description: 'The signage reads: AUGMENTATION PROTOCOL — ALPHA SERIES — AUTHORIZED PERSONNEL ONLY. The door to Wing B is different from Wing A\'s — heavier, a positive-pressure seal, and painted white instead of the institutional gray of the rest of the facility. The notebooks here are different. The handwriting is confident throughout. The margin annotations are still excited at the end. The researchers in Wing B believed in what they were doing.',
+    descriptionNight: 'Wing B\'s lighting is slightly different — warmer, closer to full-spectrum than emergency red. Someone maintained the Wing B lights specifically. The quality of the light in here is almost human.',
+    shortDescription: 'Lab Wing B entrance. Augmentation Protocol — Alpha Series. This is where the Sanguine were made.',
+    exits: { west: 'scar_28_junction', east: 'scar_20_lab_wing_b_interior' },
+    richExits: {
+      west: { destination: 'scar_28_junction', descriptionVerbose: 'west back to the junction' },
+      east: { destination: 'scar_20_lab_wing_b_interior', descriptionVerbose: 'deeper into Lab Wing B' },
+    },
+    items: ['lore_augmentation_protocol_alpha'],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['sign', 'augmentation', 'alpha', 'authorized'],
+        description: 'Augmentation Protocol — Alpha Series. Not a modification, not a treatment, not a trial. An augmentation: something intended to make the subject more than they were. The language is aspirational. The Wing B researchers weren\'t developing a bioweapon or a control agent. They were developing an upgrade. That was the program. That was what they believed in.',
+        skillCheck: { skill: 'lore', dc: 8, successAppend: 'The Alpha Series designation implies other series — Beta, Gamma. The server room has partial references to Beta Series trials that never left planning. Alpha succeeded well enough that the program moved to deployment framework without needing Beta. The Sanguine in the world are all Alpha Series. Every one of them walked through an augmentation chamber like the one deeper in this wing. Every one of them chose it, or had it chosen for them.' },
+        questFlagOnSuccess: { flag: 'found_sanguine_origin', value: true },
+      },
+      {
+        keywords: ['notebooks', 'handwriting', 'confident', 'different'],
+        description: 'The Wing B notebooks stand out: no descending handwriting quality, no margin annotations that stop, no crossed-out passages where a researcher stopped believing what they were writing. Wing B had successful results and the researchers knew it. The contrast with the Wing A materials is absolute. Same facility. Same program. Different outcome. Different tone. The horror of Wing A and the hope of Wing B existed simultaneously, in rooms thirty feet apart.',
+      },
+      {
+        keywords: ['door', 'seal', 'pressure', 'white'],
+        description: 'The positive-pressure seal on Wing B\'s door kept the augmentation environment stable — specific atmospheric composition, reduced pathogen load, controlled humidity. The researchers wanted the Alpha Series subjects in an optimal environment. Whatever else was happening in this facility, in Wing B the researchers were trying to take care of something. The white paint is the most visible signal: Wing B was not a containment space. It was a growth space.',
+      },
+      {
+        keywords: ['light', 'spectrum', 'warm', 'maintained'],
+        description: 'The full-spectrum lighting in Wing B is operational because someone maintained it. This is one of six systems the broadcaster kept running after lockdown — the server room, cold storage, the generator, the broadcast array, their own quarters, and Wing B\'s lighting. The specific choice to maintain Wing B\'s lights reads as a statement: someone wanted to keep this room looking the way it looked when the people who built it believed in it.',
+      },
+      {
+        keywords: ['subjects', 'Alpha', 'consent', 'choice'],
+        description: 'The entry protocols for Alpha Series subjects: consent documentation, pre-trial counseling, informed risk disclosure. The documentation is detailed and genuine — unlike the Wing A holding cell trials, the Alpha Series subjects entered voluntarily, with full understanding of what was proposed. The Sanguine are made of choices that their predecessors made, knowing what they were choosing. That doesn\'t make it simple. Nothing here is simple.',
+        skillCheck: { skill: 'field_medicine', dc: 10, successAppend: 'The pre-trial health screenings show that Alpha Series candidates were selected for specific baseline genetics — not random, not convenient. Someone developed a selection profile for who would best integrate R-1. The profile predicts certain personality traits alongside physical ones. The Sanguine aren\'t just biologically augmented. They were selected. What you meet in a Sanguine was partly there before the virus, and the researchers knew how to find it.' },
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.15,
+      timeModifier: { day: 1.0, night: 1.2, dawn: 1.0, dusk: 1.0 },
+      threatPool: [
+        { type: 'remnant', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'shuffler', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+      ],
+      awarenessRoll: { unaware: 0.3, awarePassive: 0.4, awareAggressive: 0.3 },
+    },
+    narrativeNotes: 'The lore_augmentation_protocol_alpha item found here. The contrast with Wing A is the room\'s structural thesis — same facility, opposite outcomes, different tones. The broadcaster\'s choice to maintain Wing B\'s lighting is a quiet character note.',
+  },
+
+  // ─── SCAR-20: Lab Wing B Interior ──────────────────────────────────────────
+  {
+    id: 'scar_20_lab_wing_b_interior',
+    name: 'MERIDIAN — Lab Wing B Interior',
+    zone: 'the_scar',
+    act: 3,
+    difficulty: 4,
+    visited: false,
+    flags: {},
+    description: 'The augmentation chambers are arranged in a semicircle — eight stations, each a reclining chair with an integrated medical array. The chairs have the specific design language of something that was never meant to be uncomfortable: padded, articulated, with a headrest designed for long-term occupation. This is where the R-1 integration happened. The medical equipment adjacent to each chair has no civilian analogue — precision infusion arrays, continuous neural monitoring, cellular regeneration tracking systems. The personnel files on the adjacent desk show eleven subjects. Nine successful outcomes. First names only. You have met at least two of them.',
+    descriptionNight: 'The augmentation chambers at night. Empty chairs, the IV stands still positioned beside them. The medical monitoring equipment reads zero on all panels. Something is missing from this room and its absence has the specific shape of the people who sat in these chairs.',
+    shortDescription: 'The augmentation chambers. This is where Sanguine were made. First-names-only files. You know two of them.',
+    exits: { west: 'scar_19_lab_wing_b_entrance' },
+    richExits: {
+      west: { destination: 'scar_19_lab_wing_b_entrance', descriptionVerbose: 'west back to Wing B entrance' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['chairs', 'augmentation', 'chambers', 'reclining'],
+        description: 'Eight chairs. Nine successful outcomes from eleven subjects — at least one subject underwent the procedure twice, or one chair saw two subjects. The integration process took forty-eight hours: a continuous infusion cycle with the subject conscious and monitored throughout. Forty-eight hours of becoming something different, aware the entire time. The researchers noted that subjects described the experience variously as \'clarifying,\' \'overwhelming,\' and in one case, \'like remembering something I never knew I had forgotten.\'',
+      },
+      {
+        keywords: ['personnel', 'files', 'names', 'subjects'],
+        description: 'The files on the desk: eleven subjects, nine successful integrations. The files use first names only — a deliberate anonymization protocol to prevent later identification. What you can read: ages (25 to 47), pre-trial occupations (five different backgrounds, none military), and the post-integration assessment scores. The scores are consistent across successful subjects: extraordinary. The two unsuccessful integrations are marked PARTIAL — not failure, not R-8 progression. Something in between that the researchers didn\'t have a category for yet.',
+        skillCheck: { skill: 'lore', dc: 12, successAppend: 'Cross-referencing details in the files — the pre-trial occupational backgrounds, the specific age-range, the documented personality traits — against people you\'ve encountered in your travels. You can place two of the nine successful subjects with high confidence. One is a Sanguine you\'ve spoken with. The specific way they described something in that conversation matches the post-integration assessment language exactly. They were here. In one of these chairs. They know what this place is.' },
+        questFlagOnSuccess: { flag: 'found_sanguine_origin', value: true },
+      },
+      {
+        keywords: ['equipment', 'medical', 'civilian', 'analogue'],
+        description: 'The precision infusion array is military-medical hardware — research-grade, not clinical-grade. The neural monitoring system has a resolution that civilian neurology won\'t have for decades, if the world ever reaches it again. The cellular regeneration tracker is the most unusual: it watches healing in real time at the cellular level, updating every 90 seconds. 90 seconds. The same cycle you noticed in the stairwell power fluctuations. Whatever is on Level 2 is running on the same rhythm as the monitoring system that watched the Alpha Series subjects heal.',
+        skillCheck: { skill: 'field_medicine', dc: 10, successAppend: 'The monitoring system data for the original nine subjects is still cached. Their healing rates at the end of the 48-hour integration: 12x baseline and climbing. The projection curve, extended: they never stopped healing faster. Every year of living with R-1 integration pushes the regeneration rate higher. A Sanguine seven years after augmentation heals at a rate the researchers never predicted because they never expected their subjects to still be alive seven years later.' },
+      },
+      {
+        keywords: ['IV', 'stands', 'infusion', 'drip'],
+        description: 'The IV stands are still positioned beside each chair, the tubing coiled and dry. The integration compound was tailored individually for each subject — not a standard formula but a custom preparation accounting for each person\'s baseline genetics. Someone made something specific for each person who sat in these chairs. Something that would work for them in particular. That\'s not mass production. That\'s care. It\'s a terrible form of care, and it is care.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.10,
+      timeModifier: { day: 1.0, night: 1.2, dawn: 1.0, dusk: 1.0 },
+      threatPool: [
+        { type: 'remnant', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 30, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+      ],
+      awarenessRoll: { unaware: 0.35, awarePassive: 0.4, awareAggressive: 0.25 },
+    },
+    narrativeNotes: 'The 90-second monitoring cycle connecting to the stairwell power fluctuations is a deliberate callback. The two identifiable subjects connect the MERIDIAN origin to the living world. The \'terrible form of care\' line is the room\'s thesis.',
+  },
+
+  // ─── SCAR-21: Personnel Quarters ───────────────────────────────────────────
+  {
+    id: 'scar_21_personnel_quarters',
+    name: 'MERIDIAN — Personnel Quarters',
+    zone: 'the_scar',
+    act: 3,
+    difficulty: 4,
+    visited: false,
+    flags: { safeRest: false },
+    description: 'The residential wing: twelve rooms arranged along a corridor, each with a bed, a desk, a closet. All twelve rooms are lived-in — clothes in the closets, personal items on the desks, the specific mess of someone who has been in a space long enough to stop performing tidiness. It takes longer than it should to realize: the same person has lived in all twelve of them. One at a time. Moving from room to room across seven years, inhabiting each space until it\'s too familiar and moving to the next. You count the evidence: seven years, twelve rooms, a pattern of methodical rotation through all the space available.',
+    descriptionNight: 'The corridor at night. Twelve doors, twelve lives that were one life, cycling through the available space to stay sane in the only way available: by moving.',
+    shortDescription: 'Personnel quarters. Twelve rooms, all lived-in. One person, seven years, cycling through the space.',
+    exits: { south: 'scar_28_junction', north: 'scar_22_cafeteria' },
+    richExits: {
+      south: { destination: 'scar_28_junction', descriptionVerbose: 'south back to the junction' },
+      north: { destination: 'scar_22_cafeteria', descriptionVerbose: 'north to the cafeteria' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['rooms', 'twelve', 'lived-in', 'rotation'],
+        description: 'The rotation pattern is visible in the wear: the earliest-occupied room has the most worn floor path from door to bed to desk. Each subsequent room is slightly less worn. The most recently occupied room — the one nearest the junction corridor — is the freshest, the personal items there most recently disturbed. You can tell which one they\'re in now. If you came back here after the Core, they wouldn\'t be in it anymore.',
+        skillCheck: { skill: 'tracking', dc: 11, successAppend: 'The rotation interval: approximately seven months per room, based on the wear patterns. Seven years, twelve rooms, roughly seven months each. The choice of when to move isn\'t random — each room shows an abrupt transition rather than a gradual shift. Something specific triggers the move. You can\'t know what. But someone alone in a facility for seven years developed a system for managing time, and the system involves leaving rooms behind.' },
+      },
+      {
+        keywords: ['personal', 'items', 'desk', 'belongings'],
+        description: 'The items on the desks across the twelve rooms accumulate a picture: early rooms have more items — photographs, books, objects carried in from outside the facility. Later rooms have fewer. By room ten, there is nothing on the desk except a journal, a pencil, and a cup. By room eleven, the cup is gone. The current room: journal, pencil. The reduction is not loss. It\'s editing. Deciding what matters.',
+      },
+      {
+        keywords: ['clothes', 'closet', 'changing', 'garments'],
+        description: 'The closets across the twelve rooms show evidence of repair — facility uniforms altered and re-altered as they wore out, clothing carefully maintained because there is no replacement. The repairs are skilled. Whoever lives here learned to sew from necessity and became good at it over time. The stitching in the early rooms is functional. In the later rooms it\'s almost artful. Seven years of practicing the same maintenance skill will do that.',
+      },
+      {
+        keywords: ['sanity', 'alone', 'method', 'system'],
+        description: 'You stand in the middle of the corridor and look at twelve doors and understand something about what it takes to be alone in a place for seven years without losing the thread of yourself. You need a system. You need to keep moving. You need to leave something behind regularly so you know you are still moving forward. The rotation is how someone builds time when time refuses to mean anything on its own.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.05,
+      timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
+      threatPool: [
+        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.5, awarePassive: 0.35, awareAggressive: 0.15 },
+    },
+    narrativeNotes: 'The rotation-through-rooms structure is the room\'s central revelation. The progressive reduction of desk items (photograph → book → journal → pencil → nothing) maps the broadcaster\'s interior journey. Low hollow encounter — the broadcaster keeps this area clear.',
+  },
+
+  // ─── SCAR-22: Cafeteria ─────────────────────────────────────────────────────
+  {
+    id: 'scar_22_cafeteria',
+    name: 'MERIDIAN — Cafeteria',
+    zone: 'the_scar',
+    act: 3,
+    difficulty: 4,
+    visited: false,
+    flags: { safeRest: false },
+    description: 'The cafeteria occupies a room larger than any other in the facility — designed for forty-three people to eat simultaneously, it now holds one person\'s supply management system. The long tables have been repurposed as shelving. The kitchen equipment is operational and well-maintained. A calendar on the wall has every day marked since lockdown — 2,555 marks in total, seven years of days, each one crossed off. The first hundred marks are in one handwriting. The next 2,455 are in another. Whoever took over the calendar system has been keeping it for six years and eight months.',
+    descriptionNight: 'The cafeteria at night. The marking on the calendar is still visible — a pale rectangle on the wall where the light doesn\'t quite reach it. 2,555 marks. Proof that each day happened.',
+    shortDescription: 'The cafeteria. 2,555 calendar marks. Two handwriting styles. Seven years of supply management for one.',
+    exits: { south: 'scar_21_personnel_quarters', east: 'scar_23_medical_bay' },
+    richExits: {
+      south: { destination: 'scar_21_personnel_quarters', descriptionVerbose: 'south to the personnel quarters' },
+      east: { destination: 'scar_23_medical_bay', descriptionVerbose: 'east to the medical bay' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['calendar', 'marks', 'days', 'counting'],
+        description: 'The first hundred marks: a specific style, the cross-off made at a slight angle, a personal habit. The marks stop abruptly. The 101st mark is made differently — vertical, deliberate, the habit not yet formed. Someone picked up the calendar from someone else and kept going. The change in handwriting is not a gradual shift. It\'s a before and after. Something happened on day 100 that meant only one person continued the count.',
+        skillCheck: { skill: 'lore', dc: 10, successAppend: 'Day 100 of lockdown. You know what happened at MERIDIAN at lockdown plus 100 days: the facility\'s last external communication, before the broadcaster began the radio signal. The last comm log in the security center references two personnel signatures, then one. Something happened on day 100 that reduced the count from two to one. The calendar tells you someone was here with the broadcaster, for 100 days, before they weren\'t.' },
+      },
+      {
+        keywords: ['supply', 'shelving', 'tables', 'management'],
+        description: 'The supply system is methodical to the point of obsession: every item labeled with its quantity, consumption rate, and projected depletion date. The projections are updated — the label on the protein supplement block shows three revisions of the depletion estimate. Someone has been updating these every few months for years, ensuring they always know exactly how long they have. This is the psychology of someone who has decided they\'re staying and needs to know it\'s possible.',
+      },
+      {
+        keywords: ['kitchen', 'equipment', 'operational', 'maintained'],
+        description: 'The kitchen equipment is in better condition than most items in the facility — the range, the ovens, the water recycler. The maintenance is not just functional but careful: the range surfaces are clean, the water recycler filter has been replaced, the refrigeration unit that stopped working has been bypassed with a manual cold-box built from insulating material and a spare thermal unit. Someone taught themselves HVAC maintenance from the facility documentation because the alternative was eating cold food forever.',
+      },
+      {
+        keywords: ['room', 'large', 'design', 'forty-three'],
+        description: 'This room was designed for forty-three people. It\'s been holding one. The scale of the emptiness is calibrated — you feel it in a way you didn\'t feel it in the laboratories, because the lab equipment doesn\'t know how many people it expected. Tables know. The long cafeteria tables know they should have bodies at them. The ratio of space to person is its own kind of grief.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.05,
+      timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
+      threatPool: [
+        { type: 'shuffler', weight: 80, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.5, awarePassive: 0.35, awareAggressive: 0.15 },
+    },
+    narrativeNotes: 'The two-handwriting calendar is the room\'s reveal: there were two survivors for 100 days, then one. The supply management labeling shows the psychology of a person who decided to stay. The HVAC repair self-teaching is a detail about resilience that isn\'t heroic — it\'s just necessary.',
+  },
+
+  // ─── SCAR-23: Medical Bay ───────────────────────────────────────────────────
+  {
+    id: 'scar_23_medical_bay',
+    name: 'MERIDIAN — Medical Bay',
+    zone: 'the_scar',
+    act: 3,
+    difficulty: 4,
+    visited: false,
+    flags: {},
+    description: 'The medical ward is not a place for sick people — it\'s a place for someone managing their own maintenance over years. The examination table has been adjusted to self-examination configuration. The surgical suite has been modified for single-operator procedures. The pharmaceutical storage is systematically depleted, the remaining inventory specifically curated: things that a Sanguine physiology needs for long-term self-maintenance, nothing that a human-normal physiology would require. The evidence is unambiguous. Whoever has been living here has Sanguine physiology. They\'ve been healing faster than human-normal. And they\'ve been managing that for seven years with the clinical precision of someone who knows exactly what they are.',
+    descriptionNight: 'The medical bay at night, the equipment clean and idle. The empty pharmaceutical slots are a specific shape — the shape of everything that\'s already been used.',
+    shortDescription: 'Facility medical bay. Single-operator setup. Sanguine physiology confirmed. Self-maintenance for seven years.',
+    exits: { west: 'scar_22_cafeteria', north: 'scar_24_security_wing' },
+    richExits: {
+      west: { destination: 'scar_22_cafeteria', descriptionVerbose: 'west back to the cafeteria' },
+      north: { destination: 'scar_24_security_wing', descriptionVerbose: 'north to the security wing' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['pharmaceutical', 'sanguine', 'inventory', 'curated'],
+        description: 'The pharmaceutical inventory tells you what someone needs and doesn\'t need. Missing: broad-spectrum antivirals (Sanguine immune function doesn\'t require them), standard pain management (Sanguine pain threshold is altered by R-1 integration), most antibiotics (accelerated cellular repair prevents most bacterial infection). Present: compounds that support R-1 integration stability, cellular regeneration cofactors, and one medication that has no label but a handwritten note: HELPS WITH THE REST.',
+        skillCheck: { skill: 'field_medicine', dc: 11, successAppend: 'The unlabeled compound: you recognize the chemical composition from Wing B lab materials — it\'s a cognitive stabilizer developed for Alpha Series subjects during extended integration periods. The extended integration period the researchers tested was six months. Someone has been taking this for seven years, extending it beyond any tested range. They\'ve been self-administering something nobody ever tested at this duration. Either it\'s still working, or the definition of \'working\' has changed over seven years.' },
+        questFlagOnSuccess: { flag: 'found_broadcaster_identity', value: true },
+      },
+      {
+        keywords: ['examination', 'table', 'self-examination', 'adjusted'],
+        description: 'The examination table adjustment — angled mirrors, extended reach apparatus, a custom bracket for the diagnostic scanner — is careful engineering from someone who needed to examine themselves without a second pair of hands. The ergonomics are practiced. The mirrors are positioned for specific angles. This wasn\'t figured out in a day. Someone spent time learning how to see themselves clearly from the inside out.',
+      },
+      {
+        keywords: ['surgical', 'suite', 'single-operator', 'modified'],
+        description: 'The surgical modification: clamps for holding tissue, extended-handle instruments, a head-mounted magnification unit. Someone performed surgery on themselves in this room. Not once — the tool wear patterns suggest repeated use, the clamps worn at consistent contact points. Minor procedures, probably — wound management, drainage, the things that Sanguine healing can handle but still occasionally requires assistance. Seven years of self-maintenance.',
+      },
+      {
+        keywords: ['healing', 'faster', 'Sanguine', 'physiology'],
+        description: 'The logs on the medical terminal cover every health event for one patient over seven years. The healing rate data matches the Alpha Series projections from Wing B — faster every year, the regeneration curve still climbing. The patient\'s notes at intervals: \'Healing rate: 14x baseline and increasing.\' \'Healing rate: 19x baseline.\' \'Healing rate: estimate only, too fast to track accurately.\' The most recent note: \'I stopped measuring. It doesn\'t matter anymore. What matters is that I\'m still here.\'',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.08,
+      timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
+      threatPool: [
+        { type: 'remnant', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.4, awarePassive: 0.4, awareAggressive: 0.2 },
+    },
+    narrativeNotes: 'The pharmaceutical inventory is the room\'s core evidence — Sanguine physiology confirmed here. The "HELPS WITH THE REST" unlabeled compound is deliberately ambiguous about what "the rest" means. The healing-rate log ending with "I stopped measuring" is a character note.',
+  },
+
+  // ─── SCAR-24: Security Wing ─────────────────────────────────────────────────
+  {
+    id: 'scar_24_security_wing',
+    name: 'MERIDIAN — Security Wing',
+    zone: 'the_scar',
+    act: 3,
+    difficulty: 4,
+    visited: false,
+    flags: { scavengingZone: true },
+    description: 'The secondary security operations center, distinct from the main security room upstairs. Where the main center controls automated defenses, this wing manages the facility\'s surveillance network. Forty-two cameras, all active, all feeding to this room\'s monitors. The monitors show the facility in real time — every corridor, every lab, every junction. Including the room you are standing in, and yourself in it. Someone is watching these monitors. The access logs on the terminal beside the door show seven years of daily check-ins. And one pattern that doesn\'t break: they never check camera 14-C. The camera covering scar_14. The Core. They have not looked at the Core in seven years.',
+    descriptionNight: 'The security monitors glow in the dark. Forty-two feeds, all live. The camera covering the Core is the only one in the room that shows an empty, undisturbed space. Everything else shows evidence of habitation. The Core doesn\'t.',
+    shortDescription: 'Surveillance operations. Forty-two live cameras. Seven years of logs. They never look at the Core.',
+    exits: { south: 'scar_23_medical_bay', west: 'scar_25_emergency_generator' },
+    richExits: {
+      south: { destination: 'scar_23_medical_bay', descriptionVerbose: 'south back to the medical bay' },
+      west: { destination: 'scar_25_emergency_generator', descriptionVerbose: 'west to the emergency generator' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['cameras', 'monitors', 'surveillance', 'feeds'],
+        description: 'Forty-two camera feeds, all live. The facility in real time: every corridor you\'ve walked, every room you\'ve entered — there is a camera. Someone has been watching this facility for seven years. They saw you the moment you came through decontamination. They\'ve watched you in every room since. They know exactly where you\'ve been and what you\'ve examined and how long you spent with each piece of evidence. They have been watching you learn what happened here.',
+        skillCheck: { skill: 'electronics', dc: 10, successAppend: 'The camera timestamp logs show the broadcaster\'s viewing pattern: they check each camera on a rotation, spending an average of forty seconds per feed per check-in. Except for recent check-ins. Recent check-ins: they spent significantly longer on certain cameras. The cameras covering the rooms where you spent the most time. They watched you linger. They watched you understand. The extra time spent on those feeds is not surveillance. It\'s something closer to witnessing.' },
+      },
+      {
+        keywords: ['access logs', 'check-ins', 'pattern', 'seven years'],
+        description: 'Seven years of daily access logs: the broadcaster checked this room every morning, duration averaging twenty minutes. The pattern is behavioral bedrock — they have not missed a single day. Not one. In seven years, there is no gap. No illness, no injury, no despair that kept them away. Whatever kept them maintaining this routine maintained everything else too. The routine is what a person looks like when they have decided, every day for seven years, to keep going.',
+      },
+      {
+        keywords: ['Core', 'camera 14-C', 'avoid', 'never'],
+        description: 'Camera 14-C covers the Core lab — the room with the four terminals. The access logs show that camera 14-C has received zero direct views in 2,555 days. The broadcaster checks every camera but this one. They know the Core is there. They designed the broadcast to bring someone here to use it. And in seven years, they have not watched it. This is a choice that tells you who they are as precisely as anything in the journals or the lab reports. They built the stage and they refuse to watch it.',
+        skillCheck: { skill: 'lore', dc: 9, successAppend: 'The broadcaster could have made the choice themselves. They have access to the Core. They understand the terminals. They\'ve had seven years to choose. The camera avoidance is the evidence that they understood, from the beginning, that this choice needed to be made by someone who came from outside — someone who would live in the world their choice creates. They removed themselves from the decision with a discipline so absolute it took seven years of not looking at one camera to maintain.' },
+      },
+      {
+        keywords: ['yourself', 'camera', 'watching', 'observed'],
+        description: 'You are on the monitors right now. The camera covering this security wing is active and the feed is displaying in real time. If the broadcaster is watching their check-in rotation, they are watching you look at a camera feed that shows you looking at a camera feed. The recursion is uncomfortable. They built this system. They know you can see yourself in it. This might be intentional. This might be the last piece of evidence they wanted you to find before the Core.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.20,
+      timeModifier: { day: 1.0, night: 1.1, dawn: 1.0, dusk: 1.0 },
+      threatPool: [
+        { type: 'remnant', weight: 55, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'brute', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 20, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+      ],
+      awarenessRoll: { unaware: 0.2, awarePassive: 0.35, awareAggressive: 0.45 },
+    },
+    narrativeNotes: 'The broadcaster watching the player is the room\'s central horror — not malevolent, just present. The zero-views on camera 14-C is the most important revelation in the wing: they chose not to make the decision themselves, and maintained that choice for seven years. The self-watching recursion in the final extra is an uncomfortable mirror.',
+  },
+
+  // ─── SCAR-25: Emergency Generator ──────────────────────────────────────────
+  {
+    id: 'scar_25_emergency_generator',
+    name: 'MERIDIAN — Emergency Generator',
+    zone: 'the_scar',
+    act: 3,
+    difficulty: 4,
+    visited: false,
+    flags: { scavengingZone: true },
+    description: 'The emergency power system is three units — two primary generators and one tertiary backup — all maintained in operational condition. The maintenance logs cover seven years: oil changes, filter replacements, fuel management, load balancing across the facility\'s systems. The entries are dated and signed with the same initials throughout: E.V. Every two weeks, without exception, for 2,555 days. E.V. kept the lights on. E.V. kept the broadcast transmitting. E.V. kept the cold storage running. The work required to maintain three industrial generators across seven years, alone, is not small work. They did it anyway.',
+    descriptionNight: 'The generators run. They always run. The sound in here at night is constant and low and the specific quality of something that refuses to stop.',
+    shortDescription: 'Emergency generators. Seven years of maintenance logs, signed E.V. Someone kept the lights on.',
+    exits: { east: 'scar_24_security_wing', north: 'scar_26_signal_origin' },
+    richExits: {
+      east: { destination: 'scar_24_security_wing', descriptionVerbose: 'east back to the security wing' },
+      north: { destination: 'scar_26_signal_origin', descriptionVerbose: 'north to the signal origin' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['E.V.', 'initials', 'signed', 'logs'],
+        description: 'E.V. Two initials, repeated 182 times across seven years of maintenance entries. The handwriting is consistent — neither deteriorating nor notably changing across the duration. What you know about initials: they are not a name. They are close. E.V. could stand for many things. In a MERIDIAN context, cross-referenced against the personnel files you\'ve already found, there is one name with those initials that appears at the director level of the research hierarchy.',
+        skillCheck: { skill: 'lore', dc: 8, successAppend: 'Elias Vane. Director Vane. The research director who signed the dead man\'s switch into the servers, who gave the holding cell subjects their door codes, who built the broadcast array, who stayed. E.V. in the maintenance logs is either him or someone using his initials. Either way, someone has been signing their work for seven years, in an empty facility, because signing your work is what you do when you respect what you\'re doing.' },
+        questFlagOnSuccess: { flag: 'found_broadcaster_identity', value: true },
+      },
+      {
+        keywords: ['generators', 'three', 'units', 'primary'],
+        description: 'Three generators because two is not enough if one fails with no replacement parts available. The tertiary unit is smaller — a backup-of-the-backup, added after the fact, identifiable by the newer mounting bolts and slightly different fuel coupling. Someone assessed the failure risk of a two-generator system and added redundancy. They were thinking ahead. Planning for their own incapacity, or a mechanical failure they couldn\'t predict, or both.',
+      },
+      {
+        keywords: ['fuel', 'management', 'supply', 'resource'],
+        description: 'The fuel management section of the maintenance log is the most detailed: consumption calculations, projections, contingency plans for reduced power mode, and a specific entry from year three: \'Reduced Wing A and B lighting to essential-only. Maintaining Wing B spectrum light on manual circuit. Calculated extension: 4+ additional years at current draw.\' They made a choice in year three to extend their operational window. They were still planning then. Seven years later: still planning.',
+      },
+      {
+        keywords: ['work', 'labor', 'maintenance', 'alone'],
+        description: 'You do the math: generator maintenance for three industrial units, every two weeks, across seven years. Fuel transfers. Oil changes. Filter replacements. Component inspections. This is work that in normal operation would involve a maintenance team. One person did all of it. The calluses this builds, the technical knowledge this requires — learned from the facility documentation, developed through practice, refined over years. They became a generator mechanic because the alternative was silence and dark.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.15,
+      timeModifier: { day: 1.0, night: 1.1, dawn: 1.0, dusk: 1.0 },
+      threatPool: [
+        { type: 'remnant', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'shuffler', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+      ],
+      awarenessRoll: { unaware: 0.3, awarePassive: 0.4, awareAggressive: 0.3 },
+    },
+    narrativeNotes: 'E.V. initials — Elias Vane — the broadcaster\'s identity hint without confirmation. The year-three fuel-management decision extends broadcaster characterization as a long-term planner. The work calculation (generator maintenance alone for seven years) grounds the broadcaster\'s existence in labor rather than abstraction.',
+  },
+
+  // ─── SCAR-26: Signal Origin ─────────────────────────────────────────────────
+  {
+    id: 'scar_26_signal_origin',
+    name: 'MERIDIAN — The Signal Origin',
+    zone: 'the_scar',
+    act: 3,
+    difficulty: 3,
+    visited: false,
+    flags: { questHub: true },
+    description: 'The broadcast station. A shortwave transmitter connected to the antenna array above, the cable run sealed and intact. A chair. A microphone. A notebook of broadcast scripts on the desk, and on the desk, evidence of the years that went into them: dozens of crossed-out drafts, folded discards, crumpled attempts. Pages and pages of tries. The broadcaster rehearsed. They wrote something, crossed it out, wrote something else, crossed that out, over years of revision until they had something they could say. The final draft is the page in the transmitter — the script you know from the signal itself: three seconds on, three seconds off, repeating. They wrote it, then they let it go. They\'re not here now. They knew you were coming and they stepped away. They wanted you to find this alone.',
+    descriptionNight: 'The transmitter hums. The broadcast script is lit by the transmitter\'s pilot light. The crossed-out pages are everywhere, the decades of revision visible as strata.',
+    shortDescription: 'The broadcast origin. The signal. Crossed-out drafts, years of them. The broadcaster stepped away for this.',
+    exits: { south: 'scar_25_emergency_generator', east: 'scar_27_the_antechamber' },
+    richExits: {
+      south: { destination: 'scar_25_emergency_generator', descriptionVerbose: 'south to the emergency generator' },
+      east: { destination: 'scar_27_the_antechamber', descriptionVerbose: 'east toward the antechamber' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['scripts', 'drafts', 'crossed-out', 'revision'],
+        description: 'The crossed-out drafts span years — you can date them by the ink oxidation and the paper age. The early drafts are different: longer, more explanatory, more defensive. \'MERIDIAN was not what you were told.\' \'The government lied about the bombing.\' \'There is a choice to be made.\' Explanation followed by justification followed by argument. The broadcasts got shorter across the years, the explanations stripped away, until what remains is the final version: not an argument. An invitation. Come. See. Choose.',
+        skillCheck: { skill: 'lore', dc: 9, successAppend: 'A draft from year two that was almost kept: \'I stayed because there was no other option.\' Crossed out. Beneath it: \'I stayed because someone had to.\' Crossed out. The final version uses neither. The process of revision isn\'t just editing — it\'s the broadcaster revising what they believe about why they stayed. The drafts are a seven-year conversation with themselves about the truth of a decision. The final broadcast script doesn\'t explain the decision. It just extends the invitation.' },
+      },
+      {
+        keywords: ['chair', 'microphone', 'transmitter', 'station'],
+        description: 'The chair is worn in the seat and the armrests — spent hours in it, across years. The microphone has a windscreen that was replaced at some point: you can see the original mounting and a repair with different material. The transmitter has a handwritten label on one component: REPLACED YEAR 4 — CHECK ANNUALLY. They maintained the thing they built to call for help. Every year, they checked it. Every year, the help hadn\'t come yet. Every year, they sent the signal anyway.',
+      },
+      {
+        keywords: ['absent', 'stepped away', 'not here', 'gone'],
+        description: 'They\'re not here. The equipment is running. The broadcast is transmitting. But the chair is empty and the door to the east is ajar. They knew from the security cameras the moment you arrived. They have been watching your progress through the facility. And at some point before you reached this room, they got up and left. They didn\'t wait. They prepared this for you and then got out of the way. The space they left behind is shaped exactly like a person who has done everything they could do and left the rest to someone else.',
+      },
+      {
+        keywords: ['signal', 'broadcast', 'script', 'message'],
+        description: 'The final broadcast script, the one that\'s been transmitting for years: twelve words, on loop. You\'ve heard them. You followed them here. The script is on a single sheet of paper, typed on a facility typewriter, the keys slightly worn. The words are chosen: not scientific, not bureaucratic, not an argument. They are the distillation of everything the crossed-out drafts were trying to say, compressed into an invitation that is also a test. Someone who follows this signal is someone who can be trusted with what\'s at the end of it.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.08,
+      timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
+      threatPool: [
+        { type: 'remnant', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.4, awarePassive: 0.4, awareAggressive: 0.2 },
+    },
+    narrativeNotes: 'The broadcaster\'s absence is intentional — they watched the player approach and stepped away. The draft evolution (explanation → invitation) maps the broadcaster\'s own understanding of what they were doing. The maintained microphone windscreen is a quiet detail about sustained purpose.',
+  },
+
+  // ─── SCAR-27: The Antechamber ───────────────────────────────────────────────
+  {
+    id: 'scar_27_the_antechamber',
+    name: 'MERIDIAN — The Antechamber',
+    zone: 'the_scar',
+    act: 3,
+    difficulty: 3,
+    visited: false,
+    flags: { noCombat: true, questHub: true },
+    description: 'A small room before the junction corridor that leads to the Core. Clean. Deliberately prepared. A single table, a single chair, a single item on the table: a recording device with a handwritten label. The broadcaster left this here for you. Not a message they broadcast — a message for whoever made it this far. The label reads: PLAY ME. IF YOU MADE IT HERE, THIS IS FOR YOU. The room is otherwise empty except for a second chair, positioned to face the first, as if the broadcaster expected to be here when you arrived and decided, at the last moment, not to be.',
+    descriptionNight: 'The antechamber at night. The recording device waits. The second chair faces the first. The broadcaster chose not to be in it.',
+    shortDescription: 'The antechamber. A recording device, left for you. An apology you didn\'t expect.',
+    exits: { west: 'scar_26_signal_origin', north: 'scar_28_junction' },
+    richExits: {
+      west: { destination: 'scar_26_signal_origin', descriptionVerbose: 'west back to the signal origin' },
+      north: { destination: 'scar_28_junction', descriptionVerbose: 'north to the junction' },
+    },
+    items: ['broadcasters_recording'],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['recording', 'device', 'label', 'play me'],
+        description: 'The recording device is facility-issue — standard field recorder, used for research notes and field data. The label is written in the same hand as the generator maintenance logs: E.V. They prepared this. They labeled it for you. Playing it is optional. The Core is accessible whether you play it or not. The recording is not an instruction or an order. It is something someone had to say before they could stop needing to say it.',
+        questFlagOnSuccess: { flag: 'meridian_antechamber_heard', value: true },
+      },
+      {
+        keywords: ['second chair', 'empty', 'facing', 'two chairs'],
+        description: 'Two chairs: one where you would sit to use the recording device, one facing it. The broadcaster placed the second chair facing the first and then chose not to sit in it. The choice is visible in the arrangement — this wasn\'t always one chair. They brought the second chair in, positioned it, and then left. They wanted to be here. They decided not to be. The empty chair is the decision. It faces you like an absence that has the specific shape of restraint.',
+      },
+      {
+        keywords: ['clean', 'prepared', 'deliberate', 'ready'],
+        description: 'The room is cleaner than any other in the facility. Dust on surfaces that no one prepared. No dust on the table, the chair, the recording device. This was cleaned recently. For you. Someone spent time making this room ready for a specific person — you — who they had never met, who they knew only by the nature of what would bring them here. Preparation is a form of respect. They respected whoever would walk through this door before they knew who it would be.',
+      },
+      {
+        keywords: ['apology', 'message', 'recording', 'content'],
+        description: 'You can anticipate what\'s in the recording before you play it. Everything in this facility has been building toward what someone who built it would need to say to whoever found it. Not an explanation — those are in the labs. Not an instruction — that\'s in the Core. Something else. The thing that isn\'t science and isn\'t strategy: the human residue of seven years of carrying what happened here. The recording isn\'t what they know. It\'s what they feel about what they know, finally said to someone other than themselves.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.0,
+      timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
+      threatPool: [],
+      awarenessRoll: { unaware: 1.0, awarePassive: 0.0, awareAggressive: 0.0 },
+    },
+    narrativeNotes: 'No combat — the broadcaster keeps this space safe. The broadcasters_recording item found here. The empty second chair is the room\'s central image: the absence that has the shape of restraint. The room is the only one in the wing that is perfectly clean — the broadcaster prepared it.',
+  },
+
+  // ─── SCAR-28: The Junction ──────────────────────────────────────────────────
+  {
+    id: 'scar_28_junction',
+    name: 'MERIDIAN — The Junction',
+    zone: 'the_scar',
+    act: 3,
+    difficulty: 4,
+    visited: false,
+    flags: { questHub: true },
+    description: 'A four-way intersection at the facility\'s operational heart. The scale of MERIDIAN is fully visible from here: corridors extending in every direction, each wing with its own purpose, its own evidence, its own piece of what happened. The junction is marked with faded directional signs: LAB WING A (east), LAB WING B (east), PERSONNEL (north), SIGNAL CONTROL (northwest), CORE LAB (north, Level 2). The facility is larger than the bombing was supposed to have destroyed. Larger than the government said. Larger than the lie required. Standing here, the lie\'s full scope is measurable in corridor length.',
+    descriptionNight: 'The junction at night. Four corridors, the emergency lighting painting each one a different shade of red depending on distance and obstruction. The signs are lit by a single strip of battery-powered LEDs — the broadcaster installed these. Someone needed to be able to read the signs in the dark.',
+    shortDescription: 'The facility junction. The scale of MERIDIAN. Four corridors, each with evidence. The Core is north.',
+    exits: { up: 'scar_14_the_core', north: 'scar_21_personnel_quarters', south: 'scar_16_decontamination_corridor', east: 'scar_17_lab_wing_a_entrance', west: 'scar_19_lab_wing_b_entrance' },
+    richExits: {
+      up: { destination: 'scar_14_the_core', descriptionVerbose: 'up to Level 2, the Core lab' },
+      north: { destination: 'scar_21_personnel_quarters', descriptionVerbose: 'north to the personnel quarters and broadcaster\'s domain' },
+      south: { destination: 'scar_16_decontamination_corridor', descriptionVerbose: 'south to the personnel decontamination corridor' },
+      east: { destination: 'scar_17_lab_wing_a_entrance', descriptionVerbose: 'east to Lab Wing A — CHARON-7 Vector Research' },
+      west: { destination: 'scar_19_lab_wing_b_entrance', descriptionVerbose: 'west to Lab Wing B — Augmentation Protocol Alpha Series' },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['signs', 'directional', 'facility', 'wings'],
+        description: 'The directional signs were installed with the facility — standard institutional wayfinding. Someone added supplemental markings later in a different hand: small arrows at ankle height in reflective paint, the kind of addition you make when you\'ve been navigating a space in the dark for years and need backup navigation. The reflective arrows cover every junction in this corridor. Seven years of additions, building a system that works without the lights.',
+      },
+      {
+        keywords: ['scale', 'size', 'large', 'bigger'],
+        description: 'You thought you understood MERIDIAN\'s scale from the outside. You didn\'t. The facility extends significantly farther in all directions than the exterior footprint suggested. The underground levels — Level 2 where the Core and the broadcaster\'s domain sit, the Level 1 wings, the utility infrastructure beneath — make up a volume that the government described as \'a small research installation.\' This is not a small research installation. This is a city block buried underground, and it has been running continuously for seven years.',
+      },
+      {
+        keywords: ['lie', 'government', 'bombing', 'scale'],
+        description: 'The scale of the lie is proportional to the scale of the facility. A bombing that was supposed to destroy this and didn\'t — the government either couldn\'t destroy it (the military spec survived), or chose not to (the bombing was calibrated). Either way, someone knew this was here. Someone has known for seven years. Someone has been making decisions in the settlements and strongholds you\'ve visited with knowledge of what was in this corridor the entire time.',
+        skillCheck: { skill: 'lore', dc: 10, successAppend: 'The funding consortium. The server data. The names in Vane\'s journal. The personnel file cross-references. Every piece of evidence converges here: the people who knew about MERIDIAN and kept knowing have been shaping post-Collapse politics using that knowledge as leverage. The factions you\'ve navigated were not accidents. Some of their choices were made in the shadow of this facility and everything it contained.' },
+      },
+      {
+        keywords: ['LEDs', 'lights', 'installed', 'broadcaster'],
+        description: 'The LED strips at junction points are not facility-standard equipment. They\'re aftermarket — different hardware, a different installation pattern. The broadcaster added them. They needed to navigate this space at all hours, in all conditions, and they built the infrastructure for it. Over years. Small additions, practical solutions, evidence of someone who treats the space they\'re in as a place worth improving rather than a prison worth enduring.',
+      },
+      {
+        keywords: ['core', 'north', 'level 2', 'choice'],
+        description: 'The Core is north and up. You can reach it from here. You don\'t have to go to the wings first. You don\'t have to find the recording. You don\'t have to read the journals or look at the cameras or understand what happened in Lab Wing A. The choice terminal will accept your input regardless of what you know. The junction makes this clear: the paths are available. None of them are required. What changes is not whether you can choose but what you understand when you do.',
+      },
+    ],
+    hollowEncounter: {
+      baseChance: 0.25,
+      timeModifier: { day: 1.0, night: 1.2, dawn: 1.0, dusk: 1.1 },
+      threatPool: [
+        { type: 'remnant', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'brute', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 20, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
+      ],
+      awarenessRoll: { unaware: 0.2, awarePassive: 0.35, awareAggressive: 0.45 },
+    },
+    narrativeNotes: 'The hub that unlocks the scale of MERIDIAN. The final extra (choice is available without knowing anything) is crucial — the game is honest that knowledge changes the choice but doesn\'t gatekeep it. The broadcaster\'s LED additions characterize them as a problem-solver who adapts to their environment. Exit structure: north to scar_14 (Core), east to Wing A, west to Wing B, south to antechamber. scar_16 (personnel decon corridor) connects west to this junction.',
   },
 ]

@@ -1,7 +1,7 @@
 import type { Room } from '@/types/game'
 
 // ============================================================
-// COVENANT — 18 Rooms
+// COVENANT — 28 Rooms
 // The Accord's capital. Population ~800. Act I–II.
 // ============================================================
 
@@ -24,6 +24,7 @@ export const COVENANT_ROOMS: Room[] = [
     exits: {
       south: 'rr_12_covenant_outskirts',
       north: 'cv_02_gate_square',
+      east: 'cv_26_refugee_processing',
     },
     richExits: {},
     items: [],
@@ -296,8 +297,15 @@ export const COVENANT_ROOMS: Room[] = [
     shortDescription: 'The Accord war room, its walls covered in annotated maps of the Four Corners.',
     exits: {
       down: 'cv_04_courthouse',
+      north: 'cv_22_council_chamber',
     },
-    richExits: {},
+    richExits: {
+      north: {
+        destination: 'cv_22_council_chamber',
+        reputationGate: { faction: 'accord', minLevel: 2 },
+        descriptionVerbose: 'the council chamber door — Trusted standing required',
+      },
+    },
     items: [],
     enemies: [],
     npcs: [],
@@ -353,6 +361,7 @@ export const COVENANT_ROOMS: Room[] = [
     exits: {
       south: 'cv_04_courthouse',
       north: 'cv_14_wall_north',
+      east: 'cv_21_garrison_barracks',
     },
     richExits: {
       south: {
@@ -418,6 +427,7 @@ export const COVENANT_ROOMS: Room[] = [
     exits: {
       west: 'cv_02_gate_square',
       north: 'cv_08_riverside_district',
+      east: 'cv_23_accord_clinic_overflow',
     },
     richExits: {},
     items: [],
@@ -754,6 +764,7 @@ export const COVENANT_ROOMS: Room[] = [
     shortDescription: 'Two cells, one prisoner, one guard, and the unresolved question of whether Dell is what Cross thinks he is.',
     exits: {
       up: 'cv_04_courthouse',
+      east: 'cv_24_holding_cells',
     },
     richExits: {},
     items: [],
@@ -822,6 +833,7 @@ export const COVENANT_ROOMS: Room[] = [
     shortDescription: 'The granary — eight hundred people\'s food supply, precisely inventoried, currently coming up short.',
     exits: {
       west: 'cv_04_courthouse',
+      south: 'cv_27_quartermaster_depot',
     },
     richExits: {},
     items: [],
@@ -890,6 +902,7 @@ export const COVENANT_ROOMS: Room[] = [
     shortDescription: 'The north wall\'s patrol post — the mountains ahead, the tree line at distance, and the question of what moves in it.',
     exits: {
       south: 'cv_06_armory',
+      west: 'cv_25_wall_south',
     },
     richExits: {},
     items: [],
@@ -964,6 +977,7 @@ export const COVENANT_ROOMS: Room[] = [
     shortDescription: 'The east wall — beautiful view of the river, one compromised panel, and a chalk line someone draws fresh every week.',
     exits: {
       south: 'cv_08_riverside_district',
+      north: 'cv_25_wall_south',
     },
     richExits: {},
     items: [],
@@ -1029,12 +1043,18 @@ export const COVENANT_ROOMS: Room[] = [
     shortDescription: 'The Marshal\'s quarters — sparse, military, one photograph on the wall of people who had no idea.',
     exits: {
       south: 'cv_04_courthouse',
+      north: 'cv_19_cross_office',
     },
     richExits: {
       south: {
         destination: 'cv_04_courthouse',
         reputationGate: { faction: 'accord', minLevel: 3 },
         descriptionVerbose: 'the door to the Marshal\'s private quarters — Blooded standing required',
+      },
+      north: {
+        destination: 'cv_19_cross_office',
+        descriptionVerbose: 'the inner office door — Cross\'s private workspace',
+        reputationGate: { faction: 'accord', minLevel: 2 },
       },
     },
     items: [],
@@ -1084,6 +1104,7 @@ export const COVENANT_ROOMS: Room[] = [
     shortDescription: 'The courthouse basement — county records, damp concrete, and one locked cabinet with a classification marking visible through the gap.',
     exits: {
       up: 'cv_04_courthouse',
+      south: 'cv_20_underground_archive',
     },
     richExits: {
       up: {
@@ -1091,6 +1112,13 @@ export const COVENANT_ROOMS: Room[] = [
         reputationGate: { faction: 'accord', minLevel: 2 },
         cycleGate: 2,
         descriptionVerbose: 'access to the basement — Trusted Accord standing and Cycle 2+ required',
+      },
+      south: {
+        destination: 'cv_20_underground_archive',
+        locked: true,
+        lockedBy: 'courthouse_archive_key',
+        descriptionVerbose: 'a heavy steel door at the back of the basement, rusted hinges, sealed padlock',
+        skillGate: { skill: 'lockpicking', dc: 8, failMessage: 'The padlock is a serious piece of hardware. You\'d need better lockpicking to crack it quietly, or the key.' },
       },
     },
     items: [],
@@ -1221,5 +1249,630 @@ export const COVENANT_ROOMS: Room[] = [
         depletion: { cooldownMinutes: { min: 720, max: 1440 }, respawnChance: 0.10 },
       },
     ],
+  },
+
+  // ----------------------------------------------------------
+  // CV-19: Marshal Cross's Inner Office
+  // ----------------------------------------------------------
+  {
+    id: 'cv_19_cross_office',
+    name: 'Covenant — Marshal\'s Inner Office',
+    zone: 'covenant',
+    act: 2,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: true },
+    description: 'The inner office is where the Accord\'s authority resolves into something specific and personal. A work table dominates the room, its surface covered in the living document of a settlement under pressure: patrol route overlays, supply projections, a handwritten ledger of outstanding judgments, three open dispatch folders with URGENT stamped in red. The walls hold a tactical map of Covenant and its surrounds, annotated in a precise, small hand that is obviously Cross\'s — threat vectors, patrol timing windows, known Hollow aggregation points, a cluster of notations around the northern road labeled MERIDIAN / UNCONFIRMED. Everything in this room is functional. There is no chair that isn\'t at the work table. There are no decorations. Power here does not decorate itself.',
+    descriptionNight: 'The lamp burns on the work table regardless of the hour. Cross works this room at any time the settlement requires it, which means any time. The dispatch folders have been reshuffled. One has been closed. The map has three new annotations since yesterday.',
+    shortDescription: 'The Marshal\'s private inner office — operational intelligence, mission orders, and the full weight of what it costs to keep eight hundred people alive.',
+    exits: {
+      south: 'cv_16_marshals_quarters',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['map', 'tactical', 'annotations', 'meridian', 'threat'],
+        description: 'The tactical map is a pre-Collapse county survey, laminated and mounted, with a palimpsest of overlays in different colored markers. Blue: patrol routes, current. Red: confirmed Hollow sightings, last thirty days. Black: infrastructure — wells, food caches, the wall sections. In the mountain country to the north, a cluster of notations circled in pencil: MERIDIAN / UNCONFIRMED / SOURCE: SIGNAL. Below that, a single question mark. That question mark has been redrawn several times — the pencil has worn a small groove in the laminate.',
+        cycleGate: 2,
+      },
+      {
+        keywords: ['dispatch', 'folders', 'orders', 'mission', 'urgent'],
+        description: 'The open dispatch folders: the first contains movement orders for the next wall rotation — four sentries reassigned, routes adjusted after last week\'s incident at the east panel. The second is a mission authorization for a supply run south to the river road junction, signature pending. The third, the URGENT folder, holds a single handwritten note. You can read only the opening line before conscience or caution stops you: "If this gets back to the council before I\'ve handled it, we have a larger problem than the one in this folder."',
+        cycleGate: 2,
+        skillCheck: { skill: 'perception', dc: 13, successAppend: 'You catch the mission designation on the third folder before you look away: OPERATION LAMPBLACK. The name means nothing to you yet.' },
+      },
+      {
+        keywords: ['work table', 'desk', 'ledger', 'judgments'],
+        description: 'The judgment ledger is a record of every enforcement decision Cross has made since assuming the marshal role. Each entry: date, parties, charge, decision, follow-up. The handwriting in the early entries is tighter, more controlled. The later entries are looser — not careless, but the looseness of someone who has made enough hard decisions that the act of recording them has become automatic. The most recent entry is blank except for a name and a charge. The decision column is empty.',
+      },
+      {
+        keywords: ['chair', 'personal effects', 'personal', 'decoration'],
+        description: 'There is nothing in this room that isn\'t required by the work. The observation sits with you after you\'ve made it. What kind of person strips even private space down to the operational minimum? Someone who has decided that this is all she is right now. Someone who isn\'t sure there\'s anything left below the function.',
+      },
+    ],
+    npcSpawns: [],
+    itemSpawns: [
+      {
+        entityId: 'accord_charter_copy',
+        spawnChance: 0.80,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.7, max: 1.0 },
+        groundDescription: 'A copy of the Accord charter sits on the corner of the work table, heavily annotated in the margins.',
+        depletion: { cooldownMinutes: { min: 99999, max: 99999 }, respawnChance: 0.0 },
+      },
+    ],
+    narrativeNotes: 'Act II access room behind Marshal\'s Quarters. Contains operational intelligence and the first reference to OPERATION LAMPBLACK. Cross NPC intentionally absent — she is everywhere but her own rooms.',
+  },
+
+  // ----------------------------------------------------------
+  // CV-20: The Underground Archive
+  // ----------------------------------------------------------
+  {
+    id: 'cv_20_underground_archive',
+    name: 'Covenant — The Underground Archive',
+    zone: 'covenant',
+    act: 2,
+    difficulty: 3,
+    visited: false,
+    flags: { hiddenRoom: true, scavengingZone: true },
+    cycleGate: 2,
+    description: 'The air changes the moment you push the door open — drier than the basement, with the particular stillness of a sealed space. The archive is a former utility room, its original purpose long overwritten. Metal shelving units line three walls, each loaded with labeled binders and sealed archival boxes. The labels are in government-standard font: MERIDIAN FACILITY — COHORT RECORDS. CHARON-7 — PHASE II PROTOCOLS. ACCORD INTERNAL — GOVERNANCE HISTORY. The last category is the largest and the most disturbing — not because it is classified, but because the governance history of the Accord, as documented here, does not match the governance history the Accord tells about itself. Discrepancies accumulate as you read the spines. By the fourth shelf, you understand why this room is locked.',
+    descriptionNight: 'The archive has no windows. Night does not exist here — only the lamplight and the documents and the gradual weight of what the Accord knows and has chosen not to share.',
+    shortDescription: 'The Accord\'s sealed archive — MERIDIAN records, pre-collapse government files, and a history that doesn\'t match the official one.',
+    exits: {
+      north: 'cv_17_the_basement',
+    },
+    richExits: {
+      north: {
+        destination: 'cv_17_the_basement',
+        locked: true,
+        lockedBy: 'courthouse_archive_key',
+        descriptionVerbose: 'the heavy steel door back to the basement — same lock, same key',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['meridian', 'cohort records', 'charon', 'classified', 'files'],
+        description: 'The MERIDIAN FACILITY — COHORT RECORDS boxes are sealed with tamper-evident tape that has been broken and resealed at least once — the color match is almost right but not quite. Inside one box you peel open: personnel files, medical evaluations, and a document titled OPTIMIZATION OUTCOME MATRIX — COHORT 4. The matrix lists subjects by number, not name. The outcome column has three possible values: FAILED, PARTIAL, SUCCESSFUL. The distribution is not what you would hope.',
+        cycleGate: 2,
+        skillCheck: { skill: 'lore', dc: 12, successAppend: 'You recognize the CHARON-7 notation from other fragments you\'ve encountered. The connection crystallizes: the Hollow, the Sanguine, the Revenant phenomenon — they\'re all in this matrix. Different columns. Same source document.' },
+        questFlagOnSuccess: { flag: 'meridian_archive_accessed', value: true },
+      },
+      {
+        keywords: ['accord', 'governance', 'history', 'internal', 'discrepancy'],
+        description: 'The ACCORD INTERNAL — GOVERNANCE HISTORY binders document decisions the council made that were never announced. A vote in year two on what to do with non-contributing residents — the vote was close and the decision recorded is "deferred," which is not what several drifters who arrived in year two remember happening. A second document authorizes an intelligence operation against the Salters dated six months before the Accord publicly claimed relations had broken down. The history in here is the same history. The emphasis is different.',
+        cycleGate: 2,
+      },
+      {
+        keywords: ['shelves', 'boxes', 'binders', 'archive', 'labels'],
+        description: 'The sheer volume is part of the message — whoever built this archive wanted everything preserved and accessible. Not hidden in the sense of destroyed, just hidden in the sense of controlled. There is a difference. Whether that difference is meaningful depends on what you think the Accord is for.',
+      },
+    ],
+    npcSpawns: [],
+    itemSpawns: [
+      {
+        entityId: 'meridian_file_fragment',
+        spawnChance: 0.90,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.8, max: 1.0 },
+        groundDescription: 'A classified file, partially unsealed, rests on the nearest shelf within reach.',
+        depletion: { cooldownMinutes: { min: 99999, max: 99999 }, respawnChance: 0.0 },
+      },
+      {
+        entityId: 'meridian_perimeter_memo',
+        spawnChance: 0.60,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.7, max: 1.0 },
+        groundDescription: 'A perimeter security memo with military classification markings.',
+        depletion: { cooldownMinutes: { min: 99999, max: 99999 }, respawnChance: 0.0 },
+      },
+    ],
+    narrativeNotes: 'Act II critical-path lore room. Accessible only via lockpick or courthouse_archive_key. Contains MERIDIAN revelations and Accord history discrepancies that recontextualize the faction. Should feel like a reward for players who pursued the investigation threads.',
+  },
+
+  // ----------------------------------------------------------
+  // CV-21: Garrison Barracks
+  // ----------------------------------------------------------
+  {
+    id: 'cv_21_garrison_barracks',
+    name: 'Covenant — Garrison Barracks',
+    zone: 'covenant',
+    act: 1,
+    difficulty: 1,
+    visited: false,
+    flags: { noCombat: true, safeRest: false },
+    description: 'The barracks smell of boot leather, gun oil, and the particular human closeness of people who live and sleep within arm\'s reach of one another and have made their peace with it. Bunks run the length of both walls — thirty-two of them, half currently empty, the occupied ones showing the small personal economies of people who own very little: a photograph tucked into a bunk frame, a book wedged between the mattress and the wall, a hand-sewn patch on a jacket hung from a post. Off-duty militia move through the space with the ease of people at home and the readiness of people who are never entirely off duty. The unit culture is visible in the details: a shared joke that plays out in a gesture between two soldiers, a coffee-stained mug rack with names written in marker, the duty roster on the back wall hand-lettered and already annotated with someone\'s dry commentary in the margins.',
+    descriptionNight: 'At night, most of the bunks are occupied. The sounds of people sleeping — breathing, the occasional restless shift — fill the space. Two soldiers sit at the far end under a lamp, speaking low, not sleeping. They have the look of people working through something that doesn\'t go away in the dark.',
+    shortDescription: 'The garrison barracks — bunks, gun oil, loyalty worn like a second uniform, and the quiet doubt underneath.',
+    exits: {
+      east: 'cv_07_infirmary',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['bunks', 'beds', 'personal effects', 'photographs'],
+        description: 'The personal effects in the bunk frames tell the story the soldiers don\'t. One has a child\'s crayon drawing, laminated. One has a watch with a cracked face, hanging from a nail — not worn, kept. One has nothing at all, which is its own kind of statement. These are people who carried what mattered most and left everything else behind. What they brought is visible. What they left behind is not, but you can feel its shape.',
+      },
+      {
+        keywords: ['duty roster', 'schedule', 'rotation', 'commentary'],
+        description: 'The duty roster lists every militia member by last name and shift assignment. Someone has added commentary in a different hand: next to one name, "night owl, works harder after midnight"; next to another, "give her the south wall, she spots movement better than the scopes." The comments are accurate tactical assessments written in the style of someone who cares about the people being assessed.',
+      },
+      {
+        keywords: ['culture', 'unit', 'loyalty', 'accord', 'doubt'],
+        description: 'They believe in the Accord — not naively, you sense, but in the way that soldiers believe in the unit they\'ve bled with: because the alternative is believing in nothing while doing the same work. A few of them have been here since the beginning, before Cross took the marshal role. Those ones are harder to read. They know what the Accord was when it was being built and what it has become, and something in them is measuring the distance.',
+        skillCheck: { skill: 'perception', dc: 11, successAppend: 'One soldier catches your eye — not hostile, not welcoming, but assessing. He\'s been here longer than the others. The way he watches Cross\'s name on the roster tells you something isn\'t sitting right with him.' },
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'accord_militia',
+        spawnChance: 0.90,
+        spawnType: 'wanderer',
+        quantity: { min: 2, max: 4, distribution: 'weighted_low' },
+        activityPool: [
+          { desc: 'An off-duty militiaman cleans her rifle at the bench with the automatic focus of someone whose hands know the procedure without instruction.', weight: 4 },
+          { desc: 'Two soldiers sit across from each other on their bunks, speaking in low voices about something specific and quiet. They stop when you enter, then resume when they\'ve assessed you.', weight: 3 },
+          { desc: 'A young militia member oils and re-oils the same piece of her gear, a tell of someone who is anxious and working it out with her hands.', weight: 2 },
+          { desc: 'An older soldier sleeps in his bunk with the practiced depth of someone who sleeps whenever the opportunity presents, regardless of time or noise.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.2, neutral: 0.6, wary: 0.2, hostile: 0.0 },
+        dialogueTree: 'cv_militia_barracks',
+      },
+    ],
+    itemSpawns: [],
+  },
+
+  // ----------------------------------------------------------
+  // CV-22: The Council Chamber
+  // ----------------------------------------------------------
+  {
+    id: 'cv_22_council_chamber',
+    name: 'Covenant — The Council Chamber',
+    zone: 'covenant',
+    act: 2,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: true, questHub: true },
+    description: 'The council chamber is the most formal room in Covenant and carries that formality like a reminder of what\'s at stake. A long salvaged table runs the center — eight mismatched chairs arranged with deliberate care, each position marked by a small folded placard. The placard names are the names of the Accord\'s governing structure: MARSHAL, CHIEF MEDIC, GARRISON COMMANDER, STOREKEEPER, CIVIL ENGINEER, TRADER REPRESENTATIVE, RESIDENT REPRESENTATIVE, and at the far end, simply RECORDER. The walls hold the Accord\'s founding documents in framed copies, the original charter alongside the amendments, each signed and countersigned. There is a smell of stale coffee and the particular air of rooms where decisions are made and then lived with. The chair at the marshal\'s position is slightly further from the table than the others — Cross\'s habit, giving herself room to stand quickly.',
+    descriptionNight: 'The council chamber at night is empty and almost loud with it — the residue of decisions made here during the day, the shape of arguments that ended without resolution. Someone left a coffee cup. The recorder\'s ledger is open on the table. The last entry is three lines, which means a decision was made with minimal debate, which means either consensus or something that couldn\'t be argued.',
+    shortDescription: 'The council chamber — long table, faction placards, founding documents framed on the wall, and the weight of every decision made in this room.',
+    exits: {
+      north: 'cv_05_courthouse_upper',
+    },
+    richExits: {
+      north: {
+        destination: 'cv_05_courthouse_upper',
+        reputationGate: { faction: 'accord', minLevel: 2 },
+        descriptionVerbose: 'the council chamber door — Trusted Accord standing required',
+      },
+    },
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['placards', 'names', 'seats', 'positions', 'chairs'],
+        description: 'The placard positions are fixed but the people in them shift. TRADER REPRESENTATIVE has had three incumbents in two years — the seat is contested, the faction behind it divided. RESIDENT REPRESENTATIVE has been the same person since year one, an older woman who says little during sessions and whose silences the other council members have learned to pay attention to. The marshal\'s chair is positioned slightly back. Either Cross built in that physical reminder of her authority, or she built in the ability to exit the room quickly. Possibly both.',
+      },
+      {
+        keywords: ['charter', 'amendments', 'founding documents', 'accord', 'wall'],
+        description: 'The founding charter is hand-lettered on two sheets of salvaged resume paper, framed behind salvaged glass. Five signatures at the bottom, three of which belong to people who are no longer living. The amendments follow in numbered succession. The fifth amendment has a note beside it in the recorder\'s hand: "Passed 5-3 over Salter bloc objection. Marshal Cross abstained." The note does not say whether the abstention was principled or strategic. The people in the room at the time know. Most of them are still here.',
+        cycleGate: 2,
+      },
+      {
+        keywords: ['recorder', 'ledger', 'minutes', 'log'],
+        description: 'The recorder\'s ledger is the actual history of Covenant\'s governance — not the version on the wall, but the working version, with strikethroughs and margin notes and the record of motions that failed and motions that were withdrawn before they could be recorded as failing. It is not a flattering document. It is an honest one. The Accord is not wrong to keep it in this room and not in public circulation. It is worth reading if you can.',
+        skillCheck: { skill: 'lore', dc: 10, successAppend: 'A recurring pattern emerges in the minutes: proposals for expanding Covenant\'s intake of outside refugees consistently fail 5-3. The same bloc votes no each time. The reason cited in the minutes is "resource constraints." The reason in the margin, in the recorder\'s small hand: "security concern per Marshal Cross."' },
+      },
+    ],
+    npcSpawns: [],
+    itemSpawns: [
+      {
+        entityId: 'accord_charter_copy',
+        spawnChance: 0.70,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.9, max: 1.0 },
+        groundDescription: 'An official copy of the Accord charter rests in the center of the council table.',
+        depletion: { cooldownMinutes: { min: 99999, max: 99999 }, respawnChance: 0.0 },
+      },
+    ],
+    narrativeNotes: 'Reputation-gated political room. The council doesn\'t meet in the player\'s presence in Act I — this is exploration space. In Act II, a council session can be triggered here by quest progression.',
+  },
+
+  // ----------------------------------------------------------
+  // CV-23: Accord Clinic Overflow Ward
+  // ----------------------------------------------------------
+  {
+    id: 'cv_23_accord_clinic_overflow',
+    name: 'Covenant — Clinic Overflow Ward',
+    zone: 'covenant',
+    act: 1,
+    difficulty: 1,
+    visited: false,
+    flags: { noCombat: true, healingBonus: 10 },
+    description: 'If the infirmary is where Covenant\'s medical care aspires to be, the overflow ward is where it lands when reality intervenes. Folding cots crowd the former storage room, close enough that the medic aides have to turn sideways to pass between them. The patients here are the lower priority cases — cracked ribs, infected minor wounds, persistent fever without clear cause, and in three of the cots, refugees with no Accord standing whose conditions were judged non-urgent by whoever was triaging that day. That judgment sits in the room like weather: some of the patients know they\'re being graded and the grade has already come back. The equipment is the infirmary\'s surplus: older dressings, the antiseptic that works less reliably, the blood pressure cuff that reads slightly high. People are being cared for. People are not being cared for equally.',
+    descriptionNight: 'The overflow ward at night is quieter than the main infirmary but less peaceful — the closeness of the cots, the particular sounds of people in discomfort trying not to disturb the people next to them, the medic aide on night watch with a single candle, moving carefully in the cramped space.',
+    shortDescription: 'The overflow ward — crowded, under-resourced, and a visible seam in the principle that all are treated first.',
+    exits: {
+      west: 'cv_07_infirmary',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['refugees', 'patients', 'cots', 'priority', 'graded'],
+        description: 'Three of the cots hold people who arrived outside Covenant\'s intake quota — refugees who came in on the wrong day, or with the wrong person vouching for them, or with nothing to trade for the credential that would make them residents rather than tolerated guests. They have been treated. Their wounds are cleaned and dressed. They are also separate from the main ward, in a room with less equipment, seen by the aide rather than the doctor. The policy says: all are treated first. The policy doesn\'t say treated equally.',
+        questFlagOnSuccess: { flag: 'cv_overflow_refugees_noted', value: true },
+      },
+      {
+        keywords: ['equipment', 'supplies', 'dressings', 'shortage'],
+        description: 'The supply shelf in the overflow ward holds what didn\'t make it to the main infirmary: bandages near their use-by date, a bottle of antiseptic that\'s been diluted once already, splints made from salvaged lumber rather than proper medical-grade material. These are not negligent choices — the main infirmary needs priority stock. This is the allocation of scarcity, which is a different category of injustice than cruelty but is still injustice.',
+      },
+      {
+        keywords: ['aide', 'medic', 'care', 'worker'],
+        description: 'The medic aide working the overflow is younger than Dr. Marsh\'s other trainees — maybe nineteen. She moves between the cots with a focus that looks like Marsh\'s, the same economy of motion, the same quiet voices for patients. She checks on the refugee cots last, not because she doesn\'t care but because that\'s how the priority was given to her and she\'s learning in a system she didn\'t design.',
+      },
+    ],
+    npcSpawns: [],
+    itemSpawns: [
+      {
+        entityId: 'bandages',
+        spawnChance: 0.45,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.4, max: 0.8 },
+        groundDescription: 'A package of bandages — older stock — sits on the supply shelf.',
+        depletion: { cooldownMinutes: { min: 120, max: 360 }, respawnChance: 0.35 },
+      },
+      {
+        entityId: 'field_dressing',
+        spawnChance: 0.25,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.5, max: 0.9 },
+        groundDescription: 'A field dressing, slightly worn packaging, rests near the edge of the shelf.',
+        depletion: { cooldownMinutes: { min: 180, max: 480 }, respawnChance: 0.25 },
+      },
+    ],
+    narrativeNotes: 'Sociopolitical contrast room to the main infirmary. Surfaces the gap between Accord principle and Accord practice without making the Accord simply villainous — the triage is a product of scarcity, not malice. Player can engage with refugee NPCs here for associated quests.',
+  },
+
+  // ----------------------------------------------------------
+  // CV-24: Extended Holding Cells
+  // ----------------------------------------------------------
+  {
+    id: 'cv_24_holding_cells',
+    name: 'Covenant — Extended Holding Block',
+    zone: 'covenant',
+    act: 1,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: true },
+    description: 'The holding block is what the jail became when the jail ran out of room. Three additional cells along a corridor that smells of lime wash and old damp, each cell a concrete box with a steel door rather than bars — less visible than the main jail, which is precisely the point. The cells are not secret. They are simply not announced. Covenant\'s official holding capacity is two. Its actual holding capacity is five, and the three additional cells exist in the governance record as "auxiliary security facilities" in a notation that required two amendment votes and produced no public debate. The people currently in these cells have been charged. Most of them have not been heard. The paperwork is in process. The process moves at the speed of a settlement managing eight hundred lives with limited administrative bandwidth, which is to say: slowly.',
+    descriptionNight: 'The holding block at night has the specific quiet of people who are not sleeping because they cannot. The lime-washed concrete holds the cold. Someone in the far cell is awake and not moving, which is the sound of someone working very hard at patience.',
+    shortDescription: 'The extended holding block — three unofficial cells, paperwork in process, people waiting for a hearing that moves at the speed of survival.',
+    exits: {
+      west: 'cv_12_the_jail',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['cells', 'doors', 'block', 'unofficial', 'auxiliary'],
+        description: 'The steel doors are salvaged — hospital fire doors, heavy, the handles removed and replaced with padlock hasps. Someone did clean work converting them. The cells behind them are smaller than the main jail cells: a cot, a bucket, a water jug. No window. The lime wash on the walls is recent enough that it still smells faintly of the application. Someone maintains this space. It is maintained the way necessary things are maintained: adequately.',
+        cycleGate: 2,
+      },
+      {
+        keywords: ['prisoners', 'held', 'charges', 'hearing', 'process'],
+        description: 'Three cells, three occupants when full. Current occupancy: two. The paperwork on the door slots gives names and charges — one for theft from the granary stores (the supply investigation Cross is running), one for striking a militia officer during a dispute. Both have hearing dates written in pencil on the paperwork: both dates have passed. Neither has been crossed out. Neither has been rescheduled yet.',
+        questGate: 'cv_supply_investigation',
+      },
+      {
+        keywords: ['governance', 'record', 'amendment', 'debate'],
+        description: 'The fact that this block exists in the governance record as "auxiliary security facilities" is either scrupulous transparency or the kind of bureaucratic minimalism that makes things technically documented and practically invisible. The council members who voted for it knew what they were voting for. The residents who weren\'t in that meeting don\'t know this block exists. That gap is not an accident.',
+        cycleGate: 2,
+        skillCheck: { skill: 'lore', dc: 11, successAppend: 'The amendment that authorized this block also modified the definition of "resident in good standing" in a way that made it easier to hold non-residents without a standard hearing timeline. The modification was not flagged in the public summary of the vote.' },
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'brig_guard',
+        spawnChance: 0.85,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'A guard sits at the corridor end with a ledger, logging the cell check times with the minimal but consistent attention of someone doing an unpleasant job correctly.', weight: 3 },
+          { desc: 'The guard does a slow walk of the corridor, checking each door hasp, returning to her post without looking at the cells. She has done this enough times that she doesn\'t need to.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.0, neutral: 0.6, wary: 0.3, hostile: 0.1 },
+        dialogueTree: 'cv_holding_guard',
+      },
+      {
+        npcId: 'brig_prisoner_accord',
+        spawnChance: 0.75,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'The sound of someone shifting on a cot, trying to find a position that will let them sleep. They don\'t find it.', weight: 3 },
+          { desc: 'A voice from behind one of the steel doors, measured: "Hey. You an officer? When\'s the hearing?" The guard doesn\'t answer. The voice goes quiet.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.1, neutral: 0.5, wary: 0.3, hostile: 0.1 },
+        dialogueTree: 'cv_holding_prisoner',
+      },
+    ],
+    itemSpawns: [],
+    narrativeNotes: 'Tonal counterpoint to the Accord\'s official justice rhetoric. Not a corruption reveal — the system is doing what bureaucratic systems do under pressure. The injustice is structural, not personal, which is harder to resolve.',
+  },
+
+  // ----------------------------------------------------------
+  // CV-25: Wall, South Section
+  // ----------------------------------------------------------
+  {
+    id: 'cv_25_wall_south',
+    name: 'Covenant — The Wall, South Section',
+    zone: 'covenant',
+    act: 1,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: false },
+    description: 'The south wall overlooks the road out — the highway south, the approach from river country, the direction that strangers come from. From the patrol walkway you can see the gate below and to the east, and beyond it the road stretching south until it bends around the low ridge and disappears. The exposure here is different from the north wall: the north watches for threat; the south watches for arrival. Every shape on that road resolves eventually into something — a person, a vehicle, a group. The sentries here have gotten good at reading silhouettes at distance. The question they are always answering: what kind of thing is coming, and how many of them, and are they bringing something we need or something we should close the gate against.',
+    descriptionNight: 'The south wall at night is where you learn what the approaches look like in the dark. The sentries here use lamplight sparingly — light gives away position as much as it provides vision. They have learned to read the road by starlight and moonlight, which takes time but produces a patience that daytime watchers don\'t always have.',
+    shortDescription: 'The south wall — overlooking the approach road, watching for what comes up from river country, asking the same question all border posts ask.',
+    exits: {
+      east: 'cv_14_wall_north',
+      south: 'cv_15_wall_east',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.07,
+      timeModifier: { day: 0.3, dusk: 1.4, night: 2.2, dawn: 0.7 },
+      threatPool: [
+        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'screamer', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.55, awarePassive: 0.30, awareAggressive: 0.15 },
+    },
+    extras: [
+      {
+        keywords: ['road', 'highway', 'south', 'approach', 'view'],
+        description: 'The highway south runs straight for about a mile before the ridge bends it out of sight. On a clear day the sentries can see the first half-mile with the naked eye and the second with the spotting scope. The road shows the same signs that all the roads show: old skid marks from the Collapse years, a rusted vehicle on its side in the ditch two hundred yards out that no one has moved because moving it would require leaving the wall. Beyond the vehicle, just a road. Just the world.',
+      },
+      {
+        keywords: ['silhouettes', 'reading', 'arrivals', 'strangers', 'identification'],
+        description: 'The south wall sentries have a vocabulary for what they see: "single walker," "family group," "trader with cart," "armed party." They report to the gate using hand signals developed over two years of iteration. The current system has fourteen distinct signals. The one used most often: two fingers extended, then a question mark gesture — unknown, armed, approaching. The gate militia respond by getting on the radio.',
+        skillCheck: { skill: 'perception', dc: 10, successAppend: 'You pick out the signal protocol quickly — pattern recognition. Someone\'s been thinking carefully about ambiguity, and the system shows it. There are signals for hesitation and uncertainty, which tells you something about how the people who built it thought about honesty.' },
+      },
+      {
+        keywords: ['gate', 'sentry', 'militia', 'post', 'patrol'],
+        description: 'Two sentries on rotation, south wall, standard four-hour shift. They move in opposite directions along the walkway and meet in the middle every circuit, exchanging a few words, then continuing. The words are always brief: a bearing, an update, a nothing-to-report. Sometimes they pass without speaking. That silence is also a report.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'accord_militia',
+        spawnChance: 0.90,
+        spawnType: 'patrol',
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        activityPool: [
+          { desc: 'A sentry scans the approach road through a spotting scope, sweeping slowly, pausing on the rusted vehicle in the ditch before moving on.', weight: 3 },
+          { desc: 'Two sentries pass each other at the midpoint of the walkway. One says something short. The other nods and keeps moving. The exchange takes three seconds.', weight: 2 },
+          { desc: 'The sentry at the south end of the walkway has stopped moving. She\'s watching something on the road. After a long moment she brings up the scope, looks, and lowers it. She reaches for the radio, thinks, then doesn\'t use it.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.2, neutral: 0.6, wary: 0.2, hostile: 0.0 },
+        dialogueTree: 'cv_south_wall_sentry',
+      },
+    ],
+    itemSpawns: [],
+  },
+
+  // ----------------------------------------------------------
+  // CV-26: Refugee Processing
+  // ----------------------------------------------------------
+  {
+    id: 'cv_26_refugee_processing',
+    name: 'Covenant — Refugee Processing Area',
+    zone: 'covenant',
+    act: 1,
+    difficulty: 1,
+    visited: false,
+    flags: { noCombat: true },
+    description: 'Outside the main gate, to the east, a cluster of canvas tents has hardened into something more permanent — salvaged poles and tarps that have been up long enough to develop mildew patterns and a proprietary lean. The Accord intake system operates here: a folding table, a ledger, two officers who have the patient, slightly hollowed look of people doing a job that is never finished. The queue when you arrive has eleven people in it. They stand with the specific posture of people who have been standing for a while and have stopped tracking how long: weight shifted, eyes forward, nothing displayed. The intake process takes twenty minutes per person for a straightforward case. The ledger on the table is thick. Most of the entries result in a stamp that says DEFERRED.',
+    descriptionNight: 'The processing area doesn\'t close at night — the queue doesn\'t empty, so the table stays open. Lanterns on poles. The intake officer on night shift is younger and faster with the ledger, which means the DEFERRED stamps come quicker. The tents are occupied; you can hear the specific silence of people trying to sleep in close quarters with strangers, each sound politely muffled.',
+    shortDescription: 'The refugee processing area — tents that have been up too long, a queue that\'s never empty, and the DEFERRED stamp doing most of the work.',
+    exits: {
+      west: 'cv_01_main_gate',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['queue', 'line', 'people', 'waiting', 'applicants'],
+        description: 'Eleven people in the queue, as of now. The woman at the front has been through this process before — you can tell by the way she holds her documents, already organized in the order the intake officers request them. The family three spots back has a child who is asleep standing, weight supported between the two adults. The man at the back of the queue is watching the front of the queue with a calculation in his eyes that might be patience or might be something else.',
+      },
+      {
+        keywords: ['intake', 'officers', 'table', 'ledger', 'processing'],
+        description: 'The intake officers work with the exhausted efficiency of people who process the same categories of tragedy all day and have learned not to let each one land fully. Their questions are standardized: origin, skills, health status, any prior Accord contact, the name of any Covenant resident who can vouch for you. On the question of a vouching resident, most of the queue has no answer. Without a vouching resident, the stamp is DEFERRED — placed in a secondary queue for council review that moves at the speed of the council\'s other priorities.',
+        skillCheck: { skill: 'negotiation', dc: 12, successAppend: 'The intake officer on the left looks up when you approach — not at you, but at the queue behind you. For a moment you see what she sees: the math of it, the ratio of DEFERRED to ACCEPTED, the faces attached to that math. She doesn\'t say anything. She goes back to the ledger.' },
+      },
+      {
+        keywords: ['tents', 'camps', 'deferred', 'waiting area'],
+        description: 'The DEFERRED applicants don\'t leave — where would they go? The tent cluster is their waiting area, which has become a waiting settlement within sight of the gate that represents their future. Some have been here three weeks. One family, locals say, has been here two months. The Accord provides: daily water allocation, one meal ration, and access to the overflow clinic for genuine medical emergencies. The Accord does not provide: resolution. The timeline for council review is posted on a board by the table. The current stated wait is fourteen to twenty-one business days, a figure that has not changed in six weeks.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'accord_gate_militiaman',
+        spawnChance: 0.80,
+        spawnType: 'anchored',
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        activityPool: [
+          { desc: 'An intake officer moves through the DEFERRED stamps with mechanical efficiency, her expression the careful neutral of someone doing a systemic job without pretending it\'s personal.', weight: 3 },
+          { desc: 'The intake officer looks up from the ledger and takes in the current queue length, then back down. Her expression doesn\'t change. She has done this calculation before and will do it again.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.1, neutral: 0.7, wary: 0.2, hostile: 0.0 },
+        dialogueTree: 'cv_refugee_intake',
+      },
+    ],
+    itemSpawns: [],
+    narrativeNotes: 'The Accord\'s intake system shown from the outside. The moral tension here is structural — Covenant can\'t absorb unlimited refugees and the intake system is a real solution to a real problem, but that doesn\'t make the people in the queue less real. Quest hooks: vouching for specific refugees, investigating the long-deferred cases, learning the council\'s actual review process.',
+  },
+
+  // ----------------------------------------------------------
+  // CV-27: Quartermaster Depot
+  // ----------------------------------------------------------
+  {
+    id: 'cv_27_quartermaster_depot',
+    name: 'Covenant — Quartermaster Depot',
+    zone: 'covenant',
+    act: 1,
+    difficulty: 1,
+    visited: false,
+    flags: { noCombat: true, questHub: true },
+    description: 'The depot sits directly south of the granary and exists in total operational symbiosis with it: what the granary stores, the depot distributes; what the militia needs, the depot tracks; what comes in from the field, the depot receives and catalogs. The shelving here is metal, salvaged commercial, organized by category with a ruthlessness that becomes its own kind of beauty when you understand the system: medical supplies on the left, always left, color-coded by priority. Equipment and gear in the center, tagged with unit assignment. Consumables and provisions on the right, organized by caloric value and shelf life. A logistics ledger on the central table is six months of perfect record-keeping in dense handwriting. Quartermaster Okafor runs this room the way a musician runs a difficult piece: from memory, fluently, with zero tolerance for deviation and an almost physical discomfort at disorder.',
+    descriptionNight: 'The depot runs a night inventory on the first of every week. Okafor does it herself, moving through the shelves with a lamp and the ledger, cross-referencing the count against the record. She has never once found an error in her own entries.',
+    shortDescription: 'The quartermaster depot — every item tracked, every unit accounted for, every supply decision documented by the woman who has made this logistics system from nothing.',
+    exits: {
+      north: 'cv_13_granary',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    extras: [
+      {
+        keywords: ['shelving', 'organization', 'system', 'layout', 'categories'],
+        description: 'The system is elegant once you see it. Medical on the left because it is always the priority — you go left first without thinking. Equipment in the center because it\'s the most actively accessed category and center minimizes travel distance. Consumables on the right because they can be retrieved last after the higher-priority checks. The color coding on the medical shelf is Okafor\'s addition from year two — three colors, three priority levels, visible at a glance from the door. Marsh was the one who suggested colors. Okafor implemented them within forty-eight hours.',
+        skillCheck: { skill: 'perception', dc: 9, successAppend: 'The system also has a secondary coding layer you spotted: small dots on the shelf tags. Not decorative — they mark which items have been requested and not yet filled. You count eleven dots on the medical shelf. That\'s eleven outstanding medical requests that the depot doesn\'t currently have stock for.' },
+      },
+      {
+        keywords: ['ledger', 'records', 'tracking', 'accounting', 'log'],
+        description: 'The logistics ledger is six months of inward and outward transfers, each entry dated, initialed by the receiving party, and cross-referenced to the granary and armory counts. The handwriting doesn\'t change — same pressure, same size, same precision at the end of a shift as the beginning. If you look for variances you find one: a category labeled INTERNAL TRANSFER / UNSPECIFIED that appears six times in the last two months, each entry initialed only by Okafor, with no receiving party. The amounts are small. Small enough to be rounding errors. Too regular to be rounding errors.',
+        cycleGate: 2,
+        questGate: 'cv_supply_investigation',
+        skillCheck: { skill: 'perception', dc: 13, successAppend: 'The pattern is real. Six transfers, each on a different day of the week, no pattern to the day — but the same time notation: evening shift, after the day guard rotation. Someone knew when attention would be lowest. The amounts match the granary discrepancy Cross is investigating. The initial on the ledger is Okafor\'s. You don\'t know yet if that means she\'s the problem or the solution.' },
+      },
+      {
+        keywords: ['okafor', 'quartermaster', 'sergeant'],
+        description: 'Okafor came to Covenant as a supply sergeant from a military unit that dissolved when its commanding officer died in year one. She arrived with the unit\'s complete supply manifest memorized and offered it to Cross as her introduction. Cross gave her the depot on the second day and hasn\'t regretted it. Okafor never discusses the unit or the officer. She discusses logistics, equipment maintenance, and the ongoing supply shortfall with the focused clarity of someone who has decided that the available work is sufficient to fill all available attention.',
+      },
+    ],
+    npcSpawns: [
+      {
+        npcId: 'quartermaster_okafor',
+        spawnChance: 0.90,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'Okafor moves through the shelves with a clipboard, running a quick visual inventory with the speed of someone who knows exactly what should be where and only needs to confirm it.', weight: 4 },
+          { desc: 'Okafor is at the central table, reviewing the logistics ledger with a fine-tipped pen, adding a new entry in her precise handwriting. She finishes the line before looking up.', weight: 3 },
+          { desc: 'Okafor is receiving a supply delivery from a militia runner, checking each item against a list, initialing the transfer receipt with the pen she keeps clipped to her vest. She nods once when the count matches.', weight: 2 },
+        ],
+        tradeInventory: ['field_dressing', 'bandages', 'canned_food', 'scrap_metal', 'basic_repair_kit'],
+        dispositionRoll: { friendly: 0.1, neutral: 0.65, wary: 0.25, hostile: 0.0 },
+        dialogueTree: 'cv_okafor_depot',
+        questGiver: ['cv_supply_investigation', 'cv_quartermaster_delivery'],
+      },
+    ],
+    itemSpawns: [
+      {
+        entityId: 'field_dressing',
+        spawnChance: 0.50,
+        quantity: { min: 1, max: 3, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.7, max: 1.0 },
+        groundDescription: 'Field dressings in standard-issue packaging sit in their designated shelf slot.',
+        depletion: { cooldownMinutes: { min: 240, max: 480 }, respawnChance: 0.40 },
+      },
+      {
+        entityId: 'canned_food',
+        spawnChance: 0.40,
+        quantity: { min: 1, max: 2, distribution: 'weighted_low' },
+        conditionRoll: { min: 0.6, max: 1.0 },
+        groundDescription: 'Canned provisions are stacked in the consumables section, organized by caloric value.',
+        depletion: { cooldownMinutes: { min: 180, max: 360 }, respawnChance: 0.35 },
+      },
+    ],
+    narrativeNotes: 'Logistics hub adjacent to granary. Okafor is a key NPC for the supply investigation quest. The ledger discrepancy here is a clue that can either exonerate or implicate her — designed to be ambiguous until Act II resolution.',
+  },
+
+  // ----------------------------------------------------------
+  // CV-28: Signal Post
+  // ----------------------------------------------------------
+  {
+    id: 'cv_28_signal_post',
+    name: 'Covenant — Wall Signal Post',
+    zone: 'covenant',
+    act: 2,
+    difficulty: 2,
+    visited: false,
+    flags: { noCombat: false, dark: false },
+    description: 'A reinforced enclosure bolted to the inner face of the north wall houses the Accord\'s communications relay — the most technically sophisticated thing in Covenant, which is both an achievement and a measure of how far the world has fallen. A salvaged military radio transceiver, its casing cracked and repaired twice, shares the enclosure with a hand-built signal amplifier that the Accord\'s engineer spent three months constructing from salvaged electronics and documented best guesses. The antenna array on the wall\'s exterior — visible from outside as a cluster of aluminum rods at awkward angles — is functional despite its appearance. On a good day, with favorable atmospheric conditions, the relay can reach forty miles. The log beside the equipment is a record of transmissions sent and received, each entry timed and initialed. Most of them are routine: supply request acknowledgments, patrol coordination with outlying posts, the twice-weekly contact window with the river road junction. One entry, three weeks ago, is different. It is logged only as INCOMING / UNKNOWN SOURCE / FREQ: [REDACTED]. Below it, in a different hand: cross notified.',
+    descriptionNight: 'The signal post at night has a different quality of work — atmospheric conditions are often better after dark, the operator says, something to do with the ionosphere, he\'s not sure of the mechanism but the results are consistent. He listens more at night and talks less. He has heard things at night that he has not logged.',
+    shortDescription: 'The Accord\'s communications relay — forty-mile range, a log of routine transmissions, and one entry three weeks ago from an unknown source that got Cross on the radio immediately.',
+    exits: {
+      south: 'cv_14_wall_north',
+    },
+    richExits: {},
+    items: [],
+    enemies: [],
+    npcs: [],
+    hollowEncounter: {
+      baseChance: 0.05,
+      timeModifier: { day: 0.2, dusk: 1.2, night: 2.0, dawn: 0.6 },
+      threatPool: [
+        { type: 'shuffler', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 35, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
+      noiseModifier: 0.5,
+    },
+    extras: [
+      {
+        keywords: ['radio', 'transceiver', 'equipment', 'salvaged', 'relay'],
+        description: 'The transceiver is a military PRC unit, the model number scraped off, the frequency range modified by someone who knew what they were doing. The amplifier beside it is artisanal — hand-soldered, with component labels written in the engineer\'s handwriting where the original markings have worn off. The whole system works because someone who understood it built it and documented every modification. The documentation is in a binder attached to the enclosure wall by a steel cable. If the operator and the engineer both die, someone could read the binder and maintain the system. Probably.',
+        skillCheck: { skill: 'electronics', dc: 12, successAppend: 'You recognize the amplifier design — it\'s based on a published amateur radio technique, adapted well. The modification to the frequency range is less standard. Someone has extended the receive capability into a band that isn\'t civilian broadcast. They\'re listening for something that doesn\'t broadcast on civilian bands.' },
+      },
+      {
+        keywords: ['log', 'transmissions', 'entries', 'unknown source', 'redacted'],
+        description: 'The transmission log is dense with routine entries — the Accord\'s communications are voluminous and boring, which is the hallmark of a functional logistics operation. Then: INCOMING / UNKNOWN SOURCE / FREQ: [REDACTED]. The entry below it, in Cross\'s handwriting rather than the operator\'s: notified. Two words. Whatever she did with the notification is not recorded here.',
+        cycleGate: 2,
+        skillCheck: { skill: 'electronics', dc: 14, successAppend: 'The redacted frequency notation is faint enough that you can make out part of it — the first three digits are 12. That\'s the upper edge of HF, close to the VHF boundary. Not a standard civilian or military channel. Something purpose-built or repurposed for a specific communication. Something that wants to reach Covenant specifically.' },
+        questFlagOnSuccess: { flag: 'meridian_signal_traced', value: true },
+      },
+      {
+        keywords: ['antenna', 'array', 'exterior', 'aluminum', 'rods'],
+        description: 'The antenna array looks like an accident — rods at different angles, different heights, one visibly bent and re-bent. It is not an accident. The operator will explain, if asked, that the angles are functional: each rod optimized for a different frequency range, the bends the result of adjustment rather than damage. The bent one points, if you follow its line of sight, toward the mountains. Toward the San Juans. Toward MERIDIAN.',
+      },
+      {
+        keywords: ['operator', 'technician', 'radio', 'listening'],
+        description: 'The operator — the only person who understands the full system well enough to run it — is a compact, quiet person who learned radio from a ham operator grandfather and has never found the skill useless. He listens more than he speaks. His logbook entry about the unknown transmission three weeks ago has been rewritten — the original entry is under the current one, faint but legible if you hold the page at an angle: the original had more detail. The current version is the sanitized version. Someone asked him to simplify it.',
+        cycleGate: 2,
+      },
+    ],
+    npcSpawns: [],
+    itemSpawns: [
+      {
+        entityId: 'meridian_file_fragment',
+        spawnChance: 0.15,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.7, max: 1.0 },
+        groundDescription: 'A printed signal intercept report, partially redacted, has been left clipped to the communication log.',
+        depletion: { cooldownMinutes: { min: 99999, max: 99999 }, respawnChance: 0.0 },
+      },
+    ],
+    narrativeNotes: 'Act II signal mystery node. Connects the MERIDIAN radio signal thread (established in earlier lore items) to Covenant\'s active intelligence capability. The operator\'s edited log entry is a significant detail for players tracking the MERIDIAN arc. Signal post connects south to cv_14_wall_north, sitting on the north wall infrastructure.',
   },
 ]

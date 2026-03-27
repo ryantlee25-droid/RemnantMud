@@ -268,7 +268,7 @@ export const THE_DUST_ROOMS: Room[] = [
     richExits: {
       south: { destination: 'du_04_ghost_main', descriptionVerbose: 'back out onto Main Street' },
     },
-    items: ['letter_diner_patty'],
+    items: ['torn_note_fragment'],
     enemies: [],
     npcs: [],
     extras: [
@@ -305,7 +305,7 @@ export const THE_DUST_ROOMS: Room[] = [
         depletion: { cooldownMinutes: { min: 180, max: 480 }, respawnChance: 0.20 },
       },
       {
-        entityId: 'letter_diner_patty',
+        entityId: 'torn_note_fragment',
         spawnChance: 0.80,
         quantity: { min: 1, max: 1, distribution: 'single' },
         conditionRoll: { min: 0.7, max: 0.9 },

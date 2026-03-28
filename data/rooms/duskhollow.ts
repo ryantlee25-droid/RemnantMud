@@ -164,6 +164,13 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         description: 'Fourteen place settings, all complete: crystal, silver cutlery, folded cloth napkins with crisp edges. Seven are set with wine glasses containing bloodwine. Seven are set with water glasses containing water. They know how many human guests they\'re expecting. They count differently than you do.',
       },
     ],
+    personalLossEchoes: {
+      child: 'Fourteen place settings. Seven with bloodwine, seven with water. The Sanguine count their guests. You count differently — you count the empty chairs, the ones that should be filled, the one that would have been theirs if the world had gone another way and you were all sitting down to dinner instead of this.',
+      partner: 'The music plays from somewhere — a string quartet, beautiful, chosen with care. You danced to music like this once, or you didn\'t, but your body remembers the shape of being held and the shape of the room and the way candlelight makes everything gentler, including memory.',
+      community: 'The Covenant socializes. They have forms for it — centuries of practice at being together. The conversation, the candlelight, the crystal. It\'s beautiful and it\'s alien and it\'s the shape of community taken to an extreme you recognize: the need to be among others, formalized until it becomes ritual.',
+      identity: 'The Sanguine are interested in you. Their attention is flattering and precise. They see something. You don\'t know what they see. You don\'t know what there is to see — whether the person they\'re assessing is the person you actually are, or the person you were, or something in between.',
+      promise: 'Blood wine in crystal decanters. A dinner that hasn\'t started yet, or hasn\'t finished. The Covenant\'s arrangement is built on a promise — the tithe, the protection, the exchange of blood for civilization. Your promise was simpler than this. It felt more honest. You\'re not sure it was.',
+    },
     narrativeNotes: 'Showcase room. The bloodwine lore check connecting to the Deep Pool bioluminescence is a significant cross-zone discovery. The dinner table count (7 and 7) establishes the tithe dynamic without stating it.',
   },
 
@@ -427,6 +434,13 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         skillCheck: { skill: 'lore', dc: 10, successAppend: 'If CHARON-7 only occurred in 2031, how are some of these portraits dated from the 1800s? The answer is either that the virus existed before MERIDIAN — or that MERIDIAN wasn\'t where it started.' },
       },
     ],
+    personalLossEchoes: {
+      child: 'The portraits span centuries. None of these subjects aged. You think about the years you missed — the ones where they would have grown, changed, become someone you didn\'t get to see. The Sanguine got centuries. You didn\'t get enough years to fill a single brass plate.',
+      partner: 'The same faces across different decades. The same bone structure. The same eyes. They had centuries together. You had what you had — a span measured in years, not centuries — and the brevity of it is something the gallery makes physical. Your time with them fits in the gap between two of these portraits.',
+      community: 'Fourteen subjects, all still alive, all still here. A community that doesn\'t lose anyone to time. You lost your entire community to a single event, and these portraits — unchanged, undying, open-ended — are a record of what permanence looks like. It looks like this. It looks like something you\'ll never have.',
+      identity: 'The portraits show the same faces wearing different centuries like costumes. You have worn one identity, or maybe more, and you can\'t remember the earlier ones. The Sanguine never forget who they were. They just add more time to the same person. You envy the continuity. You fear it in equal measure.',
+      promise: 'The date ranges are open-ended. The closing date never filled in. Every one of these subjects has infinite time to keep their promises. You have a finite amount of time and a promise that doesn\'t get smaller, and the gallery of undying faces watches you think about this with their painted, patient eyes.',
+    },
     narrativeNotes: 'The gallery\'s date discrepancy (pre-MERIDIAN portraits) is a significant lore mystery suggesting CHARON-7\'s origins are older than the official narrative. This should create player questions.',
   },
 
@@ -517,6 +531,13 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         description: 'The window overlooks the garden. You can see the fountain from here, and the roses, and the Sanguine moving between the beds with their unhurried not-quite-human gait. The window latches from inside. The drop to the garden below is fifteen feet. You notice you\'ve noted that.',
       },
     ],
+    personalLossEchoes: {
+      child: 'A bed with actual sheets. A lock that works from the inside. You lie down and the softness is a shock after so many nights on hard ground, and in that shock your body remembers: tucking them in. The weight of a small body against yours. The lock on the door you checked every night because the world outside the bedroom was your job to keep out.',
+      partner: 'The bed is made for one person but the width suggests it could hold two. The pillow smells of lavender. You lie on one side out of habit — the habit of leaving room, of sleeping in half a bed because the other half belonged to someone — and the empty space beside you has the specific gravity of a person who should be there.',
+      community: 'The Covenant maintains guest quarters as an argument that coexistence is viable. You lock the door from the inside and you lie in the bed and the safety is real and conditional and you think about the last time you felt safe without conditions. It was in a place surrounded by people who chose you. Not like this.',
+      identity: 'The writing desk. The lamp that works. You could sit here and write and the question is: what would you write? A name? A history? The things you remember? The room offers you the tools for self-documentation and you realize you don\'t know what document you\'d produce. The person who would sit at this desk is not yet fully assembled.',
+      promise: 'The window latches from inside. The drop to the garden is fifteen feet. You note this — the escape route, the contingency, the survival calculus your body performs without permission. You promised someone something and the promise requires you to survive, and the room is safe, and you noted the drop distance anyway.',
+    },
     narrativeNotes: 'Safe rest with healing bonus, but the room\'s writing should constantly remind the player that safe is a social construction. The window drop distance note at the end is important — the player character notices their own survival calculus.',
   },
 
@@ -1074,6 +1095,13 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         description: 'The solar light strung between the buildings gives just enough illumination to see faces and goods. It\'s been here long enough that the bracket holding it to the shed has been reinforced twice. The night market has infrastructure. It has been running long enough to have infrastructure.',
       },
     ],
+    personalLossEchoes: {
+      child: 'A blanket spread with goods: dried food, a tool, a folded item of clothing. The hands that arranged them are careful. You think about small hands arranging things on a blanket — a game, a picnic, the serious work of a child organizing their world. The memory is warm and the market is warm and you stand in both at once.',
+      partner: 'Two residents negotiate quietly over something small, voices barely above breath. They reach agreement with a nod. The intimacy of the transaction — the trust, the low voices, the shared understanding. You negotiated like this once. Not over goods. Over the small daily questions of a shared life.',
+      community: 'The night market happens because the community decided it should, and the decision was collective and unspoken and enacted through blankets and goods and low voices after dark. This is what community looks like when it organizes itself — not from the top, not with rules, but from the ground up, with need and trust and the willingness to show up.',
+      identity: '"Trade or browse?" the resident asks. A simple question. You don\'t know which you are — buyer, seller, observer, stranger. The market doesn\'t require you to know. It lets you stand here without a name or a role, and the permission to be undefined is a kindness you didn\'t know you needed.',
+      promise: 'The favor economy. No currency changes hands. Debts are tracked in memory, not in ledgers. You think about the debt you carry — the promise, the obligation, the thing you said you would do. In this market, debts are settled with a nod. Yours requires more than that. But you stand here among people keeping their small promises and it makes the large one feel possible.',
+    },
     narrativeNotes: 'The night market is a community and social hub. It should feel warm and human despite the difficult circumstances — the settlement finding its own life outside the structures imposed on it. The Kindling presence as community organizers rather than recruiters is important. The message drop discovery is a thread connecting to the cache. Time-gate this room: it is mostly inactive during day and dawn.',
   },
 ]

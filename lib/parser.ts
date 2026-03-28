@@ -65,6 +65,14 @@ const SURVIVAL_VERBS: Record<string, string> = {
   fill: 'drink',
 }
 
+const TRADE_VERBS: Record<string, string> = {
+  buy: 'buy',
+  purchase: 'buy',
+  sell: 'sell',
+  trade: 'trade',
+  barter: 'trade',
+}
+
 const INTERACTION_VERBS: Record<string, string> = {
   talk: 'talk',
   speak: 'talk',
@@ -184,6 +192,11 @@ export function parseCommand(input: string): Action {
   // --- Interaction ---
   if (first in INTERACTION_VERBS) {
     return { verb: INTERACTION_VERBS[first]!, noun: rest || undefined, raw }
+  }
+
+  // --- Trade ---
+  if (first in TRADE_VERBS) {
+    return { verb: TRADE_VERBS[first]!, noun: rest || undefined, raw }
   }
 
   // --- System ---

@@ -277,6 +277,13 @@ export const THE_STACKS_ROOMS: Room[] = [
         description: 'The personal diaries section occupies two shelves and is the most-read section in the library. Dates range from the Collapse through the present. Reading someone\'s diary in a library feels strange. Reading someone\'s diary in a library that exists because civilization ended and this is how they rebuilt it feels different.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The personal diaries section. Dates from the Collapse through the present. You pull one at random and it opens to a page about a child\'s first birthday after the fall — a candle in a biscuit, a song sung badly on purpose. You close it. You put it back. Your hands are steady. Your hands are not steady.',
+      partner: 'The card catalog rebuilt from scratch. Someone\'s handwriting on every card — careful, precise, the labor of someone who loves organization or loves what organization makes possible. You recognize the handwriting of devotion. Your partner had handwriting you could recognize across a room. This catalog is someone\'s love letter to the future.',
+      community: 'The library is a room full of other people\'s thoughts, preserved, organized, made accessible. It is the most concentrated form of community you\'ve seen since you lost yours — a thousand voices held together by shelves and a decimal system and the stubborn belief that what people wrote down matters.',
+      identity: 'The hard drives on the dedicated shelf, each with a catalog card. The collected knowledge of offices, homes, universities. Somewhere in these drives is a version of the world that included you — your records, your data, your name on a list. The archive is vast enough that you might be in it. You don\'t look.',
+      promise: 'A pre-Collapse academic paper on viral modification and human enhancement trials. Published 2028. The promise of science, the promise of improvement, the promise that broke. You made a simpler promise. You wonder if simple promises break less easily, or if all promises break the same way, at the point where the world stops cooperating.',
+    },
     narrativeNotes: 'Lore treasure trove. The MERIDIAN cross-reference in the card catalog is a significant clue. The personal diaries are for Letters/personal quest threads.',
   },
 
@@ -888,6 +895,13 @@ export const THE_STACKS_ROOMS: Room[] = [
         description: 'The envelope is heavy stock, cream-colored, sealed with the MERIDIAN PROJECT embossed wax seal — the caduceus-and-helix design you\'ve seen elsewhere. No addressee. No return address. The paper has yellowed slightly at the edges but the seal is intact. Whatever is inside has not been read since it was sealed. Lev has not opened it. That restraint tells you something about Lev.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The silence of the vault is the silence of things designed to outlast the people who made them. You think about the things you made for them — not documents, not data, but the small constructions of a childhood: safety, routine, the daily architecture of being kept alive. None of it was preserved. None of it was climate-controlled. It was just you, doing it, until you couldn\'t.',
+      partner: 'The sealed envelope addressed to no one. The MERIDIAN seal on the flap. You think about the letters you never sent — the things you meant to say, the words you were saving for a moment that didn\'t come. Lev didn\'t open the envelope. You understand the restraint. Some things stay sealed because opening them is the end of a possibility.',
+      community: 'Someone built a research library for the end of the world and knew exactly which subjects would matter. The foresight of it — the community that would need this knowledge, planned for before the community existed. Your community didn\'t have a vault. Your community had people, and they were enough, until they weren\'t.',
+      identity: 'The leather-bound journal in the sealed cabinet. Dense handwriting. Diagrams. The handwriting matches Lev\'s. A person\'s handwriting is their identity on paper — the pressure, the slant, the character of the marks. You don\'t know what your handwriting looks like. You don\'t know if you would recognize it.',
+      promise: 'Three items Lev considers more valuable than anything else in the Stacks. Kept under glass. The vault is a promise — to the future, to whoever comes next, to the idea that knowledge survives. Your promise is smaller and more personal and you carry it without glass or climate control, just the weight of it in your chest, still there, still intact.',
+    },
     narrativeNotes: 'The vault is a significant lore cache. The R-1 sequencing data USB is one of the most important items in the game — it connects to the Sanguine questline and the MERIDIAN endgame. The sealed envelope is a deliberate mystery object. The vault-was-here-first detail (mechanics check) implies MERIDIAN pre-positioned this archive before the Collapse.',
   },
 
@@ -953,6 +967,13 @@ export const THE_STACKS_ROOMS: Room[] = [
         { line: 'The reading room is warm. The lamp hums at its lowest setting. For a moment, nothing is wrong.', chance: 0.30, time: ['night'] },
         { line: 'Someone turns a page. The sound is impossibly loud in the silence, and then it isn\'t.', chance: 0.25, time: null },
       ],
+    },
+    personalLossEchoes: {
+      child: 'The blankets folded on two of the chairs. Someone sleeps here rather than go to assigned quarters. The domestic stubbornness of it — the refusal to sleep in the place designed for sleeping, the preference for this warmer, kinder room. You made a room like this once. Small, warm, full of the evidence of being lived in. They slept in it. You checked on them at night.',
+      partner: 'The thermos that still smells like chicory substitute. LEV\'S — DO NOT WASH. The possessiveness of a favorite object. You had things like this with them — claimed items, shared jokes written on the bottom of cups, the small territorial markings of two people occupying the same life. The thermos is chipped at the rim. You didn\'t throw those things away either.',
+      community: 'Six desks, six ongoing research projects. People don\'t just work here — they stay. The woven rug, the blankets, the warm lamp. Someone built a home inside a home. Your community did this too — turned a place into something more than shelter, made it a location where people wanted to be, not just where they had to be.',
+      identity: 'The diary project: red tabs for Collapse-day entries, blue for first Hollow sightings, green for first Sanguine contact. Someone is building a civilian timeline of the end of the world, one personal account at a time. Your account is missing. Your entry in the record is a blank space in the shape of a person who can\'t remember what color tab their story would get.',
+      promise: 'The lamp draws twelve watts. Someone took the time to make it kind instead of bright. The reading room is a promise kept — the promise that knowledge matters, that comfort matters, that a warm room with a good light is worth building even now. Your promise is different. But you sit in this light and it feels like the same kind of thing.',
     },
     narrativeNotes: 'Safe rest room in the Stacks zone. The warmth and domesticity are deliberate contrast to the facility\'s clinical tone. The diary research project is a lore thread. Lev\'s thermos is a character detail. This room exists to make the player feel something specific about the Reclaimers: they are people first.',
   },

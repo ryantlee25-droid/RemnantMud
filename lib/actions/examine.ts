@@ -83,8 +83,18 @@ export async function handleExamineExtra(engine: EngineCore, keyword?: string): 
     return
   }
 
-  // Check cycle gate
+  // Check if this extra sets charon_choice and the player already chose
   const { player } = engine.getState()
+  if (match.questFlagOnSuccess) {
+    const flags = Array.isArray(match.questFlagOnSuccess) ? match.questFlagOnSuccess : [match.questFlagOnSuccess]
+    const setsCharonChoice = flags.some(f => f.flag === 'charon_choice')
+    if (setsCharonChoice && player?.questFlags?.charon_choice) {
+      engine._appendMessages([msg('The decision has been made. There is no going back.')])
+      return
+    }
+  }
+
+  // Check cycle gate
   if (match.cycleGate && (player?.cycle ?? 1) < match.cycleGate) {
     engine._appendMessages([msg(`You notice something about the ${keyword}, but can't make sense of it yet.`)])
     return

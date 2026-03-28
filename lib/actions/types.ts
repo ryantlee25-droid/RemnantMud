@@ -15,6 +15,7 @@ export interface EngineCore {
   _savePlayer(): Promise<void>
   _applyPopulation(room: Room): Room
   _handlePlayerDeath(): Promise<void>
+  _checkLevelUp(): void
   adjustReputation(faction: FactionType, delta: number): Promise<void>
   setQuestFlag(flag: string, value: string | boolean | number): Promise<void>
 }

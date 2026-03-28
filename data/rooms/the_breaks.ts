@@ -321,6 +321,13 @@ export const BREAKS_ROOMS: Room[] = [
         cycleGate: 2,
       },
     ],
+    personalLossEchoes: {
+      child: 'The bones are bleached and anonymous. You look for small ones. You don\'t want to find them. You look anyway, the way you\'ve been looking since you lost them — in every crowd, every ruin, every place where someone small might have ended up.',
+      partner: 'The hollow collects its dead passively, completely. You think about the way grief collects — not all at once but in deposits, layer by layer, until the basin of you is full of the bleached remains of a life you shared with someone who isn\'t adding to it anymore.',
+      community: 'Three to five individuals, the field medic in you estimates. Brought here separately, over time. Not buried. Not mourned together. The loneliest dead — no community to claim them, no names on the bones. Your community is gone too, but at least the names survived somewhere. Probably. You hope.',
+      identity: 'The Whisperer calls a name from the hollow\'s edge. The voice is close enough to right to be worse than wrong. For one terrible second you think it might be calling the name you can\'t remember — the one that belongs to you, the one that might tell you who you are if you could hear it clearly.',
+      promise: 'Something brought these bones here between year one and year two. Something made a collection of the dead. You think about the promises that ended here — all the places these people were going, all the things they were going to do. The bones don\'t know about any of that. The hollow doesn\'t care.',
+    },
     npcSpawns: [],
     itemSpawns: [
       {
@@ -557,6 +564,13 @@ export const BREAKS_ROOMS: Room[] = [
         description: 'In the northeast section of the wall, a scratched map in recent knife work. You can identify the canyon system around you, and beyond it, points labeled in small script. One point: GROTTO (arrow west, with what might be a distance notation). One point: RIM (arrow up). One point: SOUTH EXIT (large arrow, pointing south, with underline). And one point, in slightly different script that may be a different hand: SIGNAL (north, with a frequency notation that might be a radio frequency).',
       },
     ],
+    personalLossEchoes: {
+      child: 'The human figures in the ancient petroglyphs — body as torso-stroke, limbs as lines. Children draw like this. The simplification of a person into a shape. You have a drawing somewhere, or you had one, in a hand that was learning to hold a crayon. The wall has been receiving for three thousand years. Somewhere on it is every kind of loss.',
+      partner: 'THEY MADE US. AND THEN THEY MADE THEM. The wall\'s conversation, carved and spray-painted, goes both ways. You think about the conversations you had with them — the things said once and never revisited, the things scratched into the relationship like marks in stone, still legible, still present.',
+      community: 'Three thousand years of people leaving marks on one wall. Spirals, hunts, calendars, faction symbols, warnings, maps. Every mark says: I was here. The wall is a community made of time — every hand that touched it belongs to the same conversation. You left marks on your community too. Someone might still be reading them.',
+      identity: 'The CHARON-7 double helix, carved twice in careful knife work. You recognize the symbol before you recognize why. The recognition is physical, not intellectual — your body knows this shape. You knew it before. The wall has your history on it and you can\'t read your own entry.',
+      promise: 'AND WE\'RE STILL HERE. Carved above the double helix, in a different hand. A statement of survival as defiance. You think about your promise and you think about this wall, still receiving, still readable after millennia, and you wonder if the thing you promised will outlast you the way these marks outlast their makers.',
+    },
     npcSpawns: [],
     itemSpawns: [],
   },
@@ -823,6 +837,13 @@ export const BREAKS_ROOMS: Room[] = [
         description: 'The alcove cache: dried food for two weeks, a first aid kit in excellent condition, spare power cells for the radio, three knives in different sizes, a set of climbing equipment, and in the back of the alcove, carefully wrapped in oil cloth: a vial case with six filled vials, labeled with Osei\'s initials and a date from eight months ago. What the vials contain is not labeled. The oil cloth is not accidental protection. The vials matter to someone.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The sleeping mat, the supply cache, the careful order of a life lived alone. Someone chose this. You think about the life you would have built for them — safe, hidden, stocked with everything they needed — and the grotto is exactly that, and it belongs to someone else, and the water runs clean and cold and your eyes sting for reasons that have nothing to do with the mineral air.',
+      partner: 'Four books and a radio and a sleeping mat for one. The evidence of a life designed for solitude. You had the opposite once — a life designed for two, where the books were shared and the radio played for both of you. The grotto is a mirror of what you lost, inverted: everything you had, minus one person.',
+      community: 'Dr. Osei works alone. The notebooks, the research, the vials — all of it conducted in isolation, in a hidden room behind a rockfall. You know what it\'s like to do important work without a community around you. The loneliness of it. The way the walls get closer when there\'s no one to talk to about what you\'ve found.',
+      identity: 'The notebooks in careful handwriting. A.O. Initials only. Someone who identifies themselves by abbreviation, who has reduced their name to a mark. You understand the impulse — when you don\'t know who you are, a smaller name feels more honest.',
+      promise: 'The vials in the alcove, wrapped in oil cloth, labeled with a date from eight months ago. Osei promised themselves something — a cure, a solution, an answer. The research continues. The promise continues. You carry one like it. The weight is the same whether the vials are yours or someone else\'s.',
+    },
     npcSpawns: [
       {
         npcId: 'lucid_sanguine_osei',
@@ -897,6 +918,13 @@ export const BREAKS_ROOMS: Room[] = [
         description: 'The Forest Service station is mostly non-functional: the anemometer is seized, the precipitation gauge is cracked, the solar panels are clouded with years of mineral deposit. But the receiver is running because its power cell is better made than the rest and because someone, within the last year, connected it to the speaker. Someone knew the receiver was functional. Someone wanted the signal to be audible here.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The 360-degree view. The whole world visible. You turn slowly and look in every direction and they are not in any of them. The mesa gives you the clearest view in the Four Corners and the clarity doesn\'t help. It just makes the absence sharper.',
+      partner: 'The radio signal cycles on its seventeen-second pattern. Automated. Patient. Waiting for someone to decode it. You think about the messages you sent them that went unanswered — not automated, not patient, just your voice going out into the world and the world not sending it back.',
+      community: 'From the mesa: the highway corridor, the canyon systems, Duskhollow Manor, the distant Stacks. The whole geography of human survival in the Four Corners, laid out like a map. You had a place in a map like this once. A dot among dots. The dot is gone now and the map kept going.',
+      identity: 'You are the first thing the sun touches from up here. The light reaches you before it reaches the canyons below. For a moment, in the dawn, you are the highest and most visible point in the landscape, and you feel like a person who could be seen, who could be recognized, who could be named. The moment passes.',
+      promise: 'The signal is coming from the north. From where MERIDIAN is. The receiver picks it up and plays it back and you listen and the signal says something you can\'t decode and the promise you made says something you can\'t ignore and both of them point in the same direction.',
+    },
     npcSpawns: [],
     itemSpawns: [
       {

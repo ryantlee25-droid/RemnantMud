@@ -6,6 +6,7 @@
 
 import { useGame } from '@/lib/gameContext'
 import { isDevMode } from '@/lib/supabaseMock'
+import { xpForNextLevel } from '@/lib/gameEngine'
 import type { TimeOfDay } from '@/types/game'
 
 function computeTimeOfDay(actionsTaken: number): TimeOfDay {
@@ -70,7 +71,7 @@ export default function StatusBar() {
       <span className="mx-2 opacity-40">|</span>
       HP: {player.hp}/{player.maxHp}
       <span className="mx-2 opacity-40">|</span>
-      XP: {player.xp}
+      Lv {player.level} | XP: {player.xp}/{xpForNextLevel(player.level) ?? 'MAX'}
       <span className="mx-2 opacity-40">|</span>
       <span className="opacity-60">Cycle {cycle}</span>
       {combatIndicator && (

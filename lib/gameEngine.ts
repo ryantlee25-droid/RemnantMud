@@ -6,6 +6,7 @@
 
 import type {
   Action,
+  EndingChoice,
   GameState,
   GameMessage,
   Player,
@@ -33,6 +34,30 @@ import { handleTalk, handleSearch, handleRep, handleQuests } from '@/lib/actions
 import { handleStats, handleInventory, handleHelp } from '@/lib/actions/system'
 import { handleExamineExtra } from '@/lib/actions/examine'
 import { handleRest, handleCamp, handleDrink } from '@/lib/actions/survival'
+import { echoRetentionFactor } from '@/lib/fear'
+import { handleTrade, handleBuy, handleSell } from '@/lib/actions/trade'
+
+// ------------------------------------------------------------
+// XP thresholds for level progression
+// Index = level you're advancing TO (e.g. XP_THRESHOLDS[2] = 100 means level 2 requires 100 XP)
+// ------------------------------------------------------------
+
+export const XP_THRESHOLDS: Record<number, number> = {
+  2: 100,
+  3: 250,
+  4: 500,
+  5: 850,
+  6: 1300,
+  7: 1900,
+  8: 2700,
+  9: 3800,
+  10: 5000,
+}
+
+/** Return the XP needed for the next level, or null if at max level. */
+export function xpForNextLevel(currentLevel: number): number | null {
+  return XP_THRESHOLDS[currentLevel + 1] ?? null
+}
 
 // Alias for gameEngine internal use
 function rollQuantity(q: QuantityConfig): number {
@@ -82,6 +107,8 @@ export class GameEngine implements EngineCore {
     playerDead: false,
     ledger: null,
     stash: [],
+    endingTriggered: false,
+    endingChoice: null,
   }
 
   private listeners: Array<(state: GameState) => void> = []
@@ -268,6 +295,7 @@ export class GameEngine implements EngineCore {
       .from('players')
       .update({
         hp: player.hp,
+        max_hp: player.maxHp,
         current_room_id: player.currentRoomId,
         xp: player.xp,
         level: player.level,
@@ -302,6 +330,40 @@ export class GameEngine implements EngineCore {
         total_deaths: (player.totalDeaths ?? 0) + 1,
       })
       .eq('id', player.id)
+  }
+
+  // ----------------------------------------------------------
+  // Level progression
+  // ----------------------------------------------------------
+
+  _checkLevelUp(): void {
+    const { player } = this.state
+    if (!player) return
+
+    let leveled = false
+    let currentPlayer = { ...player }
+
+    // Loop to handle multiple level-ups in one check
+    while (currentPlayer.level < 10) {
+      const threshold = XP_THRESHOLDS[currentPlayer.level + 1]
+      if (threshold === undefined || currentPlayer.xp < threshold) break
+
+      currentPlayer = {
+        ...currentPlayer,
+        level: currentPlayer.level + 1,
+        maxHp: currentPlayer.maxHp + 2,
+        hp: Math.min(currentPlayer.hp + 2, currentPlayer.maxHp + 2),
+      }
+      leveled = true
+
+      this._appendMessages([
+        systemMsg(`You reach Level ${currentPlayer.level}. Max HP increased to ${currentPlayer.maxHp}. (+2 HP healed)`),
+      ])
+    }
+
+    if (leveled) {
+      this._setState({ player: currentPlayer })
+    }
   }
 
   // ----------------------------------------------------------
@@ -586,14 +648,16 @@ export class GameEngine implements EngineCore {
     this._setState({ loading: true })
     const supabase = createSupabaseBrowserClient()
 
-    // Compute echo stats: floor(previousStat * 0.7), min = class floor from CLASS_DEFINITIONS
+    // Compute echo stats: floor(previousStat * retention), min = class floor from CLASS_DEFINITIONS
+    // Higher grit = better stat retention on rebirth (base 0.7, up to 0.85 at grit 8)
     const allStats: Stat[] = ['vigor', 'grit', 'reflex', 'wits', 'presence', 'shadow']
     const classDef = CLASS_DEFINITIONS[player.characterClass]
     const base = 2
+    const retention = echoRetentionFactor(player.grit)
     const echoStats: StatBlock = {} as StatBlock
     for (const s of allStats) {
       const classFloor = base + (classDef.classBonus[s] ?? 0)
-      const echoed = Math.max(classFloor, Math.floor(player[s] * 0.7))
+      const echoed = Math.max(classFloor, Math.floor(player[s] * retention))
       echoStats[s] = echoed
     }
 
@@ -668,10 +732,11 @@ export class GameEngine implements EngineCore {
     const allStats: Stat[] = ['vigor', 'grit', 'reflex', 'wits', 'presence', 'shadow']
     const classDef = CLASS_DEFINITIONS[player.characterClass]
     const base = 2
+    const retention = echoRetentionFactor(player.grit)
     const echo: StatBlock = {} as StatBlock
     for (const s of allStats) {
       const classFloor = base + (classDef.classBonus[s] ?? 0)
-      echo[s] = Math.max(classFloor, Math.floor(player[s] * 0.7))
+      echo[s] = Math.max(classFloor, Math.floor(player[s] * retention))
     }
     return echo
   }
@@ -763,8 +828,18 @@ export class GameEngine implements EngineCore {
     const { player } = this.state
     if (!player) return
 
+    // Presence modifier: on positive rep changes, presence above 5 grants a bonus
+    let effectiveDelta = delta
+    let presenceBonus = 0
+    if (delta > 0) {
+      presenceBonus = Math.floor((player.presence - 5) / 2)
+      if (presenceBonus > 0) {
+        effectiveDelta = delta + presenceBonus
+      }
+    }
+
     const oldRep = (player.factionReputation ?? {})[faction] ?? 0
-    const newRep = Math.max(-3, Math.min(3, oldRep + delta))
+    const newRep = Math.max(-3, Math.min(3, oldRep + effectiveDelta))
     if (newRep === oldRep) return
 
     const newFactionRep = { ...(player.factionReputation ?? {}), [faction]: newRep }
@@ -796,15 +871,19 @@ export class GameEngine implements EngineCore {
     const oldLabel = GameEngine.REPUTATION_LABELS[oldRep] ?? 'Unknown'
     const newLabel = GameEngine.REPUTATION_LABELS[newRep] ?? 'Unknown'
     if (oldLabel !== newLabel) {
-      this._appendMessages([msg(`${fName} now know you as ${newLabel}.`)])
+      const bonusNote = presenceBonus > 0 ? ` (Presence +${presenceBonus})` : ''
+      this._appendMessages([msg(`${fName} now know you as ${newLabel}.${bonusNote}`)])
     } else {
-      this._appendMessages([msg(`Your standing with ${fName} shifts.`)])
+      const bonusNote = presenceBonus > 0 ? ` (Presence +${presenceBonus})` : ''
+      this._appendMessages([msg(`Your standing with ${fName} shifts.${bonusNote}`)])
     }
   }
 
   // ----------------------------------------------------------
   // Quest flags
   // ----------------------------------------------------------
+
+  private static readonly VALID_ENDINGS: Set<string> = new Set(['cure', 'weapon', 'seal', 'throne'])
 
   async setQuestFlag(flag: string, value: string | boolean | number): Promise<void> {
     const { player } = this.state
@@ -819,6 +898,44 @@ export class GameEngine implements EngineCore {
       .from('players')
       .update({ quest_flags: newFlags })
       .eq('id', player.id)
+
+    // Detect ending trigger
+    if (flag === 'charon_choice' && typeof value === 'string' && GameEngine.VALID_ENDINGS.has(value)) {
+      const choice = value as EndingChoice
+
+      if (choice === 'seal') {
+        // SEAL: facility self-destruct — show countdown, then auto-navigate to exit
+        this._appendMessages([
+          msg('FACILITY SELF-DESTRUCT INITIATED. FOUR MINUTES.', 'system'),
+          msg('The building shudders. Dust falls from the ceiling. You need to move.', 'narrative'),
+        ])
+
+        // Brief delay, then auto-navigate to the exit and trigger ending
+        setTimeout(async () => {
+          // Move to scar_15_the_exit
+          const exitRoom = await getRoom('scar_15_the_exit', player.id)
+          if (exitRoom) {
+            const populated = this._applyPopulation(exitRoom)
+            this._setState({ currentRoom: populated })
+            this._appendMessages([
+              msg('You sprint up the emergency staircase as the charges begin to fire below you.', 'narrative'),
+              msg(populated.description, 'narrative'),
+            ])
+            await markVisited('scar_15_the_exit', player.id)
+          }
+
+          // Trigger ending after reaching exit
+          setTimeout(() => {
+            this._setState({ endingTriggered: true, endingChoice: choice })
+          }, 2000)
+        }, 3000)
+      } else {
+        // CURE, WEAPON, THRONE: trigger ending directly after brief pause
+        setTimeout(() => {
+          this._setState({ endingTriggered: true, endingChoice: choice })
+        }, 3000)
+      }
+    }
   }
 
   // ----------------------------------------------------------
@@ -827,7 +944,7 @@ export class GameEngine implements EngineCore {
 
   // Actions that advance in-world time (exclude meta/info commands)
   private static readonly TIME_ADVANCING_VERBS = new Set([
-    'go', 'take', 'drop', 'attack', 'flee', 'talk', 'search', 'use', 'open', 'rest', 'camp', 'drink',
+    'go', 'take', 'drop', 'attack', 'flee', 'talk', 'search', 'use', 'open', 'rest', 'camp', 'drink', 'buy', 'sell',
   ])
 
   async executeAction(action: Action): Promise<GameMessage[]> {
@@ -890,6 +1007,12 @@ export class GameEngine implements EngineCore {
       case 'camp':     await handleCamp(this)
         break
       case 'drink':    await handleDrink(this)
+        break
+      case 'trade':    await handleTrade(this, action.noun)
+        break
+      case 'buy':      await handleBuy(this, action.noun)
+        break
+      case 'sell':     await handleSell(this, action.noun)
         break
       default:         this._appendMessages([{ id: crypto.randomUUID(), text: `Unknown command. Type "help" for a list of commands.`, type: 'error' }])
     }

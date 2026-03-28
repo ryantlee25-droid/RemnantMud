@@ -164,6 +164,13 @@ export const RIVER_ROAD_ROOMS: Room[] = [
           '200 lbs. That\'s person plus gear. A heavy pack could put you over. The bridge keeper weighs people by eye and tells them if they need to make two trips. He\'s usually right.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The bridge sways and you grip the cable and think: they would have been afraid of this. You would have carried them. You would have said, don\'t look down, and they would have looked down, because children always look down.',
+      partner: 'Howard\'s bridge. Built by hand for strangers. You and they built things together once — smaller things, domestic things — and the memory of shared labor arrives with the river sound and doesn\'t leave when you reach the other side.',
+      community: 'Someone built this bridge so people could cross. That\'s what community was — someone solving a problem that wasn\'t only theirs. The cable hums under your hand and you remember a place where people did that for each other without being asked.',
+      identity: 'You\'ve crossed a bridge like this before. Or you haven\'t. The déjà vu is so specific — the sway, the cable tension, the sound of water below — that your hands know what to do before you decide to do it. Muscle memory from a life you can\'t verify.',
+      promise: 'The bridge is temporary. Everything here is temporary. You promised something permanent to someone and the cable sways under your feet and you wonder if promises have a weight limit too.',
+    },
     npcSpawns: [
       {
         npcId: 'bridge_keeper_howard',
@@ -438,6 +445,13 @@ export const RIVER_ROAD_ROOMS: Room[] = [
           'Cold. Mountain snowmelt cold. Your legs will ache after thirty seconds. But the water is clean and the footing is solid gravel. Worse crossings exist.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The stepping stones are spaced for a tall person\'s stride. You think about small legs and the math of it — the gap too wide, the water too fast, the hand you would have offered. The stones don\'t care who crosses them. You do.',
+      partner: 'Cold water. You remember wading somewhere together, the shock of it, the laughter. The Animas doesn\'t care about your memory. It runs over the stones the same way it would have run over both of you, and you cross alone and your boots are wet and that\'s all.',
+      community: 'The cart tracks on both banks — people crossing together, hauling what they need, cursing the cold in company. You had a place once where the work was shared like this. The ruts in the bank are proof that people still do it. You\'re not one of them.',
+      identity: 'You know how to read a ford — the depth, the current, where to step. You don\'t know where you learned it. The knowledge is in your body like a language you speak fluently in a country you\'ve never visited.',
+      promise: 'The water is cold enough to make you gasp and in that gasp you remember: you said you would come back. The river doesn\'t know about promises. It just keeps going in one direction, the way time does, the way you do.',
+    },
     npcSpawns: [
       {
         npcId: 'drifter_cart_team',
@@ -654,6 +668,13 @@ export const RIVER_ROAD_ROOMS: Room[] = [
           'Wild grass, waist-high. Could be hiding anything. You push through carefully. Your hand brushes something hard in the grass — a bicycle wheel, spokes bent, tire rotted. A child\'s bike.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The swing turns in the wind. The chain creaks. A child\'s bike is somewhere in the grass and you are not going to look for it. You are not. You stand very still until the impulse passes and it does not entirely pass.',
+      partner: 'Two bedrooms in the foundation. One was theirs together. The cast-iron skillet on the stove — someone was cooking for someone. The domesticity of the ruin is what gets you: not the fire, but the fact that it was a home first.',
+      community: 'The farmhouse had neighbors once, presumably. A road, a mailbox, people who waved from cars. The isolation of the ruin now is total — no other houses visible, no other chimneys, just this one family\'s attempt at a life, standing alone in the grass like it always was.',
+      identity: 'The barn tools arranged by size. Someone organized. Someone kept things in order. You look at the wrenches on the wall and your hands know the weight of a wrench and you don\'t know why. Were you this kind of person? The careful kind?',
+      promise: 'The letter in the barn, in a child\'s handwriting. You don\'t read all of it. You read enough. Someone was promised something here — safety, probably, or return — and the charred timbers are the answer the world gave back.',
+    },
     npcSpawns: [],
     itemSpawns: [
       {
@@ -808,6 +829,13 @@ export const RIVER_ROAD_ROOMS: Room[] = [
           'The locals have names for the permanent Hollow nests: the Hive, the Pit, the School (that one is in Covenant\'s zone and nobody talks about it without flinching). The Hive is the bus. It\'s been here since Year One. Nobody has cleared it because nobody wants to climb into a bus full of Hollow. The Salters offered. The Accord said no — it serves as a warning to travelers about staying alert.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The backpack in the weeds is faded purple. You don\'t pick it up. You know what\'s inside a child\'s backpack — crayons, a snack, a thing they loved — and the knowing is a physical weight in your chest that has nothing to do with what you\'re carrying.',
+      partner: 'A school bus. Someone put their kid on this bus and expected them home by 3:30. The routine of it — the morning goodbye, the afternoon return — is so specific and so gone that you have to stop walking for a moment. You had routines like that. You had someone to share them with.',
+      community: 'They call it the Hive and they walk around it. The community made a decision: not to clear it, not to bury what\'s inside, just to detour. You understand the decision. You understand what it costs to keep walking past something you should have dealt with together.',
+      identity: 'The bus number is still visible on the side: 714. The number means nothing to you. It means nothing to you. You repeat this to yourself and move on and the number stays in your head like a phone number you can\'t place.',
+      promise: 'The things inside the bus were going somewhere. They had a destination. The bus had a route and the route had a schedule and none of it was kept. You know what that feels like — the appointment that the world canceled on your behalf.',
+    },
     npcSpawns: [],
     itemSpawns: [
       {

@@ -132,6 +132,13 @@ export const COVENANT_ROOMS: Room[] = [
         dispositionRoll: { friendly: 0.2, neutral: 0.6, wary: 0.2, hostile: 0.0 },
       },
     ],
+    personalLossEchoes: {
+      child: 'The notice board. Bottom layer. A missing child notice that has gone unanswered long enough. You read the age and the description and your vision narrows and you stop reading because the specificity of a missing child is not something you can hold right now.',
+      partner: 'The marriage announcement on the board. Someone found someone, here, in this. The congratulations note pinned beside it. You are happy for them in the way that a person holding an empty cup is happy for a person holding a full one.',
+      community: 'Market stalls with price boards. An Accord patrol. A notice board with job postings. You stand in the square and the shape of it — the commerce, the governance, the shared space — is so familiar that your throat closes. You had this. Not this exactly. But this.',
+      identity: 'A vendor calls out prices and you know them — not these prices, but the rhythm of it, the cadence of a market day. You knew a place like this. You were someone who came to places like this. The knowledge is certain and the details are gone.',
+      promise: 'The job postings on the board. Someone needs something done. The format is familiar — the obligation, the expectation, the implicit contract between asking and answering. You had a contract like that once. Yours wasn\'t posted on a board. Yours was spoken aloud to someone who believed you.',
+    },
     itemSpawns: [
       {
         entityId: 'discarded_flyer',
@@ -598,6 +605,13 @@ export const COVENANT_ROOMS: Room[] = [
         narrativeNotes: 'No combat, no loot, no quests. This room exists to answer the question: why are we fighting?',
       },
     ],
+    personalLossEchoes: {
+      child: 'Twenty-three children. You count them without meaning to. You look for one who is the right age, the right height, the right anything. None of them are. All of them are. You leave before the teacher notices you staring.',
+      partner: 'Nwosu reads aloud and the room goes quiet and you remember being read to — not as a child, but as an adult, in bed, a voice you loved making someone else\'s words into a gift. The memory is so precise it has a temperature.',
+      community: 'The school is the argument for everything. Twenty-three children learning long division in a room that used to sell insurance. This is what a community builds when it decides to have a future. You had one of these. It built things for you. You didn\'t know what it cost until it was gone.',
+      identity: 'The children\'s drawings on the wall. Houses, dogs, suns. You drew like this once. Everyone drew like this once. The hand that held the crayon is connected to a person you can\'t fully remember, and the drawings on this wall are proof that person existed.',
+      promise: 'A child drew the MERIDIAN symbol without knowing what it means. You look at it and you know what it means and you promised someone you would do something about the world that symbol represents. The children are learning to spell February. You are supposed to be keeping them safe.',
+    },
     itemSpawns: [],
     narrativeNotes: 'EMOTIONAL ANCHOR ROOM. No combat, no loot, no quest triggers. The player can examine but not take anything. The purpose is to make the cost of failure real.',
   },
@@ -655,6 +669,13 @@ export const COVENANT_ROOMS: Room[] = [
         description: 'The pews are salvaged church furniture, different styles and finishes, brought here from wherever could be reached. Seven rows of them. Room for perhaps fifty people. On major days — the solstices, which Covenant observes with secular pragmatism — they\'re full.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The letters box. You could write one. You could write their name on the outside and fold it and put it in the box and it would sit there with all the other letters to people who will never read them. You stand at the box for a long time. You don\'t write anything. You don\'t leave either.',
+      partner: 'Three candles burning at different heights. You and they had rituals like this — small, repeated, meaningful only to the two of you. The candle flame doesn\'t know who lit it. The light is the same regardless. That thought is not as comforting as it should be.',
+      community: 'The stained glass was pieced together by amateurs. The pews are salvage from different churches. The whole chapel is a thing built by a community from the fragments of other communities, and the imperfection of it — the irregular joins, the mismatched wood — is what makes it sacred.',
+      identity: 'The imperfect color on the floor from the stained glass. Blue, amber, red. You sit in it and the color changes your hands and for a moment you are someone who sits in chapels, someone who seeks this kind of quiet, and you don\'t know if that\'s who you are or who you were or if it matters.',
+      promise: 'LETTERS. LEAVE THEM HERE. Someone will read them eventually. You think about the promise you made and whether a letter in a box in a chapel counts as keeping it. It doesn\'t. But you stand here anyway, in the candlelight, and the promise is heavier than when you walked in.',
+    },
     npcSpawns: [
       {
         npcId: 'chapel_visitor',
@@ -1217,6 +1238,13 @@ export const COVENANT_ROOMS: Room[] = [
         skillCheck: { skill: 'survival', dc: 11, successAppend: 'You identify it: ghost sage, an uncommon high-altitude variant with significant fever-reducing properties. This plant is worth more than most of what\'s in the armory.' },
       },
     ],
+    personalLossEchoes: {
+      child: 'Flowers. Not food, not medicine. Flowers. Someone planted them because beauty matters, because children should see roses, because the world should have lavender in it even now. You think about what you would have planted for them. You think about the garden you didn\'t get to make.',
+      partner: 'The rosebush has three blooms. Someone kept a cutting alive from before the Collapse — years of care, of stubbornness, of refusing to let a beautiful thing die. You did that with a person once. You kept something alive through sheer refusal to let it go. The rose is still here. They are not.',
+      community: 'From up here, all of Covenant is visible. The rooftops, the window boxes, the people in the streets. The view is the shape of a community seen from above, and the shape is so like the one you lost that you have to look at the mountains instead, and the mountains don\'t help.',
+      identity: 'The herb labels in two different handwritings — started by one person, continued by another. The project outlasted its founder. You look at your own hands and wonder what you started that someone else is continuing, or whether the things you built just stopped when you forgot who built them.',
+      promise: 'The dwarf apple tree had fruit last fall. Someone planted it years ago on the faith that years would pass and the tree would bear and someone would be alive to eat the apple. That\'s a promise — to the future, to the continuation of things. You made a promise like that. The tree kept its.',
+    },
     npcSpawns: [
       {
         npcId: 'garden_keeper',

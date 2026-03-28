@@ -124,6 +124,7 @@ function makeEngine(state: Partial<GameState> = {}): EngineCore & { messages: Ga
     _savePlayer: vi.fn().mockResolvedValue(undefined),
     _applyPopulation: (room) => room,
     _handlePlayerDeath: vi.fn().mockResolvedValue(undefined),
+    _checkLevelUp: vi.fn(),
     adjustReputation: vi.fn().mockResolvedValue(undefined),
     setQuestFlag: vi.fn().mockResolvedValue(undefined),
   }

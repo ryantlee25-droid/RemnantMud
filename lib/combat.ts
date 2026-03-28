@@ -10,6 +10,7 @@ import type {
 import { roll1d10, rollCheck, rollDamage, DC } from '@/lib/dice'
 import { getClassSkillBonus } from '@/lib/skillBonus'
 import { getItem } from '@/data/items'
+import { resistWhisperer } from '@/lib/fear'
 
 // ------------------------------------------------------------
 // Helpers
@@ -87,9 +88,10 @@ export function playerAttack(
 ): { result: CombatResult; newState: CombatState } {
   const { enemy } = state
 
-  // Apply whisperer debuff: subtract penalty from effective stat for the attack roll
+  // Apply whisperer debuff + fear penalty: subtract from effective stat for the attack roll
   const debuffPenalty = (state.whispererDebuff ?? 0) > 0 ? state.whispererDebuff! : 0
-  const effectiveVigor = player.vigor - debuffPenalty
+  const fearPenalty = state.fearPenalty ?? 0
+  const effectiveVigor = player.vigor - debuffPenalty - fearPenalty
 
   const check = rollCheck(effectiveVigor, enemy.defense)
 
@@ -188,16 +190,28 @@ export function playerAttack(
  */
 export function applyHollowRoundEffects(
   state: CombatState,
+  player?: Player,
 ): { messages: GameMessage[]; newState: CombatState } {
   const { enemy } = state
   const messages: GameMessage[] = []
   let newState = { ...state }
 
+  // Consume fear penalty after first round (only applies to round 1)
+  if (newState.fearPenalty && newState.turn > 1) {
+    newState.fearPenalty = 0
+  }
+
   // Whisperer: 20% chance to apply a -2 combat roll debuff this round
+  // Grit check DC 10 can resist the effect
   if (enemy.hollowType === 'whisperer') {
     if (Math.random() < 0.20) {
-      newState.whispererDebuff = 2
-      messages.push(msg(`Something it says takes the edge off your focus.`))
+      if (player && resistWhisperer(player)) {
+        newState.whispererDebuff = 0
+        messages.push(msg(`It whispers something terrible. You grit your teeth and hold.`))
+      } else {
+        newState.whispererDebuff = 2
+        messages.push(msg(`Something it says takes the edge off your focus.`))
+      }
     } else {
       newState.whispererDebuff = 0
     }

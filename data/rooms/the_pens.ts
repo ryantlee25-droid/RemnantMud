@@ -92,6 +92,13 @@ export const THE_PENS_ROOMS: Room[] = [
         { type: 'shuffler', weight: 100, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
     },
+    personalLossEchoes: {
+      child: 'The family of four in the waiting chairs. Two children. The youngest has a wristband already. You watch the mother watching the clerk and you recognize the expression: someone who has decided, and is not revisiting it. You made decisions like that. For them. You hope the ones you made were better than this.',
+      partner: 'Soft music plays from the PA system. Light jazz. The kind that played in waiting rooms. You sat in a waiting room with them once — a different kind of waiting, a different kind of outcome — and the music was the same kind of nothing, designed to say that nothing alarming is happening. The music lied then too.',
+      community: 'Three intake clerks processing fifty intakes a day. The system is efficient and the efficiency is the horror — the machinery of belonging, of being processed into a place, reduced to a wristband color. Your community didn\'t have intake forms. It had doors that were always open. The difference is everything.',
+      identity: 'The intake form asks for: name, age, blood type, medical history, voluntary status. The form assumes you know these things about yourself. You look at the fields and you\'re not sure what you would write. The name field is a question you can\'t answer with confidence. The form has a YES checkbox for voluntary status and no NO. You understand the design.',
+      promise: 'VOLUNTARY INTAKE — LEFT. REFERRAL CASES — RIGHT. The signage is clear and the process is efficient and you stand in the lobby and think about the things you promised. The people in these chairs made a calculation. You made a promise. The difference between a calculation and a promise is that a promise has a person on the other end of it.',
+    },
     narrativeNotes: 'pens_02. The intake hub. patient_intake_form placed here. The noCombat flag — the horror here is administrative, not violent. The missing NO checkbox is the key detail.',
   },
 
@@ -178,6 +185,13 @@ export const THE_PENS_ROOMS: Room[] = [
       threatPool: [
         { type: 'shuffler', weight: 100, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
+    },
+    personalLossEchoes: {
+      child: 'A photograph tacked to a curtain rail. A carved wooden figure on a bedside table. The personal items of people who have personalized a cage. You look for children\'s things — a drawing, a toy, evidence. You find reading glasses, a library book, a pair of clean socks laid out for morning. No children\'s things. That\'s either relief or a different kind of horror.',
+      partner: 'The woman near the window has watched the light change from this window for six months. Six months. You think about the things you would watch for six months if you couldn\'t move — the same view, the same light, the same pattern of dawn. You watched them sleep once, the same way, tracking the light on a face you loved. The watching is the same. The loss is different.',
+      community: 'Thirty people in various states of rest. Some sleeping, some reading, some staring at the ceiling. A ward. A community of the reduced — people who made the same calculation and arrived at the same cots. You had a community of the chosen once. The difference is consent, and consent here is complicated, and you don\'t want to think about it.',
+      identity: 'The personal items pinned to curtain rails — photographs, carved figures, books. The identities people carry when everything else is stripped away. A family portrait. A dog. A building you almost recognize. You carry identity the same way: in fragments, in objects, in the things you don\'t let go of even when you can\'t remember why you\'re holding them.',
+      promise: 'The woman says: "Six months." Not angry. Not proud. Just the fact of it. She made a deal and she\'s keeping it. You made a promise and you\'re keeping it. The forms are different — hers is a wristband, yours is a word spoken aloud — but the weight is the same. You are both people who do what they said they would do.',
     },
     narrativeNotes: 'pens_04. The most humanizing room in the zone. These donors are not victims in a simple sense — they have made calculations. Show their personhood. The horror of The Pens is partly that some people prefer it.',
   },
@@ -425,6 +439,13 @@ export const THE_PENS_ROOMS: Room[] = [
         { type: 'remnant', weight: 40, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
     },
+    personalLossEchoes: {
+      child: 'Someone pacing in a cell. Someone sleeping badly. You listen through the bars and you hear the sounds of people who didn\'t choose this, and you think about the children who didn\'t choose anything — didn\'t choose to be born into this world, didn\'t choose to lose what they lost. The bars don\'t know the difference between a grown person and a small one. The bars don\'t know anything.',
+      partner: 'Two people having a conversation through the wall in the specific low register of people who have learned to talk without the guards hearing. The intimacy of whispered speech through concrete. You had whispered conversations in the dark once. Not through a wall. Not out of fear. The register was the same.',
+      community: 'Five occupied cells. Red wristbands on every wrist. These people were classified. Someone decided they belong here. Your community classified people too — neighbors, friends, family — but the classification was chosen, mutual, warm. The difference between belonging and being sorted is the difference between a home and a cell.',
+      identity: 'The windows are painted over. Thick paint, blocking all outside light orientation. Disorientation as a management tool. You know what it\'s like to not know where you are, to lose the reference points that tell you who you are. The painted windows are a forced version of what you carry naturally — the disorientation of a self that can\'t orient to its own history.',
+      promise: 'The enforcer at the corridor entrance meets your eyes briefly and looks away. Not shame. Not apology. Just acknowledgment. You think about the promises that were broken to put these people here — the promises of safety, of civilization, of the social contract that says you don\'t put people in cages. Your promise is about one person. These broken promises are about everyone.',
+    },
     narrativeNotes: 'pens_09. The moral line is crossed here. The REFERRAL SOURCE detail on the intake form is the horror detail — the system has a pipeline for acquiring involuntary donors.',
   },
 
@@ -605,6 +626,13 @@ export const THE_PENS_ROOMS: Room[] = [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
+    },
+    personalLossEchoes: {
+      child: 'The corkboard with the coffee schedule. Someone\'s laundry hung over a chair. A worn deck of cards. The banality of the lives lived here — the people who go home after their shift at the blood facility and play rummy and hang laundry. You wonder if any of them have children. You wonder if the children know what their parents do during the day.',
+      partner: 'An enforcer off duty reads a salvage paperback near the window. The domesticity of the scene — a person reading in a chair by a window — is so ordinary that it aches. You had this. The quiet evening. The other person in the room doing their own thing. The profound normalcy of two people existing in the same space without needing to speak.',
+      community: 'The scoring sheet goes back three months. The same six names throughout. They have been playing the same game together for three months. A community of six people who process tragedy all day and then play cards together at night. You understand the need. Your community played games too. The games were the point. The games were the proof that normal still existed.',
+      identity: 'One name on the coffee schedule is crossed out in pencil and another written in. The crossed-out person is no longer here. The schedule was updated without ceremony. You think about your own name — whether it\'s written somewhere that has been updated since you disappeared, whether someone crossed you out and wrote someone else in, whether the schedule went on without you.',
+      promise: 'The staff are not monsters. They have bad days and card games and coffee schedules. They do their job. The ordinariness of it is the horror — that a person can process the paperwork of captivity and then go home and fold their laundry. You made a promise to do something difficult. At least you know it\'s difficult. At least the difficulty is not lost on you.',
     },
     narrativeNotes: 'pens_13. The humanizing counterweight to pens_09. The staff are not abstracted evil — they are people with card games and coffee schedules who do this for a living. The zone\'s tone requires this room.',
   },

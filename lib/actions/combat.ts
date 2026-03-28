@@ -15,6 +15,7 @@ import {
 import { getItem } from '@/data/items'
 import { getEnemy } from '@/data/enemies'
 import { updateRoomItems, updateRoomFlags } from '@/lib/world'
+import { fearCheck } from '@/lib/fear'
 
 // ------------------------------------------------------------
 // Local message helpers
@@ -151,6 +152,16 @@ export async function handleAttack(engine: EngineCore, noun: string | undefined)
   const newCombatState = startCombat(player, enemy)
   // Store current room for flee escape
   const combatWithRoom = { ...newCombatState, lastRoomId: player.currentRoomId }
+
+  // Fear check: high-difficulty rooms impose a first-round penalty on failed grit check
+  if (currentRoom.difficulty >= 4) {
+    const fear = fearCheck(player, currentRoom)
+    if (fear.afraid) {
+      combatWithRoom.fearPenalty = 1
+    }
+    engine._appendMessages(fear.messages)
+  }
+
   engine._setState({ combatState: combatWithRoom })
 
   const initMsg = combatWithRoom.playerGoesFirst
@@ -187,8 +198,8 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
   const equippedArmor = inventory.find((ii) => ii.equipped && ii.item.type === 'armor')
   const armorDefense = equippedArmor?.item.defense ?? 0
 
-  // Apply hollow round effects (screamer summon, whisperer debuff)
-  const { messages: hollowMsgs, newState: afterHollow } = applyHollowRoundEffects(combatState)
+  // Apply hollow round effects (screamer summon, whisperer debuff with grit resistance)
+  const { messages: hollowMsgs, newState: afterHollow } = applyHollowRoundEffects(combatState, player)
   if (hollowMsgs.length > 0) {
     engine._appendMessages(hollowMsgs)
     engine._setState({ combatState: afterHollow })
@@ -216,6 +227,9 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
       currentRoom: updatedRoom,
       combatState: null,
     })
+
+    // Check for level-up after XP award
+    engine._checkLevelUp()
 
     // Add loot to room
     if (playerResult.loot && playerResult.loot.length > 0) {

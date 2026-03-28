@@ -19,12 +19,14 @@ import CharacterCreation from '@/components/CharacterCreation'
 import Prologue from '@/components/Prologue'
 import DeathScreen from '@/components/DeathScreen'
 import TheBetween from '@/components/TheBetween'
+import EndingScreen from '@/components/EndingScreen'
+import type { EndingChoice } from '@/types/game'
 import ThemePicker from '@/components/ThemePicker'
 import { THEME_KEY, saveTheme, type ThemeId } from '@/lib/theme'
 
 type AuthPhase = 'checking' | 'unauthenticated' | 'loading-player' | 'prologue' | 'no-player' | 'ready'
 const INV_HINT_KEY = 'remnant_seen_inv_hint'
-type GamePhase = 'alive' | 'dead' | 'between' | 'rebirth' | 'rebirthing'
+type GamePhase = 'alive' | 'dead' | 'between' | 'rebirth' | 'rebirthing' | 'ending'
 
 const PROLOGUE_KEY = 'remnant_saw_prologue'
 
@@ -151,6 +153,15 @@ export default function GamePage() {
     }
   }, [state.playerDead, gamePhase])
 
+  // Watch for ending trigger
+  useEffect(() => {
+    if (state.endingTriggered && state.endingChoice && gamePhase === 'alive') {
+      // Delay so the terminal choice narrative renders first
+      const t = setTimeout(() => setGamePhase('ending'), 2000)
+      return () => clearTimeout(t)
+    }
+  }, [state.endingTriggered, state.endingChoice, gamePhase])
+
   // Theme picker — shown once before anything else
   if (showThemePicker) {
     return (
@@ -188,6 +199,31 @@ export default function GamePage() {
   // Character creation
   if (authPhase === 'no-player') {
     return <CharacterCreation />
+  }
+
+  // Ending screen
+  if (gamePhase === 'ending' && state.endingChoice) {
+    return (
+      <EndingScreen
+        choice={state.endingChoice}
+        cycle={state.player?.cycle ?? 1}
+        totalDeaths={state.player?.totalDeaths ?? 0}
+        roomsExplored={0}
+        xpEarned={state.player?.xp ?? 0}
+        onNewGame={async () => {
+          // Delete player data and restart
+          const supabase = (await import('@/lib/supabase')).createSupabaseBrowserClient()
+          const userId = state.player?.id
+          if (userId) {
+            await supabase.from('player_inventory').delete().eq('player_id', userId)
+            await supabase.from('player_ledger').delete().eq('player_id', userId)
+            await supabase.from('players').delete().eq('id', userId)
+          }
+          // Full page reload to reset all state
+          window.location.reload()
+        }}
+      />
+    )
   }
 
   // Death screen

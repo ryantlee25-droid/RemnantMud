@@ -572,6 +572,7 @@ export interface CombatState {
   bruteCharged?: boolean        // brute has used its charge attack
   bruteCooldownTurn?: number    // turn when brute last charged (skips next attack)
   whispererDebuff?: number      // combat roll penalty from whisperer this round
+  fearPenalty?: number           // -1 combat penalty from failed grit check on room entry
   additionalEnemies?: Enemy[]   // extra enemies summoned (e.g. by screamer)
   lastRoomId?: string           // room before combat started (for flee escape)
 }
@@ -620,6 +621,8 @@ export interface GameMessage {
 // Game State (held in React context during a session)
 // ------------------------------------------------------------
 
+export type EndingChoice = 'cure' | 'weapon' | 'seal' | 'throne'
+
 export interface GameState {
   player: Player | null
   currentRoom: Room | null
@@ -631,4 +634,6 @@ export interface GameState {
   playerDead: boolean
   ledger: PlayerLedger | null
   stash: StashItem[]
+  endingTriggered: boolean
+  endingChoice: EndingChoice | null
 }

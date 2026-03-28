@@ -307,6 +307,13 @@ export const SALT_CREEK_ROOMS: Room[] = [
         dialogueTree: 'sc_barracks_soldier',
       },
     ],
+    personalLossEchoes: {
+      child: 'Each footlocker is padlocked and personal. You wonder what\'s inside them — the things people kept from before. Photographs. Letters. A toy that means nothing to anyone alive except the person who locked it in a box in a barracks and checks it\'s still there every night.',
+      partner: 'Two people in a corner bunk, talking quietly, and then they see you and stop. The intimacy of the unfinished sentence. You had conversations like that — private, low, the kind that lived in the space between two people and nowhere else.',
+      community: 'Eighty people sleeping in rows, breathing, dreaming, maintaining each other\'s survival by proximity and discipline. It\'s not the community you lost but it\'s the shape of one — people choosing the same walls, the same risks, the same direction every morning.',
+      identity: 'A Salter on her bunk reads a field manual, one finger tracking her place. She knows who she is. Her identity is: Salter, this bunk, this weapon, this duty. The certainty of it pulls at you. You had that once — the knowledge of your own name and what it meant to answer to it.',
+      promise: 'The duty board covers one full wall. Assignments, schedules, obligations. Everyone here owes something to the structure that keeps them alive. You look at the board and think about your own obligation — the one that isn\'t posted, isn\'t scheduled, isn\'t assigned. The one you carry alone.',
+    },
     itemSpawns: [
       {
         entityId: 'ammo_9mm',
@@ -565,6 +572,13 @@ export const SALT_CREEK_ROOMS: Room[] = [
         questGiver: ['sc_pit_reputation_fight'],
       },
     ],
+    personalLossEchoes: {
+      child: 'The spectators on the rim watch with focused attention. You think about what you would have done to keep them from ever seeing a place like this — the violence made ordinary, the blood in the straw. You would have covered their eyes. You would have walked them away.',
+      partner: 'NO KILLING. FIRST UNCONSCIOUS OR YIELD LOSES. Rules for violence. You and they had rules too — not written, not posted, but understood. The rules that kept a life together. The chalk lines in the pit are faded from rain and redrawn, the way agreements are renegotiated when the old ones wash away.',
+      community: 'Seven spectators on the rim, watching together. Shared violence as social event. You recognize the architecture — the gathering, the common focus, the belonging that comes from watching the same thing at the same time. Your community gathered too. Not for this. But the shape was the same.',
+      identity: 'The fighter in the ring warms up — shadow footwork, loose and economical. Your body responds before your mind does: weight shifts, hands adjust. You know how to fight. You don\'t remember learning. The pit knows you better than you know yourself.',
+      promise: 'WINNER WALKS. The simplest economy. You deliver what you promised, you get what you earned. Your promise was more complicated than that — no clean rules, no chalk lines, no posted board. But the debt is the same: something owed, something unpaid, and the spectators waiting to see if you settle it.',
+    },
     itemSpawns: [],
   },
 
@@ -815,6 +829,13 @@ export const SALT_CREEK_ROOMS: Room[] = [
         cycleGate: 2,
       },
     ],
+    personalLossEchoes: {
+      child: 'The photograph of a squad on the shelf. Twelve people squinting into the sun. Some of them had children. Briggs has a locked box labeled PERSONAL — DNO. Do Not Open. You understand the instruction. Some things you keep locked because opening them means the grief gets air.',
+      partner: 'The ID badge, face-down. Placed that way deliberately. Someone who puts a photograph face-down is someone who can\'t bear to see the face but can\'t bear to throw it away. You know this gesture. You\'ve made it yourself, with something that belonged to them, turned away but kept.',
+      community: 'The unit citation, framed, glass cracked. A squad of twelve. Briggs built Salt Creek the way you build a thing to replace the thing you lost — same shape, same discipline, different people. You recognize the architecture of grief disguised as purpose.',
+      identity: 'MAJOR D. BRIGGS, USMC. The badge is worn smooth from handling. He touches it. He knows who he was. The knowing hasn\'t helped him become someone new — it\'s kept him the same, in a room at the top of a fortress, holding a credential from a world that ended. You don\'t have a badge. You might be luckier.',
+      promise: 'MERIDIAN LOG — CYCLE 0. Briggs kept the record. He has been carrying this since before the Collapse — the knowledge, the guilt, the obligation to do something about it. You look at his strongbox and you think about your own box, the one you carry without a padlock, the promise that doesn\'t fit in a container.',
+    },
     npcSpawns: [],
     itemSpawns: [
       {
@@ -1159,6 +1180,13 @@ export const SALT_CREEK_ROOMS: Room[] = [
         dialogueTree: 'sc_lookout_bluff_sniper',
       },
     ],
+    personalLossEchoes: {
+      child: 'The view north covers eighteen miles. Somewhere in those eighteen miles, or beyond them, or nowhere at all anymore. The distance is the problem — you can see so far from up here, and none of it contains what you\'re looking for. The wind takes the thought. The wind takes everything up here.',
+      partner: 'The notched log seat, silver-gray from years of weather. Worn smooth by use. You sit in it and the wind cuts through you and you think about the last time you sat somewhere high with someone and didn\'t have to explain why the view mattered. They just knew. You just sat.',
+      community: 'The sight line covers the river road — the route people take to reach each other, to trade, to find safety. From up here you can see the geography of connection, the paths between the places where people have decided to belong to each other. You can see it. You\'re not on any of those paths.',
+      identity: 'The sniper\'s logbook: WIND UNPREDICTABLE. DO NOT TRUST FIRST READING. GET THREE. You read the instruction and your body responds — you know this discipline. Patience, confirmation, precision. Were you someone who watched from high places? The wind offers no answer.',
+      promise: 'From the bluff you can see the road north, toward the mountains, toward the Scar. Toward the direction you need to go. The promise sits in you like the wind sits in the canyon — constant, directional, cold. You came up here to see how far you have left to go. It\'s far.',
+    },
     itemSpawns: [
       {
         entityId: 'ammo_762',

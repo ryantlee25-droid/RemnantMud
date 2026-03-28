@@ -10,6 +10,7 @@ import { getEnemy } from '@/data/enemies'
 import { getNPC } from '@/data/npcs'
 import { getClassSkillBonus } from '@/lib/skillBonus'
 import { getTimeOfDay } from '@/lib/gameEngine'
+import { fearCheck } from '@/lib/fear'
 
 // ------------------------------------------------------------
 // Map skill to player stat + class bonus
@@ -252,6 +253,12 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
   if (npcsLine(nextRoom)) messages.push(msg(npcsLine(nextRoom)))
   if (enemiesLine(nextRoom)) messages.push(combatMsg(enemiesLine(nextRoom)))
   if (itemsLine(nextRoom)) messages.push(msg(itemsLine(nextRoom)))
+
+  // Fear check for high-difficulty rooms with enemies (grit stat)
+  if (nextRoom.enemies.length > 0 && nextRoom.difficulty >= 4) {
+    const fear = fearCheck(updatedPlayer, nextRoom)
+    messages.push(...fear.messages)
+  }
 
   // Room flag flavor text on first visit
   if (!nextRoom.visited) {

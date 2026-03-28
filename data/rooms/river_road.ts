@@ -202,6 +202,10 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       'The east bank of the Animas is a wide gravel bar where the river bends. Cottonwood trees lean over the water, their leaves turning the light green and dappled. The bridge cables anchor into a concrete block here, bolted to bedrock. A flat area of packed earth shows signs of regular camping — fire rings, boot tracks, a rope tied to a cottonwood for hanging packs away from animals. This is a waypoint, not a destination.',
     descriptionNight:
       'The cottonwoods are black shapes against stars. The river is silver where moonlight hits it, invisible everywhere else. The gravel bar crunches underfoot. Every sound carries.',
+    descriptionDawn:
+      'Dawn on the east bank comes through the cottonwoods in broken shafts — the leaves filter the early light into a green-gold pattern that moves on the gravel and the water. The river steams where the cold air meets the warmer current. A trout rises in the shallows, the ring spreading and catching the light. The fire rings from last night\'s camps hold faint warmth. The bridge cables upstream catch the first direct sun and throw a thin line of light across the water. The gravel bar is quiet, the boot tracks from yesterday already half-filled by the river\'s overnight work at the edges.',
+    descriptionDusk:
+      'Dusk turns the east bank into a study in cooling gold. The cottonwood leaves catch the last light and hold it, the canopy glowing while the ground below goes dark. The river loses its daytime sparkle and turns to a slow, dark mirror that reflects the colored sky. The gravel bar crunches differently in the cold — dryer, sharper. The bridge cables to the west are silhouettes. Someone\'s fire ring is already smoking, a thread of white rising through the cottonwood branches, the first fire of the evening lit by someone who knows what night means out here.',
     shortDescription:
       'The east bank of the Animas is a wide gravel bar where the river bends.',
     exits: {
@@ -468,6 +472,10 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       'The road squeezes between a sheer rock face to the west and the river to the east. No shoulder. No ditch. Just asphalt, cliff, and water. The passage is maybe fifty yards long and barely wide enough for two people to walk abreast. Above, the cliff leans out over the road, creating a permanent shadow. This is ambush country. Everyone knows it. Everyone walks through it anyway because there\'s no other route north.',
     descriptionNight:
       'The Narrows at night is a throat of darkness. The cliff blocks the stars on one side. The river is a black rush on the other. Your footsteps echo off the rock face and come back to you doubled.',
+    descriptionDawn:
+      'Dawn in the Narrows is delayed — the cliff face blocks the eastern sun and the passage stays in shadow while the sky above brightens to blue. The rock is cold, still holding the night\'s temperature, and the river runs silver-gray beside you, catching light the road can\'t reach. The fifty-yard passage feels longer in this half-light. The hash marks on the cliff wall are visible only as textures, not marks. Everything in the Narrows is suggestion until the sun clears the cliff in another hour.',
+    descriptionDusk:
+      'Dusk hits the Narrows early. The cliff face blocks the western sun and the shadow falls across the passage a full hour before sunset. The river beside you still catches light from the open sky above, a strip of copper between the dark road and the dark cliff, and the contrast makes the road darker than it is. The seventeen hash marks on the stone are in shadow. The passage ahead narrows to its tightest point and beyond it, the road opens to light that won\'t last. You walk faster. Everyone walks faster through the Narrows at dusk.',
     shortDescription:
       'The road squeezes between a sheer rock face to the west and the river to the east.',
     exits: {
@@ -610,6 +618,10 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       'A homestead that didn\'t make it. The farmhouse is a blackened skeleton — stone foundation, charred timbers, a chimney standing alone like a tombstone. The fire was years ago, but the smell lingers in the stone. A barn behind the house still stands, roof sagging but walls intact. The yard is overgrown with wild grass that reaches your waist. A swing set rusts in what was once a side yard, one swing still hanging, turning slowly in the wind.',
     descriptionNight:
       'The chimney is a black finger against the stars. The barn is a dark shape. The swing turns. You hear the chain creak. That\'s the only sound.',
+    descriptionDawn:
+      'Dawn at the burned farmhouse is kind in a way the place doesn\'t deserve. The first light catches the top of the chimney and moves down the stone, warming it to a color that could be mistaken for intact. The wild grass in the yard is heavy with dew, silver-tipped, bending under the weight of water that will be gone in an hour. The swing hangs still — no wind yet. The barn\'s sagging roof catches the light on its eastern slope. A meadowlark calls from the fence line, two notes, the second one higher, and for a moment the homestead sounds like what it was before it became what it is.',
+    descriptionDusk:
+      'Dusk at the burned farmhouse stretches the chimney\'s shadow across the yard until it reaches the swing set. The wild grass turns amber in the low light, waist-high, moving in the evening breeze like a slow tide. The barn\'s open door is a dark rectangle. The swing turns, chain catching the last light, one bright line in a composition of shadow. The smell of char is fainter in the cool air, replaced by the green smell of the grass and the mineral smell of cooling stone. A child lived here. The bike is somewhere in the grass. The light is leaving.',
     shortDescription:
       'A homestead that didn\'t make it.',
     exits: {
@@ -706,6 +718,10 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       'The trail follows the river through a corridor of towering cottonwood trees, their canopy so dense the light filters down in green-gold shafts. The river runs beside you, wide and slow in this section, with deep pools where the current eddies against fallen logs. The air is cooler here, ten degrees below the open road. Birdsong. Actual birdsong. A woodpecker hammers somewhere upstream. For fifty yards, you could forget what the world has become.',
     descriptionNight:
       'The cottonwoods are cathedral columns in the dark. The river reflects starlight in broken silver. The birdsong is gone, replaced by the chirp of crickets and the occasional splash of a fish. It\'s peaceful. The kind of peaceful that makes you nervous.',
+    descriptionDawn:
+      'Dawn in the cottonwood stretch is filtered through a thousand leaves into a light that is more gold than white. The river runs slow and the steam rising from it catches the shafts and holds them, the corridor filling with a luminous haze that smells of water and bark and the green chemistry of living wood. The woodpecker starts up. Then the jays. Then a cascade of smaller voices you don\'t have names for. The world sounds like it\'s waking up on purpose, one species at a time, and you are standing in the middle of something that is not about you and is better for it.',
+    descriptionDusk:
+      'Dusk in the cottonwood stretch is a slow dimming — the canopy holds the last light above while the trail below goes to shadow, the river turning from green-gold to a dark mirror that reflects the lit branches overhead. The birdsong thins, the woodpecker going silent first, then the jays, until only the water sound remains and the occasional splash of a fish feeding in the shallows. The temperature drops and the air carries the smell of the river more strongly, mineral and clean. The deep pools go black. You could rest here. You could forget, here, for a few minutes, the weight of what is behind you and ahead of you.',
     shortDescription:
       'The trail follows the river through a corridor of towering cottonwood trees, their canopy so dense the light filters down in green-gold shafts.',
     exits: {
@@ -976,6 +992,8 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       'A secluded bend in the river, screened from the road by a stand of willows. The water is deep here — a pool carved by centuries of current against a rock shelf. The surface is dark and still except where insects dimple it. Someone has built a rough bench from a split log. A forked stick for holding a fishing line is driven into the bank. This is someone\'s secret spot. Or it was.',
     descriptionNight:
       'The willows form a curtain. The pool is black glass. An owl calls from across the river. This might be the most peaceful place in the Four Corners.',
+    descriptionDawn:
+      'Dawn at the fishing hole comes through the willow curtain in thin bright lines — the branches filter the early light into a pattern that moves on the pool surface like something written in a language you almost read. The water is dark and still except where an insect touches it, each dimple spreading a ring of gold. The split-log bench is wet with dew. The forked stick casts a shadow across the bank that reaches the water\'s edge. A heron stands in the shallows downstream, motionless, one leg lifted, waiting with a patience that predates everything.',
     shortDescription:
       'A secluded bend in the river, screened from the road by a stand of willows.',
     exits: {

@@ -2014,6 +2014,44 @@ export const NPCS: Record<string, RichNPC> = {
     ],
   },
 
+  leatherworker_vin: {
+    id: 'leatherworker_vin',
+    name: 'Vin',
+    description:
+      'A broad man with hands like slabs of oak — scarred, stained dark from years of tanning chemicals, and improbably precise. He works leather the way a surgeon works tissue: deliberate, unhurried, certain. He learned the trade from YouTube tutorials before the internet died, which he will tell you about with the exact tone of someone who finds the apocalypse personally inconvenient. His stall smells of hide, neat\'s-foot oil, and woodsmoke.',
+    dialogue:
+      "I make things that keep you alive. Belts that don't snap when you're climbing. Holsters that let you draw without thinking about drawing. Vests with steel between the layers. I don't make fashion. You want fashion, find someone who remembers what that was. You want something that works, tell me what you need and bring me something to trade.",
+    faction: 'drifters',
+    isNamed: true,
+    zone: 'crossroads',
+    spawnChance: 0.70,
+    dispositionRoll: { friendly: 0.15, neutral: 0.55, wary: 0.25, hostile: 0.05 },
+    activityPool: [
+      {
+        activity: 'drives an awl through a belt blank, his massive hands steady as a surgeon\'s. He doesn\'t look up.',
+        weight: 3,
+      },
+      {
+        activity: 'is fitting a holster to a customer\'s hip, adjusting the angle, testing the draw. \'Pull. Again. Faster. Good.\'',
+        weight: 2,
+      },
+      {
+        activity: 'is cutting leather with a curved knife in long, confident strokes, the hide peeling apart like it was meant to',
+        weight: 2,
+        timeRestrict: ['day'],
+      },
+      {
+        activity: 'is stitching a vest panel with waxed thread, each stitch placed with the mechanical precision of someone who has sewn ten thousand stitches and remembers every one',
+        weight: 2,
+      },
+      {
+        activity: 'stands at the edge of his stall, arms folded, watching the market with the quiet attention of someone who reads people the way he reads leather — by the grain',
+        weight: 1,
+        timeRestrict: ['dusk', 'night'],
+      },
+    ],
+  },
+
   water_attendant: {
     id: 'water_attendant',
     name: 'Water Attendant',

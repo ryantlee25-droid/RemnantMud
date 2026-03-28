@@ -141,9 +141,7 @@ export function playerAttack(
   if (enemyDefeated) {
     messages.push(msg(`${enemy.name} collapses. Silence.`))
     loot = rollLoot(enemy)
-    if (loot.length > 0) {
-      messages.push(msg(`You search the remains and find something.`, 'narrative'))
-    }
+    // Loot message is handled by the combat action handler with resolved item names
   } else {
     // Show rough HP indicator instead of exact numbers
     messages.push(msg(`The ${enemy.name} looks ${enemyHpIndicator(newEnemyHp, enemy.maxHp)}.`))

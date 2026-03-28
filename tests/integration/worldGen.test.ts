@@ -1,9 +1,9 @@
 // ============================================================
-// Integration tests for lib/worldGen.ts
+// Integration tests for static world data (data/rooms)
 // ============================================================
 
 import { describe, it, expect } from 'vitest'
-import { generateSeed, generateWorld } from '@/lib/worldGen'
+import { ALL_ROOMS } from '@/data/rooms/index'
 import type { Room, Direction, ZoneType } from '@/types/game'
 
 const DIRECTIONS: Direction[] = ['north', 'south', 'east', 'west', 'up', 'down']
@@ -61,124 +61,23 @@ function bfs(startId: string, roomMap: Map<string, Room>): Set<string> {
 }
 
 // ------------------------------------------------------------
-// 1. generateSeed
-// ------------------------------------------------------------
-
-describe('generateSeed', () => {
-  it('returns a number', () => {
-    const seed = generateSeed()
-    expect(typeof seed).toBe('number')
-  })
-
-  it('returns an integer', () => {
-    const seed = generateSeed()
-    expect(Number.isInteger(seed)).toBe(true)
-  })
-
-  it('returns a value in the 31-bit unsigned range [0, 2_147_483_646]', () => {
-    for (let i = 0; i < 100; i++) {
-      const seed = generateSeed()
-      expect(seed).toBeGreaterThanOrEqual(0)
-      expect(seed).toBeLessThan(2_147_483_647)
-    }
-  })
-
-  it('different calls return different values (probabilistic)', () => {
-    const seeds = new Set<number>()
-    for (let i = 0; i < 50; i++) {
-      seeds.add(generateSeed())
-    }
-    // With 50 draws from ~2 billion range, collisions are astronomically unlikely
-    expect(seeds.size).toBeGreaterThan(1)
-  })
-})
-
-// ------------------------------------------------------------
-// 2. generateWorld determinism
-// ------------------------------------------------------------
-
-describe('generateWorld determinism', () => {
-  it('produces identical output when called with the same seed 3 times', () => {
-    const seed = 123456
-
-    const run1 = generateWorld(seed)
-    const run2 = generateWorld(seed)
-    const run3 = generateWorld(seed)
-
-    // Same number of rooms
-    expect(run1.length).toBe(run2.length)
-    expect(run2.length).toBe(run3.length)
-
-    // Same room IDs in the same order
-    const ids1 = run1.map((r) => r.id)
-    const ids2 = run2.map((r) => r.id)
-    const ids3 = run3.map((r) => r.id)
-    expect(ids1).toEqual(ids2)
-    expect(ids2).toEqual(ids3)
-
-    // Same exits for every room
-    for (let i = 0; i < run1.length; i++) {
-      expect(run1[i]!.exits).toEqual(run2[i]!.exits)
-      expect(run2[i]!.exits).toEqual(run3[i]!.exits)
-    }
-
-    // Same names
-    const names1 = run1.map((r) => r.name)
-    const names2 = run2.map((r) => r.name)
-    const names3 = run3.map((r) => r.name)
-    expect(names1).toEqual(names2)
-    expect(names2).toEqual(names3)
-
-    // Same descriptions
-    const descs1 = run1.map((r) => r.description)
-    const descs2 = run2.map((r) => r.description)
-    const descs3 = run3.map((r) => r.description)
-    expect(descs1).toEqual(descs2)
-    expect(descs2).toEqual(descs3)
-
-    // Same zones
-    const zones1 = run1.map((r) => r.zone)
-    const zones2 = run2.map((r) => r.zone)
-    const zones3 = run3.map((r) => r.zone)
-    expect(zones1).toEqual(zones2)
-    expect(zones2).toEqual(zones3)
-
-    // Same difficulty values
-    const diffs1 = run1.map((r) => r.difficulty)
-    const diffs2 = run2.map((r) => r.difficulty)
-    const diffs3 = run3.map((r) => r.difficulty)
-    expect(diffs1).toEqual(diffs2)
-    expect(diffs2).toEqual(diffs3)
-  })
-})
-
-// ------------------------------------------------------------
-// 3. Room count
+// 1. Room count
 // ------------------------------------------------------------
 
 describe('room count', () => {
   it('loads at least 100 rooms from static data (12 hand-crafted zones)', () => {
-    const rooms = generateWorld(42)
     // Static world has hand-crafted rooms across 12 zones
-    expect(rooms.length).toBeGreaterThanOrEqual(100)
-  })
-
-  it('loads rooms consistently from static data', () => {
-    const rooms1 = generateWorld(42)
-    const rooms2 = generateWorld(99)
-    // Static world returns the same rooms regardless of seed
-    expect(rooms1.length).toBe(rooms2.length)
+    expect(ALL_ROOMS.length).toBeGreaterThanOrEqual(100)
   })
 })
 
 // ------------------------------------------------------------
-// 4. Zone coverage
+// 2. Zone coverage
 // ------------------------------------------------------------
 
 describe('zone coverage', () => {
   it('every zone type appears in the static world', () => {
-    const rooms = generateWorld(999)
-    const zonesPresent = new Set(rooms.map((r) => r.zone))
+    const zonesPresent = new Set(ALL_ROOMS.map((r) => r.zone))
 
     for (const zone of ZONE_ORDER) {
       expect(zonesPresent.has(zone)).toBe(true)
@@ -186,26 +85,24 @@ describe('zone coverage', () => {
   })
 
   it('each zone has at least 1 room in the static world', () => {
-    const rooms = generateWorld(999)
     for (const zone of ZONE_ORDER) {
-      const count = rooms.filter((r) => r.zone === zone).length
+      const count = ALL_ROOMS.filter((r) => r.zone === zone).length
       expect(count).toBeGreaterThanOrEqual(1)
     }
   })
 })
 
 // ------------------------------------------------------------
-// 5. Exit bidirectionality
+// 3. Exit bidirectionality
 // ------------------------------------------------------------
 
 describe('exit bidirectionality', () => {
   it('exit targets point to valid rooms', () => {
-    const rooms = generateWorld(7777)
-    const roomMap = toMap(rooms)
+    const roomMap = toMap(ALL_ROOMS)
 
     let validExitCount = 0
     let invalidExitCount = 0
-    for (const room of rooms) {
+    for (const room of ALL_ROOMS) {
       for (const dir of DIRECTIONS) {
         const targetId = room.exits[dir]
         if (targetId === undefined) continue
@@ -224,13 +121,12 @@ describe('exit bidirectionality', () => {
 })
 
 // ------------------------------------------------------------
-// 6. Starting room
+// 4. Starting room
 // ------------------------------------------------------------
 
 describe('starting room', () => {
   it('the first room in the array is the start room (Highway Junction)', () => {
-    const rooms = generateWorld(12345)
-    const startRoom = rooms[0]!
+    const startRoom = ALL_ROOMS[0]!
 
     expect(startRoom).toBeDefined()
     expect(startRoom.name).toBe('Highway Junction — The Approach')
@@ -238,26 +134,22 @@ describe('starting room', () => {
   })
 
   it('start room id follows the cr_01_approach pattern', () => {
-    const rooms = generateWorld(12345)
-    expect(rooms[0]!.id).toBe('cr_01_approach')
+    expect(ALL_ROOMS[0]!.id).toBe('cr_01_approach')
   })
 
   it('start room has required properties', () => {
-    const rooms = generateWorld(12345)
-    expect(rooms[0]!.visited).toBe(false)
-    expect(rooms[0]!.difficulty).toBeGreaterThan(0)
+    expect(ALL_ROOMS[0]!.visited).toBe(false)
+    expect(ALL_ROOMS[0]!.difficulty).toBeGreaterThan(0)
   })
 })
 
 // ------------------------------------------------------------
-// 7. Room structure
+// 5. Room structure
 // ------------------------------------------------------------
 
 describe('room structure', () => {
   it('every room has all required properties with correct types', () => {
-    const rooms = generateWorld(54321)
-
-    for (const room of rooms) {
+    for (const room of ALL_ROOMS) {
       // id: string
       expect(typeof room.id).toBe('string')
       expect(room.id.length).toBeGreaterThan(0)
@@ -305,12 +197,11 @@ describe('room structure', () => {
   })
 
   it('most exit values point to valid room IDs', () => {
-    const rooms = generateWorld(54321)
-    const roomMap = toMap(rooms)
+    const roomMap = toMap(ALL_ROOMS)
 
     let totalExits = 0
     let validExits = 0
-    for (const room of rooms) {
+    for (const room of ALL_ROOMS) {
       for (const dir of DIRECTIONS) {
         const targetId = room.exits[dir]
         if (targetId !== undefined) {
@@ -327,14 +218,13 @@ describe('room structure', () => {
 })
 
 // ------------------------------------------------------------
-// 8. Graph connectivity (BFS)
+// 6. Graph connectivity (BFS)
 // ------------------------------------------------------------
 
 describe('graph connectivity', () => {
   it('from the start room, BFS can reach some rooms', () => {
-    const rooms = generateWorld(88888)
-    const roomMap = toMap(rooms)
-    const startId = rooms[0]!.id
+    const roomMap = toMap(ALL_ROOMS)
+    const startId = ALL_ROOMS[0]!.id
 
     const reachable = bfs(startId, roomMap)
 
@@ -344,63 +234,33 @@ describe('graph connectivity', () => {
 
   it('from the start room, BFS can reach a meaningful portion of rooms', () => {
     // Not all rooms are connected yet, but we should be able to reach a significant portion
-    const rooms = generateWorld(88888)
-    const roomMap = toMap(rooms)
-    const startId = rooms[0]!.id
+    const roomMap = toMap(ALL_ROOMS)
+    const startId = ALL_ROOMS[0]!.id
 
     const reachable = bfs(startId, roomMap)
 
     // Expect to reach at least 20% of rooms (connectivity is being built out)
-    expect(reachable.size).toBeGreaterThanOrEqual(Math.floor(rooms.length * 0.2))
+    expect(reachable.size).toBeGreaterThanOrEqual(Math.floor(ALL_ROOMS.length * 0.2))
   })
 })
 
 // ------------------------------------------------------------
-// 9. Different seeds produce different worlds
-// ------------------------------------------------------------
-
-describe('seeded reproducibility — static world', () => {
-  it('all seeds produce identical worlds (static data)', () => {
-    const worldA = generateWorld(1)
-    const worldB = generateWorld(2)
-
-    const namesA = worldA.map((r) => r.name)
-    const namesB = worldB.map((r) => r.name)
-
-    // Static world: all seeds produce the same rooms in the same order
-    expect(namesA).toEqual(namesB)
-  })
-
-  it('all seeds produce identical room counts', () => {
-    // Static world: counts are always the same regardless of seed
-    const counts = new Set<number>()
-    for (let seed = 1; seed <= 5; seed++) {
-      counts.add(generateWorld(seed).length)
-    }
-    // All seeds should produce the same count
-    expect(counts.size).toBe(1)
-  })
-})
-
-// ------------------------------------------------------------
-// 10. No duplicate room IDs
+// 7. No duplicate room IDs
 // ------------------------------------------------------------
 
 describe('no duplicate room IDs', () => {
   it('every room ID in the world is unique', () => {
-    const rooms = generateWorld(77777)
-    const ids = rooms.map((r) => r.id)
+    const ids = ALL_ROOMS.map((r) => r.id)
     const uniqueIds = new Set(ids)
 
     expect(uniqueIds.size).toBe(ids.length)
   })
 
   it('room IDs follow the expected pattern: {zone_prefix}_{number}_{name}', () => {
-    const rooms = generateWorld(77777)
     // Static world uses patterns like: cr_01_approach, cr_02_interior, rr_10b_bus_interior, rr_21_motel_room7, etc.
     const pattern = /^[a-z]+_\d+[a-z]?_[a-z0-9_]+$/
 
-    for (const room of rooms) {
+    for (const room of ALL_ROOMS) {
       expect(room.id).toMatch(pattern)
     }
   })

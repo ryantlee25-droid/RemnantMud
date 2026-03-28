@@ -222,8 +222,21 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
       const newItems = [...updatedRoom.items, ...playerResult.loot]
       const roomWithLoot: Room = { ...updatedRoom, items: newItems }
       engine._setState({ currentRoom: roomWithLoot })
-      const lootNames = playerResult.loot.map((id) => getItem(id)?.name ?? id).join(', ')
-      engine._appendMessages([msg(`The ${combatState.enemy.name} dropped: ${lootNames}.`)])
+      // Group duplicate loot for display: "bandages, 9mm rounds (x3)"
+      const counts = new Map<string, { name: string; qty: number }>()
+      for (const id of playerResult.loot) {
+        const existing = counts.get(id)
+        if (existing) {
+          existing.qty += 1
+        } else {
+          counts.set(id, { name: getItem(id)?.name ?? id, qty: 1 })
+        }
+      }
+      const parts: string[] = []
+      for (const { name, qty } of counts.values()) {
+        parts.push(qty > 1 ? `${name} (x${qty})` : name)
+      }
+      engine._appendMessages([msg(`You search the remains and find: ${parts.join(', ')}.`)])
       await updateRoomItems(currentRoom.id, player.id, newItems)
     }
 

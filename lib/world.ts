@@ -4,7 +4,7 @@
 
 import type { Room, Exit, Direction } from '@/types/game'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
-import { generateWorld } from '@/lib/worldGen'
+import { ALL_ROOMS } from '@/data/rooms/index'
 
 // ------------------------------------------------------------
 // Module-level in-memory cache (per browser session)
@@ -328,6 +328,5 @@ export function clearRoomCache(): void {
 // ------------------------------------------------------------
 
 export function getRoomDefinition(roomId: string): Room | null {
-  const allRooms = generateWorld(0)
-  return allRooms.find(r => r.id === roomId) ?? null
+  return ALL_ROOMS.find(r => r.id === roomId) ?? null
 }

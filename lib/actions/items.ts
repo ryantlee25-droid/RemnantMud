@@ -157,8 +157,8 @@ export async function handleEquip(engine: EngineCore, noun: string | undefined):
 
   await equipItem(player.id, invItem.itemId)
   const updatedInventory = await getInventory(player.id)
+  engine._appendMessages([msg(`You equip the ${invItem.item.name}.`, 'system')])
   engine._setState({ inventory: updatedInventory })
-  engine._appendMessages([systemMsg(`You equip the ${invItem.item.name}.`)])
 }
 
 export async function handleUnequip(engine: EngineCore, noun: string | undefined): Promise<void> {
@@ -182,8 +182,8 @@ export async function handleUnequip(engine: EngineCore, noun: string | undefined
 
   await unequipItem(player.id, invItem.itemId)
   const updatedInventory = await getInventory(player.id)
+  engine._appendMessages([msg(`You remove the ${invItem.item.name}.`, 'system')])
   engine._setState({ inventory: updatedInventory })
-  engine._appendMessages([systemMsg(`You remove the ${invItem.item.name}.`)])
 }
 
 export async function handleUse(engine: EngineCore, noun: string | undefined): Promise<void> {

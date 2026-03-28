@@ -23,7 +23,7 @@ import { CLASS_DEFINITIONS } from '@/types/game'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 import { getRoom, markVisited, persistWorld } from '@/lib/world'
 import { getInventory } from '@/lib/inventory'
-import { generateWorld, generateSeed } from '@/lib/worldGen'
+import { ALL_ROOMS } from '@/data/rooms/index'
 import { quantityRoll, computePressure, pressureModifier } from '@/lib/spawn'
 import type { EngineCore } from '@/lib/actions/types'
 import { handleMove, handleLook, exitsLine, npcsLine, enemiesLine } from '@/lib/actions/movement'
@@ -332,8 +332,8 @@ export class GameEngine implements EngineCore {
     if (!user) throw new Error('Not authenticated')
 
     const maxHp = 8 + (stats.vigor - 2) * 2
-    const seed = generateSeed()
-    const rooms = generateWorld(seed)
+    const seed = Math.floor(Math.random() * 2_147_483_647)
+    const rooms = ALL_ROOMS
     const startRoomId = rooms[0]!.id
 
     const playerRow = {

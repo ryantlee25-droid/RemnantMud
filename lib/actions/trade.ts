@@ -8,6 +8,7 @@ import type { EngineCore } from './types'
 import { getNPC } from '@/data/npcs'
 import { getItem } from '@/data/items'
 import { getInventory, addItem, removeItem } from '@/lib/inventory'
+import { rt } from '@/lib/richText'
 
 // ------------------------------------------------------------
 // Local message helpers
@@ -109,16 +110,16 @@ export async function handleTrade(engine: EngineCore, noun: string | undefined):
   const npc = getNPC(trader.npcId)
   const npcName = npc?.name ?? 'Trader'
 
-  const lines: string[] = [`${npcName}'s wares:`]
+  const lines: string[] = [`${rt.npc(npcName)}'s wares:`]
 
   for (const itemId of trader.tradeInventory) {
     const item = getItem(itemId)
     if (!item) continue
-    lines.push(`  ${item.name} — ${item.value} rounds`)
+    lines.push(`  ${rt.item(item.name)} — ${rt.currency(`${item.value} rounds`)}`)
   }
 
   const playerRounds = getPlayerCurrency(engine)
-  lines.push(`\nYou have ${playerRounds} .22 LR rounds.`)
+  lines.push(`\nYou have ${rt.currency(`${playerRounds} .22 LR rounds`)}.`)
   lines.push(`Type "buy <item>" to purchase or "sell <item>" to sell.`)
 
   engine._appendMessages([systemMsg(lines.join('\n'))])
@@ -158,7 +159,7 @@ export async function handleBuy(engine: EngineCore, noun: string | undefined): P
   if (!matchedItemId) {
     const npc = getNPC(trader.npcId)
     const npcName = npc?.name ?? 'They'
-    engine._appendMessages([errorMsg(`${npcName} doesn't sell that. Type "trade" to see their wares.`)])
+    engine._appendMessages([errorMsg(`${rt.npc(npcName)} doesn't sell that. Type "trade" to see their wares.`)])
     return
   }
 
@@ -167,7 +168,7 @@ export async function handleBuy(engine: EngineCore, noun: string | undefined): P
   const playerRounds = getPlayerCurrency(engine)
 
   if (playerRounds < price) {
-    engine._appendMessages([errorMsg(`You can't afford the ${item.name}. It costs ${price} rounds and you have ${playerRounds}.`)])
+    engine._appendMessages([errorMsg(`You can't afford the ${rt.item(item.name)}. It costs ${rt.currency(`${price} rounds`)} and you have ${rt.currency(`${playerRounds}`)}.`)])
     return
   }
 
@@ -178,7 +179,7 @@ export async function handleBuy(engine: EngineCore, noun: string | undefined): P
   const inventory = await getInventory(player.id)
   engine._setState({ inventory })
 
-  engine._appendMessages([msg(`You buy the ${item.name} for ${price} rounds.`)])
+  engine._appendMessages([msg(`You buy the ${rt.item(item.name)} for ${rt.currency(`${price} rounds`)}.`)])
 }
 
 /**
@@ -219,7 +220,7 @@ export async function handleSell(engine: EngineCore, noun: string | undefined): 
   const sellPrice = Math.floor(invItem.item.value / 2)
 
   if (sellPrice <= 0) {
-    engine._appendMessages([errorMsg(`The ${invItem.item.name} isn't worth anything to them.`)])
+    engine._appendMessages([errorMsg(`The ${rt.item(invItem.item.name)} isn't worth anything to them.`)])
     return
   }
 
@@ -232,5 +233,5 @@ export async function handleSell(engine: EngineCore, noun: string | undefined): 
   const updatedInventory = await getInventory(player.id)
   engine._setState({ inventory: updatedInventory })
 
-  engine._appendMessages([msg(`You sell the ${invItem.item.name} for ${sellPrice} rounds.`)])
+  engine._appendMessages([msg(`You sell the ${rt.item(invItem.item.name)} for ${rt.currency(`${sellPrice} rounds`)}.`)])
 }

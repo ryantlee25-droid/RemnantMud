@@ -4,8 +4,68 @@
 // Terminal.tsx — Scrolling message log
 // ============================================================
 
-import { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import type { GameMessage } from '@/types/game'
+
+// ------------------------------------------------------------
+// Rich-text tag parser — turns <item>...</item> etc. into
+// colored <span> elements while leaving plain text untouched.
+// ------------------------------------------------------------
+
+const TAG_NAMES = ['item', 'npc', 'enemy', 'exit', 'keyword', 'currency'] as const
+type RichTag = (typeof TAG_NAMES)[number]
+
+const TAG_COLOR: Record<RichTag, string> = {
+  item:     'text-cyan-300',
+  npc:      'text-green-400',
+  enemy:    'text-red-400',
+  exit:     'text-yellow-300',
+  keyword:  'text-cyan-400',
+  currency: 'text-yellow-400',
+}
+
+const TAG_PATTERN = new RegExp(
+  `<(${TAG_NAMES.join('|')})>(.*?)<\\/\\1>`,
+  'g',
+)
+
+function parseRichText(text: string): React.ReactNode {
+  const nodes: React.ReactNode[] = []
+  let lastIndex = 0
+  let key = 0
+
+  TAG_PATTERN.lastIndex = 0            // reset stateful regex
+  let match = TAG_PATTERN.exec(text)
+
+  while (match !== null) {
+    // Push any plain text before this match
+    if (match.index > lastIndex) {
+      nodes.push(text.slice(lastIndex, match.index))
+    }
+
+    const tag = match[1] as RichTag
+    const inner = match[2]
+    nodes.push(
+      <span key={key++} className={TAG_COLOR[tag]}>{inner}</span>,
+    )
+
+    lastIndex = match.index + match[0].length
+    match = TAG_PATTERN.exec(text)
+  }
+
+  // Trailing plain text (or the entire string if no tags matched)
+  if (lastIndex < text.length) {
+    nodes.push(text.slice(lastIndex))
+  }
+
+  // Fast path: no tags found — return the original string to avoid
+  // wrapping it in an unnecessary fragment / array.
+  if (nodes.length === 1 && typeof nodes[0] === 'string') {
+    return nodes[0]
+  }
+
+  return nodes
+}
 
 interface TerminalProps {
   messages: GameMessage[]
@@ -33,7 +93,7 @@ export default function Terminal({ messages }: TerminalProps) {
     <div className="flex-1 overflow-y-auto bg-black font-mono text-sm leading-relaxed px-4 py-3 select-text">
       {messages.map((m) => (
         <div key={m.id} className={`${messageColor(m.type)} mb-0.5`}>
-          {m.text}
+          {parseRichText(m.text)}
         </div>
       ))}
       <div ref={bottomRef} />

@@ -5,6 +5,7 @@
 import type { GameMessage } from '@/types/game'
 import type { EngineCore } from './types'
 import { statModifier } from '@/lib/dice'
+import { rt } from '@/lib/richText'
 
 // ------------------------------------------------------------
 // Local message helpers
@@ -64,7 +65,7 @@ export async function handleInventory(engine: EngineCore): Promise<void> {
   const lines = inventory.map((ii) => {
     const equipped = ii.equipped ? ' [equipped]' : ''
     const qty = ii.quantity > 1 ? ` x${ii.quantity}` : ''
-    return `${ii.item.name}${qty}${equipped}`
+    return `${rt.item(ii.item.name)}${qty}${equipped}`
   })
 
   engine._appendMessages([

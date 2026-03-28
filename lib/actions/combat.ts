@@ -16,6 +16,7 @@ import { getItem } from '@/data/items'
 import { getEnemy } from '@/data/enemies'
 import { updateRoomItems, updateRoomFlags } from '@/lib/world'
 import { fearCheck } from '@/lib/fear'
+import { rt } from '@/lib/richText'
 
 // ------------------------------------------------------------
 // Local message helpers
@@ -86,8 +87,8 @@ export async function checkNoiseEncounter(engine: EngineCore, isLoud: boolean): 
   engine._setState({ combatState: combatWithRoom })
 
   const initLine = combatWithRoom.playerGoesFirst
-    ? `A ${enemy.name} emerges from the shadows. You react first.`
-    : `A ${enemy.name} emerges from the shadows. It's already moving.`
+    ? `A ${rt.enemy(enemy.name)} emerges from the shadows. You react first.`
+    : `A ${rt.enemy(enemy.name)} emerges from the shadows. It's already moving.`
   engine._appendMessages([combatMsg(initLine)])
 
   if (!combatWithRoom.playerGoesFirst) {
@@ -165,8 +166,8 @@ export async function handleAttack(engine: EngineCore, noun: string | undefined)
   engine._setState({ combatState: combatWithRoom })
 
   const initMsg = combatWithRoom.playerGoesFirst
-    ? `Combat begins. You face the ${enemy.name}. You move first.`
-    : `Combat begins. You face the ${enemy.name}. It moves first.`
+    ? `Combat begins. You face the ${rt.enemy(enemy.name)}. You move first.`
+    : `Combat begins. You face the ${rt.enemy(enemy.name)}. It moves first.`
   engine._appendMessages([combatMsg(initMsg)])
 
   if (!combatWithRoom.playerGoesFirst) {
@@ -186,7 +187,7 @@ export async function handleAttack(engine: EngineCore, noun: string | undefined)
 
   // Display weapon hint
   if (equippedWeapon) {
-    engine._appendMessages([systemMsg(`Fighting with ${equippedWeapon.item.name}.`)])
+    engine._appendMessages([systemMsg(`Fighting with ${rt.item(equippedWeapon.item.name)}.`)])
   }
 }
 
@@ -248,7 +249,7 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
       }
       const parts: string[] = []
       for (const { name, qty } of counts.values()) {
-        parts.push(qty > 1 ? `${name} (x${qty})` : name)
+        parts.push(qty > 1 ? `${rt.item(name)} (x${qty})` : rt.item(name))
       }
       engine._appendMessages([msg(`You search the remains and find: ${parts.join(', ')}.`)])
       await updateRoomItems(currentRoom.id, player.id, newItems)
@@ -282,7 +283,7 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
       engine._setState({
         combatState: { ...nextCombat, additionalEnemies: remaining, lastRoomId: afterPlayer.lastRoomId },
       })
-      engine._appendMessages([combatMsg(`Another ${nextEnemy.name} closes in.`)])
+      engine._appendMessages([combatMsg(`Another ${rt.enemy(nextEnemy.name)} closes in.`)])
     } else {
       // Combat fully over — check if ranged weapon noise draws more Hollow
       const isRanged = equippedWeapon?.item.description

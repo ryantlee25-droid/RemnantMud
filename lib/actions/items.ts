@@ -15,6 +15,7 @@ import {
 import { updateRoomItems, updateRoomFlags } from '@/lib/world'
 import { getItem } from '@/data/items'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
+import { rt } from '@/lib/richText'
 
 // ------------------------------------------------------------
 // Stash loader — reads player_stash rows and maps to StashItem[]
@@ -97,7 +98,7 @@ export async function handleTake(engine: EngineCore, noun: string | undefined): 
   const updatedRoom: Room = { ...currentRoom, items: newItems }
   engine._setState({ currentRoom: updatedRoom })
 
-  engine._appendMessages([msg(`You pick up the ${item.name}.`, 'system')])
+  engine._appendMessages([msg(`You pick up the ${rt.item(item.name)}.`, 'system')])
 
   // W-3: Record depletion for itemSpawns items so they don't immediately re-spawn
   const isSpawnedItem = currentRoom.itemSpawns?.some(e => e.entityId === itemId) ?? false
@@ -155,7 +156,7 @@ export async function handleDrop(engine: EngineCore, noun: string | undefined): 
   const updatedRoom: Room = { ...currentRoom, items: newItems }
   engine._setState({ currentRoom: updatedRoom })
 
-  engine._appendMessages([msg(`You drop the ${invItem.item.name}.`, 'system')])
+  engine._appendMessages([msg(`You drop the ${rt.item(invItem.item.name)}.`, 'system')])
 
   await Promise.all([
     removeItem(player.id, invItem.itemId),
@@ -192,7 +193,7 @@ export async function handleEquip(engine: EngineCore, noun: string | undefined):
 
   await equipItem(player.id, invItem.itemId)
   const updatedInventory = await getInventory(player.id)
-  engine._appendMessages([msg(`You equip the ${invItem.item.name}.`, 'system')])
+  engine._appendMessages([msg(`You equip the ${rt.item(invItem.item.name)}.`, 'system')])
   engine._setState({ inventory: updatedInventory })
 }
 
@@ -217,7 +218,7 @@ export async function handleUnequip(engine: EngineCore, noun: string | undefined
 
   await unequipItem(player.id, invItem.itemId)
   const updatedInventory = await getInventory(player.id)
-  engine._appendMessages([msg(`You remove the ${invItem.item.name}.`, 'system')])
+  engine._appendMessages([msg(`You remove the ${rt.item(invItem.item.name)}.`, 'system')])
   engine._setState({ inventory: updatedInventory })
 }
 
@@ -244,17 +245,17 @@ export async function handleUse(engine: EngineCore, noun: string | undefined): P
   if (invItem.item.type === 'lore') {
     if (invItem.item.loreText) {
       engine._appendMessages([
-        msg(`You read the ${invItem.item.name}:`),
+        msg(`You read the ${rt.item(invItem.item.name)}:`),
         msg(invItem.item.loreText),
       ])
     } else {
-      engine._appendMessages([msg(`The ${invItem.item.name} is blank or illegible.`)])
+      engine._appendMessages([msg(`The ${rt.item(invItem.item.name)} is blank or illegible.`)])
     }
     return
   }
 
   if (invItem.item.type !== 'consumable') {
-    engine._appendMessages([errorMsg(`You can't use the ${invItem.item.name} like that.`)])
+    engine._appendMessages([errorMsg(`You can't use the ${rt.item(invItem.item.name)} like that.`)])
     return
   }
 
@@ -265,7 +266,7 @@ export async function handleUse(engine: EngineCore, noun: string | undefined): P
   const messages: GameMessage[] = []
 
   if (healing > 0) {
-    messages.push(msg(`You use the ${invItem.item.name}. +${healing} HP. [${newHp}/${player.maxHp}]`, 'system'))
+    messages.push(msg(`You use the ${rt.item(invItem.item.name)}. +${healing} HP. [${newHp}/${player.maxHp}]`, 'system'))
   }
 
   // TODO: Make stat bonuses temporary (e.g., lasting ~20 actions) by tracking
@@ -284,7 +285,7 @@ export async function handleUse(engine: EngineCore, noun: string | undefined): P
   }
 
   if (messages.length === 0) {
-    messages.push(msg(`You use the ${invItem.item.name}.`, 'system'))
+    messages.push(msg(`You use the ${rt.item(invItem.item.name)}.`, 'system'))
   }
 
   // Optimistic update
@@ -351,7 +352,7 @@ export async function handleStash(engine: EngineCore, noun: string | undefined):
   await removeItem(player.id, invItem.itemId)
 
   const item = invItem.item
-  engine._appendMessages([systemMsg(`You stash the ${item.name}. It will survive your death.`)])
+  engine._appendMessages([systemMsg(`You stash the ${rt.item(item.name)}. It will survive your death.`)])
 
   const [updatedInventory, updatedStash] = await Promise.all([
     getInventory(player.id),
@@ -403,7 +404,7 @@ export async function handleUnstash(engine: EngineCore, noun: string | undefined
 
   await addItem(player.id, matchingRow.item_id)
 
-  engine._appendMessages([systemMsg(`You retrieve the ${item.name} from your stash.`)])
+  engine._appendMessages([systemMsg(`You retrieve the ${rt.item(item.name)} from your stash.`)])
 
   const [updatedInventory, updatedStash] = await Promise.all([
     getInventory(player.id),
@@ -435,7 +436,7 @@ export async function handleStashList(engine: EngineCore): Promise<void> {
     const item = getItem(row.item_id)
     const name = item?.name ?? row.item_id
     const qty = row.quantity > 1 ? ` x${row.quantity}` : ''
-    lines.push(systemMsg(`  ${name}${qty}`))
+    lines.push(systemMsg(`  ${rt.item(name)}${qty}`))
   }
 
   engine._appendMessages(lines)
@@ -466,17 +467,17 @@ export async function handleRead(engine: EngineCore, noun: string | undefined): 
   }
 
   if (invItem.item.type !== 'lore') {
-    engine._appendMessages([errorMsg(`${invItem.item.name} isn't something you can read.`)])
+    engine._appendMessages([errorMsg(`${rt.item(invItem.item.name)} isn't something you can read.`)])
     return
   }
 
   if (invItem.item.loreText) {
     engine._appendMessages([
-      msg(`You read the ${invItem.item.name}:`),
+      msg(`You read the ${rt.item(invItem.item.name)}:`),
       msg(invItem.item.loreText),
     ])
   } else {
-    engine._appendMessages([msg(`The ${invItem.item.name} is blank or illegible.`)])
+    engine._appendMessages([msg(`The ${rt.item(invItem.item.name)} is blank or illegible.`)])
   }
 }
 
@@ -504,7 +505,7 @@ export async function handleJournal(engine: EngineCore): Promise<void> {
         ? ii.item.loreText.slice(0, 60) + '...'
         : ii.item.loreText
       : '(blank)'
-    lines.push(systemMsg(`  - ${ii.item.name}: ${preview}`))
+    lines.push(systemMsg(`  - ${rt.item(ii.item.name)}: ${preview}`))
   }
 
   engine._appendMessages(lines)

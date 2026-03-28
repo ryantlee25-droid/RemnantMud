@@ -9,6 +9,7 @@ import { findNpcTopic, getVisibleTopics } from '@/data/npcTopics'
 import { updateRoomFlags } from '@/lib/world'
 import { itemsLine } from './movement'
 import { getClassSkillBonus } from '@/lib/skillBonus'
+import { rt } from '@/lib/richText'
 
 // ------------------------------------------------------------
 // Local message helpers
@@ -114,7 +115,7 @@ export async function handleTalk(engine: EngineCore, noun: string | undefined): 
   if (disposition === 'hostile') {
     const hostileNpcName = npc.name
     engine._appendMessages([
-      msg(`${hostileNpcName} turns away, hand moving toward something at their belt. You're not welcome here.`),
+      msg(`${rt.npc(hostileNpcName)} turns away, hand moving toward something at their belt. You're not welcome here.`),
     ])
     return
   }
@@ -124,7 +125,7 @@ export async function handleTalk(engine: EngineCore, noun: string | undefined): 
     const topic = findNpcTopic(npcId, topicWord)
     if (!topic) {
       engine._appendMessages([
-        msg(`${npc.name} looks at you blankly. That's not something they have anything to say about.`),
+        msg(`${rt.npc(npc.name)} looks at you blankly. That's not something they have anything to say about.`),
       ])
       return
     }
@@ -134,7 +135,7 @@ export async function handleTalk(engine: EngineCore, noun: string | undefined): 
       const flags = player.questFlags ?? {}
       if (!flags[topic.requiresFlag]) {
         engine._appendMessages([
-          msg(`${npc.name} studies you for a moment, then shakes their head. "You don't know enough yet for that conversation."`),
+          msg(`${rt.npc(npc.name)} studies you for a moment, then shakes their head. "You don't know enough yet for that conversation."`),
         ])
         return
       }
@@ -145,7 +146,7 @@ export async function handleTalk(engine: EngineCore, noun: string | undefined): 
       const rep = player.factionReputation?.[topic.requiresRep.faction] ?? 0
       if (rep < topic.requiresRep.min) {
         engine._appendMessages([
-          msg(`${npc.name} regards you with suspicion. "We don't know each other well enough for that."`),
+          msg(`${rt.npc(npc.name)} regards you with suspicion. "We don't know each other well enough for that."`),
         ])
         return
       }
@@ -153,7 +154,7 @@ export async function handleTalk(engine: EngineCore, noun: string | undefined): 
 
     // Wary NPCs give topic responses reluctantly
     if (disposition === 'wary') {
-      messages.push(msg(`${npc.name} hesitates, then speaks in a low voice.`))
+      messages.push(msg(`${rt.npc(npc.name)} hesitates, then speaks in a low voice.`))
     }
 
     messages.push(msg(topic.response))
@@ -187,13 +188,13 @@ export async function handleTalk(engine: EngineCore, noun: string | undefined): 
   const dialogue = revenantLine ?? npc.dialogue
 
   if (disposition === 'wary') {
-    messages.push(msg(`${npc.name} doesn't meet your eyes. "${dialogue}"`))
+    messages.push(msg(`${rt.npc(npc.name)} doesn't meet your eyes. "${dialogue}"`))
     messages.push(msg(`They don't offer anything else.`))
   } else if (disposition === 'friendly') {
-    messages.push(msg(`"${dialogue}" \u2014 ${npc.name}`))
-    messages.push(msg(`${npc.name} seems willing to talk more if you have questions.`))
+    messages.push(msg(`"${dialogue}" \u2014 ${rt.npc(npc.name)}`))
+    messages.push(msg(`${rt.npc(npc.name)} seems willing to talk more if you have questions.`))
   } else {
-    messages.push(msg(`"${dialogue}" \u2014 ${npc.name}`))
+    messages.push(msg(`"${dialogue}" \u2014 ${rt.npc(npc.name)}`))
   }
 
   // Show available topics for named NPCs
@@ -201,7 +202,7 @@ export async function handleTalk(engine: EngineCore, noun: string | undefined): 
   const factionRep = player.factionReputation ?? {}
   const visibleTopics = getVisibleTopics(npcId, questFlags, factionRep)
   if (visibleTopics.length > 0) {
-    const topicList = visibleTopics.map(t => `[${t}]`).join(' ')
+    const topicList = visibleTopics.map(t => `[${rt.keyword(t)}]`).join(' ')
     messages.push(systemMsg(`Topics: ${topicList}`))
   }
 

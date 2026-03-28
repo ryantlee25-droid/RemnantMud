@@ -11,6 +11,7 @@ import { getNPC } from '@/data/npcs'
 import { getClassSkillBonus } from '@/lib/skillBonus'
 import { getTimeOfDay } from '@/lib/gameEngine'
 import { fearCheck } from '@/lib/fear'
+import { rt } from '@/lib/richText'
 
 // ------------------------------------------------------------
 // Map skill to player stat + class bonus
@@ -81,13 +82,13 @@ function reputationLabel(level: number): string {
 export function exitsLine(room: Room): string {
   const exits = getExits(room)
   if (exits.length === 0) return 'There are no obvious exits.'
-  return `Exits: ${exits.map((e) => e.direction).join(', ')}.`
+  return `Exits: ${exits.map((e) => rt.exit(e.direction)).join(', ')}.`
 }
 
 export function itemsLine(room: Room): string {
   if (room.items.length === 0) return ''
   const names = room.items
-    .map((id) => getItem(id)?.name ?? id)
+    .map((id) => rt.item(getItem(id)?.name ?? id))
     .join(', ')
   return `You see: ${names}.`
 }
@@ -101,7 +102,7 @@ export function npcsLine(room: Room): string {
       return rolledNpc.activity
     }
     const name = getNPC(id)?.name ?? id
-    return `${name} is here.`
+    return `${rt.npc(name)} is here.`
   })
   return lines.join(' ')
 }
@@ -109,7 +110,7 @@ export function npcsLine(room: Room): string {
 export function enemiesLine(room: Room): string {
   if (room.enemies.length === 0) return ''
   const names = room.enemies
-    .map((id) => getEnemy(id)?.name ?? id)
+    .map((id) => rt.enemy(getEnemy(id)?.name ?? id))
     .join(', ')
   return `${names} lurks nearby.`
 }
@@ -337,7 +338,7 @@ export async function handleLook(engine: EngineCore, target: string | undefined)
       const hpDisplay = combatState?.active && combatState.enemy.id === enemyId
         ? ` [${combatState.enemyHp}/${enemy.maxHp} HP]`
         : ''
-      engine._appendMessages([msg(`${enemy.name}${hpDisplay}: ${enemy.description}`)])
+      engine._appendMessages([msg(`${rt.enemy(enemy.name)}${hpDisplay}: ${enemy.description}`)])
       return
     }
 
@@ -348,7 +349,7 @@ export async function handleLook(engine: EngineCore, target: string | undefined)
     })
     if (itemId) {
       const item = getItem(itemId)!
-      engine._appendMessages([msg(`${item.name}: ${item.description}`)])
+      engine._appendMessages([msg(`${rt.item(item.name)}: ${item.description}`)])
       return
     }
 
@@ -357,7 +358,7 @@ export async function handleLook(engine: EngineCore, target: string | undefined)
       ii.item.name.toLowerCase().includes(targetLower)
     )
     if (invItem) {
-      engine._appendMessages([msg(`${invItem.item.name}: ${invItem.item.description}`)])
+      engine._appendMessages([msg(`${rt.item(invItem.item.name)}: ${invItem.item.description}`)])
       return
     }
 
@@ -374,7 +375,7 @@ export async function handleLook(engine: EngineCore, target: string | undefined)
     })
     if (npcId) {
       const npc = getNPC(npcId)!
-      engine._appendMessages([msg(`${npc.name}: ${npc.description}`)])
+      engine._appendMessages([msg(`${rt.npc(npc.name)}: ${npc.description}`)])
       return
     }
 

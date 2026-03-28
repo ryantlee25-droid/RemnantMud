@@ -11,6 +11,7 @@ import { roll1d10, rollCheck, rollDamage, DC } from '@/lib/dice'
 import { getClassSkillBonus } from '@/lib/skillBonus'
 import { getItem } from '@/data/items'
 import { resistWhisperer } from '@/lib/fear'
+import { rt } from '@/lib/richText'
 
 // ------------------------------------------------------------
 // Helpers
@@ -102,7 +103,7 @@ export function playerAttack(
 
   if (check.fumble) {
     messages.push(
-      msg(`You swing wildly. ${enemy.name} sidesteps and you nearly fall.`),
+      msg(`You swing wildly. ${rt.enemy(enemy.name)} sidesteps and you nearly fall.`),
     )
     const newState: CombatState = { ...state, turn: state.turn + 1, whispererDebuff: debuffAfterRound }
     return {
@@ -112,7 +113,7 @@ export function playerAttack(
   }
 
   if (!check.success) {
-    messages.push(msg(`You lunge at ${enemy.name}. It glances off nothing.`))
+    messages.push(msg(`You lunge at ${rt.enemy(enemy.name)}. It glances off nothing.`))
     const newState: CombatState = { ...state, turn: state.turn + 1, whispererDebuff: debuffAfterRound }
     return {
       result: { hit: false, damage: 0, critical: false, fumble: false, messages },
@@ -131,7 +132,7 @@ export function playerAttack(
 
   if (check.critical) {
     messages.push(
-      msg(`Critical hit. ${enemy.name} staggers. [${damage} damage]`),
+      msg(`Critical hit. ${rt.enemy(enemy.name)} staggers. [${damage} damage]`),
     )
   } else {
     const flavor = pickFlavorText(enemy)
@@ -140,7 +141,7 @@ export function playerAttack(
     } else {
       const hitLines = [
         `You swing hard. It connects with a wet crack. [${damage} damage]`,
-        `Your blow lands square. ${enemy.name} reels. [${damage} damage]`,
+        `Your blow lands square. ${rt.enemy(enemy.name)} reels. [${damage} damage]`,
         `You drive the strike home. [${damage} damage]`,
       ]
       const line = hitLines[damage % hitLines.length]!
@@ -150,12 +151,12 @@ export function playerAttack(
 
   let loot: string[] | undefined
   if (enemyDefeated) {
-    messages.push(msg(`${enemy.name} collapses. Silence.`))
+    messages.push(msg(`${rt.enemy(enemy.name)} collapses. Silence.`))
     loot = rollLoot(enemy)
     // Loot message is handled by the combat action handler with resolved item names
   } else {
     // Show rough HP indicator instead of exact numbers
-    messages.push(msg(`The ${enemy.name} looks ${enemyHpIndicator(newEnemyHp, enemy.maxHp)}.`))
+    messages.push(msg(`The ${rt.enemy(enemy.name)} looks ${enemyHpIndicator(newEnemyHp, enemy.maxHp)}.`))
   }
 
   const newState: CombatState = {
@@ -273,7 +274,7 @@ export function enemyAttack(
     if (flavor) {
       messages.push(msg(`${flavor} Its attack goes wide.`))
     } else {
-      messages.push(msg(`${enemy.name} lunges but misses.`))
+      messages.push(msg(`${rt.enemy(enemy.name)} lunges but misses.`))
     }
     const newState: CombatState = { ...state, turn: state.turn + 1 }
     return { damage: 0, messages, newState }
@@ -294,7 +295,7 @@ export function enemyAttack(
   if (roll === 10) {
     damage = Math.ceil(damage * 1.5)
     messages.push(
-      msg(`${enemy.name} catches you clean. It hurts. [${damage} damage]`),
+      msg(`${rt.enemy(enemy.name)} catches you clean. It hurts. [${damage} damage]`),
     )
   } else if (isBruteCharge) {
     messages.push(
@@ -306,9 +307,9 @@ export function enemyAttack(
       messages.push(msg(`${flavor} [${damage} damage]`))
     } else {
       const hitLines = [
-        `${enemy.name} skitters under your guard and bites. [${damage} damage]`,
-        `${enemy.name} slams into you before you can react. [${damage} damage]`,
-        `${enemy.name} gets through. [${damage} damage]`,
+        `${rt.enemy(enemy.name)} skitters under your guard and bites. [${damage} damage]`,
+        `${rt.enemy(enemy.name)} slams into you before you can react. [${damage} damage]`,
+        `${rt.enemy(enemy.name)} gets through. [${damage} damage]`,
       ]
       const line = hitLines[damage % hitLines.length]!
       messages.push(msg(line))

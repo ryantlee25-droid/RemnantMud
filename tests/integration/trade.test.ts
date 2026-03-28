@@ -137,7 +137,7 @@ describe('handleTrade', () => {
     await handleTrade(engine, undefined)
 
     // Should list items
-    const tradeMsg = engine.messages.find(m => m.text.includes("Sal the Trader's wares"))
+    const tradeMsg = engine.messages.find(m => m.text.includes("Sal the Trader"))
     expect(tradeMsg).toBeDefined()
     expect(tradeMsg!.text).toContain('Bandage')
     expect(tradeMsg!.text).toContain('Knife')

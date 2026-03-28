@@ -267,7 +267,7 @@ export const CROSSROADS_ROOMS: Room[] = [
         activityPool: [
           { desc: 'A young man sits against a tent pole, pack between his knees, looking at the market with the wide eyes of someone who hasn\'t seen this many people in a long time.', weight: 3 },
           { desc: 'A woman with a fresh scar across her temple eats stew with one hand and keeps the other on the knife at her belt.', weight: 2 },
-          { desc: 'A child — maybe ten, maybe younger, it\'s hard to tell when kids grow up hungry — darts between the stalls, quick and watchful as a sparrow.', weight: 1 },
+          { desc: 'A child — maybe ten, maybe younger, it\'s hard to tell when kids grow up hungry — darts between the stalls, quick and flat-eyed, already calculating whether you\'re worth remembering.', weight: 1 },
         ],
       },
     ],

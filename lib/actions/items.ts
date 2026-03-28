@@ -56,7 +56,15 @@ export async function handleTake(engine: EngineCore, noun: string | undefined): 
   }
 
   const item = getItem(itemId)!
-  const newItems = currentRoom.items.filter((id) => id !== itemId)
+  // Remove only the first occurrence (room may contain multiple copies of the same item)
+  let removed = false
+  const newItems = currentRoom.items.filter((id) => {
+    if (!removed && id === itemId) {
+      removed = true
+      return false
+    }
+    return true
+  })
 
   // Optimistic update
   const updatedRoom: Room = { ...currentRoom, items: newItems }

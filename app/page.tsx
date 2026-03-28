@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { StatBlock } from '@/types/game'
 import { useRouter } from 'next/navigation'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
+import { isDevMode, DEV_USER, resetDevDb } from '@/lib/supabaseMock'
 import { useGame } from '@/lib/gameContext'
 import Terminal from '@/components/Terminal'
 import CommandInput from '@/components/CommandInput'
@@ -63,8 +64,19 @@ export default function GamePage() {
     let cancelled = false
 
     async function init() {
-      const supabase = createSupabaseBrowserClient()
-      const { data: { user } } = await supabase.auth.getUser()
+      let user: { id: string } | null = null
+
+      if (isDevMode()) {
+        resetDevDb()
+        // Clear localStorage flags so prologue/theme/hints re-show on reload
+        localStorage.removeItem('remnant_saw_prologue')
+        localStorage.removeItem('remnant_seen_inv_hint')
+        user = DEV_USER
+      } else {
+        const supabase = createSupabaseBrowserClient()
+        const { data } = await supabase.auth.getUser()
+        user = data.user
+      }
 
       if (!user) {
         if (!cancelled) setAuthPhase('unauthenticated')

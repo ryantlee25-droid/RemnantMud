@@ -133,7 +133,9 @@ export class GameEngine implements EngineCore {
 
     // --- Hollow encounter spawns ---
     // safeRest rooms suppress random Hollow encounters entirely
-    const enemyIds: string[] = []
+    // Start with static enemies from room data (parallel to NPCs and items).
+    // Suppress all enemies (static + dynamic) while room is cleared and hasn't respawned.
+    const enemyIds: string[] = enemiesRestored ? [...room.enemies] : []
     if (room.hollowEncounter && enemiesRestored && !room.flags.safeRest && !room.flags.noCombat) {
       const { baseChance, timeModifier, threatPool } = room.hollowEncounter
       const timeMod = timeModifier[timeOfDay] ?? 1.0

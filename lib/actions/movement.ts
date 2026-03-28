@@ -338,10 +338,16 @@ export async function handleLook(engine: EngineCore, target: string | undefined)
       return
     }
 
-    // Check NPCs
+    // Check NPCs — match by name, ID, activity text, or faction
     const npcId = currentRoom.npcs.find((id) => {
       const n = getNPC(id)
-      return n && n.name.toLowerCase().includes(targetLower)
+      if (!n) return false
+      if (n.name.toLowerCase().includes(targetLower)) return true
+      if (id.toLowerCase().includes(targetLower)) return true
+      const rolledNpc = currentRoom.population?.npcs.find(rn => rn.npcId === id)
+      if (rolledNpc?.activity && rolledNpc.activity.toLowerCase().includes(targetLower)) return true
+      if (n.faction && n.faction.toLowerCase().includes(targetLower)) return true
+      return false
     })
     if (npcId) {
       const npc = getNPC(npcId)!

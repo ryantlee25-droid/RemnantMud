@@ -72,7 +72,14 @@ interface WorldRoomRow {
 }
 
 function rowToRoom(row: WorldRoomRow): Room {
-  return {
+  // Merge DB-persisted state with the static room definition so that rich
+  // fields (itemSpawns, npcSpawns, hollowEncounter, richExits, extras,
+  // description variants, environmentalRolls, personalLossEchoes, etc.)
+  // survive a page reload.  DB wins for mutable fields (visited, items,
+  // enemies, npcs, flags).
+  const staticDef = ALL_ROOMS.find(r => r.id === row.id)
+
+  const base: Room = {
     id: row.id,
     name: row.name,
     description: row.description,
@@ -85,6 +92,13 @@ function rowToRoom(row: WorldRoomRow): Room {
     difficulty: row.difficulty,
     visited: row.visited,
     flags: row.flags,
+  }
+
+  if (!staticDef) return base
+
+  return {
+    ...staticDef,  // all rich/static fields
+    ...base,       // DB-persisted mutable fields overwrite
   }
 }
 

@@ -7,6 +7,7 @@ import type { EngineCore } from '@/lib/actions/types'
 import type { Player, SkillType } from '@/types/game'
 import { weightedRoll } from '@/lib/spawn'
 import { getClassSkillBonus } from '@/lib/skillBonus'
+import { handleLook } from '@/lib/actions/movement'
 
 // ------------------------------------------------------------
 // Local message helpers
@@ -76,7 +77,9 @@ export async function handleExamineExtra(engine: EngineCore, keyword?: string): 
   )
 
   if (!match) {
-    engine._appendMessages([errorMsg(`You look at the ${keyword}. There's nothing particularly notable.`)])
+    // No room extra matched — fall through to general look which checks
+    // enemies, items, inventory, and NPCs by name
+    await handleLook(engine, keyword)
     return
   }
 

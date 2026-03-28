@@ -43,7 +43,18 @@ export async function handleTalk(engine: EngineCore, noun: string | undefined): 
     const nounLower = noun.toLowerCase()
     npcId = currentRoom.npcs.find((id) => {
       const n = getNPC(id)
-      return n && n.name.toLowerCase().includes(nounLower)
+      if (!n) return false
+      // Match against NPC display name
+      if (n.name.toLowerCase().includes(nounLower)) return true
+      // Match against NPC ID (e.g. "guard" matches "crossroads_gate_guard")
+      if (id.toLowerCase().includes(nounLower)) return true
+      // Match against the activity text the player actually sees in the room
+      // (e.g. "A Drifter arbiter leans against the gate post...")
+      const rolledNpc = currentRoom.population?.npcs.find(rn => rn.npcId === id)
+      if (rolledNpc?.activity && rolledNpc.activity.toLowerCase().includes(nounLower)) return true
+      // Match against NPC faction (e.g. "talk drifter" for a drifters-faction NPC)
+      if (n.faction && n.faction.toLowerCase().includes(nounLower)) return true
+      return false
     })
   } else {
     npcId = currentRoom.npcs[0]

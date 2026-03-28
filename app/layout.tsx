@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className="h-full bg-[#0a0a0a] text-amber-400 font-mono">
+      <body className="h-full bg-neutral-950 text-amber-400 font-mono">
         <GameProvider>
           <ThemeLoader />
           {children}

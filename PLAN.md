@@ -592,3 +592,305 @@ Workers F–H can do remaining zones (C-2, C-7, C-9, C-10) in a second content c
 - TypeScript check: `npx tsc --noEmit`
 - Migration: `supabase db push --yes`
 - Tests: `pnpm vitest run`
+
+---
+
+# Plan: PipBoy-Style UI Redesign for MUD Game
+_Created: 2026-03-27 | Type: New Feature_
+
+## Goal
+Replace the current overlay-based sidebar with a fixed PipBoy-style frame containing all game UI: tabbed interface (TERM/STAT/INV/MAP/DATA), status bar, and command input — all rendered inside a rounded bezel with CRT scanlines restricted to the inner screen area.
+
+## Background
+The current UI uses an absolute-positioned overlay (Sidebar.tsx) that toggles visibility, obscuring the terminal. The redesign consolidates all game information into a single, always-visible frame that mimics the Pip-Boy aesthetic from Fallout: a gray bezel surrounding an amber-on-black screen with distinct tab sections for different information categories.
+
+## Scope
+**In scope:**
+- PipBoyFrame wrapper component with rounded corners and zinc/gray bezel
+- TabBar component (TERM, STAT, INV, MAP, DATA) with active tab highlighting
+- StatTab component (character stats from current Sidebar)
+- InventoryTab component (inventory + stash from current Sidebar)
+- MapTab component (discovered waypoints visualization)
+- DataTab component (quest flags, lore items, faction reputation)
+- Refactor app/page.tsx to wrap all content in PipBoyFrame
+- Update globals.css to confine CRT scanlines to inner screen area only
+- Move StatusBar inside the frame
+- Move CommandInput inside the frame
+- Hide/grey tab bar during non-game phases (character creation, prologue, death, ending)
+- Remove Sidebar.tsx entirely (replaced by tab system)
+- Update all modal screens to render inside PipBoyFrame
+
+**Out of scope:**
+- Mobile responsiveness (desktop-first)
+- Animation enhancements beyond current CRT effects
+- Theme picker redesign (keeps current behavior but renders inside frame)
+- Game logic changes
+
+## Technical Approach
+
+### Architecture
+1. **PipBoyFrame** — New container component that provides:
+   - Outer bezel: `bg-zinc-800`, rounded-xl corners, centered on screen
+   - Inner screen area: `bg-black`, contains all content
+   - Border between bezel and screen: thin inset shadow
+   - Scratch marks: CSS pseudo-elements with subtle diagonal lines (~10% opacity)
+   - Fixed max-width (~1400px) centered on screen
+   - Flex column layout: tab bar → status line → main content → command input
+
+2. **TabBar** — New component with 5 tabs:
+   - Active state: `border-b-2 border-amber-400`
+   - Inactive state: `text-amber-600 border-b border-amber-900`
+   - Tabs: TERM, STAT, INV, MAP, DATA
+   - Keyboard support for Tab key (cycles tabs, not open/close)
+
+3. **Tab Content Components** (new):
+   - `StatTab.tsx` — Stats, HP bar, class info, equipment (from Sidebar)
+   - `InventoryTab.tsx` — Inventory, stash, theme selector, save button (from Sidebar)
+   - `MapTab.tsx` — Discovered waypoints by zone (new; use handleMap output)
+   - `DataTab.tsx` — Quest flags, lore items, faction reputation (new)
+   - Terminal remains in TERM tab via existing Terminal component
+
+4. **Refactored page.tsx**:
+   - Wraps all game-phase content in `<PipBoyFrame>`
+   - Modal screens (CharacterCreation, Prologue, DeathScreen, etc.) render inside frame
+   - Tab bar hidden/greyed during non-game phases
+   - Status line hidden during non-game phases
+
+5. **CSS updates** (globals.css):
+   - Move CRT scanline overlay from fixed position to relative to inner screen area only
+   - Scanlines use `clip-path` or positioned inside a `.pipboy-screen` container
+   - Bezel scratches: use `::before`/`::after` pseudo-elements or inline SVG
+
+### Key Design Decisions
+- **Fixed frame, not full screen** — Frame is ~1400px max-width, centered, always visible
+- **Tabs stay visible during game** — StatusBar remains at top of frame for continuous awareness
+- **Tab bar hidden during modals** — Theme picker, character creation, prologue, death, ending render without tabs
+- **Tab cycling with Tab key** — Tab key now cycles active tab (not open/close) when sidebar hidden
+- **CRT overlay scoped** — Scanlines only apply inside frame, not bezel
+- **Reuse existing components** — Terminal, StatusBar, CommandInput move inside frame with minimal changes
+- **Sidebar fully removed** — All functionality migrated to tabs; Sidebar.tsx deleted
+
+### Constraints & Conventions
+- All components remain `'use client'`
+- TypeScript strict mode
+- Tailwind CSS (no new dependencies)
+- Maintain amber-on-black aesthetic inside screen
+- Bezel is zinc-800/zinc-900 (gray contrast)
+- No mobile optimization this pass
+
+### File References (from codebase reading)
+- `app/page.tsx` — Main orchestrator; will wrap everything in PipBoyFrame
+- `components/Terminal.tsx` — Scrolling log; moves to TERM tab
+- `components/StatusBar.tsx` — Status line; moves inside frame
+- `components/CommandInput.tsx` — Input line; moves inside frame
+- `components/Sidebar.tsx` — To be deleted; functionality → tabs
+- `app/globals.css` — CRT overlay; update to scope scanlines
+- `components/CharacterCreation.tsx`, `Prologue.tsx`, `DeathScreen.tsx`, `TheBetween.tsx`, `EndingScreen.tsx` — Render inside frame with hidden tab bar
+- `lib/gameContext.tsx` — Provides game state (read to understand Tab key binding conflicts)
+- `lib/theme.ts` — Theme persistence (TabBar may need to handle theme UI instead of Sidebar)
+
+## Open Questions
+- [ ] Should the frame be 100vh on desktop? (Suggest: yes, centered within viewport)
+- [ ] Tab key behavior when sidebar hidden — should it cycle tabs or move focus? (Suggest: cycle tabs only during game phase)
+- [ ] Should MapTab show real-time waypoint list or a visual map? (Suggest: list for MVP, visual later)
+- [ ] Should DataTab be comprehensive lore/quest tracking, or minimal? (Suggest: minimal MVP; flags, items read, faction rep)
+- [ ] CRT scanlines — use `clip-path` or wrap frame in container with `overflow: hidden`? (Suggest: container wrapper for cleaner scoping)
+
+---
+
+## Tasks
+
+- [ ] **Create branch** — invoke git-agent to start `feature/pipboy-ui-redesign`
+  - Notes: This is a large feature spanning multiple components; clear branch naming helps
+
+- [ ] **Create PipBoyFrame wrapper component** — Outer bezel, inner screen, flex layout
+  - Files: `components/PipBoyFrame.tsx` (new)
+  - Description:
+    - Root element: fixed width (~1400px), centered, `bg-zinc-800` rounded-xl
+    - Outer bezel with inset shadow ring
+    - Inner screen container: `bg-black`, contains all content
+    - Pseudo-element scratch marks (diagonal lines, ~10% opacity)
+    - Children render inside inner screen
+  - Tests: Visual test — component renders with correct structure and bezel styling
+
+- [ ] **Create TabBar component** — 5 tabs with active state
+  - Files: `components/TabBar.tsx` (new)
+  - Description:
+    - Accepts `activeTab: 'term' | 'stat' | 'inv' | 'map' | 'data'`
+    - Accepts `onTabChange: (tab) => void` callback
+    - Renders 5 buttons in a row: TERM, STAT, INV, MAP, DATA
+    - Active tab: `border-b-2 border-amber-400` text-amber-300
+    - Inactive tabs: `border-b border-amber-900` text-amber-600
+    - Hidden when phase is not 'ready' (passed via prop)
+  - Tests: Clicking tabs calls `onTabChange`; styling changes on active state
+
+- [ ] **Create StatTab component** — Stats, HP, equipment (from Sidebar content)
+  - Files: `components/StatTab.tsx` (new)
+  - Depends on: PipBoyFrame, TabBar
+  - Description:
+    - Reuse stat rendering logic from Sidebar (vigor, grit, reflex, wits, presence, shadow)
+    - Show modifiers, level, XP
+    - Show equipped items (e.g., `[eq]` flag)
+    - Clean layout: stats section, then equipped items section
+  - Tests: Renders all stats correctly; updates when `state.player` changes
+
+- [ ] **Create InventoryTab component** — Inventory, stash, theme selector, save button (from Sidebar)
+  - Files: `components/InventoryTab.tsx` (new)
+  - Depends on: PipBoyFrame, TabBar
+  - Description:
+    - Reuse inventory rendering logic from Sidebar
+    - Show stash with count (N/20)
+    - Theme color selector (circles from Sidebar, same logic)
+    - Save button with "Saving..." state and "Saved." feedback
+    - Close button not needed (tab switching replaces it)
+  - Tests: Inventory renders correctly; save button works; theme selector fires event
+
+- [ ] **Create MapTab component** — Discovered waypoints by zone
+  - Files: `components/MapTab.tsx` (new)
+  - Depends on: PipBoyFrame, TabBar
+  - Description:
+    - Queries game state for discovered waypoints (likely in `state.map` or similar; check gameContext)
+    - Display as list grouped by zone (similar to how zones appear in StatusBar)
+    - Show waypoint name and zone
+    - MVP: plain text list; styling matches Sidebar inventory list
+    - Consider: if no waypoints discovered, show "NO WAYPOINTS DISCOVERED"
+  - Notes: Will need to inspect gameContext to find waypoint data structure
+  - Tests: Renders waypoints grouped by zone; empty state message when none discovered
+
+- [ ] **Create DataTab component** — Quest flags, lore items, faction reputation
+  - Files: `components/DataTab.tsx` (new)
+  - Depends on: PipBoyFrame, TabBar
+  - Description:
+    - MVP sections:
+      - Quest flags: `state.questFlags` or similar (boolean flags that gate content)
+      - Lore items read: items the player has examined (track via `state.lore` or similar)
+      - Faction reputation: if faction system exists, show reputations
+    - Layout: three collapsible sections or tabs within DataTab
+    - Text styling matches other tabs (amber on black)
+  - Notes: Will need to inspect gameContext to find quest/lore/faction data structures; if not present, create stub that shows "NO DATA"
+  - Tests: Renders empty state if no data; shows data when present
+
+- [ ] **Update globals.css — scope CRT scanlines to inner screen only**
+  - Files: `app/globals.css`
+  - Depends on: PipBoyFrame created
+  - Description:
+    - Remove CRT overlay from `body::after` fixed positioning
+    - Create `.pipboy-screen::after` for scanlines inside PipBoyFrame
+    - Scanlines apply only within inner screen area (not bezel)
+    - Use `clip-path` or `overflow: hidden` to contain effect
+  - Tests: Visual — scanlines visible on screen, not on bezel
+
+- [ ] **Move StatusBar inside PipBoyFrame**
+  - Files: `components/StatusBar.tsx` (minor update)
+  - Depends on: PipBoyFrame created
+  - Description:
+    - StatusBar remains unchanged; just repositioned in DOM
+    - In app/page.tsx, render StatusBar as direct child of PipBoyFrame (above TabBar)
+    - Add prop `hidden?: boolean` to hide during non-game phases
+  - Tests: StatusBar renders at top of frame; hidden during non-game phases
+
+- [ ] **Move CommandInput inside PipBoyFrame**
+  - Files: `components/CommandInput.tsx` (minor update)
+  - Depends on: PipBoyFrame created
+  - Description:
+    - CommandInput remains unchanged; just repositioned in DOM
+    - In app/page.tsx, render CommandInput as last child of PipBoyFrame
+    - Add prop `hidden?: boolean` to hide during non-game phases
+  - Tests: CommandInput renders at bottom of frame; hidden during non-game phases; focus and submit work
+
+- [ ] **Refactor app/page.tsx — wrap everything in PipBoyFrame**
+  - Files: `app/page.tsx`
+  - Depends on: PipBoyFrame, TabBar, StatTab, InventoryTab, MapTab, DataTab, StatusBar + CommandInput updates
+  - Description:
+    - Add state: `activeTab: 'term' | 'stat' | 'inv' | 'map' | 'data'` (default 'term')
+    - Update Tab key handler: cycle tabs instead of toggling sidebar (only during game phase)
+    - Render PipBoyFrame wrapping the entire game phase UI
+    - Inside PipBoyFrame:
+      - StatusBar (with `hidden={authPhase !== 'ready'}`)
+      - TabBar (with `hidden={authPhase !== 'ready'}`)
+      - Conditional render: show Terminal, StatTab, InventoryTab, MapTab, or DataTab based on `activeTab`
+      - CommandInput (with `hidden={authPhase !== 'ready'}`)
+    - Modal screens (CharacterCreation, Prologue, etc.) render inside PipBoyFrame with TabBar hidden
+    - Remove Sidebar import and usage
+  - Tests: Tab switching works; keyboard Tab key cycles tabs; all phases render correctly; game state updates trigger tab content re-renders
+
+- [ ] **Update modal screens to render inside PipBoyFrame**
+  - Files: `components/CharacterCreation.tsx`, `components/Prologue.tsx`, `components/DeathScreen.tsx`, `components/TheBetween.tsx`, `components/EndingScreen.tsx`
+  - Depends on: app/page.tsx refactored
+  - Description:
+    - Modals currently render full-screen; update to render as content inside PipBoyFrame
+    - Modals should fill the main content area (center vertically within frame)
+    - TabBar should be visible but greyed out or disabled during modal phases
+    - Status line hidden during modals
+    - CommandInput hidden during modals
+    - No other changes needed to modal logic or styling
+  - Tests: Modals render inside frame; tab bar greyed/disabled; can't switch tabs during modal
+
+- [ ] **Delete Sidebar.tsx**
+  - Files: `components/Sidebar.tsx` (delete)
+  - Depends on: app/page.tsx refactored, Tab key handling updated
+  - Description: Remove Sidebar.tsx; all functionality moved to TabBar + InventoryTab
+  - Tests: No import errors in page.tsx or elsewhere
+
+- [ ] **Keyboard binding audit** — Ensure Tab key doesn't conflict
+  - Files: Audit `CommandInput.tsx`, `app/page.tsx`, any global listeners
+  - Depends on: Tab key handling in page.tsx refactored
+  - Description:
+    - Confirm Tab key in CommandInput doesn't interfere with tab cycling in page.tsx
+    - Tab key should cycle tabs ONLY when CommandInput is NOT focused
+    - When CommandInput is focused, Tab should not cycle tabs (let input handle it if needed)
+  - Notes: May need to adjust CommandInput to not prevent Tab key
+  - Tests: Tab key cycles tabs when not in input; doesn't cycle when input focused
+
+- [ ] **Test theme switching in InventoryTab**
+  - Files: `components/InventoryTab.tsx`, `lib/theme.ts`
+  - Depends on: InventoryTab created
+  - Description:
+    - Ensure theme selector in InventoryTab fires `remnant-theme-change` event
+    - Verify no conflicts with existing theme logic
+    - Test theme persists across page reload
+  - Tests: Clicking theme circle changes theme; event fires; persists in localStorage
+
+- [ ] **Visual polish — frame sizing and centering**
+  - Files: `components/PipBoyFrame.tsx`, potentially `app/layout.tsx`
+  - Depends on: PipBoyFrame created and integrated
+  - Description:
+    - Verify frame is centered on screen
+    - Confirm max-width is appropriate (~1400px)
+    - Check that frame fills viewport height (100vh)
+    - Ensure inner content scrollable if exceeds frame height
+    - Adjust padding/margin for bezel appearance
+  - Tests: Visual inspection — frame centered, properly sized, content scrollable
+
+- [ ] **Pre-MR pipeline**
+  1. `code-reviewer` — resolve any blockers; check for missed Sidebar references, prop drilling issues, Tab key conflicts
+  2. `test-runner` — run full test suite; ensure no regressions; coverage gaps noted in PR
+  3. `git-agent` — open MR with description of changes, testing done, and any known gaps
+
+---
+
+## Definition of Done
+
+Every task in this plan is complete when:
+- [ ] Code written and self-reviewed (especially Tab key handling and frame layout)
+- [ ] All imports/exports checked (Sidebar removed entirely)
+- [ ] Tests written or updated for new components and refactored logic
+- [ ] Visual inspection: frame renders correctly, tabs switch, all content visible, CRT scanlines scoped
+- [ ] Keyboard navigation works (Tab cycles tabs, no conflicts with input)
+- [ ] All modal phases render inside frame without breaking existing behavior
+- [ ] `code-reviewer` passes with no blockers
+- [ ] `test-runner` passes with no failures
+- [ ] MR opened via `git-agent` with coverage gaps (if any) noted in the description
+
+---
+
+## References
+- **Current Sidebar implementation**: `/Users/ryan/projects/mud-game/components/Sidebar.tsx` — contains inventory, stats, stash, theme selector, save logic to migrate
+- **Current StatusBar**: `/Users/ryan/projects/mud-game/components/StatusBar.tsx` — move inside frame
+- **Current Terminal**: `/Users/ryan/projects/mud-game/components/Terminal.tsx` — no changes, render in TERM tab
+- **Current CommandInput**: `/Users/ryan/projects/mud-game/components/CommandInput.tsx` — move inside frame
+- **App orchestrator**: `/Users/ryan/projects/mud-game/app/page.tsx` — main refactor point
+- **Game context**: `/Users/ryan/projects/mud-game/lib/gameContext.tsx` — check for waypoint, quest, lore data structures
+- **Global styles**: `/Users/ryan/projects/mud-game/app/globals.css` — update CRT overlay scoping
+- **Theme system**: `/Users/ryan/projects/mud-game/lib/theme.ts` — ensure InventoryTab integrates correctly
+- **Modal screens**: `components/CharacterCreation.tsx`, `Prologue.tsx`, `DeathScreen.tsx`, `TheBetween.tsx`, `EndingScreen.tsx` — update to render inside frame

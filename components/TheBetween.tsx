@@ -75,7 +75,7 @@ export default function TheBetween({ cycle, onContinue }: TheBetweenProps) {
   }, [fragments])
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-black font-mono text-amber-400 p-6">
+    <div className="flex flex-col items-center justify-center flex-1 overflow-y-auto font-mono text-amber-400 p-6">
       <div className="max-w-xl w-full space-y-8">
 
         {/* Header */}

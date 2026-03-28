@@ -167,7 +167,7 @@ describe('room structure', () => {
       expect(room.shortDescription.length).toBeGreaterThan(0)
 
       // zone: ZoneType (must be one of the 12 static zones)
-      expect(['crossroads', 'river_road', 'covenant', 'salt_creek', 'the_ember', 'the_breaks', 'the_dust', 'the_stacks', 'duskhollow', 'the_deep', 'the_pine_sea', 'the_scar']).toContain(room.zone)
+      expect(['crossroads', 'river_road', 'covenant', 'salt_creek', 'the_ember', 'the_breaks', 'the_dust', 'the_stacks', 'duskhollow', 'the_deep', 'the_pine_sea', 'the_scar', 'the_pens']).toContain(room.zone)
 
       // items: array of strings
       expect(Array.isArray(room.items)).toBe(true)

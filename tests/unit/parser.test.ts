@@ -104,12 +104,13 @@ describe('parseCommand — inventory verbs', () => {
     expect(r.noun).toBe('medkit')
   })
 
-  const drinkSynonyms = ['drink', 'eat']
-  for (const v of drinkSynonyms) {
-    it(`"${v}" → use verb`, () => {
-      expect(parseCommand(`${v} water`).verb).toBe('use')
-    })
-  }
+  it(`"eat" → use verb`, () => {
+    expect(parseCommand('eat food').verb).toBe('use')
+  })
+
+  it(`"drink" → drink verb`, () => {
+    expect(parseCommand('drink water').verb).toBe('drink')
+  })
 
   const equipSynonyms = ['equip', 'wear', 'wield']
   for (const v of equipSynonyms) {

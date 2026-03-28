@@ -32,7 +32,7 @@ export default function ThemePicker({ onSelect }: ThemePickerProps) {
             The Remnant — Display
           </div>
           <div className="text-2xl text-amber-300">Choose your signal.</div>
-          <div className="text-amber-800 text-xs mt-1">
+          <div className="text-amber-600 text-xs mt-1">
             This can be changed later in the inventory panel.
           </div>
         </div>

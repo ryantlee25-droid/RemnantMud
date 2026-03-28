@@ -5,9 +5,10 @@
 
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import RemnantLogo from '@/components/RemnantLogo'
 
 export const metadata: Metadata = {
-  title: 'The Remnant — Post-Apocalyptic MUD',
+  title: 'The Remnant — Post-Apocalyptic Text Adventure',
   description:
     'A text-based survival RPG set in the American Southwest, seven years after the collapse. Play in your browser. No download.',
 }
@@ -27,7 +28,7 @@ function StatBadge({ label, value }: { label: string; value: string }) {
   return (
     <div className="border border-amber-900 px-3 py-2 text-center">
       <div className="text-amber-300 text-lg font-mono">{value}</div>
-      <div className="text-amber-800 text-xs uppercase tracking-widest mt-0.5">{label}</div>
+      <div className="text-amber-600 text-xs uppercase tracking-widest mt-0.5">{label}</div>
     </div>
   )
 }
@@ -80,31 +81,26 @@ export default function LandingPage() {
 
         {/* ── Boot header ── */}
         <div className="mb-12">
-          <div className="text-amber-800 text-xs uppercase tracking-widest mb-4">
+          <div className="text-amber-600 text-xs uppercase tracking-widest mb-4">
             TERMINAL v2.38 — FOUR CORNERS NETWORK — SECURE CHANNEL
           </div>
           <div className="border border-amber-900 p-6 mb-4">
-            <div className="text-amber-800 text-xs mb-3">INCOMING BROADCAST — SIGNAL ORIGIN: UNKNOWN</div>
+            <div className="text-amber-600 text-xs mb-3">INCOMING BROADCAST — SIGNAL ORIGIN: UNKNOWN</div>
             <div className="text-amber-400 text-xs leading-relaxed italic">
               &ldquo;...Scar site... containment breach... data survives...
               if you can read, if you can think, if you are still you...
               come to the Four Corners... the answer is here... repeating...&rdquo;
             </div>
           </div>
-          <div className="text-amber-900 text-xs">
+          <div className="text-amber-700 text-xs">
             Signal received 3 weeks ago. Source unconfirmed. Dozens have already followed it north.
           </div>
         </div>
 
         {/* ── Title ── */}
         <div className="mb-12">
-          <div className="text-amber-900 text-xs uppercase tracking-widest mb-2">
-            THE REMNANT
-          </div>
-          <h1 className="text-4xl text-amber-300 mb-3 leading-none tracking-tight">
-            What&rsquo;s left<br />is what matters.
-          </h1>
-          <p className="text-amber-700 text-sm leading-relaxed max-w-xl">
+          <RemnantLogo size="full" />
+          <p className="text-amber-700 text-sm leading-relaxed max-w-xl mt-6">
             A text-based survival RPG. Post-apocalyptic American Southwest.
             Seven years after the collapse. You are no one. You have nothing.
             That might be exactly the right credential.
@@ -151,7 +147,7 @@ export default function LandingPage() {
 
         {/* ── Demo terminal ── */}
         <div className="border border-amber-900 p-5 mb-12 bg-black">
-          <div className="text-amber-800 text-xs uppercase tracking-widest mb-4">
+          <div className="text-amber-600 text-xs uppercase tracking-widest mb-4">
             TERMINAL SESSION EXCERPT
           </div>
           <div className="space-y-3">
@@ -171,7 +167,7 @@ export default function LandingPage() {
               command="take jerky"
               response="You hold out a strip of dried meat. The dog takes it from your hand so gently you feel the individual teeth."
             />
-            <div className="text-amber-900 text-xs pt-2">
+            <div className="text-amber-700 text-xs pt-2">
               — it follows you for the rest of the game, if you let it —
             </div>
           </div>
@@ -236,7 +232,7 @@ export default function LandingPage() {
             ].map(([label, detail]) => (
               <div key={label} className="flex gap-4 text-xs">
                 <span className="text-amber-500 shrink-0 w-40">{label}</span>
-                <span className="text-amber-800">{detail}</span>
+                <span className="text-amber-600">{detail}</span>
               </div>
             ))}
           </div>
@@ -246,7 +242,7 @@ export default function LandingPage() {
 
         {/* ── CTA ── */}
         <div className="text-center py-4">
-          <div className="text-amber-800 text-xs uppercase tracking-widest mb-6">
+          <div className="text-amber-600 text-xs uppercase tracking-widest mb-6">
             No download. No account setup. Enter your email and play.
           </div>
           <Link
@@ -255,7 +251,7 @@ export default function LandingPage() {
           >
             Enter the Wasteland
           </Link>
-          <div className="mt-4 text-amber-900 text-xs">
+          <div className="mt-4 text-amber-700 text-xs">
             Browser-based · Free during early access · Save persists across sessions
           </div>
         </div>
@@ -263,7 +259,7 @@ export default function LandingPage() {
         <Divider />
 
         {/* ── Footer ── */}
-        <div className="text-amber-900 text-xs text-center leading-relaxed">
+        <div className="text-amber-700 text-xs text-center leading-relaxed">
           <div className="mb-1">THE REMNANT — Early Access</div>
           <div>Four Corners, Colorado · 2038 · CHARON-7 Year Seven</div>
         </div>

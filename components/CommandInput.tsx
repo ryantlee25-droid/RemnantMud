@@ -9,7 +9,7 @@ import { parseCommand } from '@/lib/parser'
 import { useGame } from '@/lib/gameContext'
 
 export default function CommandInput() {
-  const { dispatch } = useGame()
+  const { dispatch, engine } = useGame()
   const [value, setValue] = useState('')
   const [history, setHistory] = useState<string[]>([])
   const [historyIndex, setHistoryIndex] = useState<number>(-1)
@@ -31,6 +31,13 @@ export default function CommandInput() {
     })
     setHistoryIndex(-1)
     setValue('')
+
+    // Echo the typed command in the terminal log before processing
+    engine._appendMessages([{
+      id: crypto.randomUUID(),
+      text: `> ${trimmed}`,
+      type: 'echo' as const,
+    }])
 
     const action = parseCommand(trimmed)
     await dispatch(action)

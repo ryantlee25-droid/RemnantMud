@@ -17,6 +17,7 @@ function messageColor(type: GameMessage['type']): string {
     case 'combat':    return 'text-red-500'
     case 'system':    return 'text-blue-400'
     case 'error':     return 'text-red-400'
+    case 'echo':      return 'text-amber-600'
     default:          return 'text-amber-400'
   }
 }

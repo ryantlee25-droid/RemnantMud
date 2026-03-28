@@ -5,7 +5,7 @@
 // Handles auth gating, character creation, and game layout.
 // ============================================================
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { StatBlock } from '@/types/game'
 import { useRouter } from 'next/navigation'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
@@ -22,9 +22,27 @@ import ThemePicker from '@/components/ThemePicker'
 import { THEME_KEY, saveTheme, type ThemeId } from '@/lib/theme'
 
 type AuthPhase = 'checking' | 'unauthenticated' | 'loading-player' | 'prologue' | 'no-player' | 'ready'
+const INV_HINT_KEY = 'remnant_seen_inv_hint'
 type GamePhase = 'alive' | 'dead' | 'between' | 'rebirth' | 'rebirthing'
 
 const PROLOGUE_KEY = 'remnant_saw_prologue'
+
+function TerminalLoader({ text }: { text: string }) {
+  const [dots, setDots] = useState('')
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setDots((prev) => (prev.length >= 3 ? '' : prev + '.'))
+    }, 400)
+    return () => clearInterval(id)
+  }, [])
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-black font-mono text-amber-600 text-sm">
+      <span>{text}<span className="inline-block w-6 text-left">{dots}</span></span>
+    </div>
+  )
+}
 
 export default function GamePage() {
   const router = useRouter()
@@ -90,6 +108,28 @@ export default function GamePage() {
     }
   }, [authPhase, router])
 
+  // One-time inventory hint after first move
+  const hintFiredRef = useRef(false)
+  useEffect(() => {
+    if (hintFiredRef.current) return
+    if (authPhase !== 'ready') return
+    if (!state.player || (state.player.actionsTaken ?? 0) < 1) return
+    if (typeof window !== 'undefined' && localStorage.getItem(INV_HINT_KEY)) return
+
+    hintFiredRef.current = true
+    localStorage.setItem(INV_HINT_KEY, '1')
+
+    // Slight delay so the room description renders first
+    const t = setTimeout(() => {
+      engine._appendMessages([{
+        id: crypto.randomUUID(),
+        text: '[Press Tab or tap [INV] to view your inventory and stats.]',
+        type: 'system',
+      }])
+    }, 400)
+    return () => clearTimeout(t)
+  }, [authPhase, state.player, engine])
+
   // Watch for player death
   useEffect(() => {
     if (state.playerDead && gamePhase === 'alive') {
@@ -114,11 +154,7 @@ export default function GamePage() {
 
   // Loading / checking states
   if (authPhase === 'checking' || authPhase === 'loading-player') {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-black font-mono text-amber-600 text-sm">
-        <span className="opacity-70">Loading...</span>
-      </div>
-    )
+    return <TerminalLoader text="ESTABLISHING CONNECTION" />
   }
 
   if (authPhase === 'unauthenticated') {
@@ -184,11 +220,7 @@ export default function GamePage() {
 
   // Rebirthing loading screen (interstitial while rebirthWithStats runs)
   if (gamePhase === 'rebirthing') {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-black font-mono text-amber-600 text-sm">
-        <span className="opacity-70">Awakening...</span>
-      </div>
-    )
+    return <TerminalLoader text="RECONSTRUCTING" />
   }
 
   // Game

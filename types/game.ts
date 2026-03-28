@@ -43,7 +43,7 @@ export type LegacyZoneType =
 
 export type ItemType = 'weapon' | 'armor' | 'consumable' | 'key' | 'junk' | 'lore' | 'currency'
 
-export type MessageType = 'narrative' | 'combat' | 'system' | 'error'
+export type MessageType = 'narrative' | 'combat' | 'system' | 'error' | 'echo'
 
 export type ContractTerm = '1' | '3' | '5' | 'perpetual'
 

@@ -186,7 +186,7 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
           <div className="text-amber-600 text-xs uppercase tracking-widest mb-1">
             {isRebirth
               ? `CYCLE ${(state.player?.cycle ?? 1) + 1} — REBIRTH`
-              : 'MUD — Character Creation'}
+              : 'THE REMNANT — Character Creation'}
           </div>
           <div className="text-2xl text-amber-300">
             {isRebirth ? 'Who will you be?' : 'Who are you?'}
@@ -228,7 +228,7 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
               </option>
             ))}
           </select>
-          <div className="text-amber-800 text-xs mt-1">
+          <div className="text-amber-600 text-xs mt-1">
             {CLASS_DEFINITIONS[characterClass].description}
           </div>
         </div>
@@ -260,7 +260,7 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
                       <span className="text-blue-600 text-xs">[~echo]</span>
                     )}
                   </div>
-                  <div className="text-amber-800 text-xs">{STAT_DESCRIPTIONS[stat]}</div>
+                  <div className="text-amber-600 text-xs">{STAT_DESCRIPTIONS[stat]}</div>
                 </div>
 
                 <button
@@ -295,7 +295,7 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
         {/* Personal loss */}
         <div className="mb-6 border-t border-amber-900 pt-6">
           <div className="text-xs text-amber-600 uppercase tracking-widest mb-1">What did you lose?</div>
-          <div className="text-amber-900 text-xs mb-3">
+          <div className="text-amber-700 text-xs mb-3">
             This shapes what surfaces in the world. Not a quest. A haunting.
           </div>
           <div className="space-y-2 mb-3">
@@ -311,7 +311,7 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
                 />
                 <div>
                   <div className="text-amber-300 text-sm">{opt.label}</div>
-                  <div className="text-amber-800 text-xs">{opt.hint}</div>
+                  <div className="text-amber-600 text-xs">{opt.hint}</div>
                 </div>
               </label>
             ))}
@@ -349,7 +349,7 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
             : (isRebirth ? 'Return' : 'Begin')}
         </button>
 
-        <div className="mt-4 text-amber-900 text-xs">
+        <div className="mt-4 text-amber-700 text-xs">
           Class bonuses are permanent floors. Distribute {classDef.freePoints} free points to any stat. Max {MAX_STAT} per stat.
         </div>
       </div>

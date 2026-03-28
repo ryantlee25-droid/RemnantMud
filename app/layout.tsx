@@ -4,7 +4,7 @@ import { GameProvider } from '@/lib/gameContext'
 import ThemeLoader from '@/components/ThemeLoader'
 
 export const metadata: Metadata = {
-  title: 'MUD — Post-Apocalyptic Text Adventure',
+  title: 'The Remnant — Post-Apocalyptic Text Adventure',
   description: 'A single-player text-based survival game.',
 }
 

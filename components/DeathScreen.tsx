@@ -5,6 +5,7 @@
 // ============================================================
 
 import { useState, useEffect } from 'react'
+import RemnantLogo from '@/components/RemnantLogo'
 
 interface DeathScreenProps {
   cycle: number           // current cycle number (1 = first death)
@@ -60,6 +61,9 @@ export default function DeathScreen({
 
         {/* Header */}
         <div>
+          <div className="mb-4 opacity-60">
+            <RemnantLogo size="compact" />
+          </div>
           <h1 className="text-3xl tracking-[0.3em] uppercase text-amber-300 mb-3">
             YOU ARE DEAD
           </h1>

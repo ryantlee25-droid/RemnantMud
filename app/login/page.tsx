@@ -47,10 +47,10 @@ export default function LoginPage() {
       <div className="w-full max-w-sm text-amber-400">
         <div className="mb-8">
           <div className="text-amber-600 text-xs uppercase tracking-widest mb-1">
-            MUD — Post-Apocalyptic Text Adventure
+            THE REMNANT — Post-Apocalyptic Text Adventure
           </div>
           <div className="text-2xl text-amber-300">ACCESS TERMINAL</div>
-          <div className="text-amber-800 text-xs mt-1">
+          <div className="text-amber-600 text-xs mt-1">
             Enter your email to receive a sign-in link.
           </div>
         </div>
@@ -95,7 +95,7 @@ export default function LoginPage() {
           </form>
         )}
 
-        <div className="mt-6 text-amber-900 text-xs">
+        <div className="mt-6 text-amber-700 text-xs">
           No password required. No account setup.
           The wasteland doesn&apos;t have time for that.
         </div>

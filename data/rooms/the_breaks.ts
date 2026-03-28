@@ -94,7 +94,7 @@ export const BREAKS_ROOMS: Room[] = [
     exits: {
       north: 'br_01_canyon_mouth',
       south: 'br_03_narrow_slot_canyon',
-      east: 'br_07_canyon_crossroads',
+      west: 'br_07_canyon_crossroads',
     },
     richExits: {},
     items: [],
@@ -421,7 +421,7 @@ export const BREAKS_ROOMS: Room[] = [
     descriptionNight: 'The crossroads at night. Without a map and without stars — the canyon walls are high and the sky is a narrow strip — you are navigating by the texture of the walls and the angle of the incline. Most people stop here until dawn.',
     shortDescription: 'Four canyon corridors meeting in a space just wide enough to see them all, the cairn at the center tended by someone, and the boot tracks that help less than they should.',
     exits: {
-      north: 'br_02_the_wash',
+      north: 'em_01_the_approach',
       south: 'br_05_bone_hollow',
       east: 'br_09_petroglyph_wall',
       west: 'br_08_nesting_gallery',
@@ -928,7 +928,7 @@ export const BREAKS_ROOMS: Room[] = [
     npcSpawns: [],
     itemSpawns: [
       {
-        entityId: 'radio_signal_fragment',
+        entityId: 'radio_fragment',
         spawnChance: 0.90,
         quantity: { min: 1, max: 1, distribution: 'single' },
         conditionRoll: { min: 0.5, max: 0.8 },

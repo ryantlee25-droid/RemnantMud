@@ -2,33 +2,19 @@
 // lib/actions/social.ts — handleTalk, handleSearch, handleRep, handleQuests
 // ============================================================
 
-import type { GameMessage, FactionType, Direction, Player, SkillType, DialogueNode, DialogueBranch, CycleSnapshot } from '@/types/game'
+import type { GameMessage, FactionType, Direction, Player, DialogueNode, DialogueBranch, CycleSnapshot } from '@/types/game'
 import type { EngineCore } from './types'
 import { getNPC, getRevenantDialogue } from '@/data/npcs'
 import { findNpcTopic, getVisibleTopics, NPC_TOPICS } from '@/data/npcTopics'
 import { DIALOGUE_TREES } from '@/data/dialogueTrees'
 import { updateRoomFlags } from '@/lib/world'
 import { itemsLine } from './movement'
-import { getClassSkillBonus } from '@/lib/skillBonus'
+import { getStatForSkill, getStatNameForSkill } from '@/lib/skillBonus'
 import { rollCheck } from '@/lib/dice'
 import { rt } from '@/lib/richText'
 import { getItem } from '@/data/items'
-
-// ------------------------------------------------------------
-// Local message helpers
-// ------------------------------------------------------------
-
-function msg(text: string, type: GameMessage['type'] = 'narrative'): GameMessage {
-  return { id: crypto.randomUUID(), text, type }
-}
-
-function systemMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'system' }
-}
-
-function errorMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'error' }
-}
+import { removeItem, getInventory } from '@/lib/inventory'
+import { msg, systemMsg, errorMsg } from '@/lib/messages'
 
 // ------------------------------------------------------------
 // Handlers
@@ -194,7 +180,7 @@ async function applyNodeEffects(engine: EngineCore, node: DialogueNode): Promise
 /**
  * Start a dialogue tree for an NPC. Sets activeDialogue and displays the start node.
  */
-async function startDialogueTree(engine: EngineCore, npcId: string, tree: import('@/types/game').DialogueTree): Promise<void> {
+async function startDialogueTree(engine: EngineCore, npcId: string, treeKey: string, tree: import('@/types/game').DialogueTree): Promise<void> {
   const { player, inventory, cycleHistory } = engine.getState()
   if (!player) return
 
@@ -211,7 +197,7 @@ async function startDialogueTree(engine: EngineCore, npcId: string, tree: import
   engine._setState({
     activeDialogue: {
       npcId,
-      treeId: npcId,
+      treeId: treeKey,
       currentNodeId: tree.startNode,
     },
   })
@@ -276,7 +262,13 @@ export async function handleDialogueChoice(engine: EngineCore, choiceStr: string
   // Handle skill check if present
   let targetNodeId = branch.targetNode
   if (branch.skillCheck) {
-    const stat = getStatForSkill(branch.skillCheck.skill, player) ?? 0
+    const baseStat = getStatForSkill(branch.skillCheck.skill, player) ?? 0
+    const buffs = engine.getState().activeBuffs ?? []
+    const governingStat = getStatNameForSkill(branch.skillCheck.skill)
+    const buffBonus = buffs
+      .filter(b => b.stat === governingStat)
+      .reduce((sum, b) => sum + b.bonus, 0)
+    const stat = baseStat + buffBonus
     const result = rollCheck(stat, branch.skillCheck.dc)
     const skillName = branch.skillCheck.skill.replace(/_/g, ' ')
 
@@ -453,7 +445,10 @@ export async function handleTalk(engine: EngineCore, noun: string | undefined): 
   }
 
   // ── Check for dialogue tree ──────────────────────────────
-  const tree = DIALOGUE_TREES[npcId]
+  // Look up dialogue tree: check room's spawned NPC data for a specific tree key, fall back to npcId
+  const spawnedNpc = currentRoom.population?.npcs.find(n => n.npcId === npcId)
+  const treeKey = spawnedNpc?.dialogueTree ?? npcId
+  const tree = DIALOGUE_TREES[treeKey]
   if (tree && !topicWord) {
     // Show NPC description on first talk this session
     if (!currentRoom.flags[talkFlag]) {
@@ -466,7 +461,7 @@ export async function handleTalk(engine: EngineCore, noun: string | undefined): 
       engine._setState({ currentRoom: updatedRoom })
     }
 
-    await startDialogueTree(engine, npcId, tree)
+    await startDialogueTree(engine, npcId, treeKey, tree)
     return
   }
 
@@ -622,48 +617,6 @@ export async function handleSearch(engine: EngineCore): Promise<void> {
 }
 
 // ------------------------------------------------------------
-// Map skill to player stat + class bonus (local helper)
-// ------------------------------------------------------------
-
-function getStatForSkill(skill: string, player: Player | null): number | null {
-  if (!player) return null
-  const map: Record<string, number> = {
-    // Vigor — raw physicality
-    survival: player.vigor,
-    brawling: player.vigor,
-    climbing: player.vigor,
-    vigor: player.vigor,
-    // Grit — endurance, willpower, steady hands under pressure
-    endurance: player.grit,
-    resilience: player.grit,
-    composure: player.grit,
-    field_medicine: player.grit,
-    // Reflex — speed, dexterity, quick reactions
-    bladework: player.reflex,
-    marksmanship: player.reflex,
-    mechanics: player.reflex,
-    perception: player.reflex,
-    // Wits — knowledge, analysis, awareness
-    lore: player.wits,
-    electronics: player.wits,
-    tracking: player.wits,
-    blood_sense: player.wits,
-    // Presence — social force, authority, persuasion
-    negotiation: player.presence,
-    intimidation: player.presence,
-    mesmerize: player.presence,
-    // Shadow — stealth, subtlety, operating unseen
-    stealth: player.shadow,
-    lockpicking: player.shadow,
-    daystalking: player.shadow,
-    scavenging: player.shadow,
-  }
-  const base = map[skill] ?? null
-  if (base === null) return null
-  return base + getClassSkillBonus(player.characterClass, skill as SkillType)
-}
-
-// ------------------------------------------------------------
 // Reputation display
 // ------------------------------------------------------------
 
@@ -740,4 +693,124 @@ export async function handleQuests(engine: EngineCore): Promise<void> {
   }
 
   engine._appendMessages([systemMsg(lines.join('\n'))])
+}
+
+// ------------------------------------------------------------
+// Item IDs considered "medical" or "food" for give interactions
+// ------------------------------------------------------------
+
+const MEDICAL_ITEM_IDS = new Set([
+  'bandages', 'bandages_clean', 'antibiotics_01', 'quiet_drops', 'stim_shot',
+  'field_surgery_kit', 'gauze', 'antiseptic', 'pain_tabs', 'sanguine_blood_vial',
+])
+
+const FOOD_ITEM_IDS = new Set([
+  'boiled_rations', 'elk_jerky', 'water_bottle_sealed', 'canned_food',
+  'canned_food_random', 'canned_food_premium', 'scavenged_rations',
+  'preserved_rations', 'salted_rations', 'emergency_rations',
+])
+
+// ------------------------------------------------------------
+// handleGive — give an item from inventory to an NPC
+// ------------------------------------------------------------
+
+export async function handleGive(engine: EngineCore, noun: string | undefined): Promise<void> {
+  const { currentRoom, player, inventory } = engine.getState()
+  if (!currentRoom || !player) return
+
+  if (!noun) {
+    engine._appendMessages([errorMsg('Give what to whom?')])
+    return
+  }
+
+  // Parse "give <item> to <npc>" or "give <item> <npc>"
+  let itemNoun: string
+  let npcNoun: string
+
+  if (noun.includes(' to ')) {
+    const parts = noun.split(' to ')
+    itemNoun = parts[0]!.trim()
+    npcNoun = parts.slice(1).join(' to ').trim()
+  } else {
+    // Split on last word: last word is NPC name, remainder is item name
+    const tokens = noun.trim().split(/\s+/)
+    if (tokens.length < 2) {
+      engine._appendMessages([errorMsg('Give what to whom?')])
+      return
+    }
+    npcNoun = tokens[tokens.length - 1]!
+    itemNoun = tokens.slice(0, tokens.length - 1).join(' ')
+  }
+
+  // Find item in inventory (partial name match)
+  const itemNounLower = itemNoun.toLowerCase()
+  const invItem = inventory.find((ii) =>
+    ii.item.name.toLowerCase().includes(itemNounLower) ||
+    ii.itemId.toLowerCase().includes(itemNounLower)
+  )
+
+  if (!invItem) {
+    engine._appendMessages([errorMsg("You don't have that.")])
+    return
+  }
+
+  // Find NPC in current room (same matching as handleTalk)
+  const npcNounLower = npcNoun.toLowerCase()
+  const npcId = currentRoom.npcs.find((id) => {
+    const n = getNPC(id)
+    if (!n) return false
+    if (n.name.toLowerCase().includes(npcNounLower)) return true
+    if (id.toLowerCase().includes(npcNounLower)) return true
+    const rolledNpc = currentRoom.population?.npcs.find(rn => rn.npcId === id)
+    if (rolledNpc?.activity && rolledNpc.activity.toLowerCase().includes(npcNounLower)) return true
+    return false
+  })
+
+  if (!npcId) {
+    engine._appendMessages([errorMsg("You don't see that person here.")])
+    return
+  }
+
+  const npc = getNPC(npcId)
+  const npcName = npc?.name ?? npcId
+  const itemName = invItem.item.name
+  const itemId = invItem.itemId
+
+  // Remove item from inventory
+  await removeItem(player.id, itemId)
+  const updatedInventory = await getInventory(player.id)
+  engine._setState({ inventory: updatedInventory })
+
+  // Apply quest flags and reputation for specific item+NPC combinations
+  if (itemId === 'meridian_keycard' && npcId === 'lev') {
+    engine._appendMessages([
+      msg(`You hand the ${rt.item(itemName)} to ${rt.npc(npcName)}.`),
+      msg(`${rt.npc(npcName)} takes the keycard with deliberate care, turning it over once to verify the batch number. "This is it. This is the one I needed." They set it down at the center of their workspace with a kind of reverence that makes you think it represents something larger than a door. "I won't forget this."`, 'narrative'),
+    ])
+    await engine.setQuestFlag('gave_keycard_to_lev', true)
+  } else if (npcId === 'patch' && MEDICAL_ITEM_IDS.has(itemId)) {
+    engine._appendMessages([
+      msg(`You hand the ${rt.item(itemName)} to ${rt.npc(npcName)}.`),
+      msg(`${rt.npc(npcName)} examines the ${rt.item(itemName)} with clinical efficiency, already thinking about who needs it most. "Good. This will help." They add it to their supplies without ceremony — in their hands, gratitude looks like competence.`, 'narrative'),
+    ])
+    await engine.setQuestFlag('helped_patch_medical', true)
+    await engine.adjustReputation('drifters', 1)
+  } else if (FOOD_ITEM_IDS.has(itemId)) {
+    // Giving food to any NPC earns faction reputation for the room's implicit faction
+    const roomNpcData = npc
+    const faction = roomNpcData?.faction
+    engine._appendMessages([
+      msg(`You offer the ${rt.item(itemName)} to ${rt.npc(npcName)}.`),
+      msg(`${rt.npc(npcName)} accepts it without theatrics — a nod, a brief meeting of eyes. Out here, that's the same as thank you.`, 'narrative'),
+    ])
+    if (faction) {
+      await engine.adjustReputation(faction, 1)
+    }
+  } else {
+    // Generic acceptance
+    engine._appendMessages([
+      msg(`You hand the ${rt.item(itemName)} to ${rt.npc(npcName)}.`),
+      msg(`${rt.npc(npcName)} takes it. "Appreciated." They don't elaborate.`, 'narrative'),
+    ])
+  }
 }

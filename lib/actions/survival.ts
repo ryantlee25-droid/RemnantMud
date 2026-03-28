@@ -6,22 +6,7 @@
 import type { GameMessage, Player } from '@/types/game'
 import type { EngineCore } from './types'
 import { statModifier } from '@/lib/dice'
-
-// ------------------------------------------------------------
-// Local message helpers
-// ------------------------------------------------------------
-
-function msg(text: string, type: GameMessage['type'] = 'narrative'): GameMessage {
-  return { id: crypto.randomUUID(), text, type }
-}
-
-function systemMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'system' }
-}
-
-function errorMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'error' }
-}
+import { msg, systemMsg, errorMsg } from '@/lib/messages'
 
 // ------------------------------------------------------------
 // rest / sleep — requires safeRest flag
@@ -42,7 +27,7 @@ export async function handleRest(engine: EngineCore): Promise<void> {
   }
 
   if (player.hp >= player.maxHp) {
-    engine._appendMessages([msg('You sit for a moment, but you are already at full strength.')])
+    engine._appendMessages([msg("You're already at full strength. No need to rest.")])
     return
   }
 
@@ -98,9 +83,7 @@ export async function handleCamp(engine: EngineCore): Promise<void> {
   }
 
   if (player.hp >= player.maxHp) {
-    engine._appendMessages([
-      msg('You build a small fire. The warmth is welcome, though you are already at full strength.'),
-    ])
+    engine._appendMessages([msg("You're already at full strength. No need to make camp.")])
     return
   }
 
@@ -147,7 +130,7 @@ export async function handleDrink(engine: EngineCore): Promise<void> {
   const actualHeal = newHp - player.hp
 
   if (actualHeal <= 0) {
-    engine._appendMessages([msg('You drink from the water. It is cold and clean, though you feel no better for it.')])
+    engine._appendMessages([msg("You're already at full strength. No need to drink.")])
     return
   }
 

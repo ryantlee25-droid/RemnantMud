@@ -245,7 +245,7 @@ export const ITEMS: Record<string, Item> = {
   water_bottle_sealed: {
     id: 'water_bottle_sealed',
     name: 'Sealed Water Bottle',
-    description: 'A clear. Sealed, verified source. Water you don\'t have to think about before drinking. You forgot how good that felt until the first time you had to think about it.',
+    description: 'A clear bottle. Sealed, verified source. Water you don\'t have to think about before drinking. You forgot how good that felt until the first time you had to think about it.',
     type: 'consumable',
     weight: 2,
     healing: 2,
@@ -372,7 +372,7 @@ export const ITEMS: Record<string, Item> = {
     description: 'Sixty-foot static kern-mantle, rated to eight hundred pounds. The vertical shaft in The Deep doesn\'t offer another way down. This is the way down.',
     type: 'key',
     weight: 4,
-    value: 5,
+    value: 0,
   },
 
   // ----------------------------------------------------------
@@ -1422,16 +1422,6 @@ export const ITEMS: Record<string, Item> = {
     loreText: '...if you can hear this, the signal is still running. CHARON-7 is still running. We didn\'t stop it. We just moved the dial. Find the source. Find the choice. What you do with it... [signal degrades]',
   },
 
-  radio_signal_fragment: {
-    id: 'radio_signal_fragment',
-    name: 'Radio Signal Fragment',
-    description: 'A decoded partial transmission on a strip of thermal printer paper.',
-    type: 'lore',
-    weight: 0,
-    value: 0,
-    usable: true,
-    loreText: '...if you can hear this, the signal is still running. CHARON-7 is still running. We didn\'t stop it. We just moved the dial. Find the source. Find the choice. What you do with it... [signal degrades]',
-  },
 
   lore_cabin_logbook: {
     id: 'lore_cabin_logbook',
@@ -1703,6 +1693,570 @@ export const ITEMS: Record<string, Item> = {
     value: 35,
     armorTraits: ['insulated', 'reactive'],
     tier: 3,
+  },
+
+  // ----------------------------------------------------------
+  // Armor — Tier 2
+  // ----------------------------------------------------------
+
+  leather_armor: {
+    id: 'leather_armor',
+    name: 'Leather Armor',
+    description: 'Hard-boiled leather panels stitched over a canvas backing. Covers the chest and upper arms. Pre-Collapse craftsmanship — somebody trained for this. It breathes better than anything with metal in it and stops most blades at an angle. Not glamorous. Still alive.',
+    type: 'armor',
+    weight: 3,
+    defense: 2,
+    value: 20,
+    tier: 2,
+  },
+
+  militia_vest: {
+    id: 'militia_vest',
+    name: 'Militia Vest',
+    description: 'A tactical vest stitched together from salvaged plate carrier webbing and reinforced canvas inserts. Accord militia issue — or close enough that the difference doesn\'t matter in the field. The magazine pouches are empty. The extra steel plate in the chest pocket is not. [Fortified]',
+    type: 'armor',
+    weight: 4,
+    defense: 2,
+    value: 28,
+    armorTraits: ['fortified'],
+    tier: 2,
+  },
+
+  // ----------------------------------------------------------
+  // Armor — Tier 4
+  // ----------------------------------------------------------
+
+  body_armor_military: {
+    id: 'body_armor_military',
+    name: 'Military Body Armor',
+    description: 'Full plate carrier with front, back, and side panels. Pre-Collapse military surplus, Salter-maintained. The plates are generation-3 ceramic composite — they\'ll stop rifle rounds until they won\'t, and then they\'re dead weight. The carrier is in good shape. Whatever unit this belonged to kept their kit clean. [Fortified]',
+    type: 'armor',
+    weight: 6,
+    defense: 4,
+    value: 100,
+    armorTraits: ['fortified'],
+    tier: 4,
+  },
+
+  // ----------------------------------------------------------
+  // Weapons — Ranged (new additions)
+  // ----------------------------------------------------------
+
+  ar_platform_rifle: {
+    id: 'ar_platform_rifle',
+    name: 'AR Platform Rifle',
+    description: 'An AR-pattern semi-automatic rifle in 5.56. The receiver is mil-spec, the furniture civilian aftermarket. Some armorer spent time on the trigger — it breaks clean at four pounds. The optic is a fixed 4x. In good hands this is a precise instrument. In bad ones it\'s still a rifle. [Precise]',
+    type: 'weapon',
+    weight: 6,
+    damage: 10,
+    value: 130,
+    weaponTraits: ['precise'],
+    tier: 4,
+  },
+
+  sniper_rifle: {
+    id: 'sniper_rifle',
+    name: 'Sniper Rifle',
+    description: 'A bolt-action .308 in a precision stock, free-floated barrel, with a 10x first-focal-plane scope. Whoever built this knew what they were doing and why. At distance, it erases the question. The trigger pull is two and a half pounds. You will not notice the weight of the round until it arrives. [Precise, Keen]',
+    type: 'weapon',
+    weight: 7,
+    damage: 12,
+    value: 200,
+    weaponTraits: ['precise', 'keen'],
+    tier: 4,
+  },
+
+  military_sidearm: {
+    id: 'military_sidearm',
+    name: 'Military Sidearm',
+    description: 'A compact .45 on a polymer frame, military specification. Short rail, night sights, beaver-tail grip safety. The finish is worn but the bore is clean. Standard Salter officer issue — someone traded this for something or lost it in a way they didn\'t get a chance to explain. [Precise, Quick]',
+    type: 'weapon',
+    weight: 2,
+    damage: 8,
+    value: 75,
+    weaponTraits: ['precise', 'quick'],
+    tier: 3,
+  },
+
+  accord_issue_rifle: {
+    id: 'accord_issue_rifle',
+    name: 'Accord Issue Rifle',
+    description: 'A semi-automatic rifle chambered in 7.62, Accord Militia standard. The stock has been replaced once, the trigger spring twice. It has seen use and survived it. Not fancy. Functional. The kind of firearm that is easy to maintain in the field, which is the only kind that matters.',
+    type: 'weapon',
+    weight: 5,
+    damage: 7,
+    value: 55,
+    weaponTraits: ['precise'],
+    tier: 3,
+  },
+
+  accord_issue_pistol: {
+    id: 'accord_issue_pistol',
+    name: 'Accord Issue Pistol',
+    description: 'A 9mm service pistol, Accord-issue. The lanyard loop is bent. The finish is service-worn but the internals are clean. Accord armorers stamp the frame — this one reads AMA-44. The forty-fourth pistol through that armory. You wonder about the other forty-three.',
+    type: 'weapon',
+    weight: 2,
+    damage: 5,
+    value: 30,
+    tier: 2,
+  },
+
+  // ----------------------------------------------------------
+  // Consumables — Explosives
+  // ----------------------------------------------------------
+
+  fragmentation_grenade: {
+    id: 'fragmentation_grenade',
+    name: 'Fragmentation Grenade',
+    description: 'An M67 frag, pre-Collapse military surplus. The spoon is wired in place and someone has marked the safety clip with orange paint — field modification for recognition by feel. Heavy for its size. The four-second fuse is either a feature or a deadline, depending on what you do next.',
+    type: 'consumable',
+    weight: 1,
+    value: 60,
+    usable: true,
+    useText: 'You pull the pin and throw. Four seconds later, the question is answered.',
+  },
+
+  // ----------------------------------------------------------
+  // Consumables — Medical (new additions)
+  // ----------------------------------------------------------
+
+  gauze: {
+    id: 'gauze',
+    name: 'Gauze',
+    description: 'Sterile rolled gauze, vacuum-sealed in its original packaging. Basic wound care. Slows a bleed, covers a cut, keeps the dirt out while the body does its work. The simplest things keep you alive the longest.',
+    type: 'consumable',
+    weight: 0.2,
+    healing: 2,
+    value: 5,
+    usable: true,
+    useText: 'You wrap the wound with gauze. Not elegant. It works.',
+  },
+
+  antiseptic: {
+    id: 'antiseptic',
+    name: 'Antiseptic',
+    description: 'Povidone-iodine solution in a brown glass bottle with a dropper. The burn when it hits a wound is not comfortable and is not meant to be. It kills what needs killing. In a world where every cut is an infection risk and every infection is a death risk, this bottle is worth more than it looks.',
+    type: 'consumable',
+    weight: 0.3,
+    value: 15,
+    usable: true,
+    useText: 'You apply the antiseptic. It burns. The infection risk drops.',
+  },
+
+  pain_tabs: {
+    id: 'pain_tabs',
+    name: 'Pain Tablets',
+    description: 'A foil blister pack of over-the-counter pain tablets, pre-Collapse manufacture. Ibuprofen, best guess. Takes the edge off. You can function through more than you think when the pain has somewhere else to be.',
+    type: 'consumable',
+    weight: 0.1,
+    value: 10,
+    usable: true,
+    statBonus: { vigor: 1 },
+    useText: 'You swallow two. Within twenty minutes the hurt is still there, just quieter.',
+  },
+
+  antibiotics_single_dose: {
+    id: 'antibiotics_single_dose',
+    name: 'Antibiotics (Single Dose)',
+    description: 'A single-dose blister pack of broad-spectrum antibiotics, individually sealed. The full course is seven days. This is one day. Better than nothing — which, out here, is the highest grade anything earns.',
+    type: 'consumable',
+    weight: 0.1,
+    value: 20,
+    usable: true,
+    useText: 'You take the dose. It\'s not enough on its own, but it\'s a start.',
+  },
+
+  // ----------------------------------------------------------
+  // Consumables — Water / Food (new additions)
+  // ----------------------------------------------------------
+
+  water_container_clean: {
+    id: 'water_container_clean',
+    name: 'Clean Water Container',
+    description: 'A sealed canteen of purified water. The verification tag on the cap says it came from a tested source. Out here that tag is worth almost as much as the water itself.',
+    type: 'consumable',
+    weight: 1,
+    healing: 3,
+    value: 6,
+    usable: true,
+    useText: 'You drink. Clean, verified water. The thirst and a little of the ache both recede.',
+  },
+
+  clean_water_1L: {
+    id: 'clean_water_1L',
+    name: 'Clean Water (1L)',
+    description: 'One liter of clean water in a sealed container. Tested, treated, safe to drink without a second thought. In a world where water will kill you as easily as it saves you, the ability to drink without thinking about it is a small luxury that costs a great deal.',
+    type: 'consumable',
+    weight: 1,
+    healing: 2,
+    value: 4,
+    usable: true,
+    useText: 'You drink. Clean. No aftertaste, no hesitation. You allow yourself to enjoy it.',
+  },
+
+  runners_kit: {
+    id: 'runners_kit',
+    name: 'Runner\'s Kit',
+    description: 'A compact travel kit: high-calorie bars, electrolyte powder, blister pads, and a folded route card. The kind of thing a Drifter courier packs before a long push. Everything in it is designed to keep you moving when stopping isn\'t an option.',
+    type: 'consumable',
+    weight: 1,
+    value: 18,
+    usable: true,
+    statBonus: { grit: 1 },
+    useText: 'You work through the kit methodically. Eat the bar, mix the powder, patch the foot. You feel the road length differently after.',
+  },
+
+  // ----------------------------------------------------------
+  // Junk / Trade / Tools (new additions)
+  // ----------------------------------------------------------
+
+  salvaged_firearm_part: {
+    id: 'salvaged_firearm_part',
+    name: 'Salvaged Firearm Part',
+    description: 'A machined component — bolt carrier, trigger group, or barrel — pulled from a weapon that can\'t be saved as a whole. The part itself is fine. Armorers will want it. The Salters pay well for mil-spec components.',
+    type: 'junk',
+    weight: 0.5,
+    value: 12,
+  },
+
+  salt_1kg: {
+    id: 'salt_1kg',
+    name: 'Salt (1 kg)',
+    description: 'A kilo of coarse salt in a sealed bag, Salt Creek Compact stamp on the label. Preservation, flavoring, trade. Salt Creek runs its economy on this. Out at Crossroads and the Covenant it\'s a recognized medium of exchange — not currency exactly, but close enough to spend.',
+    type: 'junk',
+    weight: 1,
+    value: 8,
+  },
+
+  basic_repair_kit: {
+    id: 'basic_repair_kit',
+    name: 'Basic Repair Kit',
+    description: 'A canvas roll of repair supplies: thread, needles, rivets, leather punches, small metal clips, and a tube of contact cement. Everything you need to keep worn gear from becoming dead gear. Mechanics and armorers sell these and also buy the salvage that makes them possible.',
+    type: 'junk',
+    weight: 1,
+    value: 15,
+  },
+
+  leather_patch_kit: {
+    id: 'leather_patch_kit',
+    name: 'Leather Patch Kit',
+    description: 'A small kit for field-repairing leather armor and gear: pre-cut leather patches in three thicknesses, contact cement, and a bone awl. Takes twenty minutes to use properly. Saves the armor you couldn\'t afford to replace.',
+    type: 'junk',
+    weight: 0.5,
+    value: 12,
+  },
+
+  salvaged_components: {
+    id: 'salvaged_components',
+    name: 'Salvaged Components',
+    description: 'A bundle of mixed salvage — springs, pins, small gears, washers, wire segments. The kind of parts that don\'t fit anything specific but fit everything eventually. Reclaimers call this category "inevitable inventory." Something in here will be exactly what you need in about three weeks.',
+    type: 'junk',
+    weight: 0.8,
+    value: 7,
+  },
+
+  rare_parts_random: {
+    id: 'rare_parts_random',
+    name: 'Rare Salvage Parts',
+    description: 'High-quality pre-Collapse components — machined to tolerances you can\'t match with hand tools. Optical glass, sealed bearings, precision gearing. Crossroads traders call these "rares" and price them accordingly. Every settlement wants them. Nobody has enough of them.',
+    type: 'junk',
+    weight: 0.5,
+    value: 35,
+  },
+
+  electronics_kit: {
+    id: 'electronics_kit',
+    name: 'Electronics Kit',
+    description: 'A canvas roll of electronics tools: soldering iron with tips, flux paste, solder, multimeter with spare batteries, wire strippers, and component trays with labeled resistors and capacitors. The Reclaimers at The Stacks would recognize this as a serious kit. It belongs to someone who knows what they\'re doing with it.',
+    type: 'junk',
+    weight: 1.5,
+    value: 45,
+  },
+
+  welding_rod: {
+    id: 'welding_rod',
+    name: 'Welding Rod',
+    description: 'A bundle of E6011 welding rods in a sealed tube, pre-Collapse stock. Still viable if kept dry — and these have been. Armorers, builders, and Reclaimers all want these. You can fix nearly anything if you can weld it.',
+    type: 'junk',
+    weight: 1,
+    value: 14,
+  },
+
+  leather_belt: {
+    id: 'leather_belt',
+    name: 'Leather Belt',
+    description: 'A heavy leather belt, brass buckle. It holds your gear, holds your pants, and with the right preparation can hold a sheath or holster. Simple. The kind of thing you don\'t think about until it breaks.',
+    type: 'junk',
+    weight: 0.4,
+    value: 6,
+  },
+
+  knife_sheath: {
+    id: 'knife_sheath',
+    name: 'Knife Sheath',
+    description: 'A molded leather sheath for a fixed-blade knife, with a retention snap and belt loop. Worn smooth at the draw. Whoever carried this drew it often enough to polish the leather.',
+    type: 'junk',
+    weight: 0.2,
+    value: 8,
+  },
+
+  pistol_holster: {
+    id: 'pistol_holster',
+    name: 'Pistol Holster',
+    description: 'A mid-ride leather holster, adjustable retention. Fits most compact and full-size pistols with some fitting. The thumb break works. The stitching is solid. You can draw cleanly without looking.',
+    type: 'junk',
+    weight: 0.3,
+    value: 12,
+  },
+
+  // ----------------------------------------------------------
+  // Ammunition (new additions)
+  // ----------------------------------------------------------
+
+  ammo_762: {
+    id: 'ammo_762',
+    name: '7.62mm Rounds',
+    description: 'NATO 7.62x51. Heavier and slower than 5.56, harder to run in volume, but it goes through cover that stops smaller rounds. The Accord issues these. So does anyone who\'s been in a fight where light rifle rounds weren\'t enough.',
+    type: 'currency',
+    weight: 0,
+    value: 5,
+  },
+
+  ammo_556: {
+    id: 'ammo_556',
+    name: '5.56mm Rounds',
+    description: '5.56x45 NATO. The round that feeds the AR platform. Fast, accurate at distance, and common enough in Salter armories that supply lines exist. Worth less per round than .308, worth more than 9mm. The math on a firefight always comes back to this caliber.',
+    type: 'currency',
+    weight: 0,
+    value: 4,
+  },
+
+  // ----------------------------------------------------------
+  // Lore Items — Maps
+  // ----------------------------------------------------------
+
+  map_breaks_basic: {
+    id: 'map_breaks_basic',
+    name: 'Map — The Breaks',
+    description: 'A hand-drawn map on waterproofed canvas, the canyon system rendered in careful pen lines with hazard notes.',
+    type: 'lore',
+    weight: 0,
+    value: 25,
+    usable: true,
+    loreText: 'The Breaks: canyon country east of the River Road. The main trail drops three hundred feet over a quarter mile — marked in red. Red Court presence noted at the lower fork as of last season, though the notation below reads "cleared, unverified." Two water sources marked with blue circles. One has a check beside it and "confirmed, cold." The other just has a question mark. The cartographer signed it: "Best I could do without getting shot."',
+  },
+
+  map_river_road: {
+    id: 'map_river_road',
+    name: 'Map — River Road',
+    description: 'A folded road map with hand-drawn corrections, the original printed highway lines crossed out and redrawn to match the road as it exists now.',
+    type: 'lore',
+    weight: 0,
+    value: 20,
+    usable: true,
+    loreText: 'River Road runs southwest to northeast along the Animas. Three crossings marked: Howard\'s Bridge (reliable), the log ford near mile marker 12 (seasonal — impassable spring runoff), and the ruins of the Route 550 overpass (structurally compromised, single-file only). Hollow activity noted at the overpass ruins. Drifter camp at mile marker 8 — listed as seasonal but a later note reads "permanent now, ask for Sal." A route to the Covenant is penciled along the western bank.',
+  },
+
+  map_dust_partial: {
+    id: 'map_dust_partial',
+    name: 'Map — The Dust (Partial)',
+    description: 'A partial map of the flatlands known as The Dust, roughly half of the territory sketched before the paper runs out.',
+    type: 'lore',
+    weight: 0,
+    value: 15,
+    usable: true,
+    loreText: 'The Dust: open hardpan country, former agricultural land. The map covers the northern half only — whoever drew this either ran out of time or paper or both. What\'s here: the ghost town at the center marked with a skull icon and "HOLLOW — DO NOT CAMP"; two abandoned farmsteads marked with star symbols, the notation "scavenged, empty" beside one and "NOT scavenged yet" beside the other. The water tower is marked with a question mark and the note: "contamination warning, do NOT drink without treatment." The southern half of the map is blank.',
+  },
+
+  // ----------------------------------------------------------
+  // Crafted Items (produced by recipes — crafted_ prefix)
+  // ----------------------------------------------------------
+
+  crafted_purified_antiseptic: {
+    id: 'crafted_purified_antiseptic',
+    name: 'Purified Antiseptic',
+    description: 'A concentrated antiseptic solution distilled from basic chemicals and clean water. Stronger and more stable than raw antiseptic. Cures early-stage infection.',
+    type: 'consumable',
+    weight: 0.5,
+    value: 25,
+    usable: true,
+    useText: 'You apply the purified solution. The wound is clean. The infection risk drops sharply.',
+  },
+
+  crafted_combat_medkit: {
+    id: 'crafted_combat_medkit',
+    name: 'Combat Medkit',
+    description: 'Bandages reinforced with pain tablets and a compression wrap — built for use during or immediately after fighting. Crude. Effective.',
+    type: 'consumable',
+    weight: 1,
+    healing: 10,
+    value: 30,
+    usable: true,
+    useText: 'You work fast. The compression wrap bites down. The bleeding slows. You keep moving.',
+  },
+
+  crafted_trauma_kit: {
+    id: 'crafted_trauma_kit',
+    name: 'Trauma Kit',
+    description: 'A proper trauma package: clean gauze, antiseptic, bandages, and antibiotics. Built for catastrophic injury management. Heavier and bulkier than a combat medkit. Saves lives that a combat medkit cannot.',
+    type: 'consumable',
+    weight: 2,
+    healing: 15,
+    value: 80,
+    usable: true,
+    useText: 'The work takes time. When it\'s done the wound is cleaned, closed, and treated. You will live.',
+  },
+
+  crafted_improvised_trap: {
+    id: 'crafted_improvised_trap',
+    name: 'Improvised Trap',
+    description: 'Scrap metal fashioned into a spring-loaded spike trap. Throwable in combat for 8 damage. Set it in a doorway and something will bleed for passing through.',
+    type: 'consumable',
+    weight: 1,
+    damage: 8,
+    value: 15,
+    usable: true,
+    useText: 'You set the trap. The spring tension is ugly but it will hold.',
+  },
+
+  crafted_reinforced_plate: {
+    id: 'crafted_reinforced_plate',
+    name: 'Reinforced Plate',
+    description: 'Two pieces of scrap metal welded together into a rigid armor panel. Rough but thick. Stops the first hit with authority.',
+    type: 'armor',
+    weight: 4,
+    defense: 3,
+    value: 20,
+    tier: 2,
+  },
+
+  crafted_pipe_weapon_improved: {
+    id: 'crafted_pipe_weapon_improved',
+    name: 'Improved Pipe Weapon',
+    description: 'A salvaged firearm part grafted onto a reinforced scrap-metal chassis. Longer barrel, better grip. Not military hardware. Better than nothing.',
+    type: 'weapon',
+    weight: 3,
+    damage: 6,
+    value: 35,
+    tier: 2,
+  },
+
+  crafted_incendiary_charge: {
+    id: 'crafted_incendiary_charge',
+    name: 'Incendiary Charge',
+    description: 'Basic chemicals in a scrap-metal casing with a short fuse. Throwable incendiary. Deals 10 damage and inflicts burning on impact.',
+    type: 'consumable',
+    weight: 1,
+    damage: 10,
+    value: 40,
+    usable: true,
+    useText: 'You pull the fuse and throw. It goes off correctly. Something is on fire.',
+  },
+
+  crafted_signal_booster: {
+    id: 'crafted_signal_booster',
+    name: 'Signal Booster',
+    description: 'A directional antenna array built from electronics salvage and wire coil. Pulls in faint broadcasts and triangulates transmission sources. Reveals map data when used in range of a signal.',
+    type: 'lore',
+    weight: 1,
+    value: 60,
+    usable: true,
+    useText: 'The antenna array hums. Signal detected. You note the direction.',
+  },
+
+  crafted_armor_patch: {
+    id: 'crafted_armor_patch',
+    name: 'Armor Patch',
+    description: 'A scrap metal backer bonded to a leather reinforcement — a field repair kit for damaged plate or leather armor. Keeps gear from getting worse.',
+    type: 'consumable',
+    weight: 0.5,
+    value: 18,
+    usable: true,
+    useText: 'You work the patch in. The crack is covered. Not perfect. Better.',
+  },
+
+  crafted_chemical_light: {
+    id: 'crafted_chemical_light',
+    name: 'Chemical Light',
+    description: 'A repurposed container glowing blue-green from a luminescence reaction. Silent light source for approximately four hours. Doesn\'t attract Hollows the way fire does.',
+    type: 'consumable',
+    weight: 0.2,
+    value: 8,
+    usable: true,
+    useText: 'You crack the seal. Blue-green light bleeds out from the container, steady and silent.',
+  },
+
+  crafted_lockpick_set: {
+    id: 'crafted_lockpick_set',
+    name: 'Improvised Lockpick Set',
+    description: 'Wire coil drawn and bent into tension wrenches and picks. Works on anything up to a Grade 3 deadbolt with patience. A tool for people who prefer not to announce their presence.',
+    type: 'junk',
+    weight: 0.2,
+    value: 25,
+    usable: true,
+    useText: 'You work the pick set. It takes time. The lock gives.',
+  },
+
+  crafted_antiviral_compound: {
+    id: 'crafted_antiviral_compound',
+    name: 'Antiviral Compound',
+    description: 'A synthesized antiretroviral formulation built on an antibiotics base. Does not cure CHARON-7. Extends the viable window before conversion and suppresses early neurological symptoms — long enough to act.',
+    type: 'consumable',
+    weight: 0.5,
+    value: 200,
+    usable: true,
+    useText: 'You administer the compound. The tremors recede. You have time. Use it.',
+  },
+
+  crafted_emp_device: {
+    id: 'crafted_emp_device',
+    name: 'EMP Device',
+    description: 'An electromagnetic pulse device assembled from capacitor banks and a discharge casing. Single use. Kills electronics in a fifteen-meter radius. Deals 15 damage to mechanical targets.',
+    type: 'consumable',
+    weight: 2,
+    damage: 15,
+    value: 150,
+    usable: true,
+    useText: 'You trigger the device. The pulse expands outward. Electronics die in a radius around you.',
+  },
+
+  crafted_fortified_armor: {
+    id: 'crafted_fortified_armor',
+    name: 'Fortified Armor',
+    description: 'A kevlar vest reinforced with a crafted plate backing. The best of pre-Collapse manufacturing married to what the wastes forced survivors to build. Heavier. Stops more.',
+    type: 'armor',
+    weight: 6,
+    defense: 5,
+    value: 180,
+    tier: 5,
+    armorTraits: ['fortified'],
+  },
+
+  // ----------------------------------------------------------
+  // Hazard Mitigation Gear
+  // ----------------------------------------------------------
+
+  filter_mask: {
+    id: 'filter_mask',
+    name: 'Filter Mask',
+    description: 'A tight-fitting respirator with replaceable cartridge filters. Protects against airborne toxins, chemical agents, and gas hazards. The Reclaimers manufacture these for work in the contaminated zones.',
+    type: 'armor',
+    weight: 0.5,
+    defense: 0,
+    value: 35,
+    usable: false,
+  },
+
+  cold_gear: {
+    id: 'cold_gear',
+    name: 'Cold Weather Gear',
+    description: 'Layered thermal clothing: synthetic base layer, insulated mid-layer, wind shell. Rated for sub-zero exposure. Without this in the deep cold zones, your body does the arithmetic for you.',
+    type: 'armor',
+    weight: 2,
+    defense: 1,
+    value: 40,
+    usable: false,
+    armorTraits: ['insulated'],
   },
 }
 

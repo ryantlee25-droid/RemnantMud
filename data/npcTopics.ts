@@ -86,7 +86,7 @@ export const NPC_TOPICS: Record<string, NpcTopic[]> = {
     {
       keywords: ['sanguine', 'vampire', 'vampires', 'turned'],
       response:
-        "\"Same retrovirus, two expression pathways. Hollow: total cognitive loss. Sanguine: cognitive enhancement, heightened sensory processing, photosensitivity, hemoglobin dependency.\" They tap their pen once, twice. \"The divergence mechanism is what I can't isolate. Identical pathogen, opposite outcomes. That's not random mutation — the variance is too clean. Something is selecting.\" They look at you. \"I don't use the word 'selecting' lightly.\"",
+        "\"Same retrovirus, two expression pathways. Hollow: total cognitive loss. Sanguine: cognitive enhancement, heightened sensory processing, photosensitivity, hemoglobin dependency.\" They tap their pen once, twice. \"The divergence mechanism — I have a theory. The data suggests it wasn't random. But I need proof.\" They look at you. \"I don't use the word 'theory' when I mean 'guess.' This is closer to theory. Closer.\"",
     },
   ],
 
@@ -145,7 +145,7 @@ export const NPC_TOPICS: Record<string, NpcTopic[]> = {
     {
       keywords: ['humans', 'human', 'living'],
       response:
-        "\"Fear of predators is adaptive. Correct, even. I do not resent it.\" She folds her hands. \"And yet every interaction must be structured, transparent, predictable — because the distance between fear and violence is shorter than anyone admits. Duskhollow, 2033.\" A pause that carries weight. \"I will not allow that here. That is not a preference.\"",
+        "\"Fear of predators is adaptive. Correct, even. I do not resent it.\" She folds her hands. \"And yet every interaction must be structured, transparent, predictable — because the distance between fear and violence is shorter than anyone admits. Two years after the Collapse — Duskhollow, 2033.\" A pause that carries weight. \"I will not allow that here. That is not a preference.\"",
     },
     {
       keywords: ['red court', 'court', 'rook'],

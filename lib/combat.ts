@@ -100,6 +100,7 @@ export function playerAttack(
 ): { result: CombatResult; newState: CombatState } {
   const { enemy } = state
   const messages: GameMessage[] = []
+  const weaponTraits = weapon?.weaponTraits ?? []
 
   // If defending this turn, deal 0 damage — skip attack entirely
   if (state.defendingThisTurn) {
@@ -111,27 +112,68 @@ export function playerAttack(
     }
   }
 
+  // --- Overwhelm (Enforcer): auto-hit, ignore armor/defense ---
+  const isOverwhelm = state.overwhelmActive ?? false
+
   // Apply whisperer debuff + fear penalty + condition roll penalties
   const debuffPenalty = (state.whispererDebuff ?? 0) > 0 ? state.whispererDebuff! : 0
   const fearPenalty = state.fearPenalty ?? 0
   const conditionPenalty = totalRollPenalty(state.playerConditions)
-  const effectiveVigor = player.vigor - debuffPenalty - fearPenalty + conditionPenalty
+  const effectiveVigor = player.vigor - debuffPenalty - fearPenalty - Math.abs(conditionPenalty)
 
-  // Add waiting bonus to the attack roll
+  // Mark Target (Scout): accuracy bonus
+  const markBonus = state.markTargetBonus ?? 0
+
+  // Precise weapon trait: halve enemy defense
+  const hasPrecise = weaponTraits.includes('precise')
+  const baseDefense = hasPrecise ? Math.ceil(enemy.defense / 2) : enemy.defense
+
+  // Add waiting bonus + mark target bonus to the attack roll
   const waitingBonus = state.waitingBonus ?? 0
-  const effectiveDefense = Math.max(1, enemy.defense - waitingBonus)
+  const effectiveDefense = Math.max(1, baseDefense - waitingBonus - markBonus)
 
-  const check = rollCheck(effectiveVigor, effectiveDefense)
+  // Overwhelm: skip the roll entirely — auto-hit
+  const check = isOverwhelm
+    ? { roll: 10, modifier: 0, total: 99, dc: effectiveDefense, success: true, critical: false, fumble: false }
+    : rollCheck(effectiveVigor, effectiveDefense)
+
+  // Keen weapon trait: crit on natural 9 or 10 (instead of just 10)
+  const hasKeen = weaponTraits.includes('keen')
+  if (hasKeen && !isOverwhelm && check.roll >= 9 && !check.critical) {
+    (check as { critical: boolean }).critical = true;
+    (check as { success: boolean }).success = true
+  }
+
+  // Shadowstrike (Wraith): force crit on next attack
+  const isShadowstrike = state.shadowstrikeActive ?? false
+  if (isShadowstrike && check.success) {
+    (check as { critical: boolean }).critical = true
+  }
 
   if (waitingBonus > 0) {
     messages.push(msg(`Patience pays off — +${waitingBonus} to your attack.`))
+  }
+  if (markBonus > 0) {
+    messages.push(msg(`Marked target — +${markBonus} accuracy.`))
+  }
+  if (isOverwhelm) {
+    messages.push(msg(`Pure force. No technique. No defense matters.`))
   }
 
   // Decrement whisperer debuff even on miss/fumble (it was consumed this round)
   const debuffAfterRound = debuffPenalty > 0 ? Math.max(0, debuffPenalty - 1) : state.whispererDebuff
 
-  // Reset waiting bonus after use
-  const baseStateUpdates = { whispererDebuff: debuffAfterRound, waitingBonus: 0 }
+  // Reset waiting bonus after use; consume ability flags
+  const baseStateUpdates: Partial<CombatState> = {
+    whispererDebuff: debuffAfterRound,
+    waitingBonus: 0,
+    // Clear one-shot ability flags after this attack
+    overwhelmActive: false,
+    shadowstrikeActive: false,
+    // Decrement mark target attacks
+    markTargetBonus: (state.markTargetAttacks ?? 0) > 0 ? state.markTargetBonus : 0,
+    markTargetAttacks: (state.markTargetAttacks ?? 0) > 0 ? (state.markTargetAttacks! - 1) : 0,
+  }
 
   if (check.fumble) {
     messages.push(
@@ -198,8 +240,8 @@ export function playerAttack(
   // Floor damage at 1 on a hit
   damage = Math.max(1, damage)
 
-  const newEnemyHp = Math.max(0, state.enemyHp - damage)
-  const enemyDefeated = newEnemyHp <= 0
+  let newEnemyHp = Math.max(0, state.enemyHp - damage)
+  let enemyDefeated = newEnemyHp <= 0
 
   if (check.critical) {
     messages.push(
@@ -235,6 +277,26 @@ export function playerAttack(
     messages.push(msg(`The ${rt.enemy(enemy.name)} looks ${enemyHpIndicator(newEnemyHp, enemy.maxHp)}.`))
   }
 
+  // Quick weapon trait: second strike at half damage
+  let quickBonusDamage = 0
+  const hasQuick = weaponTraits.includes('quick')
+  if (hasQuick && !enemyDefeated) {
+    const halfDamage = Math.max(1, Math.ceil(damage / 2))
+    const secondHp = Math.max(0, newEnemyHp - halfDamage)
+    quickBonusDamage = newEnemyHp - secondHp
+    newEnemyHp = secondHp
+    enemyDefeated = newEnemyHp <= 0
+    messages.push(msg(`[${rt.keyword('QUICK')}] A second strike follows — [${quickBonusDamage} damage]`))
+    if (enemyDefeated) {
+      messages.push(msg(`${rt.enemy(enemy.name)} collapses. Silence.`))
+      loot = rollLoot(enemy)
+    } else {
+      messages.push(msg(`The ${rt.enemy(enemy.name)} looks ${enemyHpIndicator(newEnemyHp, enemy.maxHp)}.`))
+    }
+  }
+
+  const totalDamage = damage + quickBonusDamage
+
   const newState: CombatState = {
     ...state,
     ...baseStateUpdates,
@@ -250,7 +312,7 @@ export function playerAttack(
   return {
     result: {
       hit: true,
-      damage,
+      damage: totalDamage,
       critical: check.critical,
       fumble: false,
       messages,
@@ -431,6 +493,16 @@ export function enemyAttack(
       }
     }
 
+    // Base armor defense reduction
+    const armorBaseDefense = armor.defense ?? 0
+    if (armorBaseDefense > 0 && damage > 0) {
+      const before = damage
+      damage = Math.max(1, damage - armorBaseDefense)
+      if (before !== damage) {
+        messages.push(msg(`Armor absorbs ${before - damage} damage.`))
+      }
+    }
+
     // Reactive / Insulated: block conditions
     const survivingConditions = incomingConditions.filter(c => !armorResult.conditionsBlocked.includes(c))
 
@@ -495,8 +567,8 @@ export function flee(
   const fleeBonus = getClassSkillBonus(player.characterClass, 'stealth')
   const fleeStat = player.reflex + player.shadow + fleeBonus
 
-  // DC scales with enemy threat: attack * 3, floor at MODERATE
-  const fleeDc = Math.max(DC.MODERATE, enemy.attack * 3)
+  // DC scales with enemy threat: attack + half defense, floor at MODERATE
+  const fleeDc = Math.max(DC.MODERATE, enemy.attack + Math.ceil(enemy.defense / 2))
 
   const check = rollCheck(fleeStat, fleeDc)
 

@@ -148,6 +148,7 @@ export const EMBER_ROOMS: Room[] = [
       west: 'em_06_dormitory',
       north: 'em_05_purification_room',
       down: 'em_08_the_crypt',
+      up: 'em_07_bell_tower',
     },
     richExits: {},
     items: [],
@@ -438,6 +439,7 @@ export const EMBER_ROOMS: Room[] = [
     shortDescription: 'Old graves along the walls, new Kindling dead marked with iron flames down the center, and a back wall with mortar of different ages.',
     exits: {
       up: 'em_03_the_nave',
+      north: 'em_10_hidden_chapel',
     },
     richExits: {
       north: {
@@ -869,7 +871,14 @@ export const EMBER_ROOMS: Room[] = [
     act: 2,
     difficulty: 4,
     visited: false,
-    flags: { scavengingZone: false },
+    flags: {
+      scavengingZone: false,
+      hazard_type: 'gas',
+      hazard_damage: 2,
+      hazard_message: 'The second smell — the one underneath the primary chemical odor, the one your body knows to dislike — gets into your lungs before you can stop it. Industrial solvent, petroleum-derived, still volatilizing from the spreading stains. Your eyes water. The back of your throat tightens on each breath. The tank farm is not safe to breathe.',
+      hazard_mitigated_by: 'filter_mask',
+      hazard_mitigation_message: 'The filter mask catches the volatile compounds before they reach your lungs. You can still smell the chemical wrong of the place, but your throat stays clear.',
+    },
     description: 'The tank farm occupies the north end of the factory complex — a grid of cylindrical storage tanks on concrete pads, linked by pipe manifolds and valve assemblies that are still nominally intact even after the fire. Some tanks are sealed, their pressure gauges frozen at readings you cannot interpret. Some are ruptured: the steel split along a seam, the interior visible as a cave of rust and residue, and from several of the split tanks something is still leaking — a slow seep of liquid that has created a discolored stain on the concrete spreading outward from each rupture in a rough circle. The liquid is not water. The smell tells you this before the visual does: a sharp organic chemical odor with a second note underneath it that you cannot name but that your body knows to dislike. The air here is wrong in a way that is different from the rest of the district\'s wrongness. This is where the fire started, according to one theory. Standing here, looking at the ruptured tanks and the spreading stain and the valve assemblies that should have been closed and may or may not have been, you find the theory credible.',
     descriptionNight: 'The tank farm at night: the seeping liquid catches whatever ambient light crosses the concrete and gives it back slightly luminescent, slightly wrong. The smell is the same at night. The smell is always the same.',
     descriptionDawn: 'Dawn light makes the stains on the concrete look like topographical maps — the shapes of whatever has been seeping from which tanks for how long, spreading and pooling and drying and spreading again. You can read the history of the leaks from the rings. The outermost rings are from before the fire.',
@@ -1353,12 +1362,20 @@ export const EMBER_ROOMS: Room[] = [
     act: 2,
     difficulty: 4,
     visited: false,
-    flags: { noCombat: false },
+    flags: {
+      noCombat: false,
+      hazard_type: 'gas',
+      hazard_damage: 2,
+      hazard_message: 'The tank farm is immediately south, and the chemical vapor has migrated north with the prevailing air current. Combined with the biocide residue from the towers\' water treatment system — still evaporating from the concrete pads after seven years — the air here catches in your airways on a slow inhale. The Ember industrial district is not done with what it used to make.',
+      hazard_mitigated_by: 'filter_mask',
+      hazard_mitigation_message: 'The filter mask cuts the biocide residue and the solvent vapor to background level. You breathe through it instead of around it.',
+    },
     description: 'Two hyperboloid cooling towers stand at the north edge of the industrial complex, their concrete shells intact in a way that nothing else in the district is intact. The fire didn\'t touch them because the fire couldn\'t — the towers are poured concrete and rebar, built for thermal endurance, and the heat that destroyed the factory and the neighborhood and the annex passed over these structures the way weather passes over geology. They stand sixty feet high and forty feet across at the base, open at the top, the interiors dark and resonant. The southern tower has a steel access door hanging from one hinge. Inside: the fill media — corrugated plastic sheets stacked in layers from floor to about thirty feet up — has partially collapsed, creating a terrain of angular ridges and hollows that the Hollow have colonized with the instinct of things that seek enclosed dark spaces. The northern tower is sealed. Its access door is welded shut from the outside, the bead visible even under the grime, and the weld is not factory — it was done by hand, by someone with a MIG welder and a reason. Whatever is inside the northern tower, someone decided it should stay inside.',
     descriptionNight: 'The towers at night are columns of deeper dark against the sky. The southern tower\'s interior produces sounds — the plastic fill media settling, or the Hollow moving through it, or both. The northern tower is silent. It has been silent since whoever welded it shut.',
     shortDescription: 'Two concrete cooling towers — one colonized by Hollow in its collapsed fill media, one welded shut by someone with a reason.',
     exits: {
       south: 'em_13_chemical_tank_farm',
+      north: 'em_18_cooling_towers',
     },
     richExits: {
       north: {
@@ -1562,7 +1579,14 @@ export const EMBER_ROOMS: Room[] = [
     act: 2,
     difficulty: 4,
     visited: false,
-    flags: { noCombat: false },
+    flags: {
+      noCombat: false,
+      hazard_type: 'gas',
+      hazard_damage: 3,
+      hazard_message: 'The chimney draft pulls air through the loading door and up the stack, and what that air carries on its way through is not nothing. The vitrified ash contains isotope-tagged compounds — the failed treatments, the burned evidence — and the draft aerosolizes the surface layer each time it moves. You are breathing the residue of what this building destroyed. The radiation sign was not decorative.',
+      hazard_mitigated_by: 'hazmat_suit',
+      hazard_mitigation_message: 'Your suit seals against the incinerator\'s aerosolized ash. The isotope residue in the chimney draft reaches your faceplate and stops there.',
+    },
     description: 'The incinerator building is set apart from the main factory — a squat concrete structure with a single tall chimney stack, the stack rising forty feet and still blackened at the top from its last use, whenever that was. The building\'s purpose is legible in its architecture: the reinforced walls, the ventilation louvers along the roofline, the heavy-gauge steel door with its panic bar and its radiation trefoil warning sign — not the biohazard symbol, the radiation symbol, which is a different conversation. Inside: the burn chamber dominates the space, a refractory-lined steel cylinder large enough to stand in, its loading door open, the interior scaled with vitrified ash that has the glassy quality of material burned at temperatures that exceed what industrial waste requires. A control panel on the west wall has gauges for temperature, airflow, and a third parameter labeled only SPEC COMPLIANCE, the needle frozen in the red zone. The floor around the burn chamber is clean — not fire-clean but swept-clean, recently, the broom marks still visible in the thin dust. Someone has been here. Someone is maintaining this space.',
     descriptionNight: 'The incinerator at night. The chimney stack is a column of black against stars. Inside, the burn chamber\'s open loading door is a circle of deeper dark. The control panel gauges are unlit. The swept floor is the same at night. The broom marks don\'t care about the hour.',
     shortDescription: 'A concrete incinerator building with a radiation warning sign, a burn chamber lined with vitrified ash, and a floor that someone has been sweeping.',

@@ -12,7 +12,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     description: 'The Stacks announces itself with solar panels — a hundred of them, angled south on the hillside like a congregation facing the sun, each one labeled with an installation date and wattage in neat stenciled paint. Behind the panels, an electric fence hums with real current, and behind the fence, the converted warehouse complex rises in clean right angles — the only structure in the Four Corners that looks engineered rather than improvised. The air smells like ozone and warm silicon. A camera tracks your approach. A speaker crackles: "State your affiliation and purpose." These people have power, and the precision of everything you can see says they intend to keep it.',
     descriptionNight: 'At night the Stacks is the brightest thing in the Four Corners. Electric light — not firelight — spills from the facility windows. The solar array\'s charge runs their batteries through the dark hours. Standing out here at night feels like standing outside civilization and watching it work. The gate camera light is a red eye in the darkness.',
     shortDescription: 'The Stacks perimeter. Solar panels. Electric fence. Camera watching.',
-    exits: { west: 'st_02_entry_hall' },
+    exits: { west: 'st_02_entry_hall', south: 'cr_10_overlook' },
     richExits: {
       west: {
         destination: 'st_02_entry_hall',

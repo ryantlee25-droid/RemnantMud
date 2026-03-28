@@ -73,6 +73,22 @@ export default function Prologue({ onComplete }: PrologueProps) {
     }
   }, [visibleLines])
 
+  // Keyboard shortcut: Space/Enter to skip or continue
+  useEffect(() => {
+    function handleKeyDown(e: globalThis.KeyboardEvent) {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault()
+        if (done) {
+          onComplete()
+        } else {
+          skipToEnd()
+        }
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [done, onComplete])
+
   function skipToEnd() {
     if (intervalRef.current) clearInterval(intervalRef.current)
     setVisibleLines(PROLOGUE_LINES.length)
@@ -81,7 +97,7 @@ export default function Prologue({ onComplete }: PrologueProps) {
   }
 
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto font-mono text-amber-400 p-6 md:p-12">
+    <div className="flex flex-col flex-1 overflow-y-auto font-mono text-amber-400 p-4 sm:p-6 md:p-12" role="region" aria-live="polite" aria-label="Prologue">
       <div className="max-w-2xl mx-auto w-full flex flex-col flex-1">
         <div className="text-amber-700 text-xs uppercase tracking-widest mb-8">
           THE REMNANT — Transmission Log

@@ -19,6 +19,7 @@ export default function InventoryTab() {
   const { player, inventory } = state
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [saveError, setSaveError] = useState(false)
   const [currentTheme, setCurrentTheme] = useState<ThemeId>('amber')
 
   // Load current theme on mount and listen for changes
@@ -41,10 +42,17 @@ export default function InventoryTab() {
 
   async function handleSave() {
     setSaving(true)
-    await engine.executeAction(parseCommand('save'))
-    setSaving(false)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 1500)
+    setSaveError(false)
+    try {
+      await engine.executeAction(parseCommand('save'))
+      setSaved(true)
+      setTimeout(() => setSaved(false), 1500)
+    } catch {
+      setSaveError(true)
+      setTimeout(() => setSaveError(false), 3000)
+    } finally {
+      setSaving(false)
+    }
   }
 
   if (!player) return null
@@ -131,6 +139,9 @@ export default function InventoryTab() {
           </button>
           {saved && (
             <span className="text-amber-500 text-xs animate-pulse">Saved.</span>
+          )}
+          {saveError && (
+            <span className="text-red-500 text-xs animate-pulse">Save failed.</span>
           )}
         </div>
       </section>

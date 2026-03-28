@@ -68,12 +68,12 @@ function makeEngine(state: Partial<GameState> = {}): EngineCore & { messages: Ga
 // ------------------------------------------------------------
 
 describe('xpForNextLevel', () => {
-  it('returns 100 for level 1 (next level is 2)', () => {
-    expect(xpForNextLevel(1)).toBe(100)
+  it('returns 50 for level 1 (next level is 2)', () => {
+    expect(xpForNextLevel(1)).toBe(50)
   })
 
-  it('returns 250 for level 2 (next level is 3)', () => {
-    expect(xpForNextLevel(2)).toBe(250)
+  it('returns 150 for level 2 (next level is 3)', () => {
+    expect(xpForNextLevel(2)).toBe(150)
   })
 
   it('returns null at max level (10)', () => {
@@ -81,15 +81,15 @@ describe('xpForNextLevel', () => {
   })
 
   it('returns correct threshold for every defined level', () => {
-    expect(xpForNextLevel(1)).toBe(100)
-    expect(xpForNextLevel(2)).toBe(250)
-    expect(xpForNextLevel(3)).toBe(500)
-    expect(xpForNextLevel(4)).toBe(850)
-    expect(xpForNextLevel(5)).toBe(1300)
-    expect(xpForNextLevel(6)).toBe(1900)
-    expect(xpForNextLevel(7)).toBe(2700)
-    expect(xpForNextLevel(8)).toBe(3800)
-    expect(xpForNextLevel(9)).toBe(5000)
+    expect(xpForNextLevel(1)).toBe(50)
+    expect(xpForNextLevel(2)).toBe(150)
+    expect(xpForNextLevel(3)).toBe(350)
+    expect(xpForNextLevel(4)).toBe(600)
+    expect(xpForNextLevel(5)).toBe(1000)
+    expect(xpForNextLevel(6)).toBe(1500)
+    expect(xpForNextLevel(7)).toBe(2200)
+    expect(xpForNextLevel(8)).toBe(3100)
+    expect(xpForNextLevel(9)).toBe(4200)
   })
 })
 
@@ -202,7 +202,7 @@ describe('GameEngine._checkLevelUp', () => {
   })
 
   it('does nothing when XP is below threshold', () => {
-    const player = makePlayer({ xp: 50, level: 1, hp: 20, maxHp: 20 })
+    const player = makePlayer({ xp: 30, level: 1, hp: 20, maxHp: 20 })
     engine._setState({ player })
 
     engine._checkLevelUp()
@@ -231,7 +231,7 @@ describe('XP display format', () => {
     const threshold = xpForNextLevel(level)
     expect(threshold).not.toBeNull()
     const display = `${currentXp}/${threshold}`
-    expect(display).toBe('75/100')
+    expect(display).toBe('75/50')
   })
 
   it('shows XP without threshold at max level', () => {

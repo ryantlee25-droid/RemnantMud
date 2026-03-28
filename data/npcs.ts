@@ -165,7 +165,7 @@ export const NPCS: Record<string, RichNPC> = {
       'She sits with the stillness of someone who no longer needs to fidget. The photosensitivity is apparent — she has positioned herself precisely in the deepest shadow of the room, equidistant from every light source. She was a philosophy professor once. You can hear it in the precision of her sentences. She believes in what she has built here. That may be the most dangerous thing about her.',
     dialogue:
       "The blood tithe is not exploitation. The blood tithe is acknowledgment. We are predators and you are prey and the Covenant is the formal agreement that both parties have chosen something else. You find that transactional? Good. Transactions are civilized. The alternative is the Red Court. I have been clear about which I prefer.",
-    faction: 'covenant_of_dusk',
+    faction: 'lucid',
     isNamed: true,
     zone: 'duskhollow',
     spawnChance: 0.80,

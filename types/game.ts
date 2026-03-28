@@ -133,6 +133,7 @@ export interface SpawnedNPC {
   npcId: string
   activity: string              // rolled from activity pool
   disposition: 'friendly' | 'neutral' | 'wary' | 'hostile'
+  dialogueTree?: string
 }
 
 export interface PopulatedRoom {
@@ -291,7 +292,7 @@ export interface RoomFlags {
   scavengingZone?: boolean
   questHub?: boolean
   waterSource?: boolean
-  [key: string]: boolean | number | undefined
+  [key: string]: boolean | number | string | undefined
 }
 
 // ------------------------------------------------------------
@@ -466,7 +467,7 @@ export interface Room {
   zone: ZoneType
   difficulty: number               // 1–5
   visited: boolean
-  flags: Record<string, boolean | number>
+  flags: Record<string, boolean | number | string>
   extras?: RoomExtra[]             // examinable details via "look <keyword>"
   hollowEncounter?: HollowEncounter
   environmentalRolls?: EnvironmentalRolls
@@ -564,6 +565,7 @@ export interface PlayerLedger {
   squirrelCyclesKnown: number
   squirrelName?: 'Chippy' | 'Stumpy'
   cycleHistory?: CycleSnapshot[]
+  discoveredEnemies?: string[]  // enemy IDs the player has encountered/defeated
 }
 
 export interface StashItem {

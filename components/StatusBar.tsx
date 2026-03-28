@@ -4,6 +4,7 @@
 // StatusBar.tsx — One-line status: location | time | HP | XP
 // ============================================================
 
+import { memo } from 'react'
 import { useGame } from '@/lib/gameContext'
 import { isDevMode } from '@/lib/supabaseMock'
 import { xpForNextLevel, getTimeOfDay } from '@/lib/gameEngine'
@@ -30,7 +31,7 @@ const TIME_COLORS: Record<TimeOfDay, string> = {
   night: 'text-blue-400',
 }
 
-export default function StatusBar() {
+export default memo(function StatusBar() {
   const { state } = useGame()
   const { player, currentRoom, combatState } = state
 
@@ -77,4 +78,4 @@ export default function StatusBar() {
       )}
     </div>
   )
-}
+})

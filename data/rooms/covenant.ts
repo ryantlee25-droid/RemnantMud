@@ -924,6 +924,7 @@ export const COVENANT_ROOMS: Room[] = [
     exits: {
       south: 'cv_06_armory',
       west: 'cv_25_wall_south',
+      north: 'cv_28_signal_post',
     },
     richExits: {},
     items: [],

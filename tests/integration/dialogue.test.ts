@@ -100,6 +100,14 @@ vi.mock('@/lib/world', () => ({
 
 vi.mock('@/lib/skillBonus', () => ({
   getClassSkillBonus: vi.fn(() => 0),
+  getStatForSkill: vi.fn((_skill: string, player: { vigor?: number; grit?: number; reflex?: number; wits?: number; presence?: number; shadow?: number } | null) => {
+    if (!player) return null
+    return player.wits ?? 5
+  }),
+  getStatNameForSkill: vi.fn((skill: string) => {
+    const map: Record<string, string> = { negotiation: 'presence', intimidation: 'presence', perception: 'reflex', survival: 'grit', stealth: 'shadow' }
+    return map[skill] ?? 'wits'
+  }),
 }))
 
 // Mock dice module — will be overridden per-test

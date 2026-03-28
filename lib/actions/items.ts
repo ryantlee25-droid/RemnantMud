@@ -2,7 +2,7 @@
 // lib/actions/items.ts — handleTake, handleDrop, handleEquip, handleUse, handleStash
 // ============================================================
 
-import type { GameMessage, Room } from '@/types/game'
+import type { GameMessage, Room, Player, InventoryItem } from '@/types/game'
 import type { EngineCore } from './types'
 import type { StashItem } from '@/types/game'
 import {
@@ -16,6 +16,7 @@ import { updateRoomItems, updateRoomFlags } from '@/lib/world'
 import { getItem } from '@/data/items'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 import { rt } from '@/lib/richText'
+import { msg, systemMsg, errorMsg } from '@/lib/messages'
 
 // ------------------------------------------------------------
 // Stash loader — reads player_stash rows and maps to StashItem[]
@@ -44,19 +45,18 @@ async function loadStash(playerId: string): Promise<StashItem[]> {
 }
 
 // ------------------------------------------------------------
-// Local message helpers
+// Weight helpers
 // ------------------------------------------------------------
 
-function msg(text: string, type: GameMessage['type'] = 'narrative'): GameMessage {
-  return { id: crypto.randomUUID(), text, type }
+function getCurrentWeight(inventory: InventoryItem[]): number {
+  return inventory.reduce((sum, inv) => {
+    const item = getItem(inv.itemId)
+    return sum + (item?.weight ?? 0) * (inv.quantity ?? 1)
+  }, 0)
 }
 
-function systemMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'system' }
-}
-
-function errorMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'error' }
+function getMaxWeight(player: Player): number {
+  return 50 + (player.vigor * 5)
 }
 
 // ------------------------------------------------------------
@@ -84,6 +84,18 @@ export async function handleTake(engine: EngineCore, noun: string | undefined): 
   }
 
   const item = getItem(itemId)!
+
+  // Weight check — refuse if carrying capacity would be exceeded
+  const { inventory: currentInventory } = engine.getState()
+  const currentWeight = getCurrentWeight(currentInventory)
+  const maxWeight = getMaxWeight(player)
+  const itemWeight = item.weight ?? 0
+
+  if (currentWeight + itemWeight > maxWeight) {
+    engine._appendMessages([errorMsg(`You can't carry any more (${currentWeight}/${maxWeight} lbs). Drop something first.`)])
+    return
+  }
+
   // Remove only the first occurrence (room may contain multiple copies of the same item)
   let removed = false
   const newItems = currentRoom.items.filter((id) => {
@@ -131,6 +143,12 @@ export async function handleTake(engine: EngineCore, noun: string | undefined): 
 
   const inventory = await getInventory(player.id)
   engine._setState({ inventory })
+
+  // First weapon hint
+  const hasOtherWeapons = inventory.filter(ii => ii.item.type === 'weapon' && ii.itemId !== itemId).length > 0
+  if (item.type === 'weapon' && !hasOtherWeapons) {
+    engine._appendMessages([systemMsg(`Hint: Type 'equip ${item.name.toLowerCase()}' to ready it for combat.`)])
+  }
 }
 
 export async function handleDrop(engine: EngineCore, noun: string | undefined): Promise<void> {
@@ -149,6 +167,11 @@ export async function handleDrop(engine: EngineCore, noun: string | undefined): 
 
   if (!invItem) {
     engine._appendMessages([errorMsg(`You don't have that.`)])
+    return
+  }
+
+  if (invItem.item.type === 'key') {
+    engine._appendMessages([errorMsg(`You can't drop the ${rt.item(invItem.item.name)}. It seems important.`)])
     return
   }
 
@@ -288,6 +311,10 @@ export async function handleUse(engine: EngineCore, noun: string | undefined): P
     // Register buffs on GameState so the dispatcher can expire them
     const currentBuffs = engine.getState().activeBuffs ?? []
     engine._setState({ activeBuffs: [...currentBuffs, ...newBuffs] })
+  }
+
+  if (messages.length === 0 && invItem.item.useText) {
+    messages.push(msg(invItem.item.useText))
   }
 
   if (messages.length === 0) {

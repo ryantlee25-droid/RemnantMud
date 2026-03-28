@@ -7,17 +7,10 @@ import type { EngineCore } from './types'
 import { statModifier } from '@/lib/dice'
 import { rt } from '@/lib/richText'
 import { WEAPON_TRAITS, ARMOR_TRAITS } from '@/types/traits'
+import { systemMsg } from '@/lib/messages'
 
 const VALID_STATS: Set<string> = new Set(['vigor', 'grit', 'reflex', 'wits', 'presence', 'shadow'])
 const STAT_BOOST_MAX = 9  // stat increase can push one stat to 9
-
-// ------------------------------------------------------------
-// Local message helpers
-// ------------------------------------------------------------
-
-function systemMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'system' }
-}
 
 function statMod(n: number): string {
   if (n > 0) return `+${n}`
@@ -106,12 +99,18 @@ export async function handleHelp(engine: EngineCore): Promise<void> {
     '  ability / special             — use class combat ability (once per fight)',
     '  analyze / scan                — study the enemy (Reclaimer: free; others: Wits check)',
     '  flee                          — attempt to flee combat',
+    '  sneak [direction]             — attempt to move stealthily into an area',
     '  talk [person]                 — speak with an NPC',
+    '  give [item] [person]          — give an item to an NPC',
     '  search                        — search the room',
     '  rest / sleep                  — rest in a safe area to recover HP',
     '  camp                          — build a campfire to rest (needs fire supplies)',
     '  drink / fill                  — drink from a water source',
     '  use [item]                    — use a consumable item',
+    '  craft [item]                  — craft an item from components',
+    '  unlock [direction]            — unlock a locked exit using a key item',
+    '  climb [direction]             — climb to reach an elevated area',
+    '  swim [direction]              — swim through a flooded passage',
     '  trade [person]                — see an NPC\'s wares',
     '  buy [item]                    — buy from a trader',
     '  sell [item]                   — sell to a trader (half price)',
@@ -126,6 +125,32 @@ export async function handleHelp(engine: EngineCore): Promise<void> {
   ]
 
   engine._appendMessages(lines.map((l) => systemMsg(l)))
+}
+
+// ------------------------------------------------------------
+// handleTutorialHint — show a one-time tutorial hint by context
+// ------------------------------------------------------------
+
+const TUTORIAL_HINTS: Record<string, string> = {
+  'first_room': "Tip: Type 'look' to examine your surroundings, or try a direction like 'north' to move.",
+  'first_item': "Tip: You see items here. Type 'take [item name]' to pick something up.",
+  'first_weapon': "Tip: You picked up a weapon! Type 'equip [weapon name]' to ready it for combat.",
+  'first_enemy': "Tip: An enemy is here! Type 'attack' to fight, 'flee' to run, or 'sneak' to try slipping past.",
+  'first_npc': "Tip: Someone is here. Type 'talk [name]' to speak with them.",
+  'first_death': "Tip: Death is not the end. Your memories echo forward. Choose wisely in the next cycle.",
+}
+
+export async function handleTutorialHint(engine: EngineCore, context: string): Promise<void> {
+  if (typeof localStorage === 'undefined') return
+
+  const storageKey = `remnant_tutorial_${context}`
+  if (localStorage.getItem(storageKey)) return
+
+  const hint = TUTORIAL_HINTS[context]
+  if (!hint) return
+
+  localStorage.setItem(storageKey, '1')
+  engine._appendMessages([systemMsg(hint)])
 }
 
 export async function handleBoost(engine: EngineCore, noun: string | undefined): Promise<void> {

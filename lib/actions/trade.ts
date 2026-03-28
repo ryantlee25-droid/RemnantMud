@@ -9,22 +9,7 @@ import { getNPC } from '@/data/npcs'
 import { getItem } from '@/data/items'
 import { getInventory, addItem, removeItem } from '@/lib/inventory'
 import { rt } from '@/lib/richText'
-
-// ------------------------------------------------------------
-// Local message helpers
-// ------------------------------------------------------------
-
-function msg(text: string, type: GameMessage['type'] = 'narrative'): GameMessage {
-  return { id: crypto.randomUUID(), text, type }
-}
-
-function systemMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'system' }
-}
-
-function errorMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'error' }
-}
+import { msg, systemMsg, errorMsg } from '@/lib/messages'
 
 // ------------------------------------------------------------
 // Currency helpers
@@ -208,6 +193,11 @@ export async function handleSell(engine: EngineCore, noun: string | undefined): 
 
   if (!invItem) {
     engine._appendMessages([errorMsg("You don't have that.")])
+    return
+  }
+
+  if (invItem.item.type === 'key') {
+    engine._appendMessages([errorMsg(`You can't sell the ${rt.item(invItem.item.name)}. It might be important.`)])
     return
   }
 

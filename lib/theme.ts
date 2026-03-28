@@ -42,13 +42,23 @@ export const THEME_KEY = 'remnant_theme'
 
 export function loadTheme(): ThemeId {
   if (typeof window === 'undefined') return 'amber'
-  const stored = localStorage.getItem(THEME_KEY)
-  if (stored === 'amber' || stored === 'green' || stored === 'blue') return stored
+  try {
+    const stored = localStorage.getItem(THEME_KEY)
+    if (stored === 'amber' || stored === 'green' || stored === 'blue') return stored
+  } catch {
+    // localStorage unavailable
+  }
   return 'amber'
 }
 
 export function saveTheme(id: ThemeId): void {
-  if (typeof window !== 'undefined') localStorage.setItem(THEME_KEY, id)
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(THEME_KEY, id)
+    } catch {
+      // localStorage unavailable
+    }
+  }
 }
 
 export function getTheme(id: ThemeId): Theme {

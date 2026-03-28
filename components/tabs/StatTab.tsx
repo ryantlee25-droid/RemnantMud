@@ -159,15 +159,6 @@ export default function StatTab() {
         </div>
       </section>
 
-      {/* STAT INCREASE BANNER */}
-      {state.pendingStatIncrease && (
-        <section className="border border-green-500/50 bg-green-900/20 rounded px-3 py-2">
-          <p className="text-green-400 text-sm">
-            Stat increase available! Type <span className="font-bold">boost [stat]</span> to choose.
-          </p>
-        </section>
-      )}
-
       {/* STATS */}
       <section>
         <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">Stats</h2>
@@ -184,7 +175,7 @@ export default function StatTab() {
                     ({modStr(mod)})
                   </span>
                   {state.pendingStatIncrease && (
-                    <span className="text-green-400 text-xs ml-1">+1</span>
+                    <span className="text-green-400/60 text-[10px] ml-1">[boostable]</span>
                   )}
                 </span>
               </div>

@@ -57,7 +57,7 @@ function getWaypoints(): Room[] {
 
 export default function MapTab() {
   const { state } = useGame()
-  const { player, currentRoom } = state
+  const { player, currentRoom, ledger } = state
 
   // Build waypoint groups from static data.
   // We can only check "visited" from the static definition or currentRoom match.
@@ -77,13 +77,10 @@ export default function MapTab() {
     const grouped = new Map<ZoneType, WaypointEntry[]>()
     for (const wp of waypoints) {
       const isCurrent = currentRoom?.id === wp.id
-      // A waypoint is "discovered" if the player has visited it.
-      // Since we don't have async DB access here, we check:
-      // 1) It's the current room (definitely visited)
-      // 2) The static room data says visited (will be false for unvisited)
-      // For a more accurate view, we'd need the DB state. But currentRoom
-      // is always accurate for where the player is now.
-      const discovered = isCurrent || wp.visited
+      // A waypoint is "discovered" if it's the current room or appears in
+      // the player's ledger of discovered room IDs (persisted across sessions).
+      const discoveredIds = ledger?.discoveredRoomIds ?? []
+      const discovered = isCurrent || discoveredIds.includes(wp.id)
 
       const entry: WaypointEntry = { room: wp, discovered, isCurrent }
       const list = grouped.get(wp.zone) ?? []
@@ -111,7 +108,7 @@ export default function MapTab() {
     }
 
     return result
-  }, [currentRoom])
+  }, [currentRoom, ledger])
 
   if (!player) return null
 

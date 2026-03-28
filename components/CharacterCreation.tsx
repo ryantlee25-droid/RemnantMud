@@ -176,6 +176,7 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create character.')
+    } finally {
       setSubmitting(false)
     }
   }

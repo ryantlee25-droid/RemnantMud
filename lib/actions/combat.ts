@@ -21,26 +21,8 @@ import { rollCheck } from '@/lib/dice'
 import { getClassSkillBonus } from '@/lib/skillBonus'
 import { cureCondition, tickConditions, tryShakeFrightened } from '@/lib/conditions'
 import { buildAnalyzeMessages } from '@/lib/abilities'
-
-// ------------------------------------------------------------
-// Local message helpers
-// ------------------------------------------------------------
-
-function msg(text: string, type: GameMessage['type'] = 'narrative'): GameMessage {
-  return { id: crypto.randomUUID(), text, type }
-}
-
-function systemMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'system' }
-}
-
-function errorMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'error' }
-}
-
-function combatMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'combat' }
-}
+import { removeItem, getInventory } from '@/lib/inventory'
+import { msg, systemMsg, combatMsg, errorMsg } from '@/lib/messages'
 
 // ------------------------------------------------------------
 // Noise-triggered hollow encounter
@@ -160,12 +142,21 @@ export async function handleAttack(engine: EngineCore, noun: string | undefined)
 
   // Fear check: high-difficulty rooms impose a first-round penalty on failed grit check
   if (currentRoom.difficulty >= 4) {
-    const fear = fearCheck(player, currentRoom)
+    const equippedArmorForFear = inventory.find((ii) => ii.equipped && ii.item.type === 'armor')
+    const fear = fearCheck(player, currentRoom, equippedArmorForFear)
     if (fear.afraid) {
       combatWithRoom.fearPenalty = 1
       combatWithRoom.fearRoundsRemaining = fear.fearRounds
     }
     engine._appendMessages(fear.messages)
+  }
+
+  // Discover enemy in bestiary on first encounter (even if player dies)
+  const ledger = engine.getState().ledger
+  if (ledger && !ledger.discoveredEnemies?.includes(enemy.id)) {
+    const updated = [...(ledger.discoveredEnemies ?? []), enemy.id]
+    const updatedLedger = { ...ledger, discoveredEnemies: updated }
+    engine._setState({ ledger: updatedLedger })
   }
 
   engine._setState({ combatState: combatWithRoom })
@@ -278,7 +269,7 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
   if (!playerStunned) {
     const playerDamageRange: [number, number] = equippedWeapon?.item.damage
       ? [1, equippedWeapon.item.damage]
-      : [1, 3]
+      : [2, 4]
     const { result: playerResult, newState: afterPlayer } = playerAttack(
       engine.getState().player!,
       activeCombat,
@@ -314,8 +305,8 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
       activeCombat,
       equippedArmor?.item,
     )
-    // Apply armor reduction (percentage-based: each defense point = 12%, capped at 50%, minimum 1 damage)
-    const reductionPct = Math.min(armorDefense * 0.12, 0.50)
+    // Apply armor reduction (percentage-based: each defense point = 15%, capped at 60%, minimum 1 damage)
+    const reductionPct = Math.min(armorDefense * 0.15, 0.60)
     const actualDamage = rawDamage > 0 ? Math.max(1, Math.ceil(rawDamage * (1 - reductionPct))) : 0
 
     // Rewrite last damage message to reflect armor
@@ -340,7 +331,7 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
           enemyHp: addEnemy.hp,
         }
         const { damage: addRawDmg, messages: addMsgs } = enemyAttack(latestPlayer, addCombatState, equippedArmor?.item)
-        const addReductionPct = Math.min(armorDefense * 0.12, 0.50)
+        const addReductionPct = Math.min(armorDefense * 0.15, 0.60)
         const addActualDmg = addRawDmg > 0 ? Math.max(1, Math.ceil(addRawDmg * (1 - addReductionPct))) : 0
 
         const addAdjustedMsgs = addMsgs.map((m, i) => {
@@ -393,6 +384,15 @@ async function handleEnemyDefeated(
     currentRoom: updatedRoom,
     combatState: null,
   })
+
+  // Track enemy in bestiary (ledger persists across cycles)
+  const ledger = engine.getState().ledger
+  if (ledger && !ledger.discoveredEnemies?.includes(afterPlayer.enemy.id)) {
+    const updated = [...(ledger.discoveredEnemies ?? []), afterPlayer.enemy.id]
+    const updatedLedger = { ...ledger, discoveredEnemies: updated }
+    engine._setState({ ledger: updatedLedger })
+    engine._appendMessages([systemMsg(`[BESTIARY] New entry: ${rt.enemy(afterPlayer.enemy.name)}`)])
+  }
 
   engine._checkLevelUp()
 
@@ -501,8 +501,8 @@ export async function handleFlee(engine: EngineCore): Promise<void> {
   if (freeAttack) {
     const equippedArmor = engine.getState().inventory.find((ii) => ii.equipped && ii.item.type === 'armor')
     const armorDefense = equippedArmor?.item.defense ?? 0
-    // Percentage-based armor reduction (each defense point = 12%, capped at 50%, minimum 1 damage)
-    const fleeReductionPct = Math.min(armorDefense * 0.12, 0.50)
+    // Percentage-based armor reduction (each defense point = 15%, capped at 60%, minimum 1 damage)
+    const fleeReductionPct = Math.min(armorDefense * 0.15, 0.60)
     const actualDamage = freeAttack.damage > 0 ? Math.max(1, Math.ceil(freeAttack.damage * (1 - fleeReductionPct))) : 0
 
     // Rewrite damage messages to reflect armor
@@ -642,16 +642,13 @@ async function doEnemyTurn(engine: EngineCore): Promise<void> {
   const { damage: rawDamage, messages: eMsgs, newState: afterEnemy } = enemyAttack(player, activeCombat, equippedArmor?.item)
 
   // Apply armor reduction
-  const reductionPct = Math.min(armorDefense * 0.12, 0.50)
+  const reductionPct = Math.min(armorDefense * 0.15, 0.60)
   let actualDamage = rawDamage > 0 ? Math.max(1, Math.ceil(rawDamage * (1 - reductionPct))) : 0
 
-  // Defending damage reduction is now handled inside enemyAttack via state.defendingThisTurn
-  // But doEnemyTurn also applies its own defend/brace reductions for the defend/wait commands
-  if (activeCombat.defendingThisTurn && actualDamage > 0) {
-    actualDamage = Math.max(1, Math.ceil(actualDamage * 0.5))
-  }
+  // Defending reduction is already applied inside enemyAttack via state.defendingThisTurn (30% reduction).
+  // Do NOT apply it again here.
 
-  // Brace active (Warden): reduce damage 60%
+  // Brace active (Warden): reduce damage 60% — separate from defend, not stackable
   if (activeCombat.braceActive && actualDamage > 0) {
     actualDamage = Math.max(1, Math.ceil(actualDamage * 0.4))
   }
@@ -690,4 +687,131 @@ async function doEnemyTurn(engine: EngineCore): Promise<void> {
 
   engine._appendMessages([systemMsg(`HP: ${newHp}/${player.maxHp}`)])
   await engine._savePlayer()
+}
+
+// ------------------------------------------------------------
+// handleCombatUse — use a consumable item during combat
+// ------------------------------------------------------------
+
+export async function handleCombatUse(engine: EngineCore, noun: string | undefined): Promise<void> {
+  const { player, combatState, inventory } = engine.getState()
+  if (!player) return
+
+  if (!combatState?.active) {
+    engine._appendMessages([errorMsg('You are not in combat.')])
+    return
+  }
+
+  if (!noun) {
+    engine._appendMessages([errorMsg('Use what?')])
+    return
+  }
+
+  const nounLower = noun.toLowerCase()
+  const invItem = inventory.find((ii) =>
+    ii.item.name.toLowerCase().includes(nounLower) ||
+    ii.itemId.toLowerCase().includes(nounLower)
+  )
+
+  if (!invItem) {
+    engine._appendMessages([errorMsg("You don't have that.")])
+    return
+  }
+
+  if (invItem.item.type !== 'consumable') {
+    engine._appendMessages([errorMsg("You can't use that in combat.")])
+    return
+  }
+
+  const item = invItem.item
+
+  // Consumable with damage field (e.g. fragmentation grenades)
+  if (item.damage != null && item.damage > 0) {
+    const dmg = item.damage
+    const newEnemyHp = Math.max(0, combatState.enemyHp - dmg)
+    const updatedCombat: CombatState = { ...combatState, enemyHp: newEnemyHp }
+    engine._setState({ combatState: updatedCombat })
+    engine._appendMessages([
+      combatMsg(`You use the ${rt.item(item.name)}. ${item.useText ?? ''}`),
+      combatMsg(`${rt.enemy(combatState.enemy.name)} takes ${dmg} damage. [${newEnemyHp}/${combatState.enemy.maxHp} HP]`),
+    ])
+
+    // Consume item
+    await removeItem(player.id, invItem.itemId)
+    const updatedInventory = await getInventory(player.id)
+    engine._setState({ inventory: updatedInventory })
+
+    // Check if enemy is defeated
+    if (newEnemyHp <= 0) {
+      engine._appendMessages([combatMsg(`${rt.enemy(combatState.enemy.name)} is torn apart by the blast.`)])
+      const updatedCombatDefeated = { ...updatedCombat, active: false }
+      engine._setState({ combatState: updatedCombatDefeated })
+      const currentRoom = engine.getState().currentRoom!
+      await handleEnemyDefeated(engine, engine.getState().player!, currentRoom, updatedCombatDefeated, undefined, false)
+      return
+    }
+
+    // Enemy attacks back
+    await doEnemyTurn(engine)
+    return
+  }
+
+  // Consumable with healAmount (healing field)
+  if (item.healing != null && item.healing > 0) {
+    const healing = item.healing
+    const newHp = Math.min(player.maxHp, player.hp + healing)
+    const updatedPlayer: Player = { ...player, hp: newHp }
+    engine._setState({ player: updatedPlayer })
+    engine._appendMessages([
+      combatMsg(`You use the ${rt.item(item.name)}. ${item.useText ?? ''}`),
+      combatMsg(`You recover ${healing} HP. [${newHp}/${player.maxHp}]`),
+    ])
+
+    // Consume item
+    await removeItem(player.id, invItem.itemId)
+    const updatedInventory = await getInventory(player.id)
+    engine._setState({ inventory: updatedInventory })
+
+    // Enemy attacks back
+    await doEnemyTurn(engine)
+    return
+  }
+
+  // Consumable with statBonus
+  if (item.statBonus) {
+    const BUFF_DURATION = 20
+    const bonusEntries = Object.entries(item.statBonus) as Array<[string, number]>
+    const expiresAt = (player.actionsTaken ?? 0) + BUFF_DURATION
+    let updatedPlayer = { ...player }
+    const newBuffs: Array<{ stat: string; bonus: number; expiresAt: number }> = []
+
+    for (const [stat, bonus] of bonusEntries) {
+      const key = stat as keyof typeof updatedPlayer
+      if (key in updatedPlayer && typeof updatedPlayer[key] === 'number') {
+        updatedPlayer = { ...updatedPlayer, [key]: (updatedPlayer[key] as number) + bonus }
+        newBuffs.push({ stat, bonus, expiresAt })
+      }
+    }
+
+    const bonusDesc = bonusEntries.map(([s, v]) => `+${v} ${s}`).join(', ')
+    engine._setState({ player: updatedPlayer })
+    engine._appendMessages([
+      combatMsg(`You use the ${rt.item(item.name)}. ${item.useText ?? ''}`),
+      combatMsg(`[${bonusDesc} for ${BUFF_DURATION} actions]`),
+    ])
+
+    const currentBuffs = engine.getState().activeBuffs ?? []
+    engine._setState({ activeBuffs: [...currentBuffs, ...newBuffs] })
+
+    // Consume item
+    await removeItem(player.id, invItem.itemId)
+    const updatedInventory = await getInventory(player.id)
+    engine._setState({ inventory: updatedInventory })
+
+    // Enemy attacks back
+    await doEnemyTurn(engine)
+    return
+  }
+
+  engine._appendMessages([errorMsg("You can't use that in combat.")])
 }

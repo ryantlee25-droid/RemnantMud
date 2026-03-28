@@ -3,8 +3,9 @@
 // Makes the "grit" stat mechanically meaningful.
 // ============================================================
 
-import type { Player, Room, GameMessage } from '@/types/game'
+import type { Player, Room, GameMessage, InventoryItem } from '@/types/game'
 import { rollCheck, DC } from '@/lib/dice'
+import { resolveArmorTraits } from '@/lib/traits'
 
 // ------------------------------------------------------------
 // Helpers
@@ -31,7 +32,7 @@ export interface FearCheckResult {
  * On failure: player is shaken (-1 combat penalty for first round).
  * On success: player steadies themselves (no penalty).
  */
-export function fearCheck(player: Player, room: Room): FearCheckResult {
+export function fearCheck(player: Player, room: Room, equippedArmor?: InventoryItem): FearCheckResult {
   if (room.difficulty < 4) return { afraid: false, fearRounds: 0, messages: [] }
   if (room.enemies.length === 0) return { afraid: false, fearRounds: 0, messages: [] }
 
@@ -49,7 +50,15 @@ export function fearCheck(player: Player, room: Room): FearCheckResult {
 
   // Fear duration scales with room difficulty:
   // difficulty 4 = 2 rounds, difficulty 5+ = 3 rounds
-  const fearRounds = room.difficulty >= 5 ? 3 : 2
+  let fearRounds = room.difficulty >= 5 ? 3 : 2
+
+  // Warded armor reduces fear duration by 1 (minimum 1)
+  if (equippedArmor?.item) {
+    const armorResult = resolveArmorTraits(equippedArmor.item, [], fearRounds)
+    if (armorResult.adjustedFearDuration < fearRounds) {
+      fearRounds = armorResult.adjustedFearDuration
+    }
+  }
 
   return {
     afraid: true,

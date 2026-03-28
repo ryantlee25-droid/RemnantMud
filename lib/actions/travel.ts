@@ -8,22 +8,8 @@ import { getRoom, markVisited } from '@/lib/world'
 import { ALL_ROOMS } from '@/data/rooms/index'
 import { getTimeOfDay } from '@/lib/gameEngine'
 import { exitsLine, npcsLine, enemiesLine, itemsLine } from './movement'
-
-// ------------------------------------------------------------
-// Local message helpers
-// ------------------------------------------------------------
-
-function msg(text: string, type: GameMessage['type'] = 'narrative'): GameMessage {
-  return { id: crypto.randomUUID(), text, type }
-}
-
-function systemMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'system' }
-}
-
-function errorMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'error' }
-}
+import { msg, systemMsg, errorMsg } from '@/lib/messages'
+import { renderZoneMap } from '@/lib/mapRenderer'
 
 // ------------------------------------------------------------
 // Zone display names
@@ -104,6 +90,18 @@ export async function handleMap(engine: EngineCore): Promise<void> {
   }
 
   engine._appendMessages(lines.map(l => systemMsg(l)))
+
+  // Zone map — show all rooms in the current zone with visited indicators
+  const { currentRoom: mapCurrentRoom } = engine.getState()
+  if (mapCurrentRoom) {
+    const currentZone = mapCurrentRoom.zone
+    const zoneRooms = ALL_ROOMS.filter(r => r.zone === currentZone)
+    const visitedRoomIds = new Set(waypointRooms.map(r => r.id))
+    // Also mark the current room as visited
+    visitedRoomIds.add(mapCurrentRoom.id)
+    const mapLines = renderZoneMap(zoneRooms, mapCurrentRoom.id, visitedRoomIds)
+    engine._appendMessages(mapLines.map(line => systemMsg(line)))
+  }
 }
 
 // ------------------------------------------------------------
@@ -159,6 +157,11 @@ export async function handleTravel(engine: EngineCore, destination: string | und
   const rawDestRoom = await getRoom(match.id, player.id)
   if (!rawDestRoom) {
     engine._appendMessages([errorMsg('That destination seems to have vanished.')])
+    return
+  }
+
+  if (rawDestRoom.cycleGate && (player.cycle ?? 1) < rawDestRoom.cycleGate) {
+    engine._appendMessages([errorMsg('That waypoint feels unreachable. You are not ready.')])
     return
   }
 

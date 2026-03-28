@@ -404,6 +404,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     exits: {
       west: 'sc_05_barracks',
       north: 'sc_10_watchtower',
+      up: 'sc_13_briggs_quarters',
     },
     richExits: {
       west: {
@@ -944,8 +945,15 @@ export const SALT_CREEK_ROOMS: Room[] = [
     exits: {
       north: 'sc_01_outer_perimeter',
       west: 'sc_14_south_wall',
+      east: 'pens_01_east_gate',
     },
-    richExits: {},
+    richExits: {
+      east: {
+        destination: 'pens_01_east_gate',
+        descriptionVerbose: 'east, along the creek road toward the Red Court facility — what the prisoners here call Mercy General',
+        questGate: 'sc_prisoner_intel',
+      },
+    },
     items: [],
     enemies: [],
     npcs: [],

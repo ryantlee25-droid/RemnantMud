@@ -22,6 +22,9 @@ export const CROSSROADS_ROOMS: Room[] = [
       'Two highways meet here in a cracked X of faded asphalt, the painted lines long surrendered to sun and weeds.',
     exits: {
       north: 'cr_02_gate',
+      east: 'rr_01_west_approach',
+      south: 'br_01_canyon_mouth',
+      west: 'du_01_dust_edge',
     },
     richExits: {
       east: {
@@ -678,6 +681,7 @@ export const CROSSROADS_ROOMS: Room[] = [
       'A rocky rise twenty feet above the campground, flat on top, with a view that justifies the climb.',
     exits: {
       south: 'cr_09_campground',
+      north: 'st_01_approach',
     },
     items: [],
     enemies: [],
@@ -728,6 +732,7 @@ export const CROSSROADS_ROOMS: Room[] = [
       'The gas station is a husk.',
     exits: {
       east: 'cr_09_campground',
+      down: 'cr_12_gas_station_basement',
     },
     richExits: {
       down: {
@@ -1051,6 +1056,7 @@ export const CROSSROADS_ROOMS: Room[] = [
       'The south edge of Crossroads, where the tire wall meets open scrubland.',
     exits: {
       north: 'cr_15_south_camp',
+      south: 'br_01_canyon_mouth',
     },
     richExits: {
       south: {

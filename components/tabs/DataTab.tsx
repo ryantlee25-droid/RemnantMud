@@ -6,6 +6,7 @@
 
 import { useGame } from '@/lib/gameContext'
 import type { FactionType } from '@/types/game'
+import { getEnemy, ENEMIES } from '@/data/enemies'
 
 // ------------------------------------------------------------
 // Faction data (mirrors lib/actions/social.ts)
@@ -123,6 +124,47 @@ export default function DataTab() {
             ))}
           </div>
         )}
+      </section>
+
+      {/* BESTIARY */}
+      <section className="border-t border-amber-900 pt-3">
+        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">
+          Bestiary
+        </h2>
+        {(() => {
+          const { ledger } = state
+          const discovered = ledger?.discoveredEnemies ?? []
+          const totalEnemies = Object.keys(ENEMIES).length
+          return (
+            <>
+              <div className="text-amber-500 text-xs mb-2">
+                {discovered.length} / {totalEnemies} enemies discovered
+              </div>
+              {discovered.length === 0 ? (
+                <div className="text-amber-600 text-xs italic">No enemies encountered yet.</div>
+              ) : (
+                <div className="space-y-1">
+                  {discovered.map((enemyId) => {
+                    const enemy = getEnemy(enemyId)
+                    if (!enemy) return null
+                    const truncated = enemy.description.length > 80
+                      ? enemy.description.slice(0, 80) + '...'
+                      : enemy.description
+                    return (
+                      <div key={enemyId} className="flex items-start gap-2">
+                        <span className="text-amber-600 shrink-0">{'\u2022'}</span>
+                        <div>
+                          <span className="text-amber-300">{enemy.name}</span>
+                          <span className="text-amber-600 text-xs ml-2">{truncated}</span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </>
+          )
+        })()}
       </section>
 
       {/* LORE ITEMS READ */}

@@ -4,7 +4,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { Player, Enemy, CombatState } from '@/types/game'
-import { handleAbility, CLASS_ABILITIES } from '@/lib/abilities/class'
+import { resolveAbility as handleAbility, CLASS_ABILITIES } from '@/lib/abilities'
 
 // ------------------------------------------------------------
 // Mock dice module to control randomness
@@ -133,23 +133,25 @@ describe('handleAbility', () => {
     const state = makeCombatState()
     const result = handleAbility(player, state)
     expect(result.success).toBe(true)
-    // 4 (roll) + 1 (presence modifier: (12-10)/2 = 1) = 5
-    expect(result.playerHpDelta).toBe(5)
+    // 4 (roll) + 1 (presence modifier: (12-10)/2 = 1) = 5, doubled on success = 10
+    expect(result.playerHpDelta).toBe(10)
     expect(result.newState.abilityUsed).toBe(true)
   })
 
-  it('shepherd: Mend fails on failed check', () => {
+  it('shepherd: Mend heals base amount on failed check', () => {
     const player = makePlayer({ characterClass: 'shepherd' })
     vi.mocked(rollCheck).mockReturnValueOnce({
       roll: 2, modifier: 0, total: 2, dc: 8, success: false, critical: false, fumble: false,
     })
+    vi.mocked(rollDamage).mockReturnValueOnce(4)
 
     const state = makeCombatState()
     const result = handleAbility(player, state)
-    expect(result.success).toBe(true) // ability was used, just didn't heal
-    expect(result.playerHpDelta).toBe(0)
+    expect(result.success).toBe(true) // ability was used, heals base amount
+    // 4 (roll) + 0 (presence modifier for default stat 10: 0) = 4
+    expect(result.playerHpDelta).toBe(4)
     expect(result.messages).toEqual(
-      expect.arrayContaining([expect.objectContaining({ text: expect.stringContaining('fails') })])
+      expect.arrayContaining([expect.objectContaining({ text: expect.stringContaining('mend') })])
     )
   })
 
@@ -170,13 +172,13 @@ describe('handleAbility', () => {
     expect(result.messages.some(m => m.text.includes('burning'))).toBe(true)
   })
 
-  it('warden: Brace sets braceActive and defendingThisTurn', () => {
+  it('warden: Brace sets braceActive without defendingThisTurn', () => {
     const player = makePlayer({ characterClass: 'warden' })
     const state = makeCombatState()
     const result = handleAbility(player, state)
     expect(result.success).toBe(true)
     expect(result.newState.braceActive).toBe(true)
-    expect(result.newState.defendingThisTurn).toBe(true)
+    expect(result.newState.defendingThisTurn).toBeFalsy()
     expect(result.newState.abilityUsed).toBe(true)
   })
 

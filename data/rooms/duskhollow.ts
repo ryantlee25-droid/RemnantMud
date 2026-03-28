@@ -731,7 +731,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     descriptionNight: 'At night the rim is where the Hollow come from. The tree line goes completely black, and whatever is in there navigates by routes you cannot trace. The patrol marks in the dirt are from hours ago. Nobody has walked this in hours.',
     descriptionDawn: 'In the grey hour before light, the rim is the most dangerous place in Duskhollow. The Hollow that pushed in during darkness haven\'t yet retreated. The tree line holds them temporarily, the way a shore holds water before the tide turns.',
     shortDescription: 'The settlement\'s edge. Where the trees begin. Where the Hollow come from.',
-    exits: { east: 'dh_13_tithe_house' },
+    exits: { east: 'dh_13_tithe_house', north: 'dh_15_kindling_cache' },
     richExits: {
       east: { destination: 'dh_13_tithe_house', descriptionVerbose: 'east, back into the settlement proper' },
       north: {
@@ -1000,7 +1000,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         description: 'The cistern\'s construction is quality — poured in sections with rebar reinforcement, the kind of municipal water engineering that only happened before the Collapse. The maintenance stamps are from 2018. Someone has been servicing it since: the pump mechanism is post-Collapse repair, cobbled from three different pump models, but it works.',
       },
     ],
-    narrativeNotes: 'The cistern investigation is a central quest for the settlement. The contamination is CHARON-7 derived — either Kindling testing a treatment delivery system, or a Hollow vector attack through water. Resolving this determines which. The device discovery should be a significant player moment. The Hollow encounter here represents creatures drawn by the chemical compound.',
+    narrativeNotes: 'The cistern investigation is a central quest for the settlement. The contamination is CHARON-7 derived — either Kindling testing a treatment delivery system, or a Hollow vector attack through water. Resolving this determines which. This room contains the Covenant communication device — a major story discovery point. The Hollow encounter here represents creatures drawn by the chemical compound.',
   },
 
   {

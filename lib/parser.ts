@@ -6,6 +6,47 @@ import type { Action, GameState } from '@/types/game'
 
 const MOVEMENT_VERBS = new Set(['go', 'move', 'walk', 'head'])
 
+const SWIM_VERBS = new Set(['swim', 'wade', 'ford'])
+
+const CLIMB_VERBS: Record<string, string> = {
+  climb: 'climb',
+  scale: 'climb',
+  ascend: 'climb',
+  clamber: 'climb',
+}
+
+const SNEAK_VERBS: Record<string, string> = {
+  sneak: 'sneak',
+  stealth: 'sneak',
+  hide: 'sneak',
+  creep: 'sneak',
+  skulk: 'sneak',
+  tiptoe: 'sneak',
+}
+
+const CRAFT_VERBS: Record<string, string> = {
+  craft: 'craft',
+  build: 'craft',
+  make: 'craft',
+  construct: 'craft',
+  assemble: 'craft',
+  forge: 'craft',
+  create: 'craft',
+}
+
+const UNLOCK_VERBS: Record<string, string> = {
+  unlock: 'unlock',
+  unbolt: 'unlock',
+}
+
+const GIVE_VERBS: Record<string, string> = {
+  give: 'give',
+  hand: 'give',
+  offer: 'give',
+  present: 'give',
+  deliver: 'give',
+}
+
 const DIRECTIONS: Record<string, string> = {
   north: 'north',
   n: 'north',
@@ -35,6 +76,8 @@ const INVENTORY_VERBS: Record<string, string> = {
   inv: 'inventory',
   take: 'take',
   get: 'take',
+  pickup: 'take',
+  grab: 'take',
   drop: 'drop',
   use: 'use',
   eat: 'use',
@@ -43,6 +86,9 @@ const INVENTORY_VERBS: Record<string, string> = {
   wield: 'equip',
   unequip: 'unequip',
   remove: 'unequip',
+  stash: 'stash',
+  unstash: 'unstash',
+  retrieve: 'unstash',
 }
 
 const COMBAT_VERBS: Record<string, string> = {
@@ -114,10 +160,12 @@ const SYSTEM_VERBS: Record<string, string> = {
 // Each entry: [normalized_verb, normalized_noun | null]
 const MULTI_WORD: Array<[string, string, string | undefined]> = [
   ['pick up', 'take', undefined],
+  ['pick lock', 'unlock', undefined],
   ['put down', 'drop', undefined],
   ['take off', 'unequip', undefined],
   ['search room', 'search', undefined],
   ['look around', 'search', undefined],
+  ['look at', 'examine_extra', undefined],
   ['fast travel', 'travel', undefined],
 ]
 
@@ -141,8 +189,8 @@ export function parseDialogueInput(input: string): Action {
   const trimmed = input.trim()
   const normalized = trimmed.toLowerCase()
 
-  // Numbered choice (1-9)
-  if (/^[1-9]$/.test(normalized)) {
+  // Numbered choice (1+)
+  if (/^\d+$/.test(normalized) && parseInt(normalized, 10) >= 1) {
     return { verb: 'dialogue_choice', noun: normalized, raw }
   }
 
@@ -197,6 +245,15 @@ export function parseCommand(input: string): Action {
     return { verb: 'go', noun: target, raw }
   }
 
+  // --- Swim ---
+  if (SWIM_VERBS.has(first)) {
+    const target = rest !== '' ? rest : undefined
+    if (target !== undefined && target in DIRECTIONS) {
+      return { verb: 'swim', noun: DIRECTIONS[target], raw }
+    }
+    return { verb: 'swim', noun: target, raw }
+  }
+
   // --- Look ---
   if (first in LOOK_VERBS) {
     // "look <keyword>" triggers extra examination of room details
@@ -233,7 +290,50 @@ export function parseCommand(input: string): Action {
 
   // --- Interaction ---
   if (first in INTERACTION_VERBS) {
-    return { verb: INTERACTION_VERBS[first]!, noun: rest || undefined, raw }
+    let noun = rest || undefined
+    const normalizedVerb = INTERACTION_VERBS[first]!
+    if (normalizedVerb === 'talk' && noun?.startsWith('to ')) {
+      noun = noun.slice(3)
+    }
+    return { verb: normalizedVerb, noun, raw }
+  }
+
+  // --- Climb ---
+  if (first in CLIMB_VERBS) {
+    const target = rest !== '' ? rest : undefined
+    if (target !== undefined && target in DIRECTIONS) {
+      return { verb: 'climb', noun: DIRECTIONS[target], raw }
+    }
+    return { verb: CLIMB_VERBS[first]!, noun: target, raw }
+  }
+
+  // --- Sneak ---
+  if (first in SNEAK_VERBS) {
+    const target = rest !== '' ? rest : undefined
+    if (target !== undefined && target in DIRECTIONS) {
+      return { verb: 'sneak', noun: DIRECTIONS[target], raw }
+    }
+    return { verb: SNEAK_VERBS[first]!, noun: target, raw }
+  }
+
+  // --- Craft ---
+  if (first in CRAFT_VERBS) {
+    return { verb: CRAFT_VERBS[first]!, noun: rest || undefined, raw }
+  }
+
+  // --- Unlock ---
+  if (first in UNLOCK_VERBS) {
+    return { verb: UNLOCK_VERBS[first]!, noun: rest || undefined, raw }
+  }
+
+  // --- Give ---
+  if (first in GIVE_VERBS) {
+    let noun = rest || undefined
+    // Strip "to" between item and NPC: "give medkit to doctor" → "medkit doctor"
+    if (noun) {
+      noun = noun.replace(/\s+to\s+/, ' ').trim()
+    }
+    return { verb: GIVE_VERBS[first]!, noun, raw }
   }
 
   // --- Trade ---

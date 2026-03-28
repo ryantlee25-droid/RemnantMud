@@ -2,73 +2,29 @@
 // lib/actions/movement.ts — handleMove, handleLook, handleExamine
 // ============================================================
 
-import type { GameMessage, Room, Direction, Player, SkillType, TimeOfDay } from '@/types/game'
+import type { GameMessage, Room, Direction, Player, TimeOfDay } from '@/types/game'
 import type { EngineCore } from './types'
 import { getRoom, canMove, markVisited, getExits } from '@/lib/world'
 import { getItem } from '@/data/items'
 import { getEnemy } from '@/data/enemies'
 import { getNPC } from '@/data/npcs'
-import { getClassSkillBonus } from '@/lib/skillBonus'
+import { getStatForSkill } from '@/lib/skillBonus'
 import { getTimeOfDay } from '@/lib/gameEngine'
 import { fearCheck } from '@/lib/fear'
 import { rt } from '@/lib/richText'
+import { msg, combatMsg, errorMsg } from '@/lib/messages'
 
-// ------------------------------------------------------------
-// Map skill to player stat + class bonus
-// ------------------------------------------------------------
-
-function getStatForSkill(skill: string, player: Player | null): number | null {
-  if (!player) return null
-  const map: Record<string, number> = {
-    // Vigor — raw physicality
-    survival: player.vigor,
-    brawling: player.vigor,
-    climbing: player.vigor,
-    vigor: player.vigor,
-    // Grit — endurance, willpower, steady hands under pressure
-    endurance: player.grit,
-    resilience: player.grit,
-    composure: player.grit,
-    field_medicine: player.grit,
-    // Reflex — speed, dexterity, quick reactions
-    bladework: player.reflex,
-    marksmanship: player.reflex,
-    mechanics: player.reflex,
-    perception: player.reflex,
-    // Wits — knowledge, analysis, awareness
-    lore: player.wits,
-    electronics: player.wits,
-    tracking: player.wits,
-    blood_sense: player.wits,
-    // Presence — social force, authority, persuasion
-    negotiation: player.presence,
-    intimidation: player.presence,
-    mesmerize: player.presence,
-    // Shadow — stealth, subtlety, operating unseen
-    stealth: player.shadow,
-    lockpicking: player.shadow,
-    daystalking: player.shadow,
-    scavenging: player.shadow,
-  }
-  const base = map[skill] ?? null
-  if (base === null) return null
-  return base + getClassSkillBonus(player.characterClass, skill as SkillType)
-}
-
-// ------------------------------------------------------------
-// Local message helpers
-// ------------------------------------------------------------
-
-function msg(text: string, type: GameMessage['type'] = 'narrative'): GameMessage {
-  return { id: crypto.randomUUID(), text, type }
-}
-
-function errorMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'error' }
-}
-
-function combatMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'combat' }
+const DIRECTIONS: Record<string, Direction> = {
+  north: 'north',
+  n: 'north',
+  south: 'south',
+  s: 'south',
+  east: 'east',
+  e: 'east',
+  west: 'west',
+  w: 'west',
+  up: 'up',
+  down: 'down',
 }
 
 function reputationLabel(level: number): string {
@@ -368,6 +324,37 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
   }
 
   engine._appendMessages(messages)
+
+  // After room entry, check for environmental hazards
+  const newRoomFlags = nextRoom.flags ?? {}
+  if (newRoomFlags.hazard_type) {
+    const damage = (newRoomFlags.hazard_damage as number) ?? 0
+    const hazardMessage = (newRoomFlags.hazard_message as string) ?? 'The environment is hostile.'
+    const mitigatedBy = newRoomFlags.hazard_mitigated_by as string | undefined
+    const mitigationMsg = newRoomFlags.hazard_mitigation_message as string | undefined
+
+    // Check if player has mitigation item in inventory
+    const { inventory: currentInventory } = engine.getState()
+    const hasMitigation = mitigatedBy !== undefined && currentInventory.some(i => i.itemId === mitigatedBy)
+
+    if (hasMitigation && mitigationMsg) {
+      engine._appendMessages([msg(mitigationMsg)])
+    } else if (damage > 0) {
+      const currentState = engine.getState()
+      const currentPlayer = currentState.player!
+      const newHp = Math.max(1, currentPlayer.hp - damage)
+      engine._setState({ player: { ...currentPlayer, hp: newHp } })
+      engine._appendMessages([combatMsg(`${hazardMessage} [-${damage} HP]`)])
+
+      if (newHp <= 1) {
+        engine._appendMessages([combatMsg('You need to find shelter. You can barely stand.')])
+      }
+    } else {
+      // Dark rooms or 0-damage hazards — just show the message
+      engine._appendMessages([msg(hazardMessage)])
+    }
+  }
+
   await engine._savePlayer()
 }
 
@@ -464,4 +451,42 @@ export async function handleLook(engine: EngineCore, target: string | undefined)
   if (ambientSound) messages.push(msg(ambientSound))
 
   engine._appendMessages(messages)
+}
+
+// ------------------------------------------------------------
+// handleUnlock — unlock a locked exit using a key item
+// ------------------------------------------------------------
+
+export async function handleUnlock(engine: EngineCore, noun: string): Promise<void> {
+  if (!noun || noun.trim() === '') {
+    engine._appendMessages([errorMsg('Unlock what? Specify a direction.')])
+    return
+  }
+
+  const direction = DIRECTIONS[noun.toLowerCase().trim()]
+  if (!direction) {
+    engine._appendMessages([errorMsg('Unlock what? Specify a direction.')])
+    return
+  }
+
+  const { currentRoom, inventory } = engine.getState()
+  if (!currentRoom) return
+
+  const richExit = currentRoom.richExits?.[direction]
+
+  if (!richExit || !richExit.locked || !richExit.lockedBy) {
+    engine._appendMessages([msg(`There's nothing locked to the ${direction}.`)])
+    return
+  }
+
+  const hasKey = inventory.some(i => i.itemId === richExit.lockedBy)
+  if (!hasKey) {
+    engine._appendMessages([msg("You don't have the right key.")])
+    return
+  }
+
+  // Set room flag to mark the exit as unlocked
+  const updatedFlags = { ...currentRoom.flags, [`unlocked_${direction}`]: true }
+  engine._setState({ currentRoom: { ...currentRoom, flags: updatedFlags } })
+  engine._appendMessages([msg(`You unlock the way to the ${direction}.`)])
 }

@@ -131,6 +131,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     exits: {
       west: 'rr_01_west_approach',
       south: 'rr_05_the_ford',
+      east: 'rr_03_east_bank',
     },
     richExits: {
       east: {
@@ -218,6 +219,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     exits: {
       west: 'rr_02_bridge_ruins',
       north: 'rr_04_south_bend',
+      east: 'rr_13_fishing_hole',
     },
     richExits: {
       east: {
@@ -571,6 +573,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       south: 'rr_06_the_narrows',
       north: 'rr_08_burned_farmhouse',
       east: 'rr_09_cottonwood_stretch',
+      west: 'ps_01_tree_line',
     },
     richExits: {
       west: {
@@ -801,6 +804,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     exits: {
       south: 'rr_08_burned_farmhouse',
       north: 'rr_11_the_bend',
+      down: 'rr_10b_bus_interior',
     },
     richExits: {
       down: {
@@ -1245,6 +1249,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       'The river bends east and the trail peters out against a wall of tumbled boulders.',
     exits: {
       north: 'rr_15_south_river',
+      south: 'br_01_canyon_mouth',
     },
     richExits: {
       south: {

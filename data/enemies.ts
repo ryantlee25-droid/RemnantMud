@@ -22,9 +22,9 @@ export const ENEMIES: Record<string, Enemy> = {
     damage: [2, 4],
     xp: 12,
     loot: [
-      { itemId: 'scrap_metal', chance: 0.10 },
-      { itemId: 'ammo_22lr', chance: 0.08 },
-      { itemId: 'scrap_vest', chance: 0.08 },
+      { itemId: 'scrap_metal', chance: 0.20 },
+      { itemId: 'ammo_22lr', chance: 0.15 },
+      { itemId: 'scrap_vest', chance: 0.12 },
     ],
     flavorText: [
       'It shambles toward you, arms dragging, feet scraping the floor.',
@@ -54,11 +54,11 @@ export const ENEMIES: Record<string, Enemy> = {
     damage: [2, 5],
     xp: 25,
     loot: [
-      { itemId: 'combat_knife', chance: 0.10 },
-      { itemId: '9mm_pistol', chance: 0.06 },
+      { itemId: 'combat_knife', chance: 0.12 },
+      { itemId: '9mm_pistol', chance: 0.12 },
       { itemId: 'ammo_9mm', chance: 0.15 },
-      { itemId: 'bandages', chance: 0.15 },
-      { itemId: 'leather_jacket', chance: 0.10 },
+      { itemId: 'bandages', chance: 0.20 },
+      { itemId: 'leather_jacket', chance: 0.12 },
     ],
     flavorText: [
       'It reaches for something at its hip that isn\'t there, then reaches for you.',
@@ -87,7 +87,10 @@ export const ENEMIES: Record<string, Enemy> = {
     defense: 9,
     damage: [1, 2],
     xp: 30,
-    loot: [],
+    loot: [
+      { itemId: 'scrap_metal', chance: 0.20 },
+      { itemId: 'ammo_22lr', chance: 0.15 },
+    ],
     flavorText: [
       'It opens its mouth and the sound that comes out is not a human sound.',
       'The shriek tears through the air — somewhere out in the dark, something answers.',
@@ -116,10 +119,10 @@ export const ENEMIES: Record<string, Enemy> = {
     xp: 50,
     loot: [
       { itemId: 'combat_knife', chance: 0.12 },
-      { itemId: 'bandages', chance: 0.15 },
-      { itemId: 'ammo_9mm', chance: 0.12 },
-      { itemId: 'leather_jacket', chance: 0.08 },
-      { itemId: 'reinforced_coat', chance: 0.04 },
+      { itemId: 'bandages', chance: 0.20 },
+      { itemId: 'ammo_9mm', chance: 0.15 },
+      { itemId: 'leather_jacket', chance: 0.12 },
+      { itemId: 'reinforced_coat', chance: 0.08 },
     ],
     flavorText: [
       'It was behind the door. It was always behind the door.',
@@ -133,7 +136,7 @@ export const ENEMIES: Record<string, Enemy> = {
         scorching: { bonusDamage: 0, description: 'Quick reflexes mean nothing when the fire catches. Burn damage doubled.' },
       },
       resistances: {
-        keen: { reduction: 50, description: 'Quick reflexes deflect precise strikes. Keen damage halved.' },
+        keen: { reduction: 0.5, description: 'Quick reflexes deflect precise strikes. Keen damage halved.' },
       },
       conditionImmunities: [],
     },
@@ -155,7 +158,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'pipe_wrench', chance: 0.25 },
       { itemId: 'bandages', chance: 0.20 },
       { itemId: 'reinforced_coat', chance: 0.10 },
-      { itemId: 'kevlar_vest', chance: 0.04 },
+      { itemId: 'kevlar_vest', chance: 0.06 },
     ],
     flavorText: [
       'It charges — not fast, but with the inevitability of falling stone.',
@@ -169,7 +172,7 @@ export const ENEMIES: Record<string, Enemy> = {
         keen: { bonusDamage: 0, description: 'Keen edges find the gaps in thick hide. Critical hits bypass armor.' },
       },
       resistances: {
-        heavy: { reduction: 50, description: 'Thick hide absorbs blunt force. Heavy bonus damage halved.' },
+        heavy: { reduction: 0.5, description: 'Thick hide absorbs blunt force. Heavy bonus damage halved.' },
       },
       conditionImmunities: [],
     },
@@ -189,6 +192,7 @@ export const ENEMIES: Record<string, Enemy> = {
     loot: [
       { itemId: 'ammo_22lr', chance: 0.30 },
       { itemId: 'quiet_drops', chance: 0.10 },
+      { itemId: 'scrap_metal', chance: 0.20 },
     ],
     flavorText: [
       'It speaks your name. Not quite your name. Close enough.',
@@ -222,6 +226,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'chemicals_basic', chance: 0.35 },
       { itemId: 'sanguine_blood_vial', chance: 0.05 },
       { itemId: 'hazmat_suit', chance: 0.08 },
+      { itemId: 'scrap_metal', chance: 0.20 },
     ],
     flavorText: [
       'The Hollow around it move in patterns — coordinated, geometric, wrong.',
@@ -246,6 +251,7 @@ export const ENEMIES: Record<string, Enemy> = {
     id: 'sanguine_feral',
     name: 'Sanguine (Feral)',
     description: 'One in ten thousand didn\'t turn Hollow. They turned into this. Fast in the way that registers after the fact — you see where it was, not where it is. No coordination, no faction, pure predatory instinct. Not supernatural. Just faster than you. Significantly faster than you.',
+    hollowType: 'sanguine_feral',
     hp: 25,
     maxHp: 25,
     attack: 5,
@@ -254,6 +260,8 @@ export const ENEMIES: Record<string, Enemy> = {
     xp: 150,
     loot: [
       { itemId: 'sanguine_blood_vial', chance: 0.40 },
+      { itemId: 'scrap_metal', chance: 0.20 },
+      { itemId: 'ammo_22lr', chance: 0.15 },
     ],
     flavorText: [
       'It moves like something that does not need to explain itself to physics.',
@@ -266,7 +274,7 @@ export const ENEMIES: Record<string, Enemy> = {
         blessed: { bonusDamage: 4, description: 'Consecrated steel burns Sanguine biology. +4 damage.' },
       },
       resistances: {
-        draining: { reduction: 100, description: 'Sanguine blood cannot be drained. Immune to draining effects.' },
+        draining: { reduction: 1.0, description: 'Sanguine blood cannot be drained. Immune to draining effects.' },
       },
       conditionImmunities: [],
     },
@@ -276,6 +284,7 @@ export const ENEMIES: Record<string, Enemy> = {
     id: 'red_court_enforcer',
     name: 'Red Court Enforcer',
     description: 'Red Court. They organize, they plan, they hold territory. This one is wearing tactical gear that fits. That means supply lines, that means logistics, that means someone is in charge. It is patient in the way that things are patient when they know they will win. It is also watching your exits.',
+    hollowType: 'sanguine_feral',
     hp: 35,
     maxHp: 35,
     attack: 6,
@@ -286,7 +295,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'sanguine_blood_vial', chance: 0.50 },
       { itemId: 'combat_knife', chance: 0.20 },
       { itemId: 'ammo_9mm', chance: 0.25 },
-      { itemId: 'kevlar_vest', chance: 0.06 },
+      { itemId: 'kevlar_vest', chance: 0.08 },
     ],
     flavorText: [
       'It circles left, cutting off the eastern approach without appearing to notice you.',
@@ -307,6 +316,7 @@ export const ENEMIES: Record<string, Enemy> = {
     id: 'elder_sanguine',
     name: 'Elder Sanguine',
     description: 'Seven years of CHARON-7 refinement in a single body. It does not look old. It looks complete. Whatever it was before the Collapse is entirely gone, replaced by something the virus has had seven years to optimize. You are not a threat. You are a complication. These are different things.',
+    hollowType: 'elder_sanguine',
     hp: 60,
     maxHp: 60,
     attack: 8,
@@ -315,8 +325,8 @@ export const ENEMIES: Record<string, Enemy> = {
     xp: 400,
     loot: [
       { itemId: 'sanguine_blood_vial', chance: 0.80 },
-      { itemId: 'silver_knife', chance: 0.05 },
-      { itemId: 'meridian_keycard', chance: 0.03 },
+      { itemId: 'silver_knife', chance: 0.06 },
+      { itemId: 'meridian_keycard', chance: 0.06 },
       { itemId: 'kevlar_vest', chance: 0.08 },
     ],
     flavorText: [
@@ -331,7 +341,7 @@ export const ENEMIES: Record<string, Enemy> = {
         blessed: { bonusDamage: 5, description: 'Seven years of CHARON-7 refinement unravels against consecrated steel. +5 damage.' },
       },
       resistances: {
-        disrupting: { reduction: 100, description: 'Individual predator, no colony link to sever. Immune to disrupting.' },
+        disrupting: { reduction: 1.0, description: 'Individual predator, no colony link to sever. Immune to disrupting.' },
       },
       conditionImmunities: [],
     },
@@ -354,6 +364,7 @@ export const ENEMIES: Record<string, Enemy> = {
     loot: [
       { itemId: 'electronics_salvage', chance: 0.50 },
       { itemId: 'ammo_9mm', chance: 0.30 },
+      { itemId: 'scrap_metal', chance: 0.20 },
     ],
     flavorText: [
       'The barrel traverses at a speed that does not correspond to any mechanism you can see.',
@@ -385,6 +396,7 @@ export const ENEMIES: Record<string, Enemy> = {
     loot: [
       { itemId: 'chemicals_basic', chance: 0.35 },
       { itemId: 'bandages', chance: 0.20 },
+      { itemId: 'scrap_metal', chance: 0.20 },
     ],
     flavorText: [
       'It turns toward you with a precision that no other Hollow has demonstrated. Seven years of refinement.',
@@ -409,7 +421,8 @@ export const ENEMIES: Record<string, Enemy> = {
   elder_sanguine_deep: {
     id: 'elder_sanguine_deep',
     name: 'Elder Sanguine (Apex)',
-    description: 'The Deep is not a territory you stumbled into. You were assessed, tracked, and allowed to reach this point. What stands before you is the reason. The oldest Sanguine in the region — pre-Collapse converted, not post. It has had eleven years. Its biology and the CHARON-7 variant that altered it are no longer distinguishable. It is watching you with something that is not exactly curiosity and is not exactly hunger and may be a word you do not have yet.',
+    description: 'The Deep is not a territory you stumbled into. You were assessed, tracked, and allowed to reach this point. What stands before you is the reason. The oldest Sanguine in the region — pre-Collapse converted, not post. It has had seven years. Its biology and the CHARON-7 variant that altered it are no longer distinguishable. It is watching you with something that is not exactly curiosity and is not exactly hunger and may be a word you do not have yet.',
+    hollowType: 'elder_sanguine',
     hp: 75,
     maxHp: 75,
     attack: 10,
@@ -430,7 +443,7 @@ export const ENEMIES: Record<string, Enemy> = {
     ],
     resistanceProfile: {
       weaknesses: {
-        blessed: { bonusDamage: 5, description: 'Eleven years of CHARON-7 integration shatters against consecrated steel. +5 damage.' },
+        blessed: { bonusDamage: 5, description: 'Seven years of CHARON-7 integration shatters against consecrated steel. +5 damage.' },
       },
       resistances: {},
       conditionImmunities: [],
@@ -451,6 +464,8 @@ export const ENEMIES: Record<string, Enemy> = {
     loot: [
       { itemId: 'chemicals_basic', chance: 0.45 },
       { itemId: 'sanguine_blood_vial', chance: 0.10 },
+      { itemId: 'scrap_metal', chance: 0.20 },
+      { itemId: 'ammo_22lr', chance: 0.15 },
     ],
     flavorText: [
       'The tunnels change when it moves. The other Hollow reorient.',
@@ -481,6 +496,7 @@ export const ENEMIES: Record<string, Enemy> = {
     loot: [
       { itemId: 'scrap_metal', chance: 0.50 },
       { itemId: 'pipe_wrench', chance: 0.20 },
+      { itemId: 'bandages', chance: 0.20 },
     ],
     flavorText: [
       'It fills the tunnel in a way that suggests the tunnel was not built for something this wide.',
@@ -493,7 +509,7 @@ export const ENEMIES: Record<string, Enemy> = {
         keen: { bonusDamage: 0, description: 'Keen edges find the gaps in thick hide. Critical hits bypass armor.' },
       },
       resistances: {
-        heavy: { reduction: 50, description: 'Adapted underground hide absorbs blunt force. Heavy bonus damage halved.' },
+        heavy: { reduction: 0.5, description: 'Adapted underground hide absorbs blunt force. Heavy bonus damage halved.' },
       },
       conditionImmunities: [],
     },
@@ -511,8 +527,9 @@ export const ENEMIES: Record<string, Enemy> = {
     damage: [2, 6],
     xp: 35,
     loot: [
-      { itemId: 'bandages', chance: 0.15 },
+      { itemId: 'bandages', chance: 0.20 },
       { itemId: 'scrap_metal', chance: 0.20 },
+      { itemId: 'ammo_22lr', chance: 0.15 },
     ],
     flavorText: [
       'The headlamp casts moving shadows as it turns. For a moment you cannot tell which shadow is real.',

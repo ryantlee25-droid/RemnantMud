@@ -4,68 +4,11 @@
 // ============================================================
 
 import type { EngineCore } from '@/lib/actions/types'
-import type { Player, SkillType } from '@/types/game'
+import type { Player } from '@/types/game'
 import { weightedRoll } from '@/lib/spawn'
-import { getClassSkillBonus } from '@/lib/skillBonus'
+import { getStatForSkill } from '@/lib/skillBonus'
 import { handleLook } from '@/lib/actions/movement'
-
-// ------------------------------------------------------------
-// Local message helpers
-// ------------------------------------------------------------
-
-function msg(text: string) {
-  return { id: crypto.randomUUID(), text, type: 'narrative' as const }
-}
-
-function systemMsg(text: string) {
-  return { id: crypto.randomUUID(), text, type: 'system' as const }
-}
-
-function errorMsg(text: string) {
-  return { id: crypto.randomUUID(), text, type: 'error' as const }
-}
-
-// ------------------------------------------------------------
-// Map skill to player stat + class bonus
-// ------------------------------------------------------------
-
-function getStatForSkill(skill: string, player: Player | null): number | null {
-  if (!player) return null
-  const map: Record<string, number> = {
-    // Vigor — raw physicality
-    survival: player.vigor,
-    brawling: player.vigor,
-    climbing: player.vigor,
-    vigor: player.vigor,
-    // Grit — endurance, willpower, steady hands under pressure
-    endurance: player.grit,
-    resilience: player.grit,
-    composure: player.grit,
-    field_medicine: player.grit,
-    // Reflex — speed, dexterity, quick reactions
-    bladework: player.reflex,
-    marksmanship: player.reflex,
-    mechanics: player.reflex,
-    perception: player.reflex,
-    // Wits — knowledge, analysis, awareness
-    lore: player.wits,
-    electronics: player.wits,
-    tracking: player.wits,
-    blood_sense: player.wits,
-    // Presence — social force, authority, persuasion
-    negotiation: player.presence,
-    intimidation: player.presence,
-    mesmerize: player.presence,
-    // Shadow — stealth, subtlety, operating unseen
-    stealth: player.shadow,
-    lockpicking: player.shadow,
-    daystalking: player.shadow,
-    scavenging: player.shadow,
-  }
-  const base = map[skill] ?? null
-  if (base === null) return null
-  return base + getClassSkillBonus(player.characterClass, skill as SkillType)
-}
+import { msg, systemMsg, errorMsg } from '@/lib/messages'
 
 // ------------------------------------------------------------
 // handleExamineExtra
@@ -111,6 +54,15 @@ export async function handleExamineExtra(engine: EngineCore, keyword?: string): 
   if (match.cycleGate && (player?.cycle ?? 1) < match.cycleGate) {
     engine._appendMessages([msg(`You notice something about the ${keyword}, but can't make sense of it yet.`)])
     return
+  }
+
+  // Check quest gate
+  if (match.questGate) {
+    const flags = player?.questFlags ?? {}
+    if (!flags[match.questGate]) {
+      engine._appendMessages([msg(`You examine it closely, but you don't have enough context to understand what you're seeing.`)])
+      return
+    }
   }
 
   // Get description (pool or single)

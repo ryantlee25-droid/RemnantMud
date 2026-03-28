@@ -43,7 +43,15 @@ export default function CommandInput() {
     const action = state.activeDialogue
       ? parseDialogueInput(trimmed)
       : parseCommand(trimmed)
-    await dispatch(action)
+    try {
+      await dispatch(action)
+    } catch {
+      engine._appendMessages([{
+        id: crypto.randomUUID(),
+        text: 'Something went wrong processing that command.',
+        type: 'error' as const,
+      }])
+    }
   }
 
   function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
@@ -90,6 +98,7 @@ export default function CommandInput() {
         onKeyDown={handleKeyDown}
         className="flex-1 bg-transparent text-amber-300 outline-none caret-amber-400 text-sm placeholder-amber-800"
         placeholder="type a command..."
+        aria-label="Game command input"
         autoComplete="off"
         autoCorrect="off"
         autoCapitalize="off"

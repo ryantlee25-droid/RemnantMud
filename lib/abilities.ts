@@ -2,7 +2,7 @@
 // lib/abilities.ts — Class combat abilities (one per class, once per combat)
 // ============================================================
 
-import type { GameMessage } from '@/types/game'
+import type { GameMessage, CharacterClass, Player, CombatState } from '@/types/game'
 import type { EngineCore } from '@/lib/actions/types'
 import { rollCheck, rollDamage, statModifier } from '@/lib/dice'
 import { getClassSkillBonus } from '@/lib/skillBonus'
@@ -169,14 +169,14 @@ function handleMarkTarget(engine: EngineCore): void {
   const updatedCombat = {
     ...combatState,
     abilityUsed: true,
-    markTargetBonus: 4,
+    markTargetBonus: 3,
     markTargetAttacks: 2,
   }
 
   engine._setState({ combatState: updatedCombat })
   engine._appendMessages([
     combatMsg('You study the enemy\'s movements. You see the pattern now.'),
-    systemMsg('Next 2 attacks get +4 accuracy. Skipping attack this turn.'),
+    systemMsg('Next 2 attacks get +3 accuracy. Skipping attack this turn.'),
   ])
 
   // Skip attack — enemy still attacks (handled by caller flowing into enemy turn)
@@ -275,6 +275,7 @@ function handleBrace(engine: EngineCore): void {
     ...combatState,
     abilityUsed: true,
     braceActive: true,
+    // Do NOT set defendingThisTurn — brace is its own 60% reduction, not stacked with defend's 50%
   }
 
   engine._setState({ combatState: updatedCombat })
@@ -322,4 +323,178 @@ function handleIntimidate(engine: EngineCore): void {
       systemMsg('Intimidation failed. Enemy gets +2 damage. Skipping your attack.'),
     ])
   }
+}
+
+// ============================================================
+// Class Ability Definitions & Pure Resolver
+// (Moved from lib/abilities/class.ts — used by tests and UI)
+// ============================================================
+
+export interface ClassAbility {
+  id: string
+  name: string
+  description: string
+  cost: 'free' | 'action' | 'hp'
+  hpCost?: number
+}
+
+export interface AbilityResult {
+  success: boolean
+  messages: GameMessage[]
+  newState: CombatState
+  playerHpDelta: number
+}
+
+export const CLASS_ABILITIES: Record<CharacterClass, ClassAbility> = {
+  enforcer: {
+    id: 'overwhelm',
+    name: 'Overwhelm',
+    description: 'Ignore all armor on next attack. Costs 3 HP.',
+    cost: 'hp',
+    hpCost: 3,
+  },
+  scout: {
+    id: 'mark_target',
+    name: 'Mark Target',
+    description: '+3 to hit for next 2 attacks.',
+    cost: 'free',
+  },
+  wraith: {
+    id: 'shadowstrike',
+    name: 'Shadowstrike',
+    description: 'Guaranteed critical hit on next attack. Cannot flee after.',
+    cost: 'action',
+  },
+  shepherd: {
+    id: 'mend',
+    name: 'Mend',
+    description: 'Heal 1d6 + presence modifier. Wits + field medicine vs DC 8 doubles healing.',
+    cost: 'action',
+  },
+  reclaimer: {
+    id: 'analyze',
+    name: 'Analyze',
+    description: 'Reveal full enemy stats and weaknesses.',
+    cost: 'free',
+  },
+  warden: {
+    id: 'brace',
+    name: 'Brace',
+    description: 'Reduce next incoming damage by 60%. Uses your attack.',
+    cost: 'action',
+  },
+  broker: {
+    id: 'intimidate',
+    name: 'Intimidate',
+    description: 'Force enemy to skip next turn. Presence + intimidation vs enemy attack + 5.',
+    cost: 'action',
+  },
+}
+
+/**
+ * Pure ability resolver — takes player + combat state, returns result.
+ * Used by tests; the engine version (handleAbility above) wraps engine state.
+ */
+export function resolveAbility(
+  player: Player,
+  state: CombatState,
+): AbilityResult {
+  const messages: GameMessage[] = []
+
+  if (!state.active) {
+    return {
+      success: false,
+      messages: [{ id: crypto.randomUUID(), text: 'You are not in combat.', type: 'error' }],
+      newState: state,
+      playerHpDelta: 0,
+    }
+  }
+
+  if (state.abilityUsed) {
+    return {
+      success: false,
+      messages: [{ id: crypto.randomUUID(), text: 'You have already used your ability this combat.', type: 'error' }],
+      newState: state,
+      playerHpDelta: 0,
+    }
+  }
+
+  const ability = CLASS_ABILITIES[player.characterClass]
+  let newState: CombatState = { ...state, abilityUsed: true }
+  let playerHpDelta = 0
+
+  switch (player.characterClass) {
+    case 'enforcer': {
+      const hpCost = ability.hpCost ?? 3
+      playerHpDelta = -hpCost
+      newState = { ...newState, overwhelmActive: true }
+      messages.push({ id: crypto.randomUUID(), text: `You channel everything into the next strike. [-${hpCost} HP]`, type: 'combat' })
+      break
+    }
+
+    case 'scout': {
+      newState = { ...newState, markTargetBonus: 3, markTargetAttacks: 2 }
+      messages.push({ id: crypto.randomUUID(), text: `You mark the target's weak points. +3 to hit for 2 attacks.`, type: 'combat' })
+      break
+    }
+
+    case 'wraith': {
+      newState = { ...newState, shadowstrikeActive: true, cantFlee: true }
+      messages.push({ id: crypto.randomUUID(), text: `You coil into the shadows. Next strike will be devastating.`, type: 'combat' })
+      break
+    }
+
+    case 'shepherd': {
+      const presMod = statModifier(player.presence)
+      let healing = rollDamage([1, 6]) + Math.max(0, presMod)
+      const fmBonus = getClassSkillBonus(player.characterClass, 'field_medicine')
+      const check = rollCheck(player.wits + fmBonus, 8)
+      if (check.success) {
+        healing = healing * 2
+        playerHpDelta = healing
+        messages.push({ id: crypto.randomUUID(), text: `Field medicine success. You mend your wounds. [+${healing} HP]`, type: 'combat' })
+      } else {
+        playerHpDelta = healing
+        messages.push({ id: crypto.randomUUID(), text: `You mend your wounds. [+${healing} HP]`, type: 'combat' })
+      }
+      break
+    }
+
+    case 'reclaimer': {
+      const enemy = state.enemy
+      const weaknesses = enemy.resistanceProfile?.weaknesses
+        ? Object.keys(enemy.resistanceProfile.weaknesses).join(', ')
+        : 'none'
+      const resistances = enemy.resistanceProfile?.resistances
+        ? Object.keys(enemy.resistanceProfile.resistances).join(', ')
+        : 'none'
+      const immunities = enemy.resistanceProfile?.conditionImmunities?.join(', ') ?? 'none'
+      messages.push({ id: crypto.randomUUID(), text: `Analysis: ${enemy.name} — HP ${state.enemyHp}/${enemy.maxHp}, ATK ${enemy.attack}, DEF ${enemy.defense}`, type: 'system' })
+      messages.push({ id: crypto.randomUUID(), text: `Weaknesses: ${weaknesses}. Resistances: ${resistances}. Immunities: ${immunities}.`, type: 'system' })
+      break
+    }
+
+    case 'warden': {
+      newState = { ...newState, braceActive: true }
+      messages.push({ id: crypto.randomUUID(), text: `You brace for impact. Incoming damage reduced 60%.`, type: 'combat' })
+      break
+    }
+
+    case 'broker': {
+      const enemy = state.enemy
+      const dc = enemy.attack + 5
+      const intimBonus = getClassSkillBonus(player.characterClass, 'intimidation')
+      const check = rollCheck(player.presence + intimBonus, dc)
+      if (check.success) {
+        newState = { ...newState, enemyIntimidated: true }
+        messages.push({ id: crypto.randomUUID(), text: `Your words cut deeper than steel. The enemy hesitates.`, type: 'combat' })
+      } else {
+        newState = { ...newState, enemyEnraged: true }
+        messages.push({ id: crypto.randomUUID(), text: `It doesn't work. The enemy is enraged. +2 damage next attack.`, type: 'combat' })
+      }
+      break
+    }
+  }
+
+  return { success: true, messages, newState, playerHpDelta }
 }

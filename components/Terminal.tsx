@@ -4,7 +4,7 @@
 // Terminal.tsx — Scrolling message log
 // ============================================================
 
-import React, { useEffect, useRef } from 'react'
+import React, { memo, useEffect, useMemo, useRef } from 'react'
 import type { GameMessage } from '@/types/game'
 
 // ------------------------------------------------------------
@@ -84,6 +84,16 @@ function messageColor(type: GameMessage['type']): string {
   }
 }
 
+const MAX_VISIBLE_MESSAGES = 500
+
+const MessageLine = memo(function MessageLine({ message }: { message: GameMessage }) {
+  return (
+    <div className={`${messageColor(message.type)} mb-0.5`} aria-label={message.type}>
+      {parseRichText(message.text)}
+    </div>
+  )
+})
+
 export default function Terminal({ messages }: TerminalProps) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -91,12 +101,18 @@ export default function Terminal({ messages }: TerminalProps) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  // Only render the most recent messages to prevent DOM bloat in long sessions
+  const visible = useMemo(
+    () => messages.length > MAX_VISIBLE_MESSAGES
+      ? messages.slice(-MAX_VISIBLE_MESSAGES)
+      : messages,
+    [messages]
+  )
+
   return (
-    <div className="flex-1 overflow-y-auto bg-black font-mono text-sm leading-relaxed px-4 py-3 select-text">
-      {messages.map((m) => (
-        <div key={m.id} className={`${messageColor(m.type)} mb-0.5`}>
-          {parseRichText(m.text)}
-        </div>
+    <div className="flex-1 overflow-y-auto bg-black font-mono text-sm leading-relaxed px-3 sm:px-4 py-3 select-text" role="log" aria-live="polite" aria-label="Game messages">
+      {visible.map((m) => (
+        <MessageLine key={m.id} message={m} />
       ))}
       <div ref={bottomRef} />
     </div>

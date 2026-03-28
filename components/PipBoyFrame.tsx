@@ -31,20 +31,23 @@ export default function PipBoyFrame({
   showInput = false,
 }: PipBoyFrameProps) {
   return (
-    <div className="max-w-6xl mx-auto h-screen flex items-center justify-center p-6">
+    <div className="max-w-6xl mx-auto h-screen flex items-center justify-center p-2 sm:p-4 md:p-6">
       {/* Bezel */}
       <div className="pipboy-scratches bg-zinc-800 rounded-2xl p-3 shadow-2xl relative overflow-hidden h-full max-h-[90vh] w-full flex flex-col">
         {/* Inner screen */}
         <div className="crt-scanlines bg-black rounded-xl overflow-hidden flex flex-col h-full relative">
           {/* Tab bar */}
           {showTabs && (
-            <div className="bg-black border-b border-amber-900 flex items-center px-2 shrink-0">
+            <div className="bg-black border-b border-amber-900 flex items-center px-2 shrink-0" role="tablist" aria-label="Game tabs">
               {TAB_IDS.map((tab) => (
                 <button
                   key={tab}
                   type="button"
+                  role="tab"
+                  aria-selected={activeTab === tab}
+                  aria-controls={`tabpanel-${tab}`}
                   onClick={() => onTabChange?.(tab)}
-                  className={`px-4 py-2 text-xs uppercase tracking-widest font-mono transition-colors ${
+                  className={`px-3 sm:px-4 py-2 text-xs uppercase tracking-widest font-mono transition-colors ${
                     activeTab === tab
                       ? 'text-amber-300 border-b-2 border-amber-400'
                       : 'text-amber-700 hover:text-amber-500'

@@ -9,6 +9,9 @@ import { useState, useEffect, useRef } from 'react'
 interface TheBetweenProps {
   cycle: number           // the NEW cycle number (e.g. 2 if this is the first death)
   onContinue: () => void  // called when player clicks BEGIN AGAIN
+  inheritedFactions?: string[]  // faction names with inherited rep
+  discoveredRooms?: number      // count of rooms discovered
+  stashItems?: number           // count of items in stash
 }
 
 const MEMORY_POOL: string[] = [
@@ -39,15 +42,17 @@ function pickFragments(count: number): string[] {
 
 const FRAGMENT_BASE_DELAY_MS = 800
 const FRAGMENT_STAGGER_MS = 900
-const WAKE_DELAY_MS = FRAGMENT_BASE_DELAY_MS + 3 * FRAGMENT_STAGGER_MS + 600
+const ECHOES_DELAY_MS = FRAGMENT_BASE_DELAY_MS + 3 * FRAGMENT_STAGGER_MS + 600
+const WAKE_DELAY_MS = ECHOES_DELAY_MS + 900
 const BUTTON_DELAY_MS = WAKE_DELAY_MS + 900
 
-export default function TheBetween({ cycle, onContinue }: TheBetweenProps) {
+export default function TheBetween({ cycle, onContinue, inheritedFactions, discoveredRooms, stashItems }: TheBetweenProps) {
   // Fragments are fixed for this render instance
   const fragments = useRef<string[]>(pickFragments(3)).current
 
   const [introVisible, setIntroVisible] = useState(false)
   const [fragmentVisible, setFragmentVisible] = useState<boolean[]>([false, false, false])
+  const [echoesVisible, setEchoesVisible] = useState(false)
   const [wakeVisible, setWakeVisible] = useState(false)
   const [buttonVisible, setButtonVisible] = useState(false)
 
@@ -68,6 +73,7 @@ export default function TheBetween({ cycle, onContinue }: TheBetweenProps) {
       )
     })
 
+    timers.push(setTimeout(() => setEchoesVisible(true), ECHOES_DELAY_MS))
     timers.push(setTimeout(() => setWakeVisible(true), WAKE_DELAY_MS))
     timers.push(setTimeout(() => setButtonVisible(true), BUTTON_DELAY_MS))
 
@@ -75,7 +81,7 @@ export default function TheBetween({ cycle, onContinue }: TheBetweenProps) {
   }, [fragments])
 
   return (
-    <div className="flex flex-col items-center justify-center flex-1 overflow-y-auto font-mono text-amber-400 p-6">
+    <div className="flex flex-col items-center justify-center flex-1 overflow-y-auto font-mono text-amber-400 p-6" role="region" aria-live="polite" aria-label="Between cycles">
       <div className="max-w-xl w-full space-y-8">
 
         {/* Header */}
@@ -119,6 +125,36 @@ export default function TheBetween({ cycle, onContinue }: TheBetweenProps) {
           ))}
         </div>
 
+        {/* Echoes — what carries forward */}
+        {((discoveredRooms && discoveredRooms > 0) || (stashItems && stashItems > 0) || (inheritedFactions && inheritedFactions.length > 0)) && (
+          <div
+            className="border-l border-amber-900 pl-5 space-y-2"
+            style={{
+              opacity: echoesVisible ? 1 : 0,
+              transition: 'opacity 0.9s ease-in',
+            }}
+          >
+            <div className="text-amber-600 text-xs uppercase tracking-widest">
+              Echoes
+            </div>
+            {discoveredRooms != null && discoveredRooms > 0 && (
+              <p className="text-sm text-amber-300">
+                {discoveredRooms} room{discoveredRooms !== 1 ? 's' : ''} mapped
+              </p>
+            )}
+            {stashItems != null && stashItems > 0 && (
+              <p className="text-sm text-amber-300">
+                {stashItems} item{stashItems !== 1 ? 's' : ''} stashed
+              </p>
+            )}
+            {inheritedFactions && inheritedFactions.length > 0 && (
+              <p className="text-sm text-amber-300">
+                Factions remember you: {inheritedFactions.join(', ')}
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Wake line */}
         <div
           className="text-amber-500 text-sm tracking-widest"
@@ -129,6 +165,12 @@ export default function TheBetween({ cycle, onContinue }: TheBetweenProps) {
         >
           You wake.
         </div>
+
+        {cycle === 2 && (
+          <p className="text-amber-600 text-xs italic mt-2">
+            Tip: Use &apos;stash [item]&apos; to preserve items across death. Stashed items survive the cycle.
+          </p>
+        )}
 
         {/* Button */}
         <div

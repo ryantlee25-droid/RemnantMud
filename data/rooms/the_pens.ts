@@ -12,9 +12,10 @@ export const THE_PENS_ROOMS: Room[] = [
     description: 'A chain-link gate in a chain-link fence, topped with razor wire that catches the light like something decorative. Two Red Court enforcers flank the checkpoint, their tactical gear immaculate, their expressions professional. A painted sign above the gate reads: MERCY GENERAL EXTENDED CARE PROGRAM — ALL VISITORS WELCOME. The paint is clean. Someone repaints it. The fence behind them runs both directions as far as visibility allows, and the facility beyond it is a repurposed hospital, its original signage still visible under the Red Court additions. The process at the checkpoint is efficient: papers, wristband assignment, processing. A donor waiting their turn stands to one side, yellow wristband already in hand, looking at nothing in particular.',
     descriptionNight: 'The gate checkpoint operates around the clock. Night shift has the same enforcers, the same clipboard, the same sign. The facility beyond glows from within — power intact, lights on in every wing. This place does not sleep. It has reasons not to.',
     shortDescription: 'The East Gate checkpoint. Red Court guards. The sign says MERCY GENERAL.',
-    exits: { east: 'pens_02_intake_hall' },
+    exits: { east: 'pens_02_intake_hall', west: 'sc_15_creek_ford' },
     richExits: {
       east: { destination: 'pens_02_intake_hall', descriptionVerbose: 'through the checkpoint gate into the intake hall' },
+      west: { destination: 'sc_15_creek_ford', descriptionVerbose: 'west, back along the creek road toward Salt Creek' },
     },
     items: [],
     enemies: ['red_court_enforcer'],

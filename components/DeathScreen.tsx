@@ -13,6 +13,9 @@ interface DeathScreenProps {
   roomsExplored: number   // count of visited rooms this cycle
   causeOfDeath: string    // e.g. "combat", "infection", "environmental"
   onContinue: () => void  // called when player clicks RETURN
+  echoStats?: { vigor: number; grit: number; reflex: number; wits: number; presence: number; shadow: number }
+  stashCount?: number
+  questMilestones?: string[]
 }
 
 const CAUSE_LABELS: Record<string, string> = {
@@ -31,6 +34,9 @@ export default function DeathScreen({
   roomsExplored,
   causeOfDeath,
   onContinue,
+  echoStats,
+  stashCount,
+  questMilestones,
 }: DeathScreenProps) {
   const [visible, setVisible] = useState(false)
   const [buttonVisible, setButtonVisible] = useState(false)
@@ -46,7 +52,7 @@ export default function DeathScreen({
   }, [])
 
   return (
-    <div className="flex flex-col items-center justify-center flex-1 overflow-y-auto font-mono text-amber-400 p-6">
+    <div className="flex flex-col items-center justify-center flex-1 overflow-y-auto font-mono text-amber-400 p-6" role="alert" aria-live="assertive">
       <div
         className="max-w-xl w-full space-y-8 text-center"
         style={{
@@ -88,6 +94,35 @@ export default function DeathScreen({
             <div className="text-amber-300 text-xl">{roomsExplored}</div>
           </div>
         </div>
+
+        {/* What persists across death */}
+        {(echoStats || (stashCount && stashCount > 0) || (questMilestones && questMilestones.length > 0)) && (
+          <div className="border border-amber-900 py-4 px-6 text-left space-y-3">
+            <div className="text-amber-600 text-xs uppercase tracking-widest text-center mb-2">
+              What You Carry Forward
+            </div>
+            {echoStats && (
+              <div className="grid grid-cols-3 gap-x-6 gap-y-1 text-sm">
+                <div><span className="text-amber-600">VIG:</span> <span className="text-amber-300">{echoStats.vigor}</span></div>
+                <div><span className="text-amber-600">GRT:</span> <span className="text-amber-300">{echoStats.grit}</span></div>
+                <div><span className="text-amber-600">REF:</span> <span className="text-amber-300">{echoStats.reflex}</span></div>
+                <div><span className="text-amber-600">WIT:</span> <span className="text-amber-300">{echoStats.wits}</span></div>
+                <div><span className="text-amber-600">PRS:</span> <span className="text-amber-300">{echoStats.presence}</span></div>
+                <div><span className="text-amber-600">SHD:</span> <span className="text-amber-300">{echoStats.shadow}</span></div>
+              </div>
+            )}
+            {stashCount != null && stashCount > 0 && (
+              <div className="text-sm text-amber-300">
+                Stash: {stashCount} item{stashCount !== 1 ? 's' : ''} preserved
+              </div>
+            )}
+            {questMilestones && questMilestones.length > 0 && (
+              <div className="text-sm text-amber-300">
+                {questMilestones.length} milestone{questMilestones.length !== 1 ? 's' : ''} remembered
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Narrative */}
         <div className="space-y-4 text-sm text-amber-400 leading-relaxed text-left">

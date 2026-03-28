@@ -26,6 +26,7 @@ import StatTab from '@/components/tabs/StatTab'
 import InventoryTab from '@/components/tabs/InventoryTab'
 import MapTab from '@/components/tabs/MapTab'
 import DataTab from '@/components/tabs/DataTab'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 
 type AuthPhase = 'checking' | 'unauthenticated' | 'loading-player' | 'prologue' | 'no-player' | 'ready'
 type GamePhase = 'alive' | 'dead' | 'between' | 'rebirth' | 'rebirthing' | 'ending'
@@ -73,6 +74,10 @@ export default function GamePage() {
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
+      // Ignore when user is typing in a form field
+      const tag = (e.target as HTMLElement)?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+
       // Only handle tab/number keys during game phase
       if (!(authPhase === 'ready' && gamePhase === 'alive')) return
 
@@ -208,23 +213,31 @@ export default function GamePage() {
     return () => clearTimeout(t)
   }, [authPhase, state.player, state.currentRoom, engine])
 
-  // Watch for player death
+  // Watch for player death — guard against double triggers
+  const deathPendingRef = useRef(false)
   useEffect(() => {
-    if (state.playerDead && gamePhase === 'alive') {
+    if (state.playerDead && gamePhase === 'alive' && !deathPendingRef.current) {
+      deathPendingRef.current = true
       // Small delay so the death messages render first
-      const t = setTimeout(() => setGamePhase('dead'), 1500)
-      return () => clearTimeout(t)
+      const t = setTimeout(() => {
+        if (gamePhase === 'alive') setGamePhase('dead')
+        deathPendingRef.current = false
+      }, 1500)
+      return () => {
+        clearTimeout(t)
+        deathPendingRef.current = false
+      }
     }
   }, [state.playerDead, gamePhase])
 
-  // Watch for ending trigger
+  // Watch for ending trigger — skip if player is dead
   useEffect(() => {
-    if (state.endingTriggered && state.endingChoice && gamePhase === 'alive') {
+    if (state.endingTriggered && state.endingChoice && gamePhase === 'alive' && !state.playerDead) {
       // Delay so the terminal choice narrative renders first
       const t = setTimeout(() => setGamePhase('ending'), 2000)
       return () => clearTimeout(t)
     }
-  }, [state.endingTriggered, state.endingChoice, gamePhase])
+  }, [state.endingTriggered, state.endingChoice, gamePhase, state.playerDead])
 
   // Redirect in progress — render nothing
   if (authPhase === 'unauthenticated') {
@@ -232,6 +245,7 @@ export default function GamePage() {
   }
 
   return (
+    <ErrorBoundary>
     <PipBoyFrame
       showTabs={showTabs}
       activeTab={activeTab}
@@ -301,6 +315,15 @@ export default function GamePage() {
           roomsExplored={state.roomsExplored}
           causeOfDeath="combat"
           onContinue={() => setGamePhase('between')}
+          echoStats={engine.getEchoStats() ?? undefined}
+          stashCount={state.stash.length}
+          questMilestones={
+            state.player?.questFlags
+              ? Object.keys(state.player.questFlags).filter((f) =>
+                  /_trusts_|_betrayed|_offered_deal|_recognized_truth|_shared_origin|_aligned_|_enabled_/.test(f)
+                )
+              : undefined
+          }
         />
       )}
 
@@ -312,6 +335,15 @@ export default function GamePage() {
             setPendingEchoStats(engine.getEchoStats())
             setGamePhase('rebirth')
           }}
+          inheritedFactions={
+            state.player?.factionReputation
+              ? Object.entries(state.player.factionReputation)
+                  .filter(([, rep]) => rep != null && (rep >= 2 || rep <= -2))
+                  .map(([faction]) => faction.replace(/_/g, ' '))
+              : undefined
+          }
+          discoveredRooms={state.ledger?.discoveredRoomIds?.length ?? 0}
+          stashItems={state.stash.length}
         />
       )}
 
@@ -339,5 +371,6 @@ export default function GamePage() {
       {isGamePhase && !showThemePicker && activeTab === 'MAP' && <MapTab />}
       {isGamePhase && !showThemePicker && activeTab === 'DATA' && <DataTab />}
     </PipBoyFrame>
+    </ErrorBoundary>
   )
 }

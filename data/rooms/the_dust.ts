@@ -413,7 +413,7 @@ export const THE_DUST_ROOMS: Room[] = [
     description: 'The tower stands sixty feet tall on four steel legs, painted white once, now rust-streaked and sun-blistered. The tank is still half-full — the water reads safe by sight (green-blue, minimal film), but you\'d want to filter it. The ladder up is intact except for the eighth rung, which has rusted through. A chain lock at the base is decorative — it was cut long ago and re-hung to look closed. At the top, you can see the ghost town below, the alkali flat, the ranch to the west, and on a clear day, the smudge of smoke that is someone\'s chimney thirty miles out.',
     descriptionNight: 'The water tower at night is a tower of stars. Climb it and the world falls away below — the ghost town becomes a geometry of dark shapes, the alkali flat becomes a mirror for the sky. The water in the tank moves slightly, almost imperceptibly, rocking with the wind that finds the tower\'s altitude.',
     shortDescription: 'A water tower. Half-full. Sixty-foot view.',
-    exits: { east: 'du_04_ghost_main', west: 'du_10_ranch' },
+    exits: { east: 'du_04_ghost_main', west: 'du_10_ranch', up: 'du_07_water_tower' },
     richExits: {
       east: { destination: 'du_04_ghost_main', descriptionVerbose: 'east to Main Street' },
       west: { destination: 'du_10_ranch', descriptionVerbose: 'west toward the abandoned ranch' },
@@ -821,7 +821,7 @@ export const THE_DUST_ROOMS: Room[] = [
     description: 'A two-story farmhouse subsiding into the dunes — the ground floor has been swallowed to the window sills, and a drift of fine sand has banked against the south wall to the second-floor eave. The upper floor is exposed: two bedrooms, a bathroom, a hallway. Everything at a slight tilt from the foundation shift. The lower floor is accessible through a broken window that a previous visitor forced — you drop six feet into sand-filled darkness, then more sand, then the buried kitchen floor. Someone else has been here recently. The sand inside the window is compressed by foot traffic.',
     descriptionNight: 'The farmhouse at night is full of wind sounds — sand sifting through cracks in the walls, a loose shutter on the upper floor working in the breeze, the structural groans of a building that is slowly losing its argument with gravity and geology. Inside, below the sand, something catches the faint light from the broken window. Glass. Or eyes.',
     shortDescription: 'A farmhouse half-buried in dunes. Upper floor accessible, lower floor through a window.',
-    exits: { east: 'du_13_deep_dunes', south: 'du_15_dry_well' },
+    exits: { east: 'du_13_deep_dunes', south: 'du_15_dry_well', down: 'du_14_farmhouse' },
     richExits: {
       east: { destination: 'du_13_deep_dunes', descriptionVerbose: 'east back into the deep dunes' },
       south: { destination: 'du_15_dry_well', descriptionVerbose: 'south, a few hundred yards — a stone ring visible above the sand line' },
@@ -919,11 +919,6 @@ export const THE_DUST_ROOMS: Room[] = [
     exits: { north: 'du_14_farmhouse' },
     richExits: {
       north: { destination: 'du_14_farmhouse', descriptionVerbose: 'north back to the buried farmhouse' },
-      down: {
-        destination: 'du_15_dry_well',
-        descriptionVerbose: 'descend the rope into the well shaft',
-        skillGate: { skill: 'climbing', dc: 10, failMessage: 'Forty feet of rope in a dark shaft with unknown anchorage at the bottom. Not today.' },
-      },
     },
     items: [],
     enemies: [],

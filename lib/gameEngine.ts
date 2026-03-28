@@ -4,6 +4,7 @@
 // Action handlers live in lib/actions/*.
 // ============================================================
 
+import { msg, systemMsg, combatMsg } from '@/lib/messages'
 import type {
   Action,
   CycleSnapshot,
@@ -30,17 +31,19 @@ import { getItem } from '@/data/items'
 import { ALL_ROOMS } from '@/data/rooms/index'
 import { quantityRoll, computePressure, pressureModifier } from '@/lib/spawn'
 import type { EngineCore } from '@/lib/actions/types'
-import { handleMove, handleLook, exitsLine, npcsLine, enemiesLine } from '@/lib/actions/movement'
-import { handleAttack, handleFlee, handleDefend, handleWait, handleAnalyze } from '@/lib/actions/combat'
+import { handleMove, handleLook, exitsLine, npcsLine, enemiesLine, handleUnlock } from '@/lib/actions/movement'
+import { handleAttack, handleFlee, handleDefend, handleWait, handleAnalyze, handleCombatUse } from '@/lib/actions/combat'
 import { handleAbility } from '@/lib/abilities'
 import { handleTake, handleDrop, handleEquip, handleUnequip, handleUse, handleStash, handleUnstash, handleStashList, handleRead, handleJournal } from '@/lib/actions/items'
-import { handleTalk, handleSearch, handleRep, handleQuests, handleDialogueChoice, handleDialogueLeave, handleDialogueBlocked } from '@/lib/actions/social'
-import { handleStats, handleInventory, handleHelp, handleBoost } from '@/lib/actions/system'
+import { handleTalk, handleSearch, handleRep, handleQuests, handleDialogueChoice, handleDialogueLeave, handleDialogueBlocked, handleGive } from '@/lib/actions/social'
+import { handleStats, handleInventory, handleHelp, handleBoost, handleTutorialHint } from '@/lib/actions/system'
 import { handleExamineExtra } from '@/lib/actions/examine'
 import { handleRest, handleCamp, handleDrink } from '@/lib/actions/survival'
 import { echoRetentionFactor } from '@/lib/fear'
 import { handleTrade, handleBuy, handleSell } from '@/lib/actions/trade'
 import { handleMap, handleTravel } from '@/lib/actions/travel'
+import { handleCraft } from '@/lib/actions/craft'
+import { attemptStealth } from '@/lib/stealth'
 import { createCycleSnapshot, computeInheritedReputation } from '@/lib/echoes'
 
 // ------------------------------------------------------------
@@ -49,15 +52,15 @@ import { createCycleSnapshot, computeInheritedReputation } from '@/lib/echoes'
 // ------------------------------------------------------------
 
 export const XP_THRESHOLDS: Record<number, number> = {
-  2: 100,
-  3: 250,
-  4: 500,
-  5: 850,
-  6: 1300,
-  7: 1900,
-  8: 2700,
-  9: 3800,
-  10: 5000,
+  2: 50,      // was 100 — first level-up comes faster
+  3: 150,     // was 250
+  4: 350,     // was 500
+  5: 600,     // was 850
+  6: 1000,    // was 1300
+  7: 1500,    // was 1900
+  8: 2200,    // was 2700
+  9: 3100,    // was 3800
+  10: 4200,   // was 5000
 }
 
 /** Return the XP needed for the next level, or null if at max level. */
@@ -74,18 +77,6 @@ function rollQuantity(q: QuantityConfig): number {
 // Helpers
 // ------------------------------------------------------------
 
-function msg(text: string, type: GameMessage['type'] = 'narrative'): GameMessage {
-  return { id: crypto.randomUUID(), text, type }
-}
-
-function systemMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'system' }
-}
-
-function combatMsg(text: string): GameMessage {
-  return { id: crypto.randomUUID(), text, type: 'combat' }
-}
-
 // 20 actions per period; cycles dawn → day → dusk → night → dawn
 function computeTimeOfDay(actionsTaken: number): TimeOfDay {
   const TIMES: TimeOfDay[] = ['dawn', 'day', 'dusk', 'night']
@@ -95,6 +86,28 @@ function computeTimeOfDay(actionsTaken: number): TimeOfDay {
 /** Public accessor for time-of-day — used by action handlers. */
 export function getTimeOfDay(actionsTaken: number): TimeOfDay {
   return computeTimeOfDay(actionsTaken)
+}
+
+// ------------------------------------------------------------
+// Unknown-command suggestion helper
+// ------------------------------------------------------------
+
+const KNOWN_VERBS = ['go','north','south','east','west','up','down','look','examine','search','read','open',
+  'take','drop','use','equip','unequip','attack','flee','defend','wait','rest','camp','drink',
+  'talk','buy','sell','trade','stash','unstash','stats','inventory','map','travel','help','save','quit',
+  'ability','analyze','boost','rep','quests','journal',
+  'craft','give','unlock','sneak','climb','swim']
+
+function suggestVerb(input: string): string | null {
+  const lower = input.toLowerCase()
+  // Exact prefix match
+  const prefix = KNOWN_VERBS.find(v => v.startsWith(lower))
+  if (prefix) return prefix
+  // Check if input is close to a known verb (off by 1-2 chars)
+  for (const v of KNOWN_VERBS) {
+    if (Math.abs(v.length - lower.length) <= 2 && v.slice(0, 3) === lower.slice(0, 3)) return v
+  }
+  return null
 }
 
 // ------------------------------------------------------------
@@ -144,7 +157,7 @@ export class GameEngine implements EngineCore {
 
   _appendMessages(messages: GameMessage[]): void {
     let newLog = [...this.state.log, ...messages]
-    if (newLog.length > 500) {
+    if (newLog.length > 600) {
       newLog = newLog.slice(-500)
     }
     this._setState({ log: newLog })
@@ -234,7 +247,7 @@ export class GameEngine implements EngineCore {
             }
           }
 
-          rolledNpcs.push({ npcId: entry.npcId, activity, disposition })
+          rolledNpcs.push({ npcId: entry.npcId, activity, disposition, dialogueTree: entry.dialogueTree })
         }
       }
     }
@@ -300,7 +313,7 @@ export class GameEngine implements EngineCore {
     const { player } = this.state
     if (!player) return
     const supabase = createSupabaseBrowserClient()
-    await supabase
+    const { error } = await supabase
       .from('players')
       .update({
         hp: player.hp,
@@ -315,8 +328,16 @@ export class GameEngine implements EngineCore {
         wits: player.wits,
         presence: player.presence,
         shadow: player.shadow,
+        faction_reputation: player.factionReputation ?? {},
+        quest_flags: player.questFlags ?? {},
+        active_buffs: JSON.stringify(this.state.activeBuffs ?? []),
+        pending_stat_increase: this.state.pendingStatIncrease ?? false,
       })
       .eq('id', player.id)
+    if (error) {
+      console.error('Failed to save player:', error.message)
+      this._appendMessages([systemMsg('Warning: Failed to save progress.')])
+    }
   }
 
   // ----------------------------------------------------------
@@ -342,7 +363,7 @@ export class GameEngine implements EngineCore {
 
     // Persist death + cycle history to DB
     const supabase = createSupabaseBrowserClient()
-    await supabase
+    const { error: deathError } = await supabase
       .from('players')
       .update({
         hp: 0,
@@ -350,11 +371,16 @@ export class GameEngine implements EngineCore {
         total_deaths: (player.totalDeaths ?? 0) + 1,
       })
       .eq('id', player.id)
+    if (deathError) console.error('Failed to persist death:', deathError.message)
 
-    await supabase
+    const { error: ledgerError } = await supabase
       .from('player_ledger')
-      .update({ cycle_history: cycleHistory })
+      .update({
+        cycle_history: cycleHistory,
+        discovered_enemies: this.state.ledger?.discoveredEnemies ?? [],
+      })
       .eq('player_id', player.id)
+    if (ledgerError) console.error('Failed to persist cycle history:', ledgerError.message)
   }
 
   // ----------------------------------------------------------
@@ -478,6 +504,7 @@ export class GameEngine implements EngineCore {
       current_cycle: 1,
       total_deaths: 0,
       pressure_level: 1,
+      discovered_enemies: [],
     })
 
     await persistWorld(rooms, user.id, seed)
@@ -539,6 +566,10 @@ export class GameEngine implements EngineCore {
     })
 
     await markVisited(startRoomId, user.id)
+    await handleTutorialHint(this, 'first_room')
+    if (startRoom.items.length > 0) await handleTutorialHint(this, 'first_item')
+    if (startRoom.enemies.length > 0) await handleTutorialHint(this, 'first_enemy')
+    if (startRoom.npcs.length > 0) await handleTutorialHint(this, 'first_npc')
   }
 
   // ----------------------------------------------------------
@@ -591,6 +622,8 @@ export class GameEngine implements EngineCore {
       is_dead: boolean | null
       faction_reputation: Partial<Record<FactionType, number>> | null
       quest_flags: Record<string, boolean | number> | null
+      active_buffs: string | null
+      pending_stat_increase: boolean | null
     }
 
     const player: Player = {
@@ -655,6 +688,7 @@ export class GameEngine implements EngineCore {
       squirrelCyclesKnown: ledgerRow.squirrel_cycles_known,
       squirrelName: ledgerRow.squirrel_name ?? undefined,
       cycleHistory: parsedCycleHistory,
+      discoveredEnemies: Array.isArray(ledgerRow.discovered_enemies) ? ledgerRow.discovered_enemies : [],
     } : null
 
     // Phase 5: faction memory rates would be loaded here from player_faction_memory table
@@ -687,6 +721,10 @@ export class GameEngine implements EngineCore {
       .eq('player_id', userId)
       .eq('visited', true)
 
+    // Restore persisted buffs and pending stat increase
+    const restoredBuffs = row.active_buffs ? JSON.parse(row.active_buffs) : []
+    const restoredPending = row.pending_stat_increase ?? false
+
     this._setState({
       player,
       currentRoom,
@@ -698,6 +736,8 @@ export class GameEngine implements EngineCore {
       stash,
       roomsExplored: visitedCount ?? 0,
       cycleHistory: parsedCycleHistory,
+      activeBuffs: restoredBuffs,
+      pendingStatIncrease: restoredPending,
       log: [
         systemMsg(`Welcome back, ${player.name}.`),
         msg(currentRoom.visited ? currentRoom.shortDescription : this._getRoomDescriptionForTime(currentRoom, player.actionsTaken)),
@@ -706,6 +746,16 @@ export class GameEngine implements EngineCore {
         ...enemiesLine(currentRoom) ? [combatMsg(enemiesLine(currentRoom))] : [],
       ],
     })
+
+    // Restore ending state if player was mid-ending
+    const endingFlag = player.questFlags?.ending_triggered
+    if (endingFlag && typeof endingFlag === 'string') {
+      this._setState({ endingTriggered: true, endingChoice: endingFlag as EndingChoice })
+    }
+
+    if (currentRoom.items.length > 0) await handleTutorialHint(this, 'first_item')
+    if (currentRoom.enemies.length > 0) await handleTutorialHint(this, 'first_enemy')
+    if (currentRoom.npcs.length > 0) await handleTutorialHint(this, 'first_npc')
 
     return true
   }
@@ -883,7 +933,7 @@ export class GameEngine implements EngineCore {
     if (ledgerData) {
       await supabase
         .from('player_ledger')
-        .update({ current_cycle: newCycle, total_deaths: newTotalDeaths, pressure_level: pressure })
+        .update({ current_cycle: newCycle, total_deaths: newTotalDeaths, pressure_level: pressure, discovered_enemies: this.state.ledger?.discoveredEnemies ?? [] })
         .eq('player_id', player.id)
     } else {
       await supabase.from('player_ledger').insert({
@@ -892,6 +942,7 @@ export class GameEngine implements EngineCore {
         current_cycle: newCycle,
         total_deaths: newTotalDeaths,
         pressure_level: pressure,
+        discovered_enemies: this.state.ledger?.discoveredEnemies ?? [],
       })
     }
 
@@ -949,10 +1000,11 @@ export class GameEngine implements EngineCore {
 
     // Persist
     const supabase = createSupabaseBrowserClient()
-    await supabase
+    const { error } = await supabase
       .from('players')
       .update({ faction_reputation: newFactionRep })
       .eq('id', player.id)
+    if (error) console.error('Failed to persist reputation:', error.message)
 
     // Display name for the faction
     const FACTION_NAMES: Record<string, string> = {
@@ -995,10 +1047,11 @@ export class GameEngine implements EngineCore {
     this._setState({ player: updatedPlayer })
 
     const supabase = createSupabaseBrowserClient()
-    await supabase
+    const { error: flagError } = await supabase
       .from('players')
       .update({ quest_flags: newFlags })
       .eq('id', player.id)
+    if (flagError) console.error('Failed to persist quest flag:', flagError.message)
 
     // Detect ending trigger
     if (flag === 'charon_choice' && typeof value === 'string' && GameEngine.VALID_ENDINGS.has(value)) {
@@ -1010,10 +1063,14 @@ export class GameEngine implements EngineCore {
       this._setState({ cycleHistory })
 
       const supabase2 = createSupabaseBrowserClient()
-      await supabase2
+      const { error: snapshotError } = await supabase2
         .from('player_ledger')
-        .update({ cycle_history: cycleHistory })
+        .update({
+          cycle_history: cycleHistory,
+          discovered_enemies: this.state.ledger?.discoveredEnemies ?? [],
+        })
         .eq('player_id', player.id)
+      if (snapshotError) console.error('Failed to persist ending snapshot:', snapshotError.message)
 
       if (choice === 'seal') {
         // SEAL: facility self-destruct — show countdown, then auto-navigate to exit
@@ -1024,29 +1081,101 @@ export class GameEngine implements EngineCore {
 
         // Brief delay, then auto-navigate to the exit and trigger ending
         setTimeout(async () => {
-          // Move to scar_15_the_exit
-          const exitRoom = await getRoom('scar_15_the_exit', player.id)
-          if (exitRoom) {
-            const populated = this._applyPopulation(exitRoom)
-            this._setState({ currentRoom: populated })
-            this._appendMessages([
-              msg('You sprint up the emergency staircase as the charges begin to fire below you.', 'narrative'),
-              msg(populated.description, 'narrative'),
-            ])
-            await markVisited('scar_15_the_exit', player.id)
-          }
+          try {
+            // Move to scar_15_the_exit
+            const exitRoom = await getRoom('scar_15_the_exit', player.id)
+            if (exitRoom) {
+              const populated = this._applyPopulation(exitRoom)
+              this._setState({ currentRoom: populated })
+              this._appendMessages([
+                msg('You sprint up the emergency staircase as the charges begin to fire below you.', 'narrative'),
+                msg(populated.description, 'narrative'),
+              ])
+              await markVisited('scar_15_the_exit', player.id)
+            }
 
-          // Trigger ending after reaching exit
-          setTimeout(() => {
+            // Trigger ending after reaching exit
+            setTimeout(async () => {
+              try {
+                const supabase3 = createSupabaseBrowserClient()
+                const { error: endError } = await supabase3
+                  .from('players')
+                  .update({ quest_flags: { ...player.questFlags, ending_triggered: choice } })
+                  .eq('id', player.id)
+                if (endError) console.error('Failed to persist ending:', endError.message)
+                this._setState({ endingTriggered: true, endingChoice: choice })
+              } catch (err) {
+                console.error('Ending trigger failed:', err)
+                this._setState({ endingTriggered: true, endingChoice: choice })
+              }
+            }, 2000)
+          } catch (err) {
+            console.error('SEAL sequence failed:', err)
             this._setState({ endingTriggered: true, endingChoice: choice })
-          }, 2000)
+          }
         }, 3000)
       } else {
         // CURE, WEAPON, THRONE: trigger ending directly after brief pause
-        setTimeout(() => {
-          this._setState({ endingTriggered: true, endingChoice: choice })
+        setTimeout(async () => {
+          try {
+            const supabase3 = createSupabaseBrowserClient()
+            const { error: endError } = await supabase3
+              .from('players')
+              .update({ quest_flags: { ...player.questFlags, ending_triggered: choice } })
+              .eq('id', player.id)
+            if (endError) console.error('Failed to persist ending:', endError.message)
+            this._setState({ endingTriggered: true, endingChoice: choice })
+          } catch (err) {
+            console.error('Ending trigger failed:', err)
+            this._setState({ endingTriggered: true, endingChoice: choice })
+          }
         }, 3000)
       }
+    }
+  }
+
+  // ----------------------------------------------------------
+  // Sneak handler
+  // ----------------------------------------------------------
+
+  async _handleSneak(direction: string | undefined): Promise<void> {
+    const { player, currentRoom } = this.state
+    if (!player || !currentRoom) return
+
+    if (!direction) {
+      this._appendMessages([{ id: crypto.randomUUID(), text: 'Sneak which direction?', type: 'error' }])
+      return
+    }
+
+    // Check if enemies are present in the current or target room
+    const hasEnemiesHere = currentRoom.enemies.length > 0
+
+    // If no enemies nearby, just move normally
+    if (!hasEnemiesHere) {
+      await handleMove(this, direction)
+      return
+    }
+
+    // Enemies present — attempt stealth check
+    const result = attemptStealth(player, currentRoom)
+    if (result.success) {
+      // Move without triggering combat
+      const prevEnemies = currentRoom.enemies
+      const stealthRoom = { ...currentRoom, enemies: [] }
+      this._setState({ currentRoom: stealthRoom })
+      await handleMove(this, direction)
+      // Restore enemies in the room we left (they didn't follow)
+      if (this.state.currentRoom?.id !== currentRoom.id) {
+        // Successfully moved — enemies stay behind
+      } else {
+        // Failed to move (exit blocked etc.), restore enemies
+        this._setState({ currentRoom: { ...this.state.currentRoom!, enemies: prevEnemies } })
+      }
+      this._appendMessages([{ id: crypto.randomUUID(), text: result.message, type: 'system' }])
+    } else {
+      // Failed stealth — move normally (may trigger combat via handleMove)
+      this._appendMessages([{ id: crypto.randomUUID(), text: result.message, type: 'system' }])
+      await handleMove(this, direction)
     }
   }
 
@@ -1057,7 +1186,8 @@ export class GameEngine implements EngineCore {
   // Actions that advance in-world time (exclude meta/info commands)
   private static readonly TIME_ADVANCING_VERBS = new Set([
     'go', 'take', 'drop', 'attack', 'flee', 'talk', 'search', 'use', 'open', 'rest', 'camp', 'drink', 'buy', 'sell',
-    'ability', 'defend', 'wait', 'analyze',
+    'ability', 'defend', 'wait', 'analyze', 'equip', 'unequip',
+    'craft', 'sneak', 'unlock', 'give', 'climb', 'swim',
   ])
 
   async executeAction(action: Action): Promise<GameMessage[]> {
@@ -1068,14 +1198,13 @@ export class GameEngine implements EngineCore {
       this._appendMessages([systemMsg("You have a stat increase pending. Type 'boost [stat]' to choose.")])
     }
 
+    try {
     switch (action.verb) {
       case 'boost':    await handleBoost(this, action.noun)
         break
       case 'go':       await handleMove(this, action.noun)
         break
       case 'look':          await handleLook(this, action.noun)
-        break
-      case 'examine':       await handleLook(this, action.noun)
         break
       case 'examine_extra': await handleExamineExtra(this, action.noun)
         break
@@ -1103,7 +1232,12 @@ export class GameEngine implements EngineCore {
         break
       case 'search':   await handleSearch(this)
         break
-      case 'use':      await handleUse(this, action.noun)
+      case 'use':
+        if (this.state.combatState?.active) {
+          await handleCombatUse(this, action.noun)
+        } else {
+          await handleUse(this, action.noun)
+        }
         break
       case 'read':     await handleRead(this, action.noun)
         break
@@ -1147,13 +1281,32 @@ export class GameEngine implements EngineCore {
         break
       case 'travel':   await handleTravel(this, action.noun)
         break
+      case 'craft':    await handleCraft(this, action.noun)
+        break
+      case 'give':     await handleGive(this, action.noun)
+        break
+      case 'unlock':   await handleUnlock(this, action.noun ?? '')
+        break
+      case 'sneak':    await this._handleSneak(action.noun)
+        break
+      case 'climb':    await handleMove(this, action.noun)
+        break
+      case 'swim':     await handleMove(this, action.noun)
+        break
       case 'dialogue_choice':  await handleDialogueChoice(this, action.noun)
         break
       case 'dialogue_leave':   await handleDialogueLeave(this)
         break
       case 'dialogue_blocked': await handleDialogueBlocked(this)
         break
-      default:         this._appendMessages([{ id: crypto.randomUUID(), text: `Unknown command. Type "help" for a list of commands.`, type: 'error' }])
+      default: {
+        const suggestion = suggestVerb(action.raw.split(' ')[0] ?? '')
+        if (suggestion) {
+          this._appendMessages([{ id: crypto.randomUUID(), text: `Unknown command. Did you mean '${suggestion}'? Type 'help' for a list.`, type: 'error' }])
+        } else {
+          this._appendMessages([{ id: crypto.randomUUID(), text: `Unknown command. Type 'help' for a list of commands.`, type: 'error' }])
+        }
+      }
     }
 
     // Advance in-world time for meaningful actions
@@ -1177,8 +1330,11 @@ export class GameEngine implements EngineCore {
       // Expire temporary stat buffs
       const activeBuffs = this.state.activeBuffs ?? []
       if (activeBuffs.length > 0) {
-        const expired = activeBuffs.filter(b => newCount >= b.expiresAt)
-        const remaining = activeBuffs.filter(b => newCount < b.expiresAt)
+        const expired: typeof activeBuffs = []
+        const remaining: typeof activeBuffs = []
+        for (const b of activeBuffs) {
+          (newCount >= b.expiresAt ? expired : remaining).push(b)
+        }
         if (expired.length > 0 && this.state.player) {
           let p = { ...this.state.player }
           const expiredDescs: string[] = []
@@ -1195,6 +1351,11 @@ export class GameEngine implements EngineCore {
           this._appendMessages([msg(`The stim effect wears off. Your ${label} returns to normal.`)])
         }
       }
+    }
+
+    } catch (err) {
+      console.error('Action failed:', err)
+      this._appendMessages([systemMsg('Something went wrong. Try again.')])
     }
 
     return this.state.log.slice(before)

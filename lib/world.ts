@@ -68,7 +68,7 @@ interface WorldRoomRow {
   zone: string
   difficulty: number
   visited: boolean
-  flags: Record<string, boolean | number>
+  flags: Record<string, boolean | number | string>
 }
 
 function rowToRoom(row: WorldRoomRow): Room {
@@ -258,13 +258,13 @@ export async function markVisited(roomId: string, playerId: string): Promise<voi
 export async function updateRoomFlags(
   roomId: string,
   playerId: string,
-  flags: Record<string, boolean | number>,
+  flags: Record<string, boolean | number | string>,
 ): Promise<void> {
   const supabase = createSupabaseBrowserClient()
 
   // Read current flags first so we can merge rather than overwrite
   const current = roomCache.get(roomId)
-  let mergedFlags: Record<string, boolean | number>
+  let mergedFlags: Record<string, boolean | number | string>
   if (current) {
     mergedFlags = { ...current.flags, ...flags }
   } else {
@@ -278,7 +278,7 @@ export async function updateRoomFlags(
     if (fetchError) {
       throw new Error(`updateRoomFlags: failed to fetch existing flags for ${roomId}: ${fetchError.message}`)
     }
-    const existingFlags = (existingRow as { flags: Record<string, boolean | number> } | null)?.flags ?? {}
+    const existingFlags = (existingRow as { flags: Record<string, boolean | number | string> } | null)?.flags ?? {}
     mergedFlags = { ...existingFlags, ...flags }
   }
 

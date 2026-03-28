@@ -476,7 +476,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
     descriptionNight: 'At night the Old Growth Heart is total darkness — the canopy filters even starlight to nothing. You navigate by touch: bark against your palms, the soft resistance of deep duff under your feet. Something moves, ahead and to your left, in the dark. Something that has been in this dark a long time and has learned to prefer it.',
     descriptionDawn: 'At dawn a single shaft of light enters through a gap in the canopy — the oldest tree has lost a major limb and the opening admits the first horizontal light of the day. The shaft is dense with particulate: pollen, spore, something older. It illuminates nothing useful. It illuminates everything important.',
     shortDescription: 'Ancient old growth. Total canopy cover. Time moves differently.',
-    exits: { south: 'ps_06_shepherds_camp', east: 'ps_11_bone_grove', west: 'ps_12_coastal_approach' },
+    exits: { south: 'ps_06_shepherds_camp', east: 'ps_11_bone_grove', west: 'ps_12_coastal_approach', north: 'ps_10_hermit_deep_camp' },
     richExits: {
       south: { destination: 'ps_06_shepherds_camp', descriptionVerbose: 'south, back toward the hermit\'s camp and familiar forest' },
       east: { destination: 'ps_11_bone_grove', descriptionVerbose: 'east, where the trees thin slightly around what looks like a clearing' },
@@ -697,16 +697,6 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
     richExits: {
       east: { destination: 'ps_09_old_growth_heart', descriptionVerbose: 'east, back into the deep old growth' },
       south: { destination: 'ps_19_windbreak_ruin', descriptionVerbose: 'south, along the thinning edge where something angular shows through the trees' },
-      west: {
-        destination: 'coast_01_sea_cliff',
-        descriptionVerbose: 'west — the forest ends in perhaps a quarter mile. What\'s beyond it is the coast. Whether the coast is navigable, populated, or something else entirely is not in any map you\'ve seen.',
-        cycleGate: 4,
-        skillGate: {
-          skill: 'survival',
-          dc: 14,
-          failMessage: 'The coastal terrain beyond the forest edge is broken and difficult. Without the right knowledge of the terrain, pushing forward risks getting pinned against the sea cliff. You pull back.',
-        },
-      },
     },
     items: ['lore_precollapse_survey'],
     enemies: [],

@@ -83,7 +83,7 @@ const levTree: DialogueTree = {
     lev_echo_distrusted: {
       id: 'lev_echo_distrusted',
       speaker: 'Lev',
-      text: `${rt.npc('Lev')}'s expression hardens — the clinical detachment sharpening into something with edges. "You again." They don't open the drawer. "Last time you took the keycard and I received nothing. No data. No samples. No professional courtesy." They adjust the tablet, not looking at you. "The keycard costs trust you haven't earned. Twice." A deliberate silence. "Bring me a ${rt.item('Viable R-8 Sample')} from the field station. Not a promise. Physical evidence. Then we discuss access."`,
+      text: `${rt.npc('Lev')}'s expression hardens — the clinical detachment sharpening into something with edges. "You again." They don't open the drawer. "Last time you took the keycard and I received nothing. No data. No samples. No professional courtesy." They adjust the tablet, not looking at you. "The keycard costs trust you haven't earned. Twice." A deliberate silence. "The field station east of the Stacks. There were sequencing records there — R-8 integration data. If any survived, bring me what you find. Not a promise. Physical evidence. Then we discuss access."`,
       onEnter: {
         setFlag: 'lev_echo_acknowledged',
       },
@@ -121,7 +121,7 @@ const levTree: DialogueTree = {
     lev_charon_strains: {
       id: 'lev_charon_strains',
       speaker: 'Lev',
-      text: `${rt.npc('Lev')}'s hands go still. "R-1 was the field release — fast, dirty, uncontrolled. R-8 was refined. The protein folding is cleaner, the integration more selective." They lower their voice. "R-8 wasn't an accident. Someone at ${rt.keyword('MERIDIAN')} designed the ${rt.keyword('Sanguine')} expression pathway on purpose. The Hollow were collateral." A breath. "The data is what it is. I don't editorialize."`,
+      text: `${rt.npc('Lev')}'s hands go still. "R-1 was the intended product — controlled augmentation. The ${rt.keyword('Sanguine')} expression. R-8 was the accident. It emerged during unauthorized trials. The integration looks cleaner under a microscope, but cleaner degradation is still degradation. The ${rt.keyword('Hollow')} were never supposed to exist." A breath. "The data is what it is. I don't editorialize."`,
       branches: [
         {
           label: 'Back to other topics.',
@@ -1425,7 +1425,7 @@ const martaTree: DialogueTree = {
     marta_faction_detail: {
       id: 'marta_faction_detail',
       speaker: 'Marta',
-      text: `"The Kindling believe in purification. Fire. Renewal. They think the Sanguine are a plague sent to burn the old world clean." She shakes her head. "They're not wrong about everything. They're just wrong about the fire part."`,
+      text: `"The Kindling believe in purification. Transformation. They think CHARON-7 is a gift and the rest of us just aren't ready for it." She shakes her head. "They're not wrong about everything. They're just wrong about the fire part."`,
       branches: [
         {
           label: 'I appreciate you telling me.',

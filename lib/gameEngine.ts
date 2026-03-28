@@ -32,7 +32,7 @@ import type { EngineCore } from '@/lib/actions/types'
 import { handleMove, handleLook, exitsLine, npcsLine, enemiesLine } from '@/lib/actions/movement'
 import { handleAttack, handleFlee } from '@/lib/actions/combat'
 import { handleTake, handleDrop, handleEquip, handleUnequip, handleUse, handleStash, handleUnstash, handleStashList, handleRead, handleJournal } from '@/lib/actions/items'
-import { handleTalk, handleSearch, handleRep, handleQuests } from '@/lib/actions/social'
+import { handleTalk, handleSearch, handleRep, handleQuests, handleDialogueChoice, handleDialogueLeave, handleDialogueBlocked } from '@/lib/actions/social'
 import { handleStats, handleInventory, handleHelp } from '@/lib/actions/system'
 import { handleExamineExtra } from '@/lib/actions/examine'
 import { handleRest, handleCamp, handleDrink } from '@/lib/actions/survival'
@@ -1041,6 +1041,12 @@ export class GameEngine implements EngineCore {
       case 'map':      await handleMap(this)
         break
       case 'travel':   await handleTravel(this, action.noun)
+        break
+      case 'dialogue_choice':  await handleDialogueChoice(this, action.noun)
+        break
+      case 'dialogue_leave':   await handleDialogueLeave(this)
+        break
+      case 'dialogue_blocked': await handleDialogueBlocked(this)
         break
       default:         this._appendMessages([{ id: crypto.randomUUID(), text: `Unknown command. Type "help" for a list of commands.`, type: 'error' }])
     }

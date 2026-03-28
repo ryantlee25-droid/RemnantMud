@@ -5,7 +5,7 @@
 // ============================================================
 
 import { useState, useRef, useEffect, type KeyboardEvent } from 'react'
-import { parseCommand } from '@/lib/parser'
+import { parseCommand, parseDialogueInput } from '@/lib/parser'
 import { useGame } from '@/lib/gameContext'
 
 export default function CommandInput() {
@@ -39,7 +39,10 @@ export default function CommandInput() {
       type: 'echo' as const,
     }])
 
-    const action = parseCommand(trimmed)
+    const state = engine.getState()
+    const action = state.activeDialogue
+      ? parseDialogueInput(trimmed)
+      : parseCommand(trimmed)
     await dispatch(action)
   }
 

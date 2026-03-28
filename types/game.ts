@@ -91,6 +91,7 @@ export type SkillType =
   | 'mesmerize'
   | 'perception'
   | 'vigor'  // stats used as skill checks in some gates
+  | 'presence'  // stat used as skill check (social authority, command)
 
 // ------------------------------------------------------------
 // Spawn / Randomization System
@@ -636,4 +637,44 @@ export interface GameState {
   stash: StashItem[]
   endingTriggered: boolean
   endingChoice: EndingChoice | null
+  activeDialogue?: {
+    npcId: string
+    treeId: string
+    currentNodeId: string
+  }
+}
+
+// ------------------------------------------------------------
+// Branching Dialogue Tree Types
+// ------------------------------------------------------------
+
+export interface DialogueNode {
+  id: string
+  speaker?: string              // NPC name (for attribution)
+  text: string                  // What the NPC says
+  branches?: DialogueBranch[]   // Player response options (if empty, conversation ends)
+  onEnter?: {                   // Effects when this node is reached
+    setFlag?: string | Record<string, boolean | number>
+    grantItem?: string[]
+    grantRep?: { faction: FactionType; delta: number }
+    removeItem?: string[]
+  }
+}
+
+export interface DialogueBranch {
+  label: string                 // What the player sees as their choice
+  targetNode: string            // ID of next DialogueNode
+  // Gates — branch only shown if ALL conditions met:
+  requiresFlag?: string
+  requiresRep?: { faction: FactionType; min: number }
+  requiresItem?: string
+  skillCheck?: { skill: SkillType; dc: number }
+  // What happens if skill check fails:
+  failNode?: string
+}
+
+export interface DialogueTree {
+  npcId: string
+  startNode: string
+  nodes: Record<string, DialogueNode>
 }

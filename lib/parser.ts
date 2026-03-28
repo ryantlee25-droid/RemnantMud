@@ -1,4 +1,4 @@
-import type { Action } from '@/types/game'
+import type { Action, GameState } from '@/types/game'
 
 // ------------------------------------------------------------
 // Verb maps — normalized verb → accepted surface forms
@@ -113,6 +113,36 @@ const MULTI_WORD: Array<[string, string, string | undefined]> = [
 // ------------------------------------------------------------
 // Parser
 // ------------------------------------------------------------
+
+// ------------------------------------------------------------
+// Dialogue-aware parser — intercepts input when in a conversation
+// ------------------------------------------------------------
+
+const DIALOGUE_LEAVE_WORDS = new Set(['leave', 'bye', 'back', 'end', 'end conversation', 'exit conversation'])
+
+/**
+ * Parse input while the player is in an active dialogue.
+ * Numbers 1-9 become dialogue_choice; leave words become dialogue_leave;
+ * everything else is blocked with a hint message.
+ */
+export function parseDialogueInput(input: string): Action {
+  const raw = input
+  const trimmed = input.trim()
+  const normalized = trimmed.toLowerCase()
+
+  // Numbered choice (1-9)
+  if (/^[1-9]$/.test(normalized)) {
+    return { verb: 'dialogue_choice', noun: normalized, raw }
+  }
+
+  // Leave words
+  if (DIALOGUE_LEAVE_WORDS.has(normalized)) {
+    return { verb: 'dialogue_leave', noun: undefined, raw }
+  }
+
+  // Anything else — blocked
+  return { verb: 'dialogue_blocked', noun: trimmed, raw }
+}
 
 /**
  * Parse raw text input into a structured Action.

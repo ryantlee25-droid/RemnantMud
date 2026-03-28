@@ -52,7 +52,7 @@ export type CharacterClass = 'enforcer' | 'scout' | 'wraith' | 'shepherd' | 'rec
 export type PersonalLossType = 'child' | 'partner' | 'community' | 'identity' | 'promise'
 
 // Hollow enemy sub-types (used in hollow_encounter threat pools)
-export type HollowType = 'shuffler' | 'remnant' | 'screamer' | 'brute' | 'whisperer' | 'hive_mother' | 'elder_sanguine' | 'sanguine_feral'
+export type HollowType = 'shuffler' | 'remnant' | 'stalker' | 'screamer' | 'brute' | 'whisperer' | 'hive_mother' | 'elder_sanguine' | 'sanguine_feral'
 
 // Factions
 export type FactionType =
@@ -624,6 +624,12 @@ export interface GameMessage {
 
 export type EndingChoice = 'cure' | 'weapon' | 'seal' | 'throne'
 
+export interface ActiveBuff {
+  stat: string
+  bonus: number
+  expiresAt: number  // actionsTaken when buff expires
+}
+
 export interface GameState {
   player: Player | null
   currentRoom: Room | null
@@ -635,8 +641,10 @@ export interface GameState {
   playerDead: boolean
   ledger: PlayerLedger | null
   stash: StashItem[]
+  roomsExplored: number
   endingTriggered: boolean
   endingChoice: EndingChoice | null
+  activeBuffs: ActiveBuff[]
   activeDialogue?: {
     npcId: string
     treeId: string

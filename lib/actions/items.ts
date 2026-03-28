@@ -269,19 +269,25 @@ export async function handleUse(engine: EngineCore, noun: string | undefined): P
     messages.push(msg(`You use the ${rt.item(invItem.item.name)}. +${healing} HP. [${newHp}/${player.maxHp}]`, 'system'))
   }
 
-  // TODO: Make stat bonuses temporary (e.g., lasting ~20 actions) by tracking
-  // active buffs on the Player or GameState with an expiry action count.
-  // For now, bonuses are applied permanently for simplicity.
+  // Temporary stat bonuses — last 20 actions then expire automatically.
   if (invItem.item.statBonus) {
+    const BUFF_DURATION = 20
     const bonusEntries = Object.entries(invItem.item.statBonus) as Array<[string, number]>
+    const expiresAt = (player.actionsTaken ?? 0) + BUFF_DURATION
+    const newBuffs: Array<{ stat: string; bonus: number; expiresAt: number }> = []
     for (const [stat, bonus] of bonusEntries) {
       const key = stat as keyof typeof updatedPlayer
       if (key in updatedPlayer && typeof updatedPlayer[key] === 'number') {
         updatedPlayer = { ...updatedPlayer, [key]: (updatedPlayer[key] as number) + bonus }
+        newBuffs.push({ stat, bonus, expiresAt })
       }
     }
     const bonusDesc = bonusEntries.map(([s, v]) => `+${v} ${s}`).join(', ')
-    messages.push(msg(`${invItem.item.useText ?? 'You feel different.'} [${bonusDesc}]`, 'system'))
+    messages.push(msg(`${invItem.item.useText ?? 'You feel different.'} [${bonusDesc} for ${BUFF_DURATION} actions]`, 'system'))
+
+    // Register buffs on GameState so the dispatcher can expire them
+    const currentBuffs = engine.getState().activeBuffs ?? []
+    engine._setState({ activeBuffs: [...currentBuffs, ...newBuffs] })
   }
 
   if (messages.length === 0) {
@@ -326,7 +332,7 @@ export async function handleStash(engine: EngineCore, noun: string | undefined):
     .eq('player_id', player.id)
 
   if ((count ?? 0) >= 20) {
-    engine._appendMessages([errorMsg('Your stash is full. (20/20)')])
+    engine._appendMessages([errorMsg('Your stash is full (20/20). Unstash something first.')])
     return
   }
 

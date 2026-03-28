@@ -69,8 +69,8 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       baseChance: 0.10,
       timeModifier: { day: 0.5, night: 2.0, dawn: 0.8, dusk: 1.5 },
       threatPool: [
-        { type: 'shuffler', weight: 85, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
-        { type: 'remnant', weight: 15, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 92, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 8, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
       activityPool: {

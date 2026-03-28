@@ -242,8 +242,9 @@ export const THE_DUST_ROOMS: Room[] = [
       baseChance: 0.30,
       timeModifier: { day: 1.0, night: 2.5, dawn: 1.5, dusk: 2.0 },
       threatPool: [
-        { type: 'shuffler', weight: 60, quantity: { min: 1, max: 4, distribution: 'weighted_low' } },
-        { type: 'remnant', weight: 30, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'shuffler', weight: 50, quantity: { min: 1, max: 4, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 25, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'stalker', weight: 15, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'brute', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.4, awarePassive: 0.35, awareAggressive: 0.25 },
@@ -503,8 +504,9 @@ export const THE_DUST_ROOMS: Room[] = [
       baseChance: 0.40,
       timeModifier: { day: 1.2, night: 3.0, dawn: 1.5, dusk: 2.5 },
       threatPool: [
-        { type: 'shuffler', weight: 50, quantity: { min: 2, max: 5, distribution: 'bell' } },
-        { type: 'remnant', weight: 40, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
+        { type: 'shuffler', weight: 40, quantity: { min: 2, max: 5, distribution: 'bell' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
+        { type: 'stalker', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'brute', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.3, awarePassive: 0.4, awareAggressive: 0.3 },

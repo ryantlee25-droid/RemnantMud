@@ -226,12 +226,12 @@ export function applyHollowRoundEffects(
         name: 'Shuffler',
         description: 'Drawn by the shriek.',
         hollowType: 'shuffler',
-        hp: 10,
-        maxHp: 10,
+        hp: 12,
+        maxHp: 12,
         attack: 1,
-        defense: 8,
-        damage: [1, 3],
-        xp: 10,
+        defense: 7,
+        damage: [2, 4],
+        xp: 12,
         loot: [{ itemId: 'scrap_metal', chance: 0.10 }],
       }
       const existing = newState.additionalEnemies ?? []

@@ -8,9 +8,14 @@ import type { Metadata } from 'next'
 import RemnantLogo from '@/components/RemnantLogo'
 
 export const metadata: Metadata = {
-  title: 'The Remnant — Post-Apocalyptic Text Adventure',
+  title: 'The Remnant — Post-Apocalyptic Text MUD',
   description:
-    'A text-based survival RPG set in the American Southwest, seven years after the collapse. Play in your browser. No download.',
+    'A single-player text adventure set 7 years after the CHARON-7 bioweapon collapse. 271 rooms, 4 endings, branching dialogue. Play free in your browser.',
+  openGraph: {
+    title: 'The Remnant',
+    description: "What's left is what matters.",
+    type: 'website',
+  },
 }
 
 // Static — never revalidate

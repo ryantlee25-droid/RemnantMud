@@ -4,8 +4,14 @@ import { GameProvider } from '@/lib/gameContext'
 import ThemeLoader from '@/components/ThemeLoader'
 
 export const metadata: Metadata = {
-  title: 'The Remnant — Post-Apocalyptic Text Adventure',
-  description: 'A single-player text-based survival game.',
+  title: 'The Remnant — Post-Apocalyptic Text MUD',
+  description:
+    'A single-player text adventure set 7 years after the CHARON-7 bioweapon collapse. 271 rooms, 4 endings, branching dialogue. Play free in your browser.',
+  openGraph: {
+    title: 'The Remnant',
+    description: "What's left is what matters.",
+    type: 'website',
+  },
 }
 
 export default function RootLayout({

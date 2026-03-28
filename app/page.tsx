@@ -32,6 +32,7 @@ type GamePhase = 'alive' | 'dead' | 'between' | 'rebirth' | 'rebirthing' | 'endi
 
 const PROLOGUE_KEY = 'remnant_saw_prologue'
 const INV_HINT_KEY = 'remnant_seen_inv_hint'
+const TRAVEL_HINT_KEY = 'remnant_seen_travel_hint'
 
 function TerminalLoader({ text }: { text: string }) {
   const [dots, setDots] = useState('')
@@ -113,6 +114,7 @@ export default function GamePage() {
         // Clear localStorage flags so prologue/theme/hints re-show on reload
         localStorage.removeItem('remnant_saw_prologue')
         localStorage.removeItem('remnant_seen_inv_hint')
+        localStorage.removeItem('remnant_seen_travel_hint')
         user = DEV_USER
       } else {
         const supabase = createSupabaseBrowserClient()
@@ -184,6 +186,28 @@ export default function GamePage() {
     return () => clearTimeout(t)
   }, [authPhase, state.player, engine])
 
+  // One-time fast travel hint when entering a waypoint room
+  const travelHintFiredRef = useRef(false)
+  useEffect(() => {
+    if (travelHintFiredRef.current) return
+    if (authPhase !== 'ready') return
+    if (!state.player || !state.currentRoom) return
+    if (!state.currentRoom.flags.fastTravelWaypoint) return
+    if (typeof window !== 'undefined' && localStorage.getItem(TRAVEL_HINT_KEY)) return
+
+    travelHintFiredRef.current = true
+    localStorage.setItem(TRAVEL_HINT_KEY, '1')
+
+    const t = setTimeout(() => {
+      engine._appendMessages([{
+        id: crypto.randomUUID(),
+        text: "[This is a waypoint. Type 'map' to see discovered waypoints, or 'travel [destination]' to fast travel.]",
+        type: 'system',
+      }])
+    }, 400)
+    return () => clearTimeout(t)
+  }, [authPhase, state.player, state.currentRoom, engine])
+
   // Watch for player death
   useEffect(() => {
     if (state.playerDead && gamePhase === 'alive') {
@@ -252,7 +276,7 @@ export default function GamePage() {
           choice={state.endingChoice}
           cycle={state.player?.cycle ?? 1}
           totalDeaths={state.player?.totalDeaths ?? 0}
-          roomsExplored={0}
+          roomsExplored={state.roomsExplored}
           xpEarned={state.player?.xp ?? 0}
           onNewGame={async () => {
             // Delete player data and restart
@@ -274,7 +298,7 @@ export default function GamePage() {
         <DeathScreen
           cycle={state.player?.cycle ?? 1}
           xpGained={state.player?.xp ?? 0}
-          roomsExplored={0}
+          roomsExplored={state.roomsExplored}
           causeOfDeath="combat"
           onContinue={() => setGamePhase('between')}
         />

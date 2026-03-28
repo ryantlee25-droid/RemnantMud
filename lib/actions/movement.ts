@@ -97,12 +97,14 @@ export function npcsLine(room: Room): string {
   if (room.npcs.length === 0) return ''
   const lines = room.npcs.map((id) => {
     const rolledNpc = room.population?.npcs.find(n => n.npcId === id)
+    const spawnEntry = room.npcSpawns?.find(s => s.npcId === id)
+    const traderTag = spawnEntry?.tradeInventory?.length ? ` ${rt.keyword('[trader]')}` : ''
     // Use rolled activity description if available (full sentence from activityPool)
     if (rolledNpc && rolledNpc.activity !== 'is here') {
-      return rolledNpc.activity
+      return `${rolledNpc.activity}${traderTag}`
     }
     const name = getNPC(id)?.name ?? id
-    return `${rt.npc(name)} is here.`
+    return `${rt.npc(name)} is here.${traderTag}`
   })
   return lines.join(' ')
 }
@@ -145,6 +147,27 @@ function rollAmbientSound(room: Room, actionsTaken: number): string | null {
   for (const entry of entries) {
     r -= entry.weight
     if (r <= 0) return entry.sound
+  }
+  return null
+}
+
+// ------------------------------------------------------------
+// Flavor line helper
+// ------------------------------------------------------------
+
+function rollFlavorLine(room: Room, actionsTaken: number): string | null {
+  const lines = room.environmentalRolls?.flavorLines
+  if (!lines || lines.length === 0) return null
+  // Only fire ~25% of the time (independent of ambient sounds)
+  if (Math.random() > 0.25) return null
+  const tod = getTimeOfDay(actionsTaken)
+  // Filter to lines valid for the current time of day (null/undefined time = always valid)
+  const eligible = lines.filter((fl) => !fl.time || fl.time.includes(tod))
+  if (eligible.length === 0) return null
+  // Each eligible line has its own chance; pick the first that passes
+  const shuffled = [...eligible].sort(() => Math.random() - 0.5)
+  for (const fl of shuffled) {
+    if (Math.random() < fl.chance) return fl.line
   }
   return null
 }
@@ -246,6 +269,9 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
   if (!nextRoom.visited) {
     messages.push(msg(getRoomDescription(nextRoom, tod)))
     await markVisited(nextRoomId, player.id)
+    // Increment rooms explored counter
+    const currentState = engine.getState()
+    engine._setState({ roomsExplored: currentState.roomsExplored + 1 })
   } else {
     messages.push(msg(nextRoom.shortDescription))
   }
@@ -299,6 +325,10 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
   // Ambient sound roll
   const ambientSound = rollAmbientSound(nextRoom, player.actionsTaken)
   if (ambientSound) messages.push(msg(ambientSound))
+
+  // Flavor line roll (independent of ambient sounds, ~25% chance)
+  const flavorLine = rollFlavorLine(nextRoom, player.actionsTaken)
+  if (flavorLine) messages.push(msg(flavorLine))
 
   // Memory bleeds — triggered at Cycle 4+, 5% base chance
   const playerCycle = engine.getState().player?.cycle ?? 1

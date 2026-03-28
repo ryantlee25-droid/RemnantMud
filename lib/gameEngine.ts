@@ -110,8 +110,10 @@ export class GameEngine implements EngineCore {
     playerDead: false,
     ledger: null,
     stash: [],
+    roomsExplored: 0,
     endingTriggered: false,
     endingChoice: null,
+    activeBuffs: [],
   }
 
   private listeners: Array<(state: GameState) => void> = []
@@ -640,6 +642,13 @@ export class GameEngine implements EngineCore {
       })
       .filter((si: StashItem | null): si is StashItem => si !== null)
 
+    // Count rooms already visited by this player
+    const { count: visitedCount } = await supabase
+      .from('generated_rooms')
+      .select('*', { count: 'exact', head: true })
+      .eq('player_id', userId)
+      .eq('visited', true)
+
     this._setState({
       player,
       currentRoom,
@@ -649,6 +658,7 @@ export class GameEngine implements EngineCore {
       initialized: true,
       ledger,
       stash,
+      roomsExplored: visitedCount ?? 0,
       log: [
         systemMsg(`Welcome back, ${player.name}.`),
         msg(currentRoom.visited ? currentRoom.shortDescription : this._getRoomDescriptionForTime(currentRoom, player.actionsTaken)),
@@ -1016,7 +1026,8 @@ export class GameEngine implements EngineCore {
       case 'save':     await this._savePlayer()
                        this._appendMessages([systemMsg('Progress saved.')])
         break
-      case 'quit':     this._appendMessages([systemMsg('Refresh the page to quit. Your progress is saved.')])
+      case 'quit':     await this._savePlayer()
+                       this._appendMessages([systemMsg('Progress saved. Refresh the page to return to the landing page.')])
         break
       case 'stash':    if (action.noun === 'list') { await handleStashList(this) } else { await handleStash(this, action.noun) }
         break
@@ -1067,6 +1078,28 @@ export class GameEngine implements EngineCore {
           dawn:  'A grey line appears on the horizon. Another day.',
         }
         this._appendMessages([msg(transitionMessages[newTime])])
+      }
+
+      // Expire temporary stat buffs
+      const activeBuffs = this.state.activeBuffs ?? []
+      if (activeBuffs.length > 0) {
+        const expired = activeBuffs.filter(b => newCount >= b.expiresAt)
+        const remaining = activeBuffs.filter(b => newCount < b.expiresAt)
+        if (expired.length > 0 && this.state.player) {
+          let p = { ...this.state.player }
+          const expiredDescs: string[] = []
+          for (const buff of expired) {
+            const key = buff.stat as keyof typeof p
+            if (key in p && typeof p[key] === 'number') {
+              p = { ...p, [key]: (p[key] as number) - buff.bonus }
+              expiredDescs.push(buff.stat)
+            }
+          }
+          this._setState({ player: p, activeBuffs: remaining })
+          const statNames = [...new Set(expiredDescs)]
+          const label = statNames.join(', ')
+          this._appendMessages([msg(`The stim effect wears off. Your ${label} returns to normal.`)])
+        }
       }
     }
 

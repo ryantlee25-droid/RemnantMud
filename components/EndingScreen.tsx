@@ -198,6 +198,9 @@ export default function EndingScreen({
           >
             NEW GAME
           </button>
+          <p className="text-amber-700 text-xs mt-3">
+            Each ending tells a different story. There are four.
+          </p>
         </div>
       </div>
     </div>

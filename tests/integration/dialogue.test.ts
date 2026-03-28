@@ -146,6 +146,7 @@ function makeEngine(state: Partial<GameState> = {}): EngineCore & { messages: Ga
     stash: [],
     endingTriggered: false,
     endingChoice: null,
+    activeBuffs: [],
     ...state,
   }
 

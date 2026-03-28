@@ -904,6 +904,7 @@ export const EMBER_ROOMS: Room[] = [
         description: 'The char pattern on the concrete around the ruptured tanks radiates outward from the rupture points — the fire moved from here, not to here. Which means the tanks ruptured first and the contents ignited, or the contents were released and then ignited, or the fire reached the tanks from elsewhere and the rupture was the result rather than the cause. The char pattern is consistent with all three explanations. You stand here for a while, reading the concrete, and come to no conclusion that the concrete didn\'t already have.',
         skillCheck: { skill: 'survival', dc: 14, successAppend: 'The valve assembly on the largest ruptured tank shows manual operation — the wheel is in the open position and the wear pattern on the handle is inconsistent with the handle having been turned by the heat. Someone opened this valve. The fire that destroyed the district started here, and someone opened this valve, and you cannot tell from physical evidence whether that someone survived.' },
         questFlagOnSuccess: { flag: 'em_tank_farm_valve_investigated', value: true },
+        reputationGrant: { faction: 'kindling', delta: 1 },
       },
       {
         keywords: ['pipe', 'manifold', 'valve', 'assembly'],
@@ -1585,6 +1586,7 @@ export const EMBER_ROOMS: Room[] = [
         description: 'The radiation trefoil is standard signage — magenta on yellow, the international standard. It is not the biohazard symbol. Biohazard means biological agents. Radiation means ionizing energy or radioactive material. An industrial waste incinerator does not require radiation signage. A medical waste incinerator does not require radiation signage. The list of things that require radiation signage on an incinerator is short and none of the entries are comforting.',
         skillCheck: { skill: 'lore', dc: 14, successAppend: 'The signage is post-installation — affixed with mechanical fasteners over the original hazard placard, which was the standard industrial waste diamond. Someone changed the classification of what this incinerator was burning. The new classification required radiation protocols. CHARON-7 is not radioactive. But the treatment compounds developed to combat it — the experimental ones, the ones that didn\'t work, the ones that the government contract was producing — some of those involved isotope-tagged markers. The incinerator was burning failed treatments. It was burning the evidence of how many times they got it wrong.' },
         questFlagOnSuccess: { flag: 'em_incinerator_radiation_investigated', value: true },
+        reputationGrant: { faction: 'kindling', delta: 1 },
       },
       {
         keywords: ['burn chamber', 'refractory', 'vitrified', 'ash', 'cylinder'],
@@ -1602,6 +1604,7 @@ export const EMBER_ROOMS: Room[] = [
         description: 'The broom marks are real. The floor has been swept — not perfectly, but deliberately, the marks of a push broom moving in long strokes from the burn chamber toward the door. The dust that was swept is gone, carried out or dispersed. The sweeping happened within the last week, based on the dust accumulation since. Someone comes here. Someone tends this space the way the Kindling tends the coal pit and the Garden of Ashes — with regularity and purpose. The incinerator has a caretaker who has not been introduced to you and who has decided that this building, of all buildings, deserves maintenance.',
         skillCheck: { skill: 'tracking', dc: 13, successAppend: 'The broom marks overlap in a pattern that reveals the sweeper\'s path: they start at the burn chamber, move outward in expanding arcs, and exit through the main door. The footprints beneath the broom marks — partially erased but readable — are a size and gait consistent with the spray-paint writer from the annex and the rail yard. The same person who wrote WE STAYED TOO LONG and DON\'T OPEN is the person who sweeps the incinerator floor. They are still here. They are still tending the evidence of what happened.' },
         questFlagOnSuccess: { flag: 'em_incinerator_sweeper_tracked', value: true },
+        reputationGrant: { faction: 'kindling', delta: 1 },
       },
       {
         keywords: ['chimney', 'stack', 'tall', 'blackened'],

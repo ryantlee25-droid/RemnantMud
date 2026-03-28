@@ -865,6 +865,7 @@ export const THE_DEEP_ROOMS: Room[] = [
         description: 'The hard drives are labeled in the evolved Sanguine script. One section is labeled in plain English: PRE-COLLAPSE ACQUISITION — MERIDIAN PROJECT FILES. You count fourteen drives in that section alone. The Sanguine have more data on MERIDIAN than anyone you\'ve encountered in the surface world.',
         skillCheck: { skill: 'electronics', dc: 11, successAppend: 'The drives are readable with standard pre-Collapse interfaces. The data architecture is government research format — classified but not encrypted at the file level. Someone gave these to the Sanguine or the Sanguine acquired them from a source with direct MERIDIAN access. The metadata on the oldest files shows a curator: J. VANE, PROJECT DIRECTOR. The Project Director gave the Sanguine the MERIDIAN files.' },
         questFlagOnSuccess: { flag: 'discovered_archive_meridian_connection', value: true },
+        reputationGrant: { faction: 'lucid', delta: 1 },
       },
       {
         keywords: ['MERIDIAN', 'project', 'files', 'documents'],
@@ -919,6 +920,7 @@ export const THE_DEEP_ROOMS: Room[] = [
         description: 'You crouch at the fault\'s edge and look down. The crack is deeper than your light reaches — the beam disappears into dark that has no floor. The heat comes from there in pulses timed to nothing you can measure. Sometimes the pulse quickens. Sometimes it goes still for minutes. Whatever is generating the heat is not geological. Geology doesn\'t pulse.',
         skillCheck: { skill: 'perception', dc: 13, successAppend: 'In the still periods, you can hear it: something breathing, far below, at a rate that would put each breath at roughly twelve minutes. Whatever is alive in the fault is old enough that its metabolism has slowed to something approaching geological time. It is alive. It has been alive for a very long time. The Sanguine call it something in their script you can\'t read. You call it a reason to be careful.' },
         questFlagOnSuccess: { flag: 'discovered_fault_entity', value: true },
+        reputationGrant: { faction: 'lucid', delta: 1 },
       },
       {
         keywords: ['offerings', 'gifts', 'depression', 'tended'],

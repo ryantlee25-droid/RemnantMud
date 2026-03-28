@@ -889,6 +889,7 @@ export const THE_SCAR_ROOMS: Room[] = [
         description: 'CHARON-7 VECTOR RESEARCH. The naming convention: CHARON, Greek ferryman of the dead, the entity that carries you across the boundary. The naming was intentional — the research director had a classical education and a taste for apt metaphors. The vector is what carries the passenger. CHARON-7 carries a passenger across a biological boundary. The researchers named it for what it does. They knew what it did.',
         skillCheck: { skill: 'lore', dc: 9, successAppend: 'The seventh CHARON iteration — six failures before this one. The research notebooks cover CHARON-1 through CHARON-6 in summary form: each reached a different stage of failure. CHARON-7 was the version that worked. R-1 worked. R-8 was what emerged when it worked imperfectly, which is different from not working at all.' },
         questFlagOnSuccess: { flag: 'found_hollow_origin', value: true },
+        reputationGrant: { faction: 'reclaimers', delta: 1 },
       },
       {
         keywords: ['notebooks', 'early', 'optimistic', 'timeline'],
@@ -957,6 +958,7 @@ export const THE_SCAR_ROOMS: Room[] = [
         description: 'The padlock on the cell is different from everything else in MERIDIAN — it\'s civilian hardware, not facility issue. Someone brought it here. Scavenged it, or brought it from the surface. Someone added this lock after the bombing, from the outside, to supplement the failing electronic containment. Someone who knew what was in this cell and made sure it stayed in. Someone who has been living in this facility for seven years made a deliberate choice to keep this sealed.',
         skillCheck: { skill: 'lore', dc: 11, successAppend: 'The broadcaster keeps this sealed. After seven years, they know every corner of this facility. They chose to lock this rather than release it, or end it. That choice tells you something about who the broadcaster is — someone who preserves rather than destroys, even when destruction would be easier and kinder. Or someone who believes in evidence. In bearing witness. In not erasing what happened here.' },
         questFlagOnSuccess: { flag: 'found_broadcaster_identity', value: true },
+        reputationGrant: { faction: 'reclaimers', delta: 1 },
       },
     ],
     hollowEncounter: {
@@ -996,6 +998,7 @@ export const THE_SCAR_ROOMS: Room[] = [
         description: 'Augmentation Protocol — Alpha Series. Not a modification, not a treatment, not a trial. An augmentation: something intended to make the subject more than they were. The language is aspirational. The Wing B researchers weren\'t developing a bioweapon or a control agent. They were developing an upgrade. That was the program. That was what they believed in.',
         skillCheck: { skill: 'lore', dc: 8, successAppend: 'The Alpha Series designation implies other series — Beta, Gamma. The server room has partial references to Beta Series trials that never left planning. Alpha succeeded well enough that the program moved to deployment framework without needing Beta. The Sanguine in the world are all Alpha Series. Every one of them walked through an augmentation chamber like the one deeper in this wing. Every one of them chose it, or had it chosen for them.' },
         questFlagOnSuccess: { flag: 'found_sanguine_origin', value: true },
+        reputationGrant: { faction: 'lucid', delta: 1 },
       },
       {
         keywords: ['notebooks', 'handwriting', 'confident', 'different'],

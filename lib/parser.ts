@@ -37,7 +37,6 @@ const INVENTORY_VERBS: Record<string, string> = {
   get: 'take',
   drop: 'drop',
   use: 'use',
-  drink: 'use',
   eat: 'use',
   equip: 'equip',
   wear: 'equip',
@@ -56,6 +55,14 @@ const COMBAT_VERBS: Record<string, string> = {
   run: 'flee',
   escape: 'flee',
   retreat: 'flee',
+}
+
+const SURVIVAL_VERBS: Record<string, string> = {
+  rest: 'rest',
+  sleep: 'rest',
+  camp: 'camp',
+  drink: 'drink',
+  fill: 'drink',
 }
 
 const INTERACTION_VERBS: Record<string, string> = {
@@ -167,6 +174,11 @@ export function parseCommand(input: string): Action {
   // --- Combat ---
   if (first in COMBAT_VERBS) {
     return { verb: COMBAT_VERBS[first]!, noun: rest || undefined, raw }
+  }
+
+  // --- Survival ---
+  if (first in SURVIVAL_VERBS) {
+    return { verb: SURVIVAL_VERBS[first]!, noun: rest || undefined, raw }
   }
 
   // --- Interaction ---

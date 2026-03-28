@@ -131,6 +131,8 @@ function getRoomDescription(room: Room, timeOfDay: TimeOfDay): string {
 function rollAmbientSound(room: Room, actionsTaken: number): string | null {
   const pool = room.environmentalRolls?.ambientSoundPool
   if (!pool) return null
+  // Only fire ~35% of the time to avoid spamming ambient text every room entry
+  if (Math.random() > 0.35) return null
   const tod = getTimeOfDay(actionsTaken)
   const entries = pool[tod] ?? pool.day ?? []
   if (entries.length === 0) return null
@@ -226,6 +228,12 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
     return
   }
 
+  // Room-level cycle gate — block entry if player hasn't reached the required cycle
+  if (rawNextRoom.cycleGate && (player.cycle ?? 1) < rawNextRoom.cycleGate) {
+    engine._appendMessages([msg(`Something prevents you from going further. You're not ready yet.`)])
+    return
+  }
+
   const nextRoom = engine._applyPopulation(rawNextRoom)
   const updatedPlayer = { ...player, currentRoomId: nextRoomId }
   engine._setState({ player: updatedPlayer, currentRoom: nextRoom })
@@ -244,6 +252,19 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
   if (npcsLine(nextRoom)) messages.push(msg(npcsLine(nextRoom)))
   if (enemiesLine(nextRoom)) messages.push(combatMsg(enemiesLine(nextRoom)))
   if (itemsLine(nextRoom)) messages.push(msg(itemsLine(nextRoom)))
+
+  // Room flag flavor text on first visit
+  if (!nextRoom.visited) {
+    if (nextRoom.flags.safeRest) {
+      messages.push(msg('This place feels safe. You could rest here.'))
+    }
+    if (nextRoom.flags.waterSource) {
+      messages.push(msg('You hear the sound of running water nearby.'))
+    }
+    if (nextRoom.flags.campfireAllowed) {
+      messages.push(msg('There is a sheltered spot here — good enough for a campfire.'))
+    }
+  }
 
   // Personal loss echoes — intrusive thoughts tied to the player's loss
   const playerLoss = updatedPlayer.personalLossType

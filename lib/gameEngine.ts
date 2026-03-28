@@ -32,6 +32,7 @@ import { handleTake, handleDrop, handleEquip, handleUnequip, handleUse, handleSt
 import { handleTalk, handleSearch, handleRep, handleQuests } from '@/lib/actions/social'
 import { handleStats, handleInventory, handleHelp } from '@/lib/actions/system'
 import { handleExamineExtra } from '@/lib/actions/examine'
+import { handleRest, handleCamp, handleDrink } from '@/lib/actions/survival'
 
 // Alias for gameEngine internal use
 function rollQuantity(q: QuantityConfig): number {
@@ -131,8 +132,9 @@ export class GameEngine implements EngineCore {
       (typeof clearedAt === 'number' && actionsTakenNow - clearedAt >= ENEMY_RESPAWN_ACTIONS)
 
     // --- Hollow encounter spawns ---
+    // safeRest rooms suppress random Hollow encounters entirely
     const enemyIds: string[] = []
-    if (room.hollowEncounter && enemiesRestored) {
+    if (room.hollowEncounter && enemiesRestored && !room.flags.safeRest && !room.flags.noCombat) {
       const { baseChance, timeModifier, threatPool } = room.hollowEncounter
       const timeMod = timeModifier[timeOfDay] ?? 1.0
       const pressMod = pressureModifier(pressure)
@@ -820,7 +822,7 @@ export class GameEngine implements EngineCore {
 
   // Actions that advance in-world time (exclude meta/info commands)
   private static readonly TIME_ADVANCING_VERBS = new Set([
-    'go', 'take', 'drop', 'attack', 'flee', 'talk', 'search', 'use', 'open',
+    'go', 'take', 'drop', 'attack', 'flee', 'talk', 'search', 'use', 'open', 'rest', 'camp', 'drink',
   ])
 
   async executeAction(action: Action): Promise<GameMessage[]> {
@@ -877,6 +879,12 @@ export class GameEngine implements EngineCore {
       case 'rep':      await handleRep(this)
         break
       case 'quests':   await handleQuests(this)
+        break
+      case 'rest':     await handleRest(this)
+        break
+      case 'camp':     await handleCamp(this)
+        break
+      case 'drink':    await handleDrink(this)
         break
       default:         this._appendMessages([{ id: crypto.randomUUID(), text: `Unknown command. Type "help" for a list of commands.`, type: 'error' }])
     }

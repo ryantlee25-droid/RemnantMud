@@ -826,6 +826,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         description: 'The maps are of Duskhollow and the surrounding terrain — but the settlement is annotated in a code you\'ve seen variations of before. Route markers for movement through the rim. Timed patrol gaps circled in red. Two locations outside the hollow marked with the same symbol. The Kindling cell here has been planning movement in and out of Duskhollow without Accord or Covenant knowledge. They\'ve been at this long enough that the maps are worn at the folds.',
         skillCheck: { skill: 'lore', dc: 12, successAppend: 'The patrol gap timings match something you noticed at the rim — the irregular spacing of boot marks. The Kindling knows the patrol pattern. Someone inside the patrol is telling them.' },
         questFlagOnSuccess: { flag: 'duskhollow_kindling_cell_maps_read', value: true },
+        reputationGrant: { faction: 'kindling', delta: -1 },
       },
       {
         keywords: ['vials', 'compound', 'liquid', 'glass'],
@@ -953,6 +954,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         description: 'You pump a small amount and catch it in your palm. It looks clean. But there\'s something at the back of it — a faint mineral edge that doesn\'t match the underlying geology, too sharp for natural groundwater. Not enough to identify. Enough to notice.',
         skillCheck: { skill: 'field_medicine', dc: 10, successAppend: 'The compound in the water is consistent with a CHARON-7 metabolic byproduct — trace amounts, below immediately dangerous threshold, but cumulative. Someone has been introducing this slowly, over enough time for the baseline to shift. The settlement has been drinking it for weeks.' },
         questFlagOnSuccess: { flag: 'duskhollow_cistern_contamination_identified', value: true },
+        reputationGrant: { faction: 'covenant_of_dusk', delta: 1 },
       },
       {
         keywords: ['hatch', 'access', 'hatch', 'below', 'down'],
@@ -962,6 +964,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
           { flag: 'duskhollow_cistern_device_found', value: true },
           { flag: 'duskhollow_cistern_investigation', value: 'active' },
         ],
+        reputationGrant: { faction: 'covenant_of_dusk', delta: 1 },
       },
       {
         keywords: ['concrete', 'structure', 'walls', 'construction'],

@@ -2,7 +2,7 @@
 // lib/actions/combat.ts — handleAttack, handleFlee, noise encounters
 // ============================================================
 
-import type { GameMessage, Player, Room, Enemy } from '@/types/game'
+import type { GameMessage, Player, Room, Enemy, CombatState } from '@/types/game'
 import type { EngineCore } from './types'
 import {
   startCombat,
@@ -43,6 +43,7 @@ function combatMsg(text: string): GameMessage {
 /**
  * Check if a loud action draws Hollow to the current room.
  * Call after ranged weapon attacks or other noisy actions.
+ * Falls back to a flat 20% chance when the room has no hollow encounter data.
  */
 export async function checkNoiseEncounter(engine: EngineCore, isLoud: boolean): Promise<void> {
   if (!isLoud) return
@@ -51,17 +52,20 @@ export async function checkNoiseEncounter(engine: EngineCore, isLoud: boolean): 
   if (!player || !currentRoom) return
   // Don't trigger if already in combat
   if (combatState?.active) return
+  // Don't trigger in safe rooms
+  if (currentRoom.flags?.noCombat) return
 
   const encounter = currentRoom.hollowEncounter
-  if (!encounter || encounter.baseChance <= 0) return
-  // Only trigger if room has a noise modifier
-  if (!encounter.noiseModifier) return
 
-  // d20 roll vs noise-modified base chance
-  const roll = Math.floor(Math.random() * 20) + 1
-  const threshold = Math.ceil(encounter.baseChance * encounter.noiseModifier * 20)
-
-  if (roll > threshold) return
+  if (encounter && encounter.baseChance > 0 && encounter.noiseModifier) {
+    // Room has hollow encounter data — use noise-modified threshold
+    const roll = Math.floor(Math.random() * 20) + 1
+    const threshold = Math.ceil(encounter.baseChance * encounter.noiseModifier * 20)
+    if (roll > threshold) return
+  } else {
+    // Fallback: flat 20% chance for any non-safe room
+    if (Math.random() > 0.20) return
+  }
 
   // Spawn a shuffler or remnant randomly
   const spawnId = Math.random() < 0.6 ? 'shuffler' : 'remnant'
@@ -141,11 +145,6 @@ export async function handleAttack(engine: EngineCore, noun: string | undefined)
   // Get equipped weapon
   const equippedWeapon = inventory.find((ii) => ii.equipped && ii.item.type === 'weapon')
 
-  // Check if this is a ranged weapon (noise trigger)
-  const isRanged = equippedWeapon?.item.description
-    ? /rifle|pistol|gun|firearm/i.test(equippedWeapon.item.description)
-    : false
-
   // Clone enemy with fresh HP
   const enemy = { ...enemyTemplate }
 
@@ -177,11 +176,6 @@ export async function handleAttack(engine: EngineCore, noun: string | undefined)
   // Display weapon hint
   if (equippedWeapon) {
     engine._appendMessages([systemMsg(`Fighting with ${equippedWeapon.item.name}.`)])
-  }
-
-  // Noise check for ranged weapons (may draw more enemies after this combat)
-  if (isRanged) {
-    await checkNoiseEncounter(engine, true)
   }
 }
 
@@ -256,11 +250,20 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
     if (afterPlayer.additionalEnemies && afterPlayer.additionalEnemies.length > 0) {
       const nextEnemy = afterPlayer.additionalEnemies[0]!
       const remaining = afterPlayer.additionalEnemies.slice(1)
-      const nextCombat = startCombat(player, nextEnemy)
+      const latestPlayer = engine.getState().player!
+      const nextCombat = startCombat(latestPlayer, nextEnemy)
       engine._setState({
         combatState: { ...nextCombat, additionalEnemies: remaining, lastRoomId: afterPlayer.lastRoomId },
       })
       engine._appendMessages([combatMsg(`Another ${nextEnemy.name} closes in.`)])
+    } else {
+      // Combat fully over — check if ranged weapon noise draws more Hollow
+      const isRanged = equippedWeapon?.item.description
+        ? /rifle|pistol|gun|firearm/i.test(equippedWeapon.item.description)
+        : false
+      if (isRanged) {
+        await checkNoiseEncounter(engine, true)
+      }
     }
 
     await engine._savePlayer()
@@ -282,9 +285,35 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
 
   engine._appendMessages(adjustedMsgs)
 
-  const newHp = Math.max(0, player.hp - actualDamage)
+  let totalDamage = actualDamage
+
+  // Additional enemies (summoned by screamer) also attack
+  let latestCombat = afterEnemy
+  if (latestCombat.additionalEnemies && latestCombat.additionalEnemies.length > 0) {
+    for (const addEnemy of latestCombat.additionalEnemies) {
+      // Build a temporary combat state for this additional enemy's attack
+      const addCombatState: CombatState = {
+        ...latestCombat,
+        enemy: addEnemy,
+        enemyHp: addEnemy.hp,
+      }
+      const { damage: addRawDmg, messages: addMsgs } = enemyAttack(player, addCombatState)
+      const addActualDmg = Math.max(0, addRawDmg - armorDefense)
+
+      const addAdjustedMsgs = addMsgs.map((m, i) => {
+        if (i === addMsgs.length - 1 && addActualDmg !== addRawDmg && addRawDmg > 0) {
+          return { ...m, text: m.text.replace(`[${addRawDmg} damage]`, `[${addActualDmg} damage after armor]`) }
+        }
+        return m
+      })
+      engine._appendMessages(addAdjustedMsgs)
+      totalDamage += addActualDmg
+    }
+  }
+
+  const newHp = Math.max(0, player.hp - totalDamage)
   const updatedPlayer: Player = { ...player, hp: newHp }
-  engine._setState({ player: updatedPlayer, combatState: afterEnemy })
+  engine._setState({ player: updatedPlayer, combatState: latestCombat })
 
   if (newHp <= 0) {
     await engine._handlePlayerDeath()
@@ -293,15 +322,6 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
 
   // Show HP hint
   engine._appendMessages([systemMsg(`HP: ${newHp}/${player.maxHp}`)])
-
-  // Check ranged weapon noise after combat round
-  const isRanged = equippedWeapon?.item.description
-    ? /rifle|pistol|gun|firearm/i.test(equippedWeapon.item.description)
-    : false
-  if (isRanged) {
-    // Noise check happens after combat ends, not during
-    // (stored for post-combat trigger)
-  }
 
   await engine._savePlayer()
 }

@@ -2,11 +2,12 @@
 // lib/actions/social.ts — handleTalk, handleSearch, handleRep, handleQuests
 // ============================================================
 
-import type { GameMessage, FactionType } from '@/types/game'
+import type { GameMessage, FactionType, Direction, Player, SkillType } from '@/types/game'
 import type { EngineCore } from './types'
 import { getNPC, getRevenantDialogue } from '@/data/npcs'
 import { updateRoomFlags } from '@/lib/world'
 import { itemsLine } from './movement'
+import { getClassSkillBonus } from '@/lib/skillBonus'
 
 // ------------------------------------------------------------
 // Local message helpers
@@ -123,10 +124,64 @@ export async function handleSearch(engine: EngineCore): Promise<void> {
     engine._appendMessages([msg('You find nothing of note.')])
   }
 
-  // Mark the room as searched so the guard above fires on future attempts
-  await updateRoomFlags(currentRoom.id, player.id, { searched: true })
-  const updatedRoom = { ...currentRoom, flags: { ...currentRoom.flags, searched: true } }
+  // Discover hidden exits via skill checks
+  const newFlags: Record<string, boolean | number> = { searched: true }
+  if (currentRoom.richExits) {
+    for (const dir of Object.keys(currentRoom.richExits) as Direction[]) {
+      const richExit = currentRoom.richExits[dir]
+      if (!richExit?.hidden) continue
+      if (currentRoom.flags[`discovered_exit_${dir}`]) continue
+
+      const skill = richExit.discoverSkill ?? 'perception'
+      const dc = richExit.discoverDc ?? 10
+      const playerStat = getStatForSkill(skill, player)
+      if (playerStat === null) continue
+
+      const roll = Math.floor(Math.random() * 10) + 1 + playerStat
+      if (roll >= dc) {
+        newFlags[`discovered_exit_${dir}`] = true
+        const discoverMsg = richExit.discoverMessage ?? `You notice a passage leading ${dir}.`
+        engine._appendMessages([msg(discoverMsg)])
+      }
+    }
+  }
+
+  await updateRoomFlags(currentRoom.id, player.id, newFlags)
+  const updatedRoom = { ...currentRoom, flags: { ...currentRoom.flags, ...newFlags } }
   engine._setState({ currentRoom: updatedRoom })
+}
+
+// ------------------------------------------------------------
+// Map skill to player stat + class bonus (local helper)
+// ------------------------------------------------------------
+
+function getStatForSkill(skill: string, player: Player | null): number | null {
+  if (!player) return null
+  const map: Record<string, number> = {
+    tracking: player.wits,
+    survival: player.vigor,
+    perception: player.wits,
+    scavenging: player.wits,
+    mechanics: player.wits,
+    stealth: player.shadow,
+    lockpicking: player.shadow,
+    negotiation: player.presence,
+    brawling: player.vigor,
+    climbing: player.vigor,
+    lore: player.wits,
+    electronics: player.wits,
+    marksmanship: player.reflex,
+    bladework: player.reflex,
+    field_medicine: player.presence,
+    intimidation: player.presence,
+    blood_sense: player.wits,
+    daystalking: player.shadow,
+    mesmerize: player.presence,
+    vigor: player.vigor,
+  }
+  const base = map[skill] ?? null
+  if (base === null) return null
+  return base + getClassSkillBonus(player.characterClass, skill as SkillType)
 }
 
 // ------------------------------------------------------------

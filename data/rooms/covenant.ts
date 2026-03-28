@@ -1343,6 +1343,7 @@ export const COVENANT_ROOMS: Room[] = [
         cycleGate: 2,
         skillCheck: { skill: 'lore', dc: 12, successAppend: 'You recognize the CHARON-7 notation from other fragments you\'ve encountered. The connection crystallizes: the Hollow, the Sanguine, the Revenant phenomenon — they\'re all in this matrix. Different columns. Same source document.' },
         questFlagOnSuccess: { flag: 'meridian_archive_accessed', value: true },
+        reputationGrant: { faction: 'accord', delta: 1 },
       },
       {
         keywords: ['accord', 'governance', 'history', 'internal', 'discrepancy'],
@@ -1851,6 +1852,7 @@ export const COVENANT_ROOMS: Room[] = [
         cycleGate: 2,
         skillCheck: { skill: 'electronics', dc: 14, successAppend: 'The redacted frequency notation is faint enough that you can make out part of it — the first three digits are 12. That\'s the upper edge of HF, close to the VHF boundary. Not a standard civilian or military channel. Something purpose-built or repurposed for a specific communication. Something that wants to reach Covenant specifically.' },
         questFlagOnSuccess: { flag: 'meridian_signal_traced', value: true },
+        reputationGrant: { faction: 'accord', delta: 1 },
       },
       {
         keywords: ['antenna', 'array', 'exterior', 'aluminum', 'rods'],

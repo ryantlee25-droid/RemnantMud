@@ -186,6 +186,11 @@ export function getExits(room: Room): Exit[] {
   return directions.reduce<Exit[]>((acc, direction) => {
     const roomId = room.exits[direction]
     if (roomId !== undefined) {
+      // Filter out hidden exits that haven't been discovered yet
+      const richExit = room.richExits?.[direction]
+      if (richExit?.hidden && !room.flags[`discovered_exit_${direction}`]) {
+        return acc
+      }
       acc.push({ direction, roomId })
     }
     return acc
@@ -195,11 +200,16 @@ export function getExits(room: Room): Exit[] {
 // ------------------------------------------------------------
 // canMove
 // Return true if a move in the given direction is valid.
+// Hidden exits require discovery before they can be traversed.
 // ------------------------------------------------------------
 
 export function canMove(room: Room, direction: string): boolean {
   const dir = direction as Direction
-  return room.exits[dir] !== undefined
+  if (room.exits[dir] === undefined) return false
+  // Block hidden exits that haven't been discovered
+  const richExit = room.richExits?.[dir]
+  if (richExit?.hidden && !room.flags[`discovered_exit_${dir}`]) return false
+  return true
 }
 
 // ------------------------------------------------------------

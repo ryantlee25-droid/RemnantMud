@@ -593,6 +593,7 @@ export const THE_STACKS_ROOMS: Room[] = [
         description: 'The three active units draw from a UPS bank that should have died years ago — someone replaced the batteries. Recently, from the casing condition. The active units are running a process you can\'t identify from the indicator lights alone. Whatever it\'s doing, it hasn\'t stopped doing it. The UPS has maybe six months left before those batteries fail too.',
         skillCheck: { skill: 'electronics', dc: 13, successAppend: 'You jack a terminal into the maintenance port. The system is running a single job: data integrity verification across a distributed archive. It\'s been running since 2031. The progress bar reads 94.7%. It has been at 94.7% for three years. Something in the remaining 5.3% is corrupted beyond local repair — the system is looping on it, unable to complete, unable to stop. The archive it\'s verifying is labeled: MERIDIAN CORE — PERSONNEL AND RESEARCH.' },
         questFlagOnSuccess: { flag: 'found_meridian_edge_node', value: true },
+        reputationGrant: { faction: 'reclaimers', delta: 1 },
       },
       {
         keywords: ['suppression', 'foam', 'crust', 'fire'],
@@ -875,6 +876,7 @@ export const THE_STACKS_ROOMS: Room[] = [
         description: 'The sealed glass cabinet at the far end is newer than everything else in the vault — built specifically for these three items. Inside: a leather-bound journal with no title, a USB drive in a static-proof case labeled CS-R1 SEQUENCING DATA — COMPLETE, and a sealed envelope addressed to no one, with the MERIDIAN PROJECT seal on the flap. The journal\'s pages are visible through the glass. Dense handwriting. Diagrams. The handwriting matches Lev\'s.',
         skillCheck: { skill: 'electronics', dc: 12, successAppend: 'The USB drive label is specific: CS-R1, not CS-R8. R-1 is the Sanguine strain — the prototype, the success. Complete sequencing data for the virus that made the Sanguine what they are. This is the single most valuable scientific artifact in the Four Corners and it is sitting in a glass case in a basement because Lev does not trust it to be anywhere else.' },
         questFlagOnSuccess: { flag: 'found_r1_sequencing_data', value: true },
+        reputationGrant: { faction: 'reclaimers', delta: 1 },
       },
       {
         keywords: ['humidity', 'climate', 'desiccant', 'temperature', 'system'],
@@ -1239,6 +1241,7 @@ export const THE_STACKS_ROOMS: Room[] = [
         description: 'The central map is hand-drawn on plotter paper at approximately 1:50,000 scale — large enough to fill a wall, detailed enough to show individual buildings in settlements. The color code is posted beside it: GREEN = safe route, verified. RED = danger, confirmed Hollow presence. BLUE = water source. YELLOW = cache/supply. BLACK = do not enter. The black pins cluster in three locations: the Scar valley, the Deep mine entrance, and a third location in the Dust that you haven\'t visited yet.',
         skillCheck: { skill: 'lore', dc: 9, successAppend: 'The third black-pin cluster in the Dust is labeled in small handwriting: MERIDIAN SECONDARY SITE — FIELD STATION ECHO. Not on any other map you\'ve seen. Not mentioned in any document you\'ve read. The Reclaimers know about a second MERIDIAN facility and haven\'t told anyone. The pin was placed by Lev.' },
         questFlagOnSuccess: { flag: 'discovered_field_station_echo', value: true },
+        reputationGrant: { faction: 'reclaimers', delta: 1 },
       },
       {
         keywords: ['USGS', 'topographic', 'surveys', 'geological'],

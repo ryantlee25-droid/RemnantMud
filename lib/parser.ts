@@ -156,6 +156,28 @@ const SYSTEM_VERBS: Record<string, string> = {
   quests: 'quests',
 }
 
+// ------------------------------------------------------------
+// Sensory verbs
+// ------------------------------------------------------------
+
+const SMELL_VERBS = new Set(['smell', 'sniff', 'scent'])
+
+const LISTEN_VERBS = new Set(['listen', 'hear'])
+
+const TOUCH_VERBS = new Set(['touch', 'feel'])
+
+// ------------------------------------------------------------
+// Hint verb
+// ------------------------------------------------------------
+
+const HINT_VERBS = new Set(['hint', 'stuck', 'clue', 'what', 'where'])
+
+// ------------------------------------------------------------
+// Called-shot body parts
+// ------------------------------------------------------------
+
+const BODY_PARTS = new Set(['head', 'legs', 'arms', 'torso', 'eyes'])
+
 // Multi-word surface forms, checked before single-word splitting.
 // Each entry: [normalized_verb, normalized_noun | null]
 const MULTI_WORD: Array<[string, string, string | undefined]> = [
@@ -167,6 +189,10 @@ const MULTI_WORD: Array<[string, string, string | undefined]> = [
   ['look around', 'search', undefined],
   ['look at', 'examine_extra', undefined],
   ['fast travel', 'travel', undefined],
+  ['look under', 'examine_spatial', 'under'],
+  ['look behind', 'examine_spatial', 'behind'],
+  ['look inside', 'examine_spatial', 'inside'],
+  ['look in', 'examine_spatial', 'inside'],
 ]
 
 // ------------------------------------------------------------
@@ -222,6 +248,10 @@ export function parseCommand(input: string): Action {
   for (const [surface, verb, noun] of MULTI_WORD) {
     if (normalized === surface || normalized.startsWith(surface + ' ')) {
       const remainder = normalized.slice(surface.length).trim()
+      // For examine_spatial, prepend the preposition so noun = "under table"
+      if (verb === 'examine_spatial' && noun) {
+        return { verb, noun: remainder ? `${noun} ${remainder}` : noun, raw }
+      }
       return { verb, noun: noun ?? (remainder || undefined), raw }
     }
   }
@@ -263,6 +293,22 @@ export function parseCommand(input: string): Action {
     return { verb: LOOK_VERBS[first]!, noun: undefined, raw }
   }
 
+  // --- Sensory ---
+  if (SMELL_VERBS.has(first)) {
+    return { verb: 'smell', noun: rest || undefined, raw }
+  }
+  if (LISTEN_VERBS.has(first)) {
+    return { verb: 'listen', noun: rest || undefined, raw }
+  }
+  if (TOUCH_VERBS.has(first)) {
+    return { verb: 'touch', noun: rest || undefined, raw }
+  }
+
+  // --- Hint ---
+  if (HINT_VERBS.has(first)) {
+    return { verb: 'hint', noun: rest || undefined, raw }
+  }
+
   // --- Read (dedicated lore verb) ---
   if (first === 'read') {
     return { verb: 'read', noun: rest || undefined, raw }
@@ -280,7 +326,17 @@ export function parseCommand(input: string): Action {
 
   // --- Combat ---
   if (first in COMBAT_VERBS) {
-    return { verb: COMBAT_VERBS[first]!, noun: rest || undefined, raw }
+    const normalizedCombat = COMBAT_VERBS[first]!
+    const noun = rest || undefined
+    // Called shot: "attack <target> <body_part>" → attack_called
+    if (normalizedCombat === 'attack' && noun) {
+      const nounTokens = noun.split(/\s+/)
+      const lastWord = nounTokens[nounTokens.length - 1]!
+      if (nounTokens.length > 1 && BODY_PARTS.has(lastWord)) {
+        return { verb: 'attack_called', noun, raw }
+      }
+    }
+    return { verb: normalizedCombat, noun, raw }
   }
 
   // --- Survival ---
@@ -361,4 +417,76 @@ export function parseCommand(input: string): Action {
 
   // --- Unknown ---
   return { verb: 'unknown', noun: trimmed, raw }
+}
+
+// ------------------------------------------------------------
+// Levenshtein distance
+// ------------------------------------------------------------
+
+export function levenshtein(a: string, b: string): number {
+  const m = a.length, n = b.length
+  const dp: number[][] = Array.from({ length: m + 1 }, (_, i) =>
+    Array.from({ length: n + 1 }, (_, j) => i === 0 ? j : j === 0 ? i : 0)
+  )
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      dp[i][j] = a[i-1] === b[j-1]
+        ? dp[i-1][j-1]
+        : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])
+    }
+  }
+  return dp[m][n]
+}
+
+// ------------------------------------------------------------
+// Verb suggestion (typo correction)
+// ------------------------------------------------------------
+
+/**
+ * Given an unknown input token, suggest the closest known verb.
+ * First tries prefix matching; if nothing matches, falls back to
+ * Levenshtein distance (max 3). Returns undefined if no good match.
+ */
+export function suggestVerb(input: string): string | undefined {
+  const lower = input.toLowerCase()
+
+  // Collect all known surface-form verbs into one array
+  const allVerbs: string[] = [
+    ...Array.from(MOVEMENT_VERBS),
+    ...Array.from(SWIM_VERBS),
+    ...Array.from(SMELL_VERBS),
+    ...Array.from(LISTEN_VERBS),
+    ...Array.from(TOUCH_VERBS),
+    ...Array.from(HINT_VERBS),
+    ...Object.keys(CLIMB_VERBS),
+    ...Object.keys(SNEAK_VERBS),
+    ...Object.keys(CRAFT_VERBS),
+    ...Object.keys(UNLOCK_VERBS),
+    ...Object.keys(GIVE_VERBS),
+    ...Object.keys(LOOK_VERBS),
+    ...Object.keys(INVENTORY_VERBS),
+    ...Object.keys(COMBAT_VERBS),
+    ...Object.keys(SURVIVAL_VERBS),
+    ...Object.keys(INTERACTION_VERBS),
+    ...Object.keys(TRADE_VERBS),
+    ...Object.keys(SYSTEM_VERBS),
+    ...Object.keys(DIRECTIONS),
+    'read', 'journal', 'codex', 'notes', 'travel', 'warp', 'map', 'boost',
+  ]
+
+  // 1. Exact prefix match
+  const prefixMatch = allVerbs.find(v => v.startsWith(lower))
+  if (prefixMatch !== undefined) return prefixMatch
+
+  // 2. Closest Levenshtein match (max distance 3)
+  let bestVerb: string | undefined
+  let bestDist = Infinity
+  for (const v of allVerbs) {
+    const d = levenshtein(lower, v)
+    if (d < bestDist) {
+      bestDist = d
+      bestVerb = v
+    }
+  }
+  return bestDist <= 3 ? bestVerb : undefined
 }

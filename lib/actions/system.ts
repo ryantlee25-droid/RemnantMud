@@ -7,7 +7,8 @@ import type { EngineCore } from './types'
 import { statModifier } from '@/lib/dice'
 import { rt } from '@/lib/richText'
 import { WEAPON_TRAITS, ARMOR_TRAITS } from '@/types/traits'
-import { systemMsg } from '@/lib/messages'
+import { systemMsg, msg } from '@/lib/messages'
+import { getQuestEntries } from '@/data/questDescriptions'
 
 const VALID_STATS: Set<string> = new Set(['vigor', 'grit', 'reflex', 'wits', 'presence', 'shadow'])
 const STAT_BOOST_MAX = 9  // stat increase can push one stat to 9
@@ -84,7 +85,75 @@ export async function handleInventory(engine: EngineCore): Promise<void> {
   ])
 }
 
-export async function handleHelp(engine: EngineCore): Promise<void> {
+const HELP_CATEGORIES: Record<string, string[]> = {
+  combat: [
+    'Combat commands:',
+    '  attack [enemy]     — start or continue combat',
+    '  defend / block     — skip attack, reduce incoming damage',
+    '  wait               — skip attack, gain +3 accuracy next turn',
+    '  flee               — attempt to flee combat',
+    '  ability / special  — use class combat ability (once per fight)',
+    '  analyze / scan     — study the enemy (Reclaimer: free; others: Wits check)',
+    '  use [item]         — use a consumable item in combat',
+  ],
+  movement: [
+    'Movement commands:',
+    '  north/south/east/west/up/down — move between areas',
+    '  look [thing]       — look around or examine something',
+    '  search             — search the room for hidden items or exits',
+    '  sneak [direction]  — attempt to move stealthily into an area',
+    '  climb [direction]  — climb to reach an elevated area',
+    '  swim [direction]   — swim through a flooded passage',
+    '  unlock [direction] — unlock a locked exit using a key item',
+    '  travel [destination] — fast travel to a discovered waypoint',
+    '  map                — show discovered fast travel waypoints',
+  ],
+  items: [
+    'Item commands:',
+    '  take [item]        — pick up an item',
+    '  drop [item]        — drop an item',
+    '  equip [item]       — equip a weapon or armor',
+    '  unequip [item]     — remove equipped item',
+    '  use [item]         — use a consumable item',
+    '  craft [item]       — craft an item from components',
+    '  stash [item]       — stash an item for safekeeping across deaths',
+    '  unstash [item]     — retrieve from stash',
+    '  give [item] [person] — give an item to an NPC',
+  ],
+  social: [
+    'Social commands:',
+    '  talk [person]      — speak with an NPC',
+    '  give [item] [person] — give an item to an NPC',
+    '  buy [item]         — buy from a trader',
+    '  sell [item]        — sell to a trader (half price)',
+    '  trade [person]     — see an NPC\'s wares',
+    '  rep                — show faction standing',
+  ],
+  system: [
+    'System commands:',
+    '  stats              — show character stats',
+    '  inventory / i      — show inventory',
+    '  quests             — show quest journal',
+    '  journal            — show quest journal',
+    '  help [topic]       — show help (topics: combat, movement, items, social, system)',
+    '  hint               — get a hint based on your current quests',
+    '  save               — save the game',
+    '  quit               — quit the game',
+  ],
+}
+
+export async function handleHelp(engine: EngineCore, noun?: string): Promise<void> {
+  if (noun) {
+    const key = noun.toLowerCase().trim()
+    const categoryLines = HELP_CATEGORIES[key]
+    if (categoryLines) {
+      engine._appendMessages(categoryLines.map((l) => systemMsg(l)))
+      return
+    }
+    // Unknown topic — fall through to full list with a note
+    engine._appendMessages([systemMsg(`Unknown help topic '${noun}'. Showing all commands.`)])
+  }
+
   const lines = [
     'Commands:',
     '  north/south/east/west/up/down — move',
@@ -122,9 +191,56 @@ export async function handleHelp(engine: EngineCore): Promise<void> {
     '  boost [stat]                  — increase a stat when leveling up (at levels 3, 6, 9)',
     '  stats                         — show character stats',
     '  help / ?                      — show this message',
+    '',
+    "Type 'help [topic]' for details: combat, movement, items, social, system",
   ]
 
   engine._appendMessages(lines.map((l) => systemMsg(l)))
+}
+
+// ------------------------------------------------------------
+// handleHint — suggest next action based on active quests
+// ------------------------------------------------------------
+
+const QUEST_CATEGORY_PRIORITY: Record<string, number> = {
+  main: 0,
+  faction: 1,
+  discovery: 2,
+  personal: 3,
+}
+
+export async function handleHint(engine: EngineCore): Promise<void> {
+  const { player } = engine.getState()
+  if (!player) return
+
+  const flags = player.questFlags ?? {}
+  const { active } = getQuestEntries(flags)
+
+  if (active.length === 0) {
+    engine._appendMessages([
+      msg('Try exploring. Talk to people. Examine everything.', 'echo'),
+    ])
+    return
+  }
+
+  // Find highest-priority quest with a hint
+  const sorted = [...active].sort((a, b) => {
+    const pa = QUEST_CATEGORY_PRIORITY[a.category] ?? 99
+    const pb = QUEST_CATEGORY_PRIORITY[b.category] ?? 99
+    return pa - pb
+  })
+
+  const hintEntry = sorted.find(e => e.hint)
+
+  if (hintEntry) {
+    engine._appendMessages([
+      msg(`Perhaps you should: ${hintEntry.hint}`, 'echo'),
+    ])
+  } else {
+    engine._appendMessages([
+      msg("Review your quests with 'quests' for guidance.", 'echo'),
+    ])
+  }
 }
 
 // ------------------------------------------------------------

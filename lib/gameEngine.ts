@@ -36,8 +36,8 @@ import { handleAttack, handleFlee, handleDefend, handleWait, handleAnalyze, hand
 import { handleAbility } from '@/lib/abilities'
 import { handleTake, handleDrop, handleEquip, handleUnequip, handleUse, handleStash, handleUnstash, handleStashList, handleRead, handleJournal } from '@/lib/actions/items'
 import { handleTalk, handleSearch, handleRep, handleQuests, handleDialogueChoice, handleDialogueLeave, handleDialogueBlocked, handleGive } from '@/lib/actions/social'
-import { handleStats, handleInventory, handleHelp, handleBoost, handleTutorialHint } from '@/lib/actions/system'
-import { handleExamineExtra } from '@/lib/actions/examine'
+import { handleStats, handleInventory, handleHelp, handleHint, handleBoost, handleTutorialHint } from '@/lib/actions/system'
+import { handleExamineExtra, handleSmell, handleListen, handleTouch, handleExamineSpatial } from '@/lib/actions/examine'
 import { handleRest, handleCamp, handleDrink } from '@/lib/actions/survival'
 import { echoRetentionFactor } from '@/lib/fear'
 import { handleTrade, handleBuy, handleSell } from '@/lib/actions/trade'
@@ -45,6 +45,7 @@ import { handleMap, handleTravel } from '@/lib/actions/travel'
 import { handleCraft } from '@/lib/actions/craft'
 import { attemptStealth } from '@/lib/stealth'
 import { createCycleSnapshot, computeInheritedReputation } from '@/lib/echoes'
+import { suggestVerb as parserSuggestVerb } from '@/lib/parser'
 
 // ------------------------------------------------------------
 // XP thresholds for level progression
@@ -92,22 +93,8 @@ export function getTimeOfDay(actionsTaken: number): TimeOfDay {
 // Unknown-command suggestion helper
 // ------------------------------------------------------------
 
-const KNOWN_VERBS = ['go','north','south','east','west','up','down','look','examine','search','read','open',
-  'take','drop','use','equip','unequip','attack','flee','defend','wait','rest','camp','drink',
-  'talk','buy','sell','trade','stash','unstash','stats','inventory','map','travel','help','save','quit',
-  'ability','analyze','boost','rep','quests','journal',
-  'craft','give','unlock','sneak','climb','swim']
-
 function suggestVerb(input: string): string | null {
-  const lower = input.toLowerCase()
-  // Exact prefix match
-  const prefix = KNOWN_VERBS.find(v => v.startsWith(lower))
-  if (prefix) return prefix
-  // Check if input is close to a known verb (off by 1-2 chars)
-  for (const v of KNOWN_VERBS) {
-    if (Math.abs(v.length - lower.length) <= 2 && v.slice(0, 3) === lower.slice(0, 3)) return v
-  }
-  return null
+  return parserSuggestVerb(input) ?? null
 }
 
 // ------------------------------------------------------------
@@ -131,6 +118,7 @@ export class GameEngine implements EngineCore {
     endingChoice: null,
     activeBuffs: [],
     pendingStatIncrease: false,
+    weather: 'clear',
   }
 
   private listeners: Array<(state: GameState) => void> = []
@@ -1135,6 +1123,39 @@ export class GameEngine implements EngineCore {
   }
 
   // ----------------------------------------------------------
+  // Weather
+  // ----------------------------------------------------------
+
+  private static readonly WEATHER_MESSAGES: Record<string, string> = {
+    clear: 'The clouds part. Pale sun.',
+    overcast: 'The sky closes over, flat and grey.',
+    rain: 'Rain begins to fall — thin, persistent, tasting of metal.',
+    dust_storm: 'The wind picks up. Visibility drops. Dust gets in everything.',
+    fog: 'Fog rolls in, swallowing the middle distance.',
+  }
+
+  private _rollWeather(): void {
+    const prevWeather = this.state.weather
+    const roll = Math.random()
+    let newWeather: GameState['weather']
+    if (roll < 0.4)       newWeather = 'clear'
+    else if (roll < 0.6)  newWeather = 'overcast'
+    else if (roll < 0.75) newWeather = 'rain'
+    else if (roll < 0.9)  newWeather = 'fog'
+    else                  newWeather = 'dust_storm'
+
+    this._setState({ weather: newWeather })
+
+    // Only narrate if weather actually changed
+    if (newWeather !== prevWeather) {
+      const weatherMsg = GameEngine.WEATHER_MESSAGES[newWeather]
+      if (weatherMsg) {
+        this._appendMessages([msg(weatherMsg)])
+      }
+    }
+  }
+
+  // ----------------------------------------------------------
   // Sneak handler
   // ----------------------------------------------------------
 
@@ -1247,8 +1268,34 @@ export class GameEngine implements EngineCore {
         break
       case 'inventory': await handleInventory(this)
         break
-      case 'help':     await handleHelp(this)
+      case 'help':     await handleHelp(this, action.noun)
         break
+      case 'smell':    await handleSmell(this, action.noun ?? '')
+        break
+      case 'listen':   await handleListen(this, action.noun ?? '')
+        break
+      case 'touch':    await handleTouch(this, action.noun ?? '')
+        break
+      case 'hint':     await handleHint(this)
+        break
+      case 'examine_spatial': await handleExamineSpatial(this, action.noun ?? '')
+        break
+      case 'attack_called': {
+        const { combatState, player: attackPlayer } = this.state
+        if (!combatState?.active || !attackPlayer) {
+          this._appendMessages([{ id: crypto.randomUUID(), text: 'You are not in combat.', type: 'error' }])
+          break
+        }
+        const nounTokens = (action.noun ?? '').split(/\s+/)
+        const bodyPart = nounTokens[nounTokens.length - 1] ?? 'torso'
+        const { playerCalledShot } = await import('@/lib/combat')
+        const equipped = this.state.inventory.find(ii => ii.equipped && ii.item.type === 'weapon')
+        const weaponTraits = (equipped?.item.weaponTraits ?? []) as string[]
+        const calledResult = playerCalledShot(attackPlayer, combatState.enemy, bodyPart, combatState, weaponTraits)
+        this._appendMessages(calledResult.messages)
+        this._setState({ combatState: { ...combatState, ...calledResult.newState } })
+        break
+      }
       case 'open':     this._appendMessages([msg("You try it. It doesn't budge.", 'narrative')])
         break
       case 'save':     await this._savePlayer()
@@ -1325,6 +1372,8 @@ export class GameEngine implements EngineCore {
           dawn:  'A grey line appears on the horizon. Another day.',
         }
         this._appendMessages([msg(transitionMessages[newTime])])
+        // Roll new weather on each time-of-day shift
+        this._rollWeather()
       }
 
       // Expire temporary stat buffs

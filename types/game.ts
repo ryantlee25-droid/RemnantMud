@@ -691,6 +691,7 @@ export interface GameState {
   activeBuffs: ActiveBuff[]
   cycleHistory?: CycleSnapshot[]
   pendingStatIncrease?: boolean  // true when player needs to choose a stat to boost
+  weather?: 'clear' | 'overcast' | 'rain' | 'dust_storm' | 'fog'
   activeDialogue?: {
     npcId: string
     treeId: string

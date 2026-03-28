@@ -15,6 +15,7 @@ import { rt } from '@/lib/richText'
 import { getItem } from '@/data/items'
 import { removeItem, getInventory } from '@/lib/inventory'
 import { msg, systemMsg, errorMsg } from '@/lib/messages'
+import { getQuestEntries } from '@/data/questDescriptions'
 
 // ------------------------------------------------------------
 // Handlers
@@ -670,29 +671,59 @@ export async function handleRep(engine: EngineCore): Promise<void> {
 // Quest flags display
 // ------------------------------------------------------------
 
+const QUEST_CATEGORY_HEADERS: Record<string, string> = {
+  main: 'MAIN',
+  faction: 'FACTION',
+  discovery: 'DISCOVERY',
+  personal: 'PERSONAL',
+}
+
+const QUEST_CATEGORY_ORDER: Array<'main' | 'faction' | 'discovery' | 'personal'> = [
+  'main', 'faction', 'discovery', 'personal',
+]
+
 export async function handleQuests(engine: EngineCore): Promise<void> {
   const { player } = engine.getState()
   if (!player) return
 
   const flags = player.questFlags ?? {}
-  const active = Object.entries(flags).filter(([, v]) => !!v)
+  const { active, completed } = getQuestEntries(flags)
 
-  if (active.length === 0) {
-    engine._appendMessages([systemMsg('No active quests.')])
+  if (active.length === 0 && completed.length === 0) {
+    engine._appendMessages([systemMsg('No active quests. Explore and talk to people.')])
     return
   }
 
-  const lines: string[] = ['Active quests:']
-  for (const [key, value] of active) {
-    const name = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
-    if (typeof value === 'number') {
-      lines.push(`  ${name} (${value})`)
-    } else {
-      lines.push(`  ${name}`)
+  const messages: import('@/types/game').GameMessage[] = []
+
+  if (active.length > 0) {
+    messages.push(systemMsg('\u2550\u2550\u2550 ACTIVE QUESTS \u2550\u2550\u2550'))
+
+    for (const category of QUEST_CATEGORY_ORDER) {
+      const entries = active.filter(e => e.category === category)
+      if (entries.length === 0) continue
+
+      const header = QUEST_CATEGORY_HEADERS[category]!
+      for (const entry of entries) {
+        messages.push(msg(''))
+        messages.push(systemMsg(`[${header}] ${entry.title}`))
+        messages.push(msg(entry.description))
+        if (entry.hint) {
+          messages.push(msg(`\u2192 Hint: ${entry.hint}`, 'echo'))
+        }
+      }
     }
   }
 
-  engine._appendMessages([systemMsg(lines.join('\n'))])
+  if (completed.length > 0) {
+    messages.push(msg(''))
+    messages.push(systemMsg('\u2550\u2550\u2550 COMPLETED \u2550\u2550\u2550'))
+    for (const entry of completed) {
+      messages.push(systemMsg(`\u2713 ${entry.title}`))
+    }
+  }
+
+  engine._appendMessages(messages)
 }
 
 // ------------------------------------------------------------

@@ -35,7 +35,7 @@ export const ENEMIES: Record<string, Enemy> = {
     ],
     resistanceProfile: {
       weaknesses: {
-        scorching: { bonusDamage: 0, description: 'Dead tissue ignites easily. Burn damage doubled.' },
+        scorching: { bonusDamage: 3, description: 'Dead tissue ignites easily. +3 fire damage.' },
       },
       resistances: {},
       conditionImmunities: ['bleeding'],
@@ -137,6 +137,8 @@ export const ENEMIES: Record<string, Enemy> = {
       },
       resistances: {
         keen: { reduction: 0.5, description: 'Quick reflexes deflect precise strikes. Keen damage halved.' },
+        blessed: { reduction: 0.5, description: 'Adaptability dulls holy resonance. Blessed damage halved.' },
+        disrupting: { reduction: 0.5, description: 'No fixed neural pattern to disrupt. Electric damage halved.' },
       },
       conditionImmunities: [],
     },
@@ -170,9 +172,11 @@ export const ENEMIES: Record<string, Enemy> = {
     resistanceProfile: {
       weaknesses: {
         keen: { bonusDamage: 0, description: 'Keen edges find the gaps in thick hide. Critical hits bypass armor.' },
+        scorching: { bonusDamage: 3, description: 'Thick viral muscle burns hot. +3 fire damage.' },
       },
       resistances: {
         heavy: { reduction: 0.5, description: 'Thick hide absorbs blunt force. Heavy bonus damage halved.' },
+        disrupting: { reduction: 0.5, description: 'Brute musculature has no neural precision to disrupt. Electric damage halved.' },
       },
       conditionImmunities: [],
     },
@@ -203,7 +207,7 @@ export const ENEMIES: Record<string, Enemy> = {
     ],
     resistanceProfile: {
       weaknesses: {
-        blessed: { bonusDamage: 3, description: 'Consecrated steel disrupts the vocal mimicry. +3 damage.' },
+        blessed: { bonusDamage: 3, description: 'Consecrated steel disrupts the vocal mimicry. +3 holy damage.' },
       },
       resistances: {},
       conditionImmunities: ['frightened'],
@@ -236,7 +240,8 @@ export const ENEMIES: Record<string, Enemy> = {
     ],
     resistanceProfile: {
       weaknesses: {
-        disrupting: { bonusDamage: 4, description: 'Severing strike disrupts the pheromonal colony link. +4 damage.' },
+        disrupting: { bonusDamage: 4, description: 'Severing strike disrupts the pheromonal colony link. +4 electric damage.' },
+        scorching: { bonusDamage: 3, description: 'Pheromonal tissue is volatile. +3 fire damage.' },
       },
       resistances: {},
       conditionImmunities: [],
@@ -306,8 +311,11 @@ export const ENEMIES: Record<string, Enemy> = {
     resistanceProfile: {
       weaknesses: {
         precise: { bonusDamage: 2, description: 'Tactical gear has gaps a precise strike can find. +2 damage.' },
+        blessed: { bonusDamage: 3, description: 'Consecrated steel burns Sanguine biology. +3 holy damage.' },
       },
-      resistances: {},
+      resistances: {
+        scorching: { reduction: 0.5, description: 'Tactical heat-resistant gear. Fire damage halved.' },
+      },
       conditionImmunities: ['frightened'],
     },
   },
@@ -338,10 +346,11 @@ export const ENEMIES: Record<string, Enemy> = {
     ],
     resistanceProfile: {
       weaknesses: {
-        blessed: { bonusDamage: 5, description: 'Seven years of CHARON-7 refinement unravels against consecrated steel. +5 damage.' },
+        blessed: { bonusDamage: 5, description: 'Seven years of CHARON-7 refinement unravels against consecrated steel. +5 holy damage.' },
       },
       resistances: {
-        disrupting: { reduction: 1.0, description: 'Individual predator, no colony link to sever. Immune to disrupting.' },
+        disrupting: { reduction: 1.0, description: 'Individual predator, no colony link to sever. Immune to electric disruption.' },
+        scorching: { reduction: 0.5, description: 'Seven years of viral adaptation dulls fire damage. Fire damage halved.' },
       },
       conditionImmunities: [],
     },
@@ -375,9 +384,12 @@ export const ENEMIES: Record<string, Enemy> = {
     ],
     resistanceProfile: {
       weaknesses: {
-        disrupting: { bonusDamage: 3, description: 'Electromagnetic disruption shorts the targeting circuits. +3 damage.' },
+        disrupting: { bonusDamage: 3, description: 'Electromagnetic disruption shorts the targeting circuits. +3 electric damage.' },
       },
-      resistances: {},
+      resistances: {
+        blessed: { reduction: 1.0, description: 'Mechanical construct. Immune to holy damage.' },
+        scorching: { reduction: 0.5, description: 'Heat-hardened housing. Fire damage halved.' },
+      },
       conditionImmunities: ['bleeding', 'burning', 'stunned', 'frightened', 'poisoned', 'weakened'],
     },
   },
@@ -407,7 +419,8 @@ export const ENEMIES: Record<string, Enemy> = {
     ],
     resistanceProfile: {
       weaknesses: {
-        blessed: { bonusDamage: 3, description: 'Seven years of CHARON-7 calcification reacts violently to consecrated steel. +3 damage.' },
+        blessed: { bonusDamage: 3, description: 'Seven years of CHARON-7 calcification reacts violently to consecrated steel. +3 holy damage.' },
+        scorching: { bonusDamage: 3, description: 'Seven years of calcified tissue burns readily. +3 fire damage.' },
       },
       resistances: {},
       conditionImmunities: ['frightened'],
@@ -443,9 +456,12 @@ export const ENEMIES: Record<string, Enemy> = {
     ],
     resistanceProfile: {
       weaknesses: {
-        blessed: { bonusDamage: 5, description: 'Seven years of CHARON-7 integration shatters against consecrated steel. +5 damage.' },
+        blessed: { bonusDamage: 5, description: 'Seven years of CHARON-7 integration shatters against consecrated steel. +5 holy damage.' },
       },
-      resistances: {},
+      resistances: {
+        disrupting: { reduction: 1.0, description: 'Apex predator, no colony link. Immune to electric disruption.' },
+        scorching: { reduction: 0.5, description: 'Pre-Collapse CHARON-7 adaptation dampens fire damage. Fire damage halved.' },
+      },
       conditionImmunities: [],
     },
   },
@@ -475,7 +491,8 @@ export const ENEMIES: Record<string, Enemy> = {
     ],
     resistanceProfile: {
       weaknesses: {
-        disrupting: { bonusDamage: 4, description: 'Severing strike disrupts the concentrated pheromonal link. +4 damage.' },
+        disrupting: { bonusDamage: 4, description: 'Severing strike disrupts the concentrated pheromonal link. +4 electric damage.' },
+        scorching: { bonusDamage: 3, description: 'Concentrated pheromonal tissue burns. +3 fire damage.' },
       },
       resistances: {},
       conditionImmunities: [],
@@ -507,9 +524,11 @@ export const ENEMIES: Record<string, Enemy> = {
     resistanceProfile: {
       weaknesses: {
         keen: { bonusDamage: 0, description: 'Keen edges find the gaps in thick hide. Critical hits bypass armor.' },
+        scorching: { bonusDamage: 3, description: 'Underground adaptation doesn\'t protect against fire. +3 fire damage.' },
       },
       resistances: {
         heavy: { reduction: 0.5, description: 'Adapted underground hide absorbs blunt force. Heavy bonus damage halved.' },
+        disrupting: { reduction: 0.5, description: 'Dense brute musculature dampens electric disruption. Electric damage halved.' },
       },
       conditionImmunities: [],
     },

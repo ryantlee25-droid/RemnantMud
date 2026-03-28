@@ -323,6 +323,20 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
     messages.push(msg(`[${bleed}]`, 'narrative'))
   }
 
+  // Weather flavor (skip 'clear' — no message needed)
+  const weather = engine.getState().weather
+  if (weather && weather !== 'clear') {
+    const weatherFlavor: Record<string, string> = {
+      rain: 'Rain streaks across the view.',
+      dust_storm: 'The air is thick with dust. You squint.',
+      fog: 'Everything beyond thirty feet is suggestion.',
+      overcast: 'Grey light. No shadows.',
+    }
+    if (weatherFlavor[weather]) {
+      messages.push(msg(weatherFlavor[weather]!))
+    }
+  }
+
   engine._appendMessages(messages)
 
   // After room entry, check for environmental hazards

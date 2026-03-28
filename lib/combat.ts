@@ -7,6 +7,7 @@ import type {
   GameMessage,
   HollowType,
   Item,
+  CheckResult,
 } from '@/types/game'
 import type { ConditionId } from '@/types/traits'
 import { roll1d10, rollCheck, rollDamage, statModifier, DC } from '@/lib/dice'
@@ -229,6 +230,44 @@ export function playerAttack(
 
   // Add trait bonus damage
   damage += traitBonusDamage
+
+  // Elemental damage bonus: weapon traits vs enemy weaknesses/resistances
+  let elementalBonus = 0
+  if (weaponTraits.length > 0) {
+    // Map weapon traits to elemental damage types
+    const elementMap: Partial<Record<string, string>> = {
+      blessed: 'holy',
+      scorching: 'fire',
+      disrupting: 'electric',
+    }
+
+    for (const trait of weaponTraits) {
+      const element = elementMap[trait]
+      if (!element) continue
+
+      // Check weakness (keyed by WeaponTraitId, not string)
+      const weakness = enemy.resistanceProfile?.weaknesses?.[trait as keyof typeof enemy.resistanceProfile.weaknesses]
+      // Check resistance
+      const resistance = enemy.resistanceProfile?.resistances?.[trait as keyof typeof enemy.resistanceProfile.resistances]
+
+      // Only apply elemental bonus if the weakness has bonusDamage > 0
+      // (bonusDamage: 0 means the trait already applies a condition, not flat damage)
+      if (weakness && weakness.bonusDamage > 0) {
+        elementalBonus += weakness.bonusDamage
+        messages.push(msg(`[WEAKNESS] The enemy is vulnerable to ${element}! [+${weakness.bonusDamage} damage]`))
+      }
+
+      // Resistance: apply a -2 penalty (flat reduction)
+      if (resistance && resistance.reduction > 0 && resistance.reduction < 1.0) {
+        const penalty = 2
+        elementalBonus -= penalty
+        messages.push(msg(`[RESIST] The enemy resists ${element}. [-${penalty} damage]`))
+      }
+    }
+  }
+  if (elementalBonus !== 0) {
+    damage += elementalBonus
+  }
 
   // Weakened condition: halve final damage
   const isWeakened = state.playerConditions.some(c => c.id === 'weakened')
@@ -585,6 +624,180 @@ export function flee(
     result: { success: false, messages },
     freeAttack,
   }
+}
+
+// ------------------------------------------------------------
+// Called Shots
+// ------------------------------------------------------------
+
+/**
+ * Player makes a called shot at a specific body part.
+ * Uses playerAttack as its base but applies a to-hit penalty and a body-part-specific
+ * bonus effect on hit.
+ *
+ * Body parts:
+ * - head:  -3 to hit, +50% damage, 50% chance to stun (enemy -2 attack/defense for 1 turn)
+ * - legs:  -2 to hit, enemy defense -2 for the rest of the fight
+ * - arms:  -2 to hit, enemy damage -1 for the rest of the fight
+ * - eyes:  -4 to hit, enemy -3 to all rolls for 2 turns (tracked via whispererDebuff)
+ * - torso: +0 penalty — identical to a normal attack
+ */
+export function playerCalledShot(
+  player: Player,
+  enemy: Enemy,
+  bodyPart: string,
+  state: CombatState,
+  weaponTraits: string[],
+): { result: CheckResult & { damage: number }; newState: Partial<CombatState>; messages: GameMessage[] } {
+  const messages: GameMessage[] = []
+  const part = bodyPart.toLowerCase()
+
+  // Determine penalty and bonus descriptor
+  let toHitPenalty = 0
+  switch (part) {
+    case 'head':  toHitPenalty = 3; break
+    case 'legs':  toHitPenalty = 2; break
+    case 'arms':  toHitPenalty = 2; break
+    case 'eyes':  toHitPenalty = 4; break
+    case 'torso': toHitPenalty = 0; break
+    default:      toHitPenalty = 2; break  // unknown body part: treat like legs
+  }
+
+  // Base checks copied from playerAttack (no defending/overwhelm — called shots
+  // are always intentional targeted strikes)
+  const debuffPenalty = (state.whispererDebuff ?? 0) > 0 ? state.whispererDebuff! : 0
+  const fearPenalty = state.fearPenalty ?? 0
+  const conditionPenalty = totalRollPenalty(state.playerConditions)
+
+  // Apply the called shot to-hit penalty on top of existing penalties
+  const effectiveVigor = player.vigor - debuffPenalty - fearPenalty - Math.abs(conditionPenalty) - toHitPenalty
+
+  const hasPrecise = weaponTraits.includes('precise')
+  const baseDefense = hasPrecise ? Math.ceil(enemy.defense / 2) : enemy.defense
+  const waitingBonus = state.waitingBonus ?? 0
+  const markBonus = state.markTargetBonus ?? 0
+  const effectiveDefense = Math.max(1, baseDefense - waitingBonus - markBonus)
+
+  const check = rollCheck(effectiveVigor, effectiveDefense)
+
+  // Keen: crit on 9 or 10
+  const hasKeen = weaponTraits.includes('keen')
+  if (hasKeen && check.roll >= 9 && !check.critical) {
+    (check as { critical: boolean }).critical = true;
+    (check as { success: boolean }).success = true
+  }
+
+  // Base state updates (consume wait/mark bonuses regardless of outcome)
+  const baseStateUpdates: Partial<CombatState> = {
+    whispererDebuff: debuffPenalty > 0 ? Math.max(0, debuffPenalty - 1) : state.whispererDebuff,
+    waitingBonus: 0,
+    markTargetBonus: (state.markTargetAttacks ?? 0) > 0 ? state.markTargetBonus : 0,
+    markTargetAttacks: (state.markTargetAttacks ?? 0) > 0 ? (state.markTargetAttacks! - 1) : 0,
+  }
+
+  if (check.fumble) {
+    messages.push(msg(`Your aimed shot goes wide — badly. You nearly lose your footing.`))
+    const failResult: CheckResult & { damage: number } = { ...check, damage: 0 }
+    return { result: failResult, newState: { ...baseStateUpdates, turn: state.turn + 1 }, messages }
+  }
+
+  if (!check.success) {
+    messages.push(msg(`Your aimed shot at ${part === 'torso' ? 'center mass' : `the ${part}`} goes wide.`))
+    const failResult: CheckResult & { damage: number } = { ...check, damage: 0 }
+    return { result: failResult, newState: { ...baseStateUpdates, turn: state.turn + 1 }, messages }
+  }
+
+  // Hit — base damage
+  const vigorBonus = Math.max(0, statModifier(player.vigor))
+  let damage = rollDamage([1, 3]) + vigorBonus
+
+  if (check.critical) {
+    damage = Math.ceil(damage * 1.5)
+    messages.push(msg(`[CRITICAL] Aimed shot lands perfectly — direct hit!`))
+  }
+
+  // Body-part bonus effects
+  const newStateExtras: Partial<CombatState> = {}
+
+  switch (part) {
+    case 'head': {
+      // +50% damage, 50% chance to stun (reduce enemy attack for 1 turn)
+      damage = Math.ceil(damage * 1.5)
+      messages.push(msg(`[CALLED SHOT: HEAD] You aim for the skull. [+50% damage]`))
+      if (Math.random() < 0.5) {
+        // Use whispererDebuff as a proxy stun penalty on enemy
+        newStateExtras.whispererDebuff = (state.whispererDebuff ?? 0) + 2
+        messages.push(msg(`[STUN] The blow staggers the enemy — they lose focus.`))
+      }
+      break
+    }
+
+    case 'legs': {
+      // Reduce enemy defense by 2 for the rest of the fight
+      // Store as a negative bonus on mark/wait — we use a dedicated field if available,
+      // otherwise we write directly to enemy defense via newState
+      messages.push(msg(`[CALLED SHOT: LEGS] You slash at the legs. Enemy defense reduced by 2 for this fight.`))
+      newStateExtras.enemy = {
+        ...state.enemy,
+        defense: Math.max(1, state.enemy.defense - 2),
+      }
+      break
+    }
+
+    case 'arms': {
+      // Reduce enemy damage by 1 for the rest of the fight
+      const [dMin, dMax] = state.enemy.damage
+      messages.push(msg(`[CALLED SHOT: ARMS] You target the striking arm. Enemy damage reduced by 1.`))
+      newStateExtras.enemy = {
+        ...state.enemy,
+        damage: [Math.max(1, dMin - 1), Math.max(1, dMax - 1)] as [number, number],
+      }
+      break
+    }
+
+    case 'eyes': {
+      // Blind: enemy -3 to hit for 2 turns (represented as whispererDebuff extending across turns)
+      messages.push(msg(`[CALLED SHOT: EYES] A precise strike across the eyes — the enemy is blinded.`))
+      // Whisperer debuff is a per-round penalty; we layer it as 3 and it decrements each turn
+      // We extend it for 2 rounds by adding 6 (3 per round × 2 rounds) then letting it decrement
+      newStateExtras.whispererDebuff = (state.whispererDebuff ?? 0) + 6
+      messages.push(msg(`[BLIND] The enemy is blinded — -3 to hit for 2 turns.`))
+      break
+    }
+
+    case 'torso':
+    default: {
+      // No special effect — just the base attack
+      messages.push(msg(`[CALLED SHOT: TORSO] You aim for center mass.`))
+      break
+    }
+  }
+
+  // Floor damage at 1
+  damage = Math.max(1, damage)
+
+  // Apply damage to enemy
+  const newEnemyHp = Math.max(0, state.enemyHp - damage)
+  const enemyDefeated = newEnemyHp <= 0
+
+  messages.push(msg(`Called shot connects. [${damage} damage]`))
+
+  if (enemyDefeated) {
+    messages.push(msg(`${rt.enemy(enemy.name)} collapses. Silence.`))
+  } else {
+    messages.push(msg(`The ${rt.enemy(enemy.name)} looks ${enemyHpIndicator(newEnemyHp, enemy.maxHp)}.`))
+  }
+
+  const newState: Partial<CombatState> = {
+    ...baseStateUpdates,
+    ...newStateExtras,
+    enemyHp: newEnemyHp,
+    active: !enemyDefeated,
+    turn: state.turn + 1,
+  }
+
+  const hitResult: CheckResult & { damage: number } = { ...check, damage }
+  return { result: hitResult, newState, messages }
 }
 
 // ------------------------------------------------------------

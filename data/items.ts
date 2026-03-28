@@ -1624,6 +1624,60 @@ export const ITEMS: Record<string, Item> = {
     usable: true,
     loreText: 'EXTRACTION EFFICIENCY BY BLOOD TYPE — Internal Reference Only. O-neg: highest demand, lowest yield per draw, 10-day recovery minimum. A-pos: moderate demand, good yield, 7-day recovery. B-pos: specialized applications only, flag for research queue. AB-neg: PRIORITY — contact facility coordinator immediately upon intake. Wristband color codes: YELLOW=voluntary/O-neg, BLUE=voluntary/A-pos, RED=involuntary (any), WHITE=research queue. Recovery nutrition targets by type listed on reverse. The chart has been laminated. Someone updated it in pen at least twice. It is a living document.',
   },
+
+  // ----------------------------------------------------------
+  // Armor
+  // ----------------------------------------------------------
+
+  scrap_vest: {
+    id: 'scrap_vest',
+    name: 'Scrap Vest',
+    description: 'Sheet metal and leather scraps riveted to a canvas backing. It weighs more than it should and covers less than you\'d like. Stops a knife once. Stops a claw once. After that, it\'s a suggestion.',
+    type: 'armor',
+    weight: 3,
+    defense: 1,
+    value: 6,
+  },
+
+  leather_jacket: {
+    id: 'leather_jacket',
+    name: 'Leather Jacket',
+    description: 'Pre-Collapse motorcycle jacket, heavy cowhide with armored elbows and a cracked back panel. Whoever wore this last rode something fast into something hard. The road rash on the left shoulder is from asphalt, not teeth. The jacket survived. Whether the rider did is a question the jacket does not answer.',
+    type: 'armor',
+    weight: 3,
+    defense: 2,
+    value: 18,
+  },
+
+  reinforced_coat: {
+    id: 'reinforced_coat',
+    name: 'Reinforced Coat',
+    description: 'A long leather duster with steel plates sewn into the lining — shoulder, chest, and kidney panels. Someone with tailoring skills and access to a rivet gun spent serious hours on this. It moves well for something with metal in it. The weight settles across the shoulders like a hand that is not entirely reassuring.',
+    type: 'armor',
+    weight: 5,
+    defense: 3,
+    value: 45,
+  },
+
+  kevlar_vest: {
+    id: 'kevlar_vest',
+    name: 'Kevlar Vest',
+    description: 'Military-grade body armor, pre-Collapse manufacture. The ballistic panels are intact, the carrier is faded to a gray that was once tan. The Velcro still works. The ceramic trauma plate is cracked but present. This kept someone alive through the first year. The bloodstain on the collar suggests it did not keep them alive through the second.',
+    type: 'armor',
+    weight: 4,
+    defense: 4,
+    value: 80,
+  },
+
+  hazmat_suit: {
+    id: 'hazmat_suit',
+    name: 'Hazmat Suit',
+    description: 'Level B hazmat suit, bright yellow turned brown by seven years of atmosphere. The seals are intact. The respirator filters are third-generation replacements — someone has been maintaining this. It won\'t stop a blade, but it seals against CHARON-7 spore exposure, and in the zones where the air itself is the weapon, that matters more than steel.',
+    type: 'armor',
+    weight: 4,
+    defense: 2,
+    value: 35,
+  },
 }
 
 export function getItem(id: string): Item | undefined {

@@ -24,7 +24,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       west: 'cr_01_approach',
       east: 'rr_02_bridge_ruins',
     },
-    items: [],
+    items: ['scrap_vest'],
     enemies: [],
     npcs: [],
     extras: [

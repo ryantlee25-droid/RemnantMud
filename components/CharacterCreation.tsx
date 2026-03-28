@@ -6,6 +6,7 @@
 
 import { useState } from 'react'
 import { useGame } from '@/lib/gameContext'
+import { isDevMode } from '@/lib/supabaseMock'
 import type { StatBlock, CharacterClass, PersonalLossType } from '@/types/game'
 import { CLASS_DEFINITIONS } from '@/types/game'
 
@@ -348,6 +349,28 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
             ? (isRebirth ? 'Awakening...' : 'Generating world...')
             : (isRebirth ? 'Return' : 'Begin')}
         </button>
+
+        {isDevMode() && !isRebirth && !submitting && (
+          <button
+            onClick={async () => {
+              setSubmitting(true)
+              try {
+                // Enforcer base (2) + classBonus: vigor=6, grit=4, reflex=4, wits=2, presence=2, shadow=2
+                // Distribute 4 free points: wits+2, presence+1, shadow+1
+                const devStats: StatBlock = {
+                  vigor: 6, grit: 4, reflex: 4, wits: 4, presence: 3, shadow: 3,
+                }
+                await engine.createCharacter('Dev', devStats, 'enforcer')
+              } catch (err) {
+                setError(err instanceof Error ? err.message : 'Quick start failed.')
+                setSubmitting(false)
+              }
+            }}
+            className="w-full mt-2 border border-amber-900 text-amber-700 py-1 text-xs hover:bg-amber-950 transition-colors"
+          >
+            Quick Start (Dev)
+          </button>
+        )}
 
         <div className="mt-4 text-amber-700 text-xs">
           Class bonuses are permanent floors. Distribute {classDef.freePoints} free points to any stat. Max {MAX_STAT} per stat.

@@ -23,6 +23,7 @@ export const ENEMIES: Record<string, Enemy> = {
     loot: [
       { itemId: 'scrap_metal', chance: 0.10 },
       { itemId: 'ammo_22lr', chance: 0.08 },
+      { itemId: 'scrap_vest', chance: 0.04 },
     ],
     flavorText: [
       'It shambles toward you, arms dragging, feet scraping the floor.',
@@ -49,6 +50,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: '9mm_pistol', chance: 0.06 },
       { itemId: 'ammo_9mm', chance: 0.15 },
       { itemId: 'bandages', chance: 0.12 },
+      { itemId: 'leather_jacket', chance: 0.05 },
     ],
     flavorText: [
       'It reaches for something at its hip that isn\'t there, then reaches for you.',
@@ -94,6 +96,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'scrap_metal', chance: 0.60 },
       { itemId: 'pipe_wrench', chance: 0.25 },
       { itemId: 'bandages', chance: 0.15 },
+      { itemId: 'reinforced_coat', chance: 0.06 },
     ],
     flavorText: [
       'It charges — not fast, but with the inevitability of falling stone.',
@@ -143,6 +146,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'electronics_salvage', chance: 0.40 },
       { itemId: 'chemicals_basic', chance: 0.35 },
       { itemId: 'sanguine_blood_vial', chance: 0.05 },
+      { itemId: 'hazmat_suit', chance: 0.08 },
     ],
     flavorText: [
       'The Hollow around it move in patterns — coordinated, geometric, wrong.',
@@ -191,6 +195,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'sanguine_blood_vial', chance: 0.50 },
       { itemId: 'combat_knife', chance: 0.20 },
       { itemId: 'ammo_9mm', chance: 0.25 },
+      { itemId: 'kevlar_vest', chance: 0.06 },
     ],
     flavorText: [
       'It circles left, cutting off the eastern approach without appearing to notice you.',
@@ -214,6 +219,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'sanguine_blood_vial', chance: 0.80 },
       { itemId: 'silver_knife', chance: 0.05 },
       { itemId: 'meridian_keycard', chance: 0.03 },
+      { itemId: 'kevlar_vest', chance: 0.08 },
     ],
     flavorText: [
       'It has been watching you since you entered the zone. You are only now realizing this.',

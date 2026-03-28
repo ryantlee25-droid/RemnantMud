@@ -9,6 +9,7 @@ import type {
 } from '@/types/game'
 import { roll1d10, rollCheck, rollDamage, DC } from '@/lib/dice'
 import { getClassSkillBonus } from '@/lib/skillBonus'
+import { getItem } from '@/data/items'
 
 // ------------------------------------------------------------
 // Helpers
@@ -85,15 +86,23 @@ export function playerAttack(
   playerDamageRange: [number, number] = [1, 3],
 ): { result: CombatResult; newState: CombatState } {
   const { enemy } = state
-  const check = rollCheck(player.vigor, enemy.defense)
+
+  // Apply whisperer debuff: subtract penalty from effective stat for the attack roll
+  const debuffPenalty = (state.whispererDebuff ?? 0) > 0 ? state.whispererDebuff! : 0
+  const effectiveVigor = player.vigor - debuffPenalty
+
+  const check = rollCheck(effectiveVigor, enemy.defense)
 
   const messages: GameMessage[] = []
+
+  // Decrement whisperer debuff even on miss/fumble (it was consumed this round)
+  const debuffAfterRound = debuffPenalty > 0 ? Math.max(0, debuffPenalty - 1) : state.whispererDebuff
 
   if (check.fumble) {
     messages.push(
       msg(`You swing wildly. ${enemy.name} sidesteps and you nearly fall.`),
     )
-    const newState: CombatState = { ...state, turn: state.turn + 1 }
+    const newState: CombatState = { ...state, turn: state.turn + 1, whispererDebuff: debuffAfterRound }
     return {
       result: { hit: false, damage: 0, critical: false, fumble: true, messages },
       newState,
@@ -102,7 +111,7 @@ export function playerAttack(
 
   if (!check.success) {
     messages.push(msg(`You lunge at ${enemy.name}. It glances off nothing.`))
-    const newState: CombatState = { ...state, turn: state.turn + 1 }
+    const newState: CombatState = { ...state, turn: state.turn + 1, whispererDebuff: debuffAfterRound }
     return {
       result: { hit: false, damage: 0, critical: false, fumble: false, messages },
       newState,
@@ -116,7 +125,7 @@ export function playerAttack(
   }
 
   const newEnemyHp = Math.max(0, state.enemyHp - damage)
-  const enemyDefeated = newEnemyHp === 0
+  const enemyDefeated = newEnemyHp <= 0
 
   if (check.critical) {
     messages.push(
@@ -152,6 +161,7 @@ export function playerAttack(
     enemyHp: newEnemyHp,
     active: !enemyDefeated,
     turn: state.turn + 1,
+    whispererDebuff: debuffAfterRound,
   }
 
   return {
@@ -360,7 +370,10 @@ export function rollLoot(enemy: Enemy): string[] {
   const dropped: string[] = []
   for (const entry of enemy.loot) {
     if (Math.random() < entry.chance) {
-      dropped.push(entry.itemId)
+      // Validate that the item actually exists before adding to drops
+      if (getItem(entry.itemId)) {
+        dropped.push(entry.itemId)
+      }
     }
   }
   return dropped

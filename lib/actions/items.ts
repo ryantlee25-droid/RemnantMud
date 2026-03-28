@@ -233,13 +233,36 @@ export async function handleUse(engine: EngineCore, noun: string | undefined): P
 
   const healing = invItem.item.healing ?? 0
   const newHp = Math.min(player.maxHp, player.hp + healing)
-  const updatedPlayer = { ...player, hp: newHp }
+  let updatedPlayer = { ...player, hp: newHp }
+
+  const messages: GameMessage[] = []
+
+  if (healing > 0) {
+    messages.push(msg(`You use the ${invItem.item.name}. +${healing} HP. [${newHp}/${player.maxHp}]`, 'system'))
+  }
+
+  // TODO: Make stat bonuses temporary (e.g., lasting ~20 actions) by tracking
+  // active buffs on the Player or GameState with an expiry action count.
+  // For now, bonuses are applied permanently for simplicity.
+  if (invItem.item.statBonus) {
+    const bonusEntries = Object.entries(invItem.item.statBonus) as Array<[string, number]>
+    for (const [stat, bonus] of bonusEntries) {
+      const key = stat as keyof typeof updatedPlayer
+      if (key in updatedPlayer && typeof updatedPlayer[key] === 'number') {
+        updatedPlayer = { ...updatedPlayer, [key]: (updatedPlayer[key] as number) + bonus }
+      }
+    }
+    const bonusDesc = bonusEntries.map(([s, v]) => `+${v} ${s}`).join(', ')
+    messages.push(msg(`${invItem.item.useText ?? 'You feel different.'} [${bonusDesc}]`, 'system'))
+  }
+
+  if (messages.length === 0) {
+    messages.push(msg(`You use the ${invItem.item.name}.`, 'system'))
+  }
 
   // Optimistic update
   engine._setState({ player: updatedPlayer })
-  engine._appendMessages([
-    msg(`You use the ${invItem.item.name}. +${healing} HP. [${newHp}/${player.maxHp}]`, 'system'),
-  ])
+  engine._appendMessages(messages)
 
   await removeItem(player.id, invItem.itemId)
   const updatedInventory = await getInventory(player.id)

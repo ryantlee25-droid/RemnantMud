@@ -336,7 +336,10 @@ export class GameEngine implements EngineCore {
     const maxHp = 8 + (stats.vigor - 2) * 2
     const seed = Math.floor(Math.random() * 2_147_483_647)
     const rooms = ALL_ROOMS
-    const startRoomId = rooms[0]!.id
+    const devOverrideRoom = process.env.NEXT_PUBLIC_DEV_START_ROOM
+    const startRoomId = (devOverrideRoom && rooms.some(r => r.id === devOverrideRoom))
+      ? devOverrideRoom
+      : rooms[0]!.id
 
     const playerRow = {
       id: user.id,

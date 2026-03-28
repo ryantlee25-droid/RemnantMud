@@ -5,6 +5,7 @@
 // ============================================================
 
 import { useGame } from '@/lib/gameContext'
+import { isDevMode } from '@/lib/supabaseMock'
 import type { TimeOfDay } from '@/types/game'
 
 function computeTimeOfDay(actionsTaken: number): TimeOfDay {
@@ -49,6 +50,12 @@ export default function StatusBar() {
 
   return (
     <div className="bg-black border-b border-amber-900 px-4 py-1 font-mono text-xs text-amber-400 select-none">
+      {isDevMode() && (
+        <>
+          <span className="text-amber-700">[DEV]</span>
+          <span className="mx-2 opacity-40">|</span>
+        </>
+      )}
       <span className="opacity-70">[</span>
       {locationName}
       {zoneName && (

@@ -91,8 +91,8 @@ export default function GamePage() {
           if (found) {
             setAuthPhase('ready')
           } else {
-            // Show prologue once before character creation
-            const sawPrologue = typeof window !== 'undefined' && localStorage.getItem(PROLOGUE_KEY)
+            // In dev mode, skip prologue entirely to save ~4s per reload
+            const sawPrologue = isDevMode() || (typeof window !== 'undefined' && localStorage.getItem(PROLOGUE_KEY))
             setAuthPhase(sawPrologue ? 'no-player' : 'prologue')
           }
         }

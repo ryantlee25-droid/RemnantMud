@@ -17,6 +17,10 @@ function msg(text: string) {
   return { id: crypto.randomUUID(), text, type: 'narrative' as const }
 }
 
+function systemMsg(text: string) {
+  return { id: crypto.randomUUID(), text, type: 'system' as const }
+}
+
 function errorMsg(text: string) {
   return { id: crypto.randomUUID(), text, type: 'error' as const }
 }
@@ -28,26 +32,35 @@ function errorMsg(text: string) {
 function getStatForSkill(skill: string, player: Player | null): number | null {
   if (!player) return null
   const map: Record<string, number> = {
-    tracking: player.wits,
+    // Vigor — raw physicality
     survival: player.vigor,
-    perception: player.wits,
-    scavenging: player.wits,
-    mechanics: player.wits,
-    stealth: player.shadow,
-    lockpicking: player.shadow,
-    negotiation: player.presence,
     brawling: player.vigor,
     climbing: player.vigor,
+    vigor: player.vigor,
+    // Grit — endurance, willpower, steady hands under pressure
+    endurance: player.grit,
+    resilience: player.grit,
+    composure: player.grit,
+    field_medicine: player.grit,
+    // Reflex — speed, dexterity, quick reactions
+    bladework: player.reflex,
+    marksmanship: player.reflex,
+    mechanics: player.reflex,
+    perception: player.reflex,
+    // Wits — knowledge, analysis, awareness
     lore: player.wits,
     electronics: player.wits,
-    marksmanship: player.reflex,
-    bladework: player.reflex,
-    field_medicine: player.presence,
-    intimidation: player.presence,
+    tracking: player.wits,
     blood_sense: player.wits,
-    daystalking: player.shadow,
+    // Presence — social force, authority, persuasion
+    negotiation: player.presence,
+    intimidation: player.presence,
     mesmerize: player.presence,
-    vigor: player.vigor,
+    // Shadow — stealth, subtlety, operating unseen
+    stealth: player.shadow,
+    lockpicking: player.shadow,
+    daystalking: player.shadow,
+    scavenging: player.shadow,
   }
   const base = map[skill] ?? null
   if (base === null) return null
@@ -123,7 +136,10 @@ export async function handleExamineExtra(engine: EngineCore, keyword?: string): 
     const playerStat = getStatForSkill(skill, player)
     if (playerStat !== null) {
       const roll = Math.floor(Math.random() * 10) + 1 + playerStat
+      const skillLabel = skill.replace(/_/g, ' ')
+      const capitalizedSkill = skillLabel.charAt(0).toUpperCase() + skillLabel.slice(1)
       if (roll >= dc) {
+        engine._appendMessages([systemMsg(`[${capitalizedSkill} check succeeded]`)])
         engine._appendMessages([msg(successAppend)])
 
         // Set quest flag(s) on successful skill check if configured
@@ -136,6 +152,14 @@ export async function handleExamineExtra(engine: EngineCore, keyword?: string): 
         // Grant reputation on successful skill check if configured
         if (match.reputationGrant) {
           await engine.adjustReputation(match.reputationGrant.faction, match.reputationGrant.delta)
+        }
+      } else {
+        // Failure feedback — close miss if within 2 of DC
+        const diff = dc - roll
+        if (diff <= 2) {
+          engine._appendMessages([systemMsg(`[${capitalizedSkill} check failed (close) — you almost understood, but not quite]`)])
+        } else {
+          engine._appendMessages([systemMsg(`[${capitalizedSkill} check failed — you'd need more expertise to understand this]`)])
         }
       }
     }

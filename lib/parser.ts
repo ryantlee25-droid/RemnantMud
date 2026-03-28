@@ -238,6 +238,11 @@ export function parseCommand(input: string): Action {
     return { verb: 'map', noun: undefined, raw }
   }
 
+  // --- Boost (stat increase on level-up) ---
+  if (first === 'boost') {
+    return { verb: 'boost', noun: rest || undefined, raw }
+  }
+
   // --- System ---
   if (first in SYSTEM_VERBS) {
     return { verb: SYSTEM_VERBS[first]!, noun: rest || undefined, raw }

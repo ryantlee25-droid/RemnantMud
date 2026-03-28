@@ -7,7 +7,7 @@ import type {
   GameMessage,
   HollowType,
 } from '@/types/game'
-import { roll1d10, rollCheck, rollDamage, DC } from '@/lib/dice'
+import { roll1d10, rollCheck, rollDamage, statModifier, DC } from '@/lib/dice'
 import { getClassSkillBonus } from '@/lib/skillBonus'
 import { getItem } from '@/data/items'
 import { resistWhisperer } from '@/lib/fear'
@@ -121,8 +121,9 @@ export function playerAttack(
     }
   }
 
-  // Hit — roll damage
-  let damage = rollDamage(playerDamageRange)
+  // Hit — roll damage (weapon + vigor bonus)
+  const vigorBonus = Math.max(0, statModifier(player.vigor))  // only positive bonus
+  let damage = rollDamage(playerDamageRange) + vigorBonus
   if (check.critical) {
     damage = Math.ceil(damage * 1.5)
   }
@@ -197,9 +198,14 @@ export function applyHollowRoundEffects(
   const messages: GameMessage[] = []
   let newState = { ...state }
 
-  // Consume fear penalty after first round (only applies to round 1)
-  if (newState.fearPenalty && newState.turn > 1) {
-    newState.fearPenalty = 0
+  // Decrement fear rounds remaining each round; remove penalty when exhausted
+  if (newState.fearPenalty && newState.fearRoundsRemaining !== undefined) {
+    if (newState.fearRoundsRemaining <= 1) {
+      newState.fearPenalty = 0
+      newState.fearRoundsRemaining = 0
+    } else {
+      newState.fearRoundsRemaining = newState.fearRoundsRemaining - 1
+    }
   }
 
   // Whisperer: 20% chance to apply a -2 combat roll debuff this round

@@ -56,12 +56,12 @@ const STAT_LABELS: Record<StatKey, string> = {
 }
 
 const STAT_DESCRIPTIONS: Record<StatKey, string> = {
-  vigor: 'Melee attack & HP',
-  grit: 'Fear & stress resistance',
-  reflex: 'Speed, ranged & initiative',
-  wits: 'Perception & crafting',
-  presence: 'Charisma & faction',
-  shadow: 'Stealth & deception',
+  vigor: 'Melee damage, HP, and physical skill checks',
+  grit: 'Fear resistance, rest recovery, resilience, and endurance checks',
+  reflex: 'Flee chance, initiative, and agility-based skill checks',
+  wits: 'Knowledge, awareness, and technical skill checks',
+  presence: 'Social influence, medical skill, and faction reputation gains',
+  shadow: 'Stealth, evasion, and covert skill checks',
 }
 
 const BASE = 2

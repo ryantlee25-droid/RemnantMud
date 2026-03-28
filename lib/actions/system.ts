@@ -2,10 +2,13 @@
 // lib/actions/system.ts — handleStats, handleInventory, handleHelp
 // ============================================================
 
-import type { GameMessage } from '@/types/game'
+import type { GameMessage, Stat } from '@/types/game'
 import type { EngineCore } from './types'
 import { statModifier } from '@/lib/dice'
 import { rt } from '@/lib/richText'
+
+const VALID_STATS: Set<string> = new Set(['vigor', 'grit', 'reflex', 'wits', 'presence', 'shadow'])
+const STAT_BOOST_MAX = 9  // stat increase can push one stat to 9
 
 // ------------------------------------------------------------
 // Local message helpers
@@ -99,9 +102,68 @@ export async function handleHelp(engine: EngineCore): Promise<void> {
     '  unstash [item]                — retrieve from stash',
     '  map                           — show discovered fast travel waypoints',
     '  travel [destination]          — fast travel to a discovered waypoint',
+    '  boost [stat]                  — increase a stat when leveling up (at levels 3, 6, 9)',
     '  stats                         — show character stats',
     '  help / ?                      — show this message',
   ]
 
   engine._appendMessages(lines.map((l) => systemMsg(l)))
+}
+
+export async function handleBoost(engine: EngineCore, noun: string | undefined): Promise<void> {
+  const state = engine.getState()
+  const { player } = state
+
+  if (!player) return
+
+  if (!state.pendingStatIncrease) {
+    engine._appendMessages([systemMsg('You do not have a stat increase available.')])
+    return
+  }
+
+  if (!noun) {
+    engine._appendMessages([
+      systemMsg("Choose a stat to boost: type 'boost [stat]'."),
+      systemMsg('Options: vigor, grit, reflex, wits, presence, shadow'),
+    ])
+    return
+  }
+
+  const statName = noun.toLowerCase().trim()
+
+  if (!VALID_STATS.has(statName)) {
+    engine._appendMessages([
+      systemMsg(`'${noun}' is not a valid stat.`),
+      systemMsg('Options: vigor, grit, reflex, wits, presence, shadow'),
+    ])
+    return
+  }
+
+  const stat = statName as Stat
+  const currentValue = player[stat]
+
+  if (currentValue >= STAT_BOOST_MAX) {
+    engine._appendMessages([systemMsg(`Your ${stat} is already at ${currentValue} and cannot be increased further.`)])
+    return
+  }
+
+  const newValue = currentValue + 1
+  const updatedPlayer = { ...player, [stat]: newValue }
+
+  // If boosting vigor, also increase maxHp by 2 (HP formula depends on vigor)
+  if (stat === 'vigor') {
+    updatedPlayer.maxHp = player.maxHp + 2
+    updatedPlayer.hp = Math.min(player.hp + 2, updatedPlayer.maxHp)
+  }
+
+  engine._setState({ player: updatedPlayer, pendingStatIncrease: false })
+  engine._appendMessages([
+    systemMsg(`+1 ${stat}! Your ${stat} is now ${newValue}.`),
+  ])
+
+  if (stat === 'vigor') {
+    engine._appendMessages([systemMsg(`Max HP increased to ${updatedPlayer.maxHp}.`)])
+  }
+
+  await engine._savePlayer()
 }

@@ -41,21 +41,34 @@ function equippedArmor(inventory: InventoryItem[]): { name: string; defense: num
 
 // Skill-to-stat mapping (matches the game engine's derivation)
 const SKILL_STAT_MAP: Record<string, Stat> = {
+  // Vigor — raw physicality
   survival: 'vigor',
-  marksmanship: 'reflex',
   brawling: 'vigor',
+  climbing: 'vigor',
+  // Grit — endurance, willpower, steady hands under pressure
+  endurance: 'grit',
+  resilience: 'grit',
+  composure: 'grit',
+  field_medicine: 'grit',
+  // Reflex — speed, dexterity, quick reactions
   bladework: 'reflex',
-  scavenging: 'wits',
-  field_medicine: 'wits',
-  mechanics: 'wits',
+  marksmanship: 'reflex',
+  mechanics: 'reflex',
+  perception: 'reflex',
+  // Wits — knowledge, analysis, awareness
+  lore: 'wits',
+  electronics: 'wits',
   tracking: 'wits',
+  blood_sense: 'wits',
+  // Presence — social force, authority, persuasion
   negotiation: 'presence',
   intimidation: 'presence',
+  mesmerize: 'presence',
+  // Shadow — stealth, subtlety, operating unseen
   stealth: 'shadow',
   lockpicking: 'shadow',
-  electronics: 'wits',
-  perception: 'wits',
-  climbing: 'vigor',
+  daystalking: 'shadow',
+  scavenging: 'shadow',
 }
 
 function formatSkillName(skill: string): string {
@@ -83,6 +96,13 @@ export default function StatTab() {
 
   return (
     <div className="overflow-y-auto flex-1 font-mono text-sm text-amber-400 p-4 space-y-5">
+      {/* Pending stat increase banner */}
+      {state.pendingStatIncrease && (
+        <div className="border border-green-700 bg-green-950 text-green-400 px-3 py-2 text-xs uppercase tracking-widest text-center animate-pulse">
+          ⬆ STAT INCREASE AVAILABLE — type &apos;boost [stat]&apos;
+        </div>
+      )}
+
       {/* CHARACTER header */}
       <section>
         <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">Character</h2>
@@ -126,6 +146,15 @@ export default function StatTab() {
         </div>
       </section>
 
+      {/* STAT INCREASE BANNER */}
+      {state.pendingStatIncrease && (
+        <section className="border border-green-500/50 bg-green-900/20 rounded px-3 py-2">
+          <p className="text-green-400 text-sm">
+            Stat increase available! Type <span className="font-bold">boost [stat]</span> to choose.
+          </p>
+        </section>
+      )}
+
       {/* STATS */}
       <section>
         <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">Stats</h2>
@@ -141,6 +170,9 @@ export default function StatTab() {
                   <span className={mod >= 0 ? 'text-amber-400' : 'text-amber-600'}>
                     ({modStr(mod)})
                   </span>
+                  {state.pendingStatIncrease && (
+                    <span className="text-green-400 text-xs ml-1">+1</span>
+                  )}
                 </span>
               </div>
             )

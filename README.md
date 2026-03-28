@@ -13,6 +13,9 @@ Seven years after the CHARON-7 bioweapon escaped the MERIDIAN facility, humanity
 - Branching dialogue with 18 NPCs (~130 conversation nodes)
 - Turn-based combat with 15 enemy types and 5 armor tiers
 - 7 character classes with unique stat distributions
+- Stat increases at levels 3, 6, and 9 (player's choice)
+- Vigor-based damage scaling
+- Percentage-based armor reduction
 - Faction reputation system (9 factions)
 - Trading economy using .22 LR rounds as currency
 - Death/rebirth cycle with stat echo retention
@@ -139,6 +142,7 @@ npx vitest run
 | Command | Aliases | Description |
 |---------|---------|-------------|
 | `stats` | `status`, `character`, `char` | View character stats |
+| `boost <stat>` | | Increase a stat when leveling up (at levels 3, 6, 9) |
 | `rep` | `reputation`, `standing` | View faction standings |
 | `quests` | `quest` | View active quests |
 | `journal` | `codex`, `notes` | Open the journal |

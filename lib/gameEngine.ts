@@ -33,7 +33,7 @@ import { handleMove, handleLook, exitsLine, npcsLine, enemiesLine } from '@/lib/
 import { handleAttack, handleFlee } from '@/lib/actions/combat'
 import { handleTake, handleDrop, handleEquip, handleUnequip, handleUse, handleStash, handleUnstash, handleStashList, handleRead, handleJournal } from '@/lib/actions/items'
 import { handleTalk, handleSearch, handleRep, handleQuests, handleDialogueChoice, handleDialogueLeave, handleDialogueBlocked } from '@/lib/actions/social'
-import { handleStats, handleInventory, handleHelp } from '@/lib/actions/system'
+import { handleStats, handleInventory, handleHelp, handleBoost } from '@/lib/actions/system'
 import { handleExamineExtra } from '@/lib/actions/examine'
 import { handleRest, handleCamp, handleDrink } from '@/lib/actions/survival'
 import { echoRetentionFactor } from '@/lib/fear'
@@ -114,6 +114,7 @@ export class GameEngine implements EngineCore {
     endingTriggered: false,
     endingChoice: null,
     activeBuffs: [],
+    pendingStatIncrease: false,
   }
 
   private listeners: Array<(state: GameState) => void> = []
@@ -305,6 +306,12 @@ export class GameEngine implements EngineCore {
         xp: player.xp,
         level: player.level,
         actions_taken: player.actionsTaken ?? 0,
+        vigor: player.vigor,
+        grit: player.grit,
+        reflex: player.reflex,
+        wits: player.wits,
+        presence: player.presence,
+        shadow: player.shadow,
       })
       .eq('id', player.id)
   }
@@ -341,11 +348,15 @@ export class GameEngine implements EngineCore {
   // Level progression
   // ----------------------------------------------------------
 
+  // Levels that grant a stat increase choice
+  private static readonly STAT_INCREASE_LEVELS = new Set([3, 6, 9])
+
   _checkLevelUp(): void {
     const { player } = this.state
     if (!player) return
 
     let leveled = false
+    let pendingStatIncrease = this.state.pendingStatIncrease ?? false
     let currentPlayer = { ...player }
 
     // Loop to handle multiple level-ups in one check
@@ -364,10 +375,19 @@ export class GameEngine implements EngineCore {
       this._appendMessages([
         systemMsg(`You reach Level ${currentPlayer.level}. Max HP increased to ${currentPlayer.maxHp}. (+2 HP healed)`),
       ])
+
+      // Grant stat increase at milestone levels
+      if (GameEngine.STAT_INCREASE_LEVELS.has(currentPlayer.level)) {
+        pendingStatIncrease = true
+        this._appendMessages([
+          systemMsg(`LEVEL UP! You've reached level ${currentPlayer.level}. Choose a stat to increase: type 'boost [stat]'.`),
+          systemMsg(`Options: vigor, grit, reflex, wits, presence, shadow`),
+        ])
+      }
     }
 
     if (leveled) {
-      this._setState({ player: currentPlayer })
+      this._setState({ player: currentPlayer, pendingStatIncrease })
     }
   }
 
@@ -984,7 +1004,14 @@ export class GameEngine implements EngineCore {
   async executeAction(action: Action): Promise<GameMessage[]> {
     const before = this.state.log.length
 
+    // Remind player of pending stat increase (don't block, just remind)
+    if (this.state.pendingStatIncrease && action.verb !== 'boost' && action.verb !== 'help' && action.verb !== 'stats') {
+      this._appendMessages([systemMsg("You have a stat increase pending. Type 'boost [stat]' to choose.")])
+    }
+
     switch (action.verb) {
+      case 'boost':    await handleBoost(this, action.noun)
+        break
       case 'go':       await handleMove(this, action.noun)
         break
       case 'look':          await handleLook(this, action.noun)

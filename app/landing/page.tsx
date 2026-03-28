@@ -230,6 +230,7 @@ export default function LandingPage() {
             {[
               ['You type commands.', 'go north, look, take knife, talk vesper, attack, flee'],
               ['The world is text.', 'Description, atmosphere, consequence. Nothing is hidden behind a UI.'],
+              ['You grow stronger.', '7 classes, 6 stats, and stat boosts at levels 3, 6, and 9 — you choose where to invest.'],
               ['Death is not the end.', 'You die. You wake up in The Between. You come back. Changed.'],
               ['Your choices persist.', 'Faction reputation, world events, discovered rooms — they carry across deaths.'],
               ['There is a mystery.', 'MERIDIAN. What happened there. What\'s still inside. Who is broadcasting.'],

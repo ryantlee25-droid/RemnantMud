@@ -21,6 +21,7 @@ function msg(text: string, type: GameMessage['type'] = 'narrative'): GameMessage
 
 export interface FearCheckResult {
   afraid: boolean
+  fearRounds: number
   messages: GameMessage[]
 }
 
@@ -31,8 +32,8 @@ export interface FearCheckResult {
  * On success: player steadies themselves (no penalty).
  */
 export function fearCheck(player: Player, room: Room): FearCheckResult {
-  if (room.difficulty < 4) return { afraid: false, messages: [] }
-  if (room.enemies.length === 0) return { afraid: false, messages: [] }
+  if (room.difficulty < 4) return { afraid: false, fearRounds: 0, messages: [] }
+  if (room.enemies.length === 0) return { afraid: false, fearRounds: 0, messages: [] }
 
   // DC scales: difficulty 4 = DC.MODERATE + 2 = 10, difficulty 5 = DC.MODERATE + 5 = 13
   const dc = DC.MODERATE + (room.difficulty - 3) * 3 - 1
@@ -41,12 +42,18 @@ export function fearCheck(player: Player, room: Room): FearCheckResult {
   if (check.success) {
     return {
       afraid: false,
+      fearRounds: 0,
       messages: [msg('You steady yourself.')],
     }
   }
 
+  // Fear duration scales with room difficulty:
+  // difficulty 4 = 2 rounds, difficulty 5+ = 3 rounds
+  const fearRounds = room.difficulty >= 5 ? 3 : 2
+
   return {
     afraid: true,
+    fearRounds,
     messages: [
       msg('Your hands shake. The presence here is overwhelming.'),
     ],

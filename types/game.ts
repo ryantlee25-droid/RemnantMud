@@ -90,6 +90,9 @@ export type SkillType =
   | 'daystalking'
   | 'mesmerize'
   | 'perception'
+  | 'endurance'    // grit — long-distance travel, resisting exhaustion
+  | 'resilience'   // grit — resisting poison, infection, environmental hazards
+  | 'composure'    // grit — maintaining calm under pressure, fear resistance
   | 'vigor'  // stats used as skill checks in some gates
   | 'presence'  // stat used as skill check (social authority, command)
 
@@ -574,6 +577,7 @@ export interface CombatState {
   bruteCooldownTurn?: number    // turn when brute last charged (skips next attack)
   whispererDebuff?: number      // combat roll penalty from whisperer this round
   fearPenalty?: number           // -1 combat penalty from failed grit check on room entry
+  fearRoundsRemaining?: number   // rounds of fear penalty left (decrements each round)
   additionalEnemies?: Enemy[]   // extra enemies summoned (e.g. by screamer)
   lastRoomId?: string           // room before combat started (for flee escape)
 }
@@ -645,6 +649,7 @@ export interface GameState {
   endingTriggered: boolean
   endingChoice: EndingChoice | null
   activeBuffs: ActiveBuff[]
+  pendingStatIncrease?: boolean  // true when player needs to choose a stat to boost
   activeDialogue?: {
     npcId: string
     treeId: string

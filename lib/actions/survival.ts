@@ -5,6 +5,7 @@
 
 import type { GameMessage, Player } from '@/types/game'
 import type { EngineCore } from './types'
+import { statModifier } from '@/lib/dice'
 
 // ------------------------------------------------------------
 // Local message helpers
@@ -45,8 +46,9 @@ export async function handleRest(engine: EngineCore): Promise<void> {
     return
   }
 
-  // Heal 3-5 HP, boosted by healingBonus flag if present
-  const baseHeal = 3 + Math.floor(Math.random() * 3) // 3–5
+  // Heal 3-5 HP + grit bonus, boosted by healingBonus flag if present
+  const gritBonus = Math.max(0, statModifier(player.grit))
+  const baseHeal = 3 + gritBonus + Math.floor(Math.random() * 3) // (3 + grit)–(5 + grit)
   const bonus = typeof currentRoom.flags.healingBonus === 'number' ? currentRoom.flags.healingBonus : 1
   const heal = Math.floor(baseHeal * bonus)
   const newHp = Math.min(player.maxHp, player.hp + heal)
@@ -102,8 +104,9 @@ export async function handleCamp(engine: EngineCore): Promise<void> {
     return
   }
 
-  // Heal 4-6 HP with campfire warmth
-  const baseHeal = 4 + Math.floor(Math.random() * 3) // 4–6
+  // Heal 4-6 HP + grit bonus with campfire warmth
+  const gritBonus = Math.max(0, statModifier(player.grit))
+  const baseHeal = 4 + gritBonus + Math.floor(Math.random() * 3) // (4 + grit)–(6 + grit)
   const bonus = typeof currentRoom.flags.healingBonus === 'number' ? currentRoom.flags.healingBonus : 1
   const heal = Math.floor(baseHeal * bonus)
   const newHp = Math.min(player.maxHp, player.hp + heal)

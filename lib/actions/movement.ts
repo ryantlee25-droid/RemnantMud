@@ -20,26 +20,35 @@ import { rt } from '@/lib/richText'
 function getStatForSkill(skill: string, player: Player | null): number | null {
   if (!player) return null
   const map: Record<string, number> = {
-    tracking: player.wits,
+    // Vigor — raw physicality
     survival: player.vigor,
-    perception: player.wits,
-    scavenging: player.wits,
-    mechanics: player.wits,
-    stealth: player.shadow,
-    lockpicking: player.shadow,
-    negotiation: player.presence,
     brawling: player.vigor,
     climbing: player.vigor,
+    vigor: player.vigor,
+    // Grit — endurance, willpower, steady hands under pressure
+    endurance: player.grit,
+    resilience: player.grit,
+    composure: player.grit,
+    field_medicine: player.grit,
+    // Reflex — speed, dexterity, quick reactions
+    bladework: player.reflex,
+    marksmanship: player.reflex,
+    mechanics: player.reflex,
+    perception: player.reflex,
+    // Wits — knowledge, analysis, awareness
     lore: player.wits,
     electronics: player.wits,
-    marksmanship: player.reflex,
-    bladework: player.reflex,
-    field_medicine: player.presence,
-    intimidation: player.presence,
+    tracking: player.wits,
     blood_sense: player.wits,
-    daystalking: player.shadow,
+    // Presence — social force, authority, persuasion
+    negotiation: player.presence,
+    intimidation: player.presence,
     mesmerize: player.presence,
-    vigor: player.vigor,
+    // Shadow — stealth, subtlety, operating unseen
+    stealth: player.shadow,
+    lockpicking: player.shadow,
+    daystalking: player.shadow,
+    scavenging: player.shadow,
   }
   const base = map[skill] ?? null
   if (base === null) return null
@@ -213,9 +222,20 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
     if (richExit.skillGate) {
       const { skill, dc, failMessage } = richExit.skillGate
       const statVal = getStatForSkill(skill, player)
-      if (statVal !== null && statVal < dc) {
-        engine._appendMessages([msg(failMessage)])
-        return
+      if (statVal !== null) {
+        const skillLabel = skill.replace(/_/g, ' ')
+        const capitalizedSkill = skillLabel.charAt(0).toUpperCase() + skillLabel.slice(1)
+        if (statVal < dc) {
+          const diff = dc - statVal
+          if (diff <= 2) {
+            engine._appendMessages([msg(failMessage), { id: crypto.randomUUID(), text: `[${capitalizedSkill} check failed (close) — you're almost capable enough]`, type: 'system' }])
+          } else {
+            engine._appendMessages([msg(failMessage), { id: crypto.randomUUID(), text: `[${capitalizedSkill} check failed — you'd need more skill to pass this way]`, type: 'system' }])
+          }
+          return
+        } else {
+          engine._appendMessages([{ id: crypto.randomUUID(), text: `[${capitalizedSkill} check succeeded]`, type: 'system' }])
+        }
       }
     }
     // Reputation gate — check faction standing

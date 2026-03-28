@@ -159,6 +159,7 @@ export async function handleAttack(engine: EngineCore, noun: string | undefined)
     const fear = fearCheck(player, currentRoom)
     if (fear.afraid) {
       combatWithRoom.fearPenalty = 1
+      combatWithRoom.fearRoundsRemaining = fear.fearRounds
     }
     engine._appendMessages(fear.messages)
   }
@@ -300,8 +301,9 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
 
   // Enemy attacks back
   const { damage: rawDamage, messages: eMsgs, newState: afterEnemy } = enemyAttack(player, afterPlayer)
-  // Apply armor reduction
-  const actualDamage = Math.max(0, rawDamage - armorDefense)
+  // Apply armor reduction (percentage-based: each defense point = 12%, capped at 50%, minimum 1 damage)
+  const reductionPct = Math.min(armorDefense * 0.12, 0.50)
+  const actualDamage = rawDamage > 0 ? Math.max(1, Math.ceil(rawDamage * (1 - reductionPct))) : 0
 
   // Rewrite last damage message to reflect armor
   const adjustedMsgs = eMsgs.map((m, i) => {
@@ -326,7 +328,9 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
         enemyHp: addEnemy.hp,
       }
       const { damage: addRawDmg, messages: addMsgs } = enemyAttack(player, addCombatState)
-      const addActualDmg = Math.max(0, addRawDmg - armorDefense)
+      // Percentage-based armor reduction (same formula as main enemy)
+      const addReductionPct = Math.min(armorDefense * 0.12, 0.50)
+      const addActualDmg = addRawDmg > 0 ? Math.max(1, Math.ceil(addRawDmg * (1 - addReductionPct))) : 0
 
       const addAdjustedMsgs = addMsgs.map((m, i) => {
         if (i === addMsgs.length - 1 && addActualDmg !== addRawDmg && addRawDmg > 0) {
@@ -376,7 +380,9 @@ export async function handleFlee(engine: EngineCore): Promise<void> {
   if (freeAttack) {
     const equippedArmor = engine.getState().inventory.find((ii) => ii.equipped && ii.item.type === 'armor')
     const armorDefense = equippedArmor?.item.defense ?? 0
-    const actualDamage = Math.max(0, freeAttack.damage - armorDefense)
+    // Percentage-based armor reduction (each defense point = 12%, capped at 50%, minimum 1 damage)
+    const fleeReductionPct = Math.min(armorDefense * 0.12, 0.50)
+    const actualDamage = freeAttack.damage > 0 ? Math.max(1, Math.ceil(freeAttack.damage * (1 - fleeReductionPct))) : 0
 
     // Rewrite damage messages to reflect armor
     const adjustedMsgs = freeAttack.messages.map((m, i) => {

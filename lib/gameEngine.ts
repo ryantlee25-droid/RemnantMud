@@ -13,6 +13,7 @@ import type {
   PlayerLedger,
   Room,
   Stat,
+  StashItem,
   StatBlock,
   TimeOfDay,
   QuantityConfig,
@@ -24,6 +25,7 @@ import { CLASS_DEFINITIONS } from '@/types/game'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 import { getRoom, markVisited, persistWorld } from '@/lib/world'
 import { getInventory } from '@/lib/inventory'
+import { getItem } from '@/data/items'
 import { ALL_ROOMS } from '@/data/rooms/index'
 import { quantityRoll, computePressure, pressureModifier } from '@/lib/spawn'
 import type { EngineCore } from '@/lib/actions/types'
@@ -36,6 +38,7 @@ import { handleExamineExtra } from '@/lib/actions/examine'
 import { handleRest, handleCamp, handleDrink } from '@/lib/actions/survival'
 import { echoRetentionFactor } from '@/lib/fear'
 import { handleTrade, handleBuy, handleSell } from '@/lib/actions/trade'
+import { handleMap, handleTravel } from '@/lib/actions/travel'
 
 // ------------------------------------------------------------
 // XP thresholds for level progression
@@ -617,6 +620,26 @@ export class GameEngine implements EngineCore {
     // Phase 5: faction memory rates would be loaded here from player_faction_memory table
     // and applied to faction reputation scores on rebirth. Placeholder until faction system exists.
 
+    // Load stash (persists across death/rebirth)
+    const { data: stashRows } = await supabase
+      .from('player_stash')
+      .select('*')
+      .eq('player_id', userId)
+
+    const stash: StashItem[] = (stashRows ?? [])
+      .map((row: { id: string; player_id: string; item_id: string; quantity: number }) => {
+        const item = getItem(row.item_id)
+        if (!item) return null
+        return {
+          id: row.id,
+          playerId: row.player_id,
+          itemId: row.item_id,
+          item,
+          quantity: row.quantity,
+        }
+      })
+      .filter((si: StashItem | null): si is StashItem => si !== null)
+
     this._setState({
       player,
       currentRoom,
@@ -625,6 +648,7 @@ export class GameEngine implements EngineCore {
       loading: false,
       initialized: true,
       ledger,
+      stash,
       log: [
         systemMsg(`Welcome back, ${player.name}.`),
         msg(currentRoom.visited ? currentRoom.shortDescription : this._getRoomDescriptionForTime(currentRoom, player.actionsTaken)),
@@ -1014,13 +1038,30 @@ export class GameEngine implements EngineCore {
         break
       case 'sell':     await handleSell(this, action.noun)
         break
+      case 'map':      await handleMap(this)
+        break
+      case 'travel':   await handleTravel(this, action.noun)
+        break
       default:         this._appendMessages([{ id: crypto.randomUUID(), text: `Unknown command. Type "help" for a list of commands.`, type: 'error' }])
     }
 
     // Advance in-world time for meaningful actions
     if (GameEngine.TIME_ADVANCING_VERBS.has(action.verb) && this.state.player) {
-      const newCount = (this.state.player.actionsTaken ?? 0) + 1
+      const oldCount = this.state.player.actionsTaken ?? 0
+      const newCount = oldCount + 1
       this._setState({ player: { ...this.state.player, actionsTaken: newCount } })
+
+      // Emit a narrative message when time-of-day shifts (every 20 actions)
+      if (Math.floor(oldCount / 20) !== Math.floor(newCount / 20)) {
+        const newTime = computeTimeOfDay(newCount)
+        const transitionMessages: Record<TimeOfDay, string> = {
+          day:   'The sun climbs. Light reaches into the shadows.',
+          dusk:  'The light softens. Shadows lengthen.',
+          night: 'Darkness falls. The world contracts to what you can hear.',
+          dawn:  'A grey line appears on the horizon. Another day.',
+        }
+        this._appendMessages([msg(transitionMessages[newTime])])
+      }
     }
 
     return this.state.log.slice(before)

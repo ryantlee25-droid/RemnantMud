@@ -41,7 +41,7 @@ describe('parseCommand — bare directions', () => {
 })
 
 describe('parseCommand — movement verbs', () => {
-  const verbs = ['go', 'move', 'walk', 'head', 'travel']
+  const verbs = ['go', 'move', 'walk', 'head']
   for (const v of verbs) {
     it(`"${v} north" → go north`, () => {
       const r = parseCommand(`${v} north`)

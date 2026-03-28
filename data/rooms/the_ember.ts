@@ -224,6 +224,14 @@ export const EMBER_ROOMS: Room[] = [
         keywords: ['congregant board', 'assignments', 'roles', 'names'],
         description: 'The congregant board shows current residents of The Ember by name, role, and assignment. Some names have small notations: "SEEKING" (new arrivals in discernment), "FAITHFUL" (full members), "PURIFIED" (treatment completed), and two entries marked only with a dash. The dash entries have no dates, no roles, no assignments. You don\'t ask about the dashes.',
       },
+      {
+        keywords: ['tunnel', 'harrow', 'kindling', 'meridian', 'entrance', 'scar', 'map'],
+        description: 'You mention the incinerator — what you found there, the radiation signage that shouldn\'t exist on an industrial unit, the implications of what was burned and for whom. Harrow listens without moving. When you finish, he opens a drawer in his desk and removes a hand-drawn map, folded once, the paper heavy with use. "The fire showed us the way," he says. "Before the Collapse, this district processed material for the facility in the Scar. The workers used a supply tunnel — a direct line from the industrial yard to the MERIDIAN maintenance level. The entrance is beneath the rail yard, behind the loading platform. We\'ve kept it clear." He traces the route with one finger: from the Ember, south through the canyon, to an entrance that opens below MERIDIAN\'s maintenance hatch. "My people mapped it eighteen months ago. The charges are set. The hasp will come clean. When you\'re ready, the tunnel is yours." He refolds the map and holds it out. "Bring light back from whatever you find in there. We have burned long enough in the dark."',
+        questGate: 'em_incinerator_radiation_investigated',
+        skillCheck: { skill: 'negotiation', dc: 10, successAppend: 'Harrow holds the map a moment longer before releasing it. "I will tell you something I have not told the congregation. The tunnel is not empty. We cleared it twice and both times the Hollow returned within a week. Something in the tunnel draws them — the heat, the vibration, the MERIDIAN systems still running beneath the rock. My people will clear it a third time when you are ready to go. But you should know what you are walking through to get there." His eyes hold yours with the specific intensity of a man who sends people into places and counts the ones who come back.' },
+        questFlagOnSuccess: { flag: 'kindling_tunnel_access', value: true },
+        reputationGrant: { faction: 'kindling', delta: 1 },
+      },
     ],
     npcSpawns: [
       {

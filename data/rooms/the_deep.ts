@@ -1036,6 +1036,14 @@ export const THE_DEEP_ROOMS: Room[] = [
         skillCheck: { skill: 'negotiation', dc: 12, successAppend: 'You meet the Elder\'s eyes and hold them. It is harder than meeting any human gaze you\'ve encountered. After a moment the Elder inclines their head — minimal, precise. They have been waiting for someone who could do that. Not because it\'s impressive, but because it means you\'re having this conversation as an equal, which is the only way they have it.' },
         reputationGrant: { faction: 'lucid', delta: 1 },
       },
+      {
+        keywords: ['utility', 'access', 'meridian', 'pipeline', 'entrance', 'mine', 'tunnel'],
+        description: 'You speak to the Elder about the MERIDIAN archive files — the ones Director Vane gave the Sanguine before the Collapse. The Elder goes still in a way that is different from their usual stillness: not patience, but memory. "Vane gave us the files because he knew what was coming," they say. "He also gave us something else. The utility corridor that connects the mine to MERIDIAN — we have maintained it. Not maintained. Guarded. The pipeline you found in the rock wall runs to a junction beneath the sealed door. The junction has a manual override that bypasses the keycard reader." The Elder moves to the carved wall and presses a specific point. A section of the carving shifts — behind it, a niche containing a hand-drawn schematic on treated leather. "The override sequence. Memorize it, then put it back. The sequence changes the sealed door from a barrier to a passage. The Lucid have kept this route viable for fifteen years because Director Vane asked us to, and because we have our own reasons for wanting someone competent to reach what is inside MERIDIAN." They watch you study the schematic. "You found the archive connection. That means you understand what MERIDIAN was. Now you need to understand what it still is."',
+        questGate: 'discovered_archive_meridian_connection',
+        skillCheck: { skill: 'lore', dc: 12, successAppend: 'The schematic is precise — utility junction C-7, bypass relay, manual override sequence: three switches in a specific order that reroutes the door\'s mag-lock power circuit. The Elder watches you commit it to memory and nods. "Vane was a careful man. He built redundancies into everything, including the ways out. The utility corridor is the oldest path to MERIDIAN. It was the first one built and it will be the last one standing. Use it well."' },
+        questFlagOnSuccess: { flag: 'deep_utility_access', value: true },
+        reputationGrant: { faction: 'lucid', delta: 1 },
+      },
     ],
     hollowEncounter: {
       baseChance: 0.10,

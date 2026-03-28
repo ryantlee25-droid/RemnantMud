@@ -6,13 +6,8 @@
 
 import { useGame } from '@/lib/gameContext'
 import { isDevMode } from '@/lib/supabaseMock'
-import { xpForNextLevel } from '@/lib/gameEngine'
+import { xpForNextLevel, getTimeOfDay } from '@/lib/gameEngine'
 import type { TimeOfDay } from '@/types/game'
-
-function computeTimeOfDay(actionsTaken: number): TimeOfDay {
-  const TIMES: TimeOfDay[] = ['dawn', 'day', 'dusk', 'night']
-  return TIMES[Math.floor(actionsTaken / 20) % 4]!
-}
 
 const TIME_LABELS: Record<TimeOfDay, string> = {
   dawn:  'DAWN',
@@ -43,7 +38,9 @@ export default function StatusBar() {
 
   const locationName = currentRoom?.name ?? '...'
   const zoneName = currentRoom?.zone ? formatZone(currentRoom.zone) : null
-  const timeOfDay = computeTimeOfDay(player.actionsTaken ?? 0)
+  const actionsTaken = player.actionsTaken ?? 0
+  const timeOfDay = getTimeOfDay(actionsTaken)
+  const actionsInPeriod = actionsTaken % 20
   const cycle = player.cycle ?? 1
   const combatIndicator = combatState?.active
     ? ` | COMBAT: ${combatState.enemy.name} [${combatState.enemyHp}/${combatState.enemy.maxHp}]`
@@ -68,6 +65,7 @@ export default function StatusBar() {
       <span className="opacity-70">]</span>
       <span className="mx-2 opacity-40">|</span>
       <span className={TIME_COLORS[timeOfDay]}>{TIME_LABELS[timeOfDay]}</span>
+      <span className="opacity-40 ml-1">({actionsInPeriod}/20)</span>
       <span className="mx-2 opacity-40">|</span>
       HP: {player.hp}/{player.maxHp}
       <span className="mx-2 opacity-40">|</span>

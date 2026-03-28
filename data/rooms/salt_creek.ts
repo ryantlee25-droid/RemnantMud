@@ -17,7 +17,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     act: 1,
     difficulty: 2,
     visited: false,
-    flags: { noCombat: false },
+    flags: { noCombat: false, fastTravelWaypoint: true },
     description: 'The outer perimeter of Salt Creek Stronghold announces itself a hundred yards before you reach it: earthwork berms three meters high, topped with coils of razor wire that catch the sun like something alive and hostile. No artistry here, no attempt at welcome — the fortifications are functional, expensive in labor, and designed by someone who has thought carefully about what an attacking force would need to do and then made every one of those things worse. A guard post is visible at the crest of the berm, a silhouette with a long gun. They saw you before you saw them. The challenge when it comes is flat and procedural: "Halt. State your business. Hands where I can see them." There is no curiosity in the voice.',
     descriptionNight: 'The perimeter at night is perimeter at night. No lights — light is a target. The sentries work by night-adapted vision and sound discipline. You know they\'re there because the challenge comes before you expect it, from a direction you weren\'t watching.',
     shortDescription: 'Earth berms topped with razor wire and sentries who saw you long before you saw them.',

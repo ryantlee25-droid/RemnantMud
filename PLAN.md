@@ -5,6 +5,319 @@
 
 ---
 
+# PLAN: UX Polish Pass for The Remnant
+_Date: 2026-03-27 | Type: Feature (UX Enhancement) | Parallelizable: Yes (3 independent batches)_
+
+## Goal
+Polish the player experience with branding consistency, discoverability hints, accessibility fixes, visual feedback, and thematic aesthetic improvements—without redesigning the core interface.
+
+## Background
+The Remnant MUD is a text-based post-apocalyptic RPG with an amber-on-black terminal aesthetic. This polish pass addresses:
+- Branding inconsistency: "MUD" references remain on login and character creation
+- Discoverability gap: new players don't know Tab toggles inventory or that [INV] button exists
+- Contrast failures: secondary/tertiary text uses WCAG-failing color classes (amber-800, amber-900 on black)
+- Feedback gaps: command submission, save operations, and loading states lack visual confirmation
+- Theme system disconnect: picker says theme is changeable in inventory but implementation was only at startup
+- Missing signature visual: no DOOM-style ASCII logo on key screens (landing, death, endgame)
+
+## Scope
+**In scope:**
+- Replace "MUD" branding with "THE REMNANT" on login and character creation pages
+- Create shared DOOM-style ASCII logo component (monospace-compatible, reusable)
+- Add one-time discoverability hint for new players about Tab/[INV] button
+- Fix WCAG AA contrast failures: amber-800/900 text → amber-600/700 respectively
+- Add animated loading states for auth, rebirth, and save operations
+- Implement in-game theme picker in sidebar (instead of launch-only)
+- Echo player commands in terminal before responses with visual differentiation
+- Deploy logo to landing page, death screen, and any endgame/credits screen
+
+**Out of scope:**
+- Mobile UI fixes (desktop-first; flag as future task)
+- Redesigning sidebar or terminal layout
+- Adding new game features or mechanics
+- Changes to content or lore
+
+## Technical Approach
+- **Branding:** Simple string replacements in `/app/login/page.tsx` and `/components/CharacterCreation.tsx`
+- **ASCII Logo:** Create new shared component `/components/RemnantsLogo.tsx` (monospace text, max 80 chars wide for terminal compatibility); DOOM-style heavy/blocky rendering
+- **Discoverability:** Add localStorage flag `hasSeenInventoryHint` in Sidebar component; render one-time hint after first room entry
+- **Contrast fixes:** Bulk search-and-replace: `text-amber-800` → `text-amber-600` (secondary labels), `text-amber-900` → `text-amber-700` (tertiary text). Leave `border-amber-8/900` and `placeholder-amber-900` untouched (decorative/acceptable contrast)
+- **Loading states:** Update button text in CharacterCreation and login to show animated feedback during long operations
+- **Theme picker:** Add color swatch row to Sidebar below save button; reuse existing theme system and `remnant-theme-change` custom event
+- **Command echo:** Modify CommandInput to dispatch a synthetic `system` message before action executes; Terminal already styles `system` type distinctly
+- **Logo placement:** Pass `size` prop to control scale (small for landing, large for death screen)
+
+## Technical Constraints
+- All components use `'use client'` (client-side React only)
+- TypeScript strict mode required
+- Must reuse existing theme system (`/lib/theme.ts`), GameContext, and dispatch mechanism
+- localStorage for one-time hints (no backend changes)
+- No new dependencies beyond current stack
+- All color choices must preserve the amber-on-black aesthetic
+
+## File Inventory (from codebase reading)
+- `/app/login/page.tsx` — login branding (line 50)
+- `/components/CharacterCreation.tsx` — character creation branding (line 189), loading state (line 348)
+- `/components/Sidebar.tsx` — inventory, hints, theme picker, save feedback (new sections)
+- `/components/Terminal.tsx` — message styling (messageColor fn)
+- `/components/CommandInput.tsx` — command echo dispatch (submit fn)
+- `/components/RemnantsLogo.tsx` — **new shared component**
+- `/app/landing/page.tsx` — landing page logo placement
+- `/components/DeathScreen.tsx` — death screen logo placement
+- `/components/TheBetween.tsx` — check if endgame screen (if exists)
+- `/app/globals.css` — theme reference, CRT scanlines
+- `/lib/theme.ts` — existing theme system (do not modify)
+
+## Parallelization Strategy
+
+This plan is parallelizable into **3 independent batches** with zero file conflicts:
+
+### Batch 1 — Branding & Logo
+- Creates new component: RemnantsLogo
+- Modifies: login page, character creation, landing page, death screen
+- No conflicts with other batches
+
+### Batch 2 — Contrast & Feedback
+- Modifies: command input, terminal, sidebar (save feedback), character creation (loading), login (loading)
+- Bulk contrast fixes across all component files
+- No conflicts with other batches (except Sidebar, which is also modified in Batch 3 but with different sections)
+
+### Batch 3 — Discoverability & Theme
+- Modifies: Sidebar only (adds hint section, theme swatch section)
+- Uses localStorage for state
+- No conflicts with other batches (except Sidebar, but changes are isolated to new sections)
+
+**Resolution:** Sidebar is modified in both Batch 2 (save feedback) and Batch 3 (hint + theme). These modifications are to different sections:
+- Batch 2 adds toast feedback **after** the save button
+- Batch 3 adds hint at **top** of sidebar, and theme picker **below** save button
+- If run in parallel: merge conflicts in Sidebar are minimal and localized to clear sections; can be resolved in code review
+
+**Recommendation:** Run all three batches in parallel. Sidebar is the only potential merge point, but conflicts are easy to resolve because changes touch different logical sections.
+
+---
+
+## Tasks
+
+### Batch 1: Branding & Logo (Files: RemnantsLogo.tsx, login, character creation, landing, death screen)
+
+- [ ] **Create RemnantsLogo shared component** — DOOM-style ASCII art in monospace
+  - Files: `/components/RemnantsLogo.tsx` (new)
+  - Design notes:
+    - Spell "THE REMNANT" in heavy/blocky ASCII art style (inspired by DOOM title screen)
+    - Width: ≤80 chars for terminal compatibility (standard terminal width)
+    - Props: `size?: 'small' | 'large'` to control scaling (small for landing preview, large for death screen)
+    - Styling: `text-amber-300` or `text-amber-400`, maintain monospace font
+    - Make it a pure functional component (no hooks)
+    - Example ASCII concept (8-bit block style):
+      ```
+      ╔═══════════════════════════════════════════════════════════════════╗
+      ║ ████████ ███████ ███████ ███    ███ ███    ██ █████  ██████████  ║
+      ║ ██          ██      ██   ████  ████ ████   ██ ██   ██    ██       ║
+      ║ ██████      ██      ██   ██ ████ ██ ██ ██  ██ ██████     ██       ║
+      ║ ██          ██      ██   ██  ██  ██ ██  ██ ██ ██   ██    ██       ║
+      ║ ████████    ██      ██   ██      ██ ██   ████ ██   ██    ██       ║
+      ╚═══════════════════════════════════════════════════════════════════╝
+      ```
+      (Adjust to taste; keep monospace-safe characters only)
+  - Tests: Render component with both `size` values; verify no line-wrapping on 80-char width; check styling applies correctly
+
+- [ ] **Replace "MUD" branding on login page** — Update header text
+  - Files: `/app/login/page.tsx`
+  - Change: Line 50, `"MUD — Post-Apocalyptic Text Adventure"` → `"THE REMNANT — Post-Apocalyptic Text Adventure"`
+  - Tests: Visit `/login` and verify header displays new branding
+
+- [ ] **Replace "MUD" branding on character creation** — Update header text
+  - Files: `/components/CharacterCreation.tsx`
+  - Change: Line 189, `'MUD — Character Creation'` → `'THE REMNANT — Character Creation'`
+  - Tests: Trigger character creation and verify header displays new branding
+
+- [ ] **Add RemnantsLogo to landing page** — Integrate logo into marketing page
+  - Files: `/app/landing/page.tsx`
+  - Changes: Import RemnantsLogo; render with `size="large"` after the title/header section (around line 100); place before faction cards for maximum impact
+  - Tests: Visit `/landing` and verify logo appears with correct styling and doesn't break layout
+
+- [ ] **Add RemnantsLogo to death screen** — Integrate logo with fade-in timing
+  - Files: `/components/DeathScreen.tsx`
+  - Changes: Import RemnantsLogo; render with `size="large"` at the top of the visible area (before "YOU ARE DEAD" heading); add same fade-in `transition-opacity` as surrounding elements
+  - Tests: Trigger death screen and verify logo fades in with the rest of the content
+
+---
+
+### Batch 2: Contrast Fixes & Feedback (Files: all component/page files, CommandInput, Terminal, Sidebar, CharacterCreation, login)
+
+- [ ] **Audit and fix WCAG AA contrast failures** — Replace low-contrast amber classes
+  - Files: Search across `/app/**/*.tsx` and `/components/*.tsx` for `text-amber-800` and `text-amber-900`
+  - Specific files to check: `/app/login/page.tsx`, `/components/CharacterCreation.tsx`, `/app/landing/page.tsx`, `/components/Sidebar.tsx`, `/components/StatusBar.tsx`, `/components/ThemePicker.tsx`, `/components/Prologue.tsx`, `/app/page.tsx`, `/components/Terminal.tsx`, `/components/DeathScreen.tsx`
+  - Contrast requirements:
+    - `text-amber-800` (#92400e) on black = 2.8:1 (WCAG fail) → replace with `text-amber-600` (#d97706) = ~5.5:1 (WCAG AA pass)
+    - `text-amber-900` (#78350f) on black = 1.9:1 (WCAG fail) → replace with `text-amber-700` (#b45309) = ~4.2:1 (WCAG AA pass)
+    - Do NOT change: `border-amber-800`, `border-amber-900`, `placeholder-amber-900` (borders are decorative; placeholders can be lower contrast)
+  - Approach: Use `grep -r "text-amber-8\|text-amber-9"` to find all; systematically update each file
+  - Tests: Use a contrast checker tool on fixed text; verify 4.5:1 minimum for normal text; visually scan each screen (login, character creation, game, sidebar) for readability
+  - Notes: This is a bulk visual fix; each change should be straightforward
+
+- [ ] **Add command echo to terminal** — Show player input before game response
+  - Files: `/components/CommandInput.tsx`, `/components/Terminal.tsx`
+  - Changes to CommandInput:
+    - In the `submit()` function (line 23), before `await dispatch(action)`, add:
+      ```typescript
+      dispatch({
+        type: 'ADD_MESSAGE',
+        payload: {
+          text: `> ${trimmed}`,
+          type: 'system',
+        }
+      })
+      ```
+      (Or use the appropriate action type if the engine uses named actions)
+    - This echoes the player's command immediately, before the response
+  - Changes to Terminal:
+    - In `messageColor()` function (line 14), ensure `case 'system'` returns a distinct color: `return 'text-amber-500'` (slightly dimmer than narrative amber-400) to visually differentiate from game output
+  - Tests: Type a command, press Enter; verify the echoed command appears in the log in amber-500 before the game's response in amber-400; test multiple commands
+  - Notes: Reuses existing `GameMessage` dispatch; no new state needed
+
+- [ ] **Add "Saved." toast feedback** — Confirm save operations visually
+  - Files: `/components/Sidebar.tsx`
+  - Changes:
+    - Add state: `const [savedFeedback, setSavedFeedback] = useState(false)`
+    - In `handleSave()` function (line 23), after `setSaving(false)`, add:
+      ```typescript
+      setSavedFeedback(true)
+      setTimeout(() => setSavedFeedback(false), 2000)
+      ```
+    - After the save button (around line 27), add:
+      ```tsx
+      {savedFeedback && (
+        <div className="mt-1 text-amber-500 text-xs italic">Saved.</div>
+      )}
+      ```
+  - Tests: Click save button in-game; verify "Saved." message appears briefly and disappears after 2 seconds
+  - Notes: Keep it minimal and terminal-appropriate (no animation, no spinner)
+
+- [ ] **Add animated loading states** — Improve feedback during async operations
+  - Files: `/app/login/page.tsx`, `/components/CharacterCreation.tsx`
+  - Changes to login page (line 93):
+    - Current: `{loading ? 'Sending...' : 'Send Link'}`
+    - Options:
+      - A) Keep as-is (already sufficient)
+      - B) Animate dots: `{loading ? `Sending${'.'.repeat((Math.floor(Date.now() / 300) % 4))}` : 'Send Link'}`
+    - Recommendation: Keep current simple state (A); it's already good
+  - Changes to CharacterCreation (line 348):
+    - Current: `{submitting ? (isRebirth ? 'Awakening...' : 'Generating world...') : ...}`
+    - Options:
+      - A) Keep as-is (already sufficient)
+      - B) Add CSS animation class that makes text blink or pulse
+    - Recommendation: Keep current simple state (A); add a subtle pulse animation class if desired for "Awakening..."
+  - CSS option (if implementing): Add to `/app/globals.css`:
+    ```css
+    @keyframes pulse-text {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .pulse {
+      animation: pulse-text 1.5s ease-in-out infinite;
+    }
+    ```
+  - Tests: Create a character or login; watch button text during load phase; ensure feedback is clear
+  - Notes: Terminal aesthetic prefers understatement—avoid spinners or complex animations; ellipsis or simple pulse is sufficient
+
+---
+
+### Batch 3: Discoverability & Theme (Files: Sidebar only, with localStorage)
+
+- [ ] **Add one-time inventory hint** — Guide new players to Tab and [INV] button
+  - Files: `/components/Sidebar.tsx`
+  - Changes:
+    - Add state: `const [showHint, setShowHint] = useState(false)`
+    - In `useEffect` (or add new one), on mount:
+      ```typescript
+      useEffect(() => {
+        if (!player) return
+        const hasSeenHint = localStorage.getItem('hasSeenInventoryHint')
+        if (!hasSeenHint) {
+          setShowHint(true)
+          localStorage.setItem('hasSeenInventoryHint', 'true')
+        }
+      }, [player])
+      ```
+    - Render hint conditionally at the top of the sidebar panel (after the "INVENTORY & STATS" header, before stats section):
+      ```tsx
+      {showHint && (
+        <div className="mb-4 p-2 border border-amber-700 bg-amber-950 text-amber-400 text-xs rounded">
+          <strong>Tip:</strong> Press Tab or click [INV] to toggle inventory and stats.
+        </div>
+      )}
+      ```
+  - Tests: First time opening inventory in a new game (new localStorage), hint should appear; click "CLOSE" or press Tab to hide; reload game or clear localStorage and reopen—hint should appear again; on second visit without localStorage clear, hint should NOT appear
+  - Notes: Trigger hint display after first room entry (when `player` exists and game has started); this avoids flashing during loading
+
+- [ ] **Add theme picker to sidebar** — Let players change theme in-game
+  - Files: `/components/Sidebar.tsx`
+  - Changes:
+    - Import: `import { THEMES } from '@/lib/theme'`
+    - Below the save button and "Saved." feedback (around line 28), add a new section separated by a border:
+      ```tsx
+      <div className="border-t border-amber-900 mt-3 pt-3">
+        <div className="text-amber-600 text-xs uppercase tracking-widest mb-2">Signal</div>
+        <div className="flex gap-1">
+          {THEMES.map((theme) => (
+            <button
+              key={theme.id}
+              onClick={() => {
+                window.dispatchEvent(
+                  new CustomEvent('remnant-theme-change', { detail: { themeId: theme.id } })
+                )
+              }}
+              className="w-5 h-5 rounded border border-amber-700 hover:border-amber-500 transition-colors"
+              style={{ backgroundColor: theme.sampleColor }}
+              title={theme.name}
+              aria-label={`Change to ${theme.name} theme`}
+            />
+          ))}
+        </div>
+      </div>
+      ```
+    - Each swatch is a small clickable square (5x5 or 6x6) with the theme's sample color
+    - Clicking dispatches the existing `remnant-theme-change` event (ThemeLoader already listens for it)
+  - Tests: Open sidebar during game; verify theme swatches appear below save section; click each swatch; verify theme changes (filter applied); reload page; verify chosen theme persists (should be stored via existing system)
+  - Notes: Reuse existing theme system—no new logic needed, just UI to trigger existing events
+
+---
+
+## Pre-MR Pipeline
+
+- [ ] **Code review & parallel quality gates**
+  1. Spawn `code-reviewer` to check for blockers (branding consistency, contrast ratios, component integration, no console errors)
+  2. Spawn `test-runner` in parallel to run test suite; verify no regressions; note coverage gaps
+  3. When both pass: Spawn `git-agent` to open MR
+
+---
+
+## Definition of Done
+
+Every task in this plan is complete when:
+- [ ] Code written and self-reviewed
+- [ ] Changes tested locally (visual verification on login, character creation, game screens, sidebar, landing, death screen)
+- [ ] WCAG AA contrast verified (4.5:1 minimum for normal text) using contrast checker or browser DevTools
+- [ ] No TypeScript errors (`npx tsc --noEmit` passes)
+- [ ] No console errors or warnings during gameplay
+- [ ] `code-reviewer` passes with zero blockers
+- [ ] `test-runner` passes with no test failures (coverage gaps are warnings, not blockers)
+- [ ] MR opened via `git-agent` with summary of UX improvements
+
+---
+
+## References
+- WCAG 2.1 Level AA: https://www.w3.org/WAI/WCAG21/quickref/ (contrast minimum 4.5:1 normal text, 3:1 large text)
+- Existing theme system: `/lib/theme.ts` (THEMES array, custom event `remnant-theme-change`)
+- Tailwind color reference: amber-600 (#d97706), amber-700 (#b45309)
+- Terminal width convention: 80 characters (standard)
+- DOOM title screen reference: heavy pixel/block ASCII art
+
+
+
+---
+
 ## Current State Summary
 
 ### What's Done (Strong Foundation)

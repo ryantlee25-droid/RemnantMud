@@ -4,7 +4,7 @@ import type { Action } from '@/types/game'
 // Verb maps — normalized verb → accepted surface forms
 // ------------------------------------------------------------
 
-const MOVEMENT_VERBS = new Set(['go', 'move', 'walk', 'head', 'travel'])
+const MOVEMENT_VERBS = new Set(['go', 'move', 'walk', 'head'])
 
 const DIRECTIONS: Record<string, string> = {
   north: 'north',
@@ -107,6 +107,7 @@ const MULTI_WORD: Array<[string, string, string | undefined]> = [
   ['take off', 'unequip', undefined],
   ['search room', 'search', undefined],
   ['look around', 'search', undefined],
+  ['fast travel', 'travel', undefined],
 ]
 
 // ------------------------------------------------------------
@@ -197,6 +198,14 @@ export function parseCommand(input: string): Action {
   // --- Trade ---
   if (first in TRADE_VERBS) {
     return { verb: TRADE_VERBS[first]!, noun: rest || undefined, raw }
+  }
+
+  // --- Fast travel / map ---
+  if (first === 'travel' || first === 'warp') {
+    return { verb: 'travel', noun: rest || undefined, raw }
+  }
+  if (first === 'map') {
+    return { verb: 'map', noun: undefined, raw }
   }
 
   // --- System ---

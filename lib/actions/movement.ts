@@ -254,6 +254,22 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
   if (enemiesLine(nextRoom)) messages.push(combatMsg(enemiesLine(nextRoom)))
   if (itemsLine(nextRoom)) messages.push(msg(itemsLine(nextRoom)))
 
+  // Cleared-room feedback: tell the player the area is quiet (enemies suppressed)
+  if (nextRoom.flags.room_cleared && nextRoom.enemies.length === 0) {
+    const ENEMY_RESPAWN_ACTIONS = 160
+    const clearedAt = nextRoom.flags.room_cleared_at
+    if (typeof clearedAt === 'number') {
+      const elapsed = (updatedPlayer.actionsTaken ?? 0) - clearedAt
+      const remaining = ENEMY_RESPAWN_ACTIONS - elapsed
+      if (remaining > 0) {
+        messages.push(msg('This area has been cleared. It is quiet — for now.'))
+      }
+    } else {
+      // room_cleared set but no timestamp — just show the quiet message
+      messages.push(msg('This area has been cleared. It is quiet — for now.'))
+    }
+  }
+
   // Fear check for high-difficulty rooms with enemies (grit stat)
   if (nextRoom.enemies.length > 0 && nextRoom.difficulty >= 4) {
     const fear = fearCheck(updatedPlayer, nextRoom)
@@ -376,6 +392,21 @@ export async function handleLook(engine: EngineCore, target: string | undefined)
   if (itemsLine(currentRoom)) messages.push(msg(itemsLine(currentRoom)))
   if (npcsLine(currentRoom)) messages.push(msg(npcsLine(currentRoom)))
   if (enemiesLine(currentRoom)) messages.push(combatMsg(enemiesLine(currentRoom)))
+
+  // Cleared-room feedback on look
+  if (currentRoom.flags.room_cleared && currentRoom.enemies.length === 0) {
+    const ENEMY_RESPAWN_ACTIONS = 160
+    const clearedAt = currentRoom.flags.room_cleared_at
+    if (typeof clearedAt === 'number') {
+      const elapsed = (player?.actionsTaken ?? 0) - clearedAt
+      const remaining = ENEMY_RESPAWN_ACTIONS - elapsed
+      if (remaining > 0) {
+        messages.push(msg('This area has been cleared. It is quiet — for now.'))
+      }
+    } else {
+      messages.push(msg('This area has been cleared. It is quiet — for now.'))
+    }
+  }
 
   // Ambient sound roll
   const ambientSound = rollAmbientSound(currentRoom, player?.actionsTaken ?? 0)

@@ -96,6 +96,8 @@ export async function handleHelp(engine: EngineCore): Promise<void> {
     '  inventory / i                 — show inventory',
     '  stash [item]                  — stash an item for safekeeping across deaths',
     '  unstash [item]                — retrieve from stash',
+    '  map                           — show discovered fast travel waypoints',
+    '  travel [destination]          — fast travel to a discovered waypoint',
     '  stats                         — show character stats',
     '  help / ?                      — show this message',
   ]

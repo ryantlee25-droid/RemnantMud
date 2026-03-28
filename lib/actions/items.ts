@@ -4,6 +4,7 @@
 
 import type { GameMessage, Room } from '@/types/game'
 import type { EngineCore } from './types'
+import type { StashItem } from '@/types/game'
 import {
   getInventory,
   addItem,
@@ -14,6 +15,32 @@ import {
 import { updateRoomItems, updateRoomFlags } from '@/lib/world'
 import { getItem } from '@/data/items'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
+
+// ------------------------------------------------------------
+// Stash loader — reads player_stash rows and maps to StashItem[]
+// ------------------------------------------------------------
+
+async function loadStash(playerId: string): Promise<StashItem[]> {
+  const supabase = createSupabaseBrowserClient()
+  const { data: rows } = await supabase
+    .from('player_stash')
+    .select('*')
+    .eq('player_id', playerId)
+
+  return (rows ?? [])
+    .map((row: { id: string; player_id: string; item_id: string; quantity: number }) => {
+      const item = getItem(row.item_id)
+      if (!item) return null
+      return {
+        id: row.id,
+        playerId: row.player_id,
+        itemId: row.item_id,
+        item,
+        quantity: row.quantity,
+      }
+    })
+    .filter((si: StashItem | null): si is StashItem => si !== null)
+}
 
 // ------------------------------------------------------------
 // Local message helpers
@@ -326,8 +353,11 @@ export async function handleStash(engine: EngineCore, noun: string | undefined):
   const item = invItem.item
   engine._appendMessages([systemMsg(`You stash the ${item.name}. It will survive your death.`)])
 
-  const updatedInventory = await getInventory(player.id)
-  engine._setState({ inventory: updatedInventory })
+  const [updatedInventory, updatedStash] = await Promise.all([
+    getInventory(player.id),
+    loadStash(player.id),
+  ])
+  engine._setState({ inventory: updatedInventory, stash: updatedStash })
 }
 
 export async function handleUnstash(engine: EngineCore, noun: string | undefined): Promise<void> {
@@ -375,8 +405,11 @@ export async function handleUnstash(engine: EngineCore, noun: string | undefined
 
   engine._appendMessages([systemMsg(`You retrieve the ${item.name} from your stash.`)])
 
-  const updatedInventory = await getInventory(player.id)
-  engine._setState({ inventory: updatedInventory })
+  const [updatedInventory, updatedStash] = await Promise.all([
+    getInventory(player.id),
+    loadStash(player.id),
+  ])
+  engine._setState({ inventory: updatedInventory, stash: updatedStash })
 }
 
 export async function handleStashList(engine: EngineCore): Promise<void> {

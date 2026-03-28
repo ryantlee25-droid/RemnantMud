@@ -5,6 +5,7 @@
 import type { GameMessage, FactionType, Direction, Player, SkillType } from '@/types/game'
 import type { EngineCore } from './types'
 import { getNPC, getRevenantDialogue } from '@/data/npcs'
+import { findNpcTopic, getVisibleTopics } from '@/data/npcTopics'
 import { updateRoomFlags } from '@/lib/world'
 import { itemsLine } from './movement'
 import { getClassSkillBonus } from '@/lib/skillBonus'
@@ -38,24 +39,55 @@ export async function handleTalk(engine: EngineCore, noun: string | undefined): 
     return
   }
 
+  // Split noun into NPC name and optional topic.
+  // e.g. "patch scar" → npcNoun="patch", topicWord="scar"
+  // e.g. "marshal cross scar" → need to match "marshal cross" first, then "scar"
+  // Strategy: try longest match against room NPCs, remainder is topic.
   let npcId: string | undefined
+  let topicWord: string | undefined
+
   if (noun) {
     const nounLower = noun.toLowerCase()
-    npcId = currentRoom.npcs.find((id) => {
-      const n = getNPC(id)
-      if (!n) return false
-      // Match against NPC display name
-      if (n.name.toLowerCase().includes(nounLower)) return true
-      // Match against NPC ID (e.g. "guard" matches "crossroads_gate_guard")
-      if (id.toLowerCase().includes(nounLower)) return true
-      // Match against the activity text the player actually sees in the room
-      // (e.g. "A Drifter arbiter leans against the gate post...")
-      const rolledNpc = currentRoom.population?.npcs.find(rn => rn.npcId === id)
-      if (rolledNpc?.activity && rolledNpc.activity.toLowerCase().includes(nounLower)) return true
-      // Match against NPC faction (e.g. "talk drifter" for a drifters-faction NPC)
-      if (n.faction && n.faction.toLowerCase().includes(nounLower)) return true
-      return false
-    })
+    // Strip "about" prefix for "ask patch about scar" style input
+    // (parser turns "ask patch about scar" into verb=talk, noun="patch about scar")
+    const aboutStripped = nounLower.replace(/\babout\b/, '').replace(/\s+/g, ' ').trim()
+    const tokens = aboutStripped.split(' ')
+
+    // Try progressively shorter prefixes as NPC name, longest first.
+    // This handles multi-word names like "marshal cross".
+    for (let split = tokens.length; split >= 1; split--) {
+      const candidate = tokens.slice(0, split).join(' ')
+      const matched = currentRoom.npcs.find((id) => {
+        const n = getNPC(id)
+        if (!n) return false
+        if (n.name.toLowerCase().includes(candidate)) return true
+        if (id.toLowerCase().includes(candidate)) return true
+        const rolledNpc = currentRoom.population?.npcs.find(rn => rn.npcId === id)
+        if (rolledNpc?.activity && rolledNpc.activity.toLowerCase().includes(candidate)) return true
+        if (n.faction && n.faction.toLowerCase().includes(candidate)) return true
+        return false
+      })
+      if (matched) {
+        npcId = matched
+        const remainder = tokens.slice(split).join(' ').trim()
+        if (remainder) topicWord = remainder
+        break
+      }
+    }
+
+    // Fallback: if no NPC matched at all, try the full noun as NPC name
+    if (!npcId) {
+      npcId = currentRoom.npcs.find((id) => {
+        const n = getNPC(id)
+        if (!n) return false
+        if (n.name.toLowerCase().includes(nounLower)) return true
+        if (id.toLowerCase().includes(nounLower)) return true
+        const rolledNpc = currentRoom.population?.npcs.find(rn => rn.npcId === id)
+        if (rolledNpc?.activity && rolledNpc.activity.toLowerCase().includes(nounLower)) return true
+        if (n.faction && n.faction.toLowerCase().includes(nounLower)) return true
+        return false
+      })
+    }
   } else {
     npcId = currentRoom.npcs[0]
   }
@@ -87,6 +119,56 @@ export async function handleTalk(engine: EngineCore, noun: string | undefined): 
     return
   }
 
+  // ── Topic-specific dialogue ──────────────────────────────
+  if (topicWord) {
+    const topic = findNpcTopic(npcId, topicWord)
+    if (!topic) {
+      engine._appendMessages([
+        msg(`${npc.name} looks at you blankly. That's not something they have anything to say about.`),
+      ])
+      return
+    }
+
+    // Check flag gate
+    if (topic.requiresFlag) {
+      const flags = player.questFlags ?? {}
+      if (!flags[topic.requiresFlag]) {
+        engine._appendMessages([
+          msg(`${npc.name} studies you for a moment, then shakes their head. "You don't know enough yet for that conversation."`),
+        ])
+        return
+      }
+    }
+
+    // Check reputation gate
+    if (topic.requiresRep) {
+      const rep = player.factionReputation?.[topic.requiresRep.faction] ?? 0
+      if (rep < topic.requiresRep.min) {
+        engine._appendMessages([
+          msg(`${npc.name} regards you with suspicion. "We don't know each other well enough for that."`),
+        ])
+        return
+      }
+    }
+
+    // Wary NPCs give topic responses reluctantly
+    if (disposition === 'wary') {
+      messages.push(msg(`${npc.name} hesitates, then speaks in a low voice.`))
+    }
+
+    messages.push(msg(topic.response))
+
+    // Set quest flag if defined
+    if (topic.setsFlag) {
+      await engine.setQuestFlag(topic.setsFlag, true)
+    }
+
+    engine._appendMessages(messages)
+    return
+  }
+
+  // ── Standard greeting (no topic specified) ───────────────
+
   // Show NPC description on first talk this session
   if (!currentRoom.flags[talkFlag]) {
     messages.push(msg(npc.description))
@@ -112,6 +194,15 @@ export async function handleTalk(engine: EngineCore, noun: string | undefined): 
     messages.push(msg(`${npc.name} seems willing to talk more if you have questions.`))
   } else {
     messages.push(msg(`"${dialogue}" \u2014 ${npc.name}`))
+  }
+
+  // Show available topics for named NPCs
+  const questFlags = player.questFlags ?? {}
+  const factionRep = player.factionReputation ?? {}
+  const visibleTopics = getVisibleTopics(npcId, questFlags, factionRep)
+  if (visibleTopics.length > 0) {
+    const topicList = visibleTopics.map(t => `[${t}]`).join(' ')
+    messages.push(systemMsg(`Topics: ${topicList}`))
   }
 
   engine._appendMessages(messages)

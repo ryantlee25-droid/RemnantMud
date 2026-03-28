@@ -233,8 +233,16 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         description: 'The three active papers on the desk: one titled "On the Moral Standing of Symbiotic Arrangements." One untitled, hand-written, with heavy crossings-out. One addressed to someone whose name you can\'t make out, reading like a letter — "...the Accord proposal is worth considering. I am not willing to be the reason it fails..." — then crossed out and started again.',
         questGate: 'vesper_trust_level_2',
       },
+      {
+        keywords: ['biometric', 'vesper', 'sanguine', 'access', 'scanner', 'meridian', 'physiology'],
+        description: 'You ask Vesper about MERIDIAN\'s biometric locks — the ones keyed to Sanguine physiology. Vesper sets down the pencil. The room gets quieter, which should not be possible in a room that was already quiet. "You know what you\'re asking," they say. Not a question. "The facility was built to accept us. The locks were designed for our biology. That means someone at MERIDIAN wanted us to be able to enter. Or wanted to make sure we couldn\'t leave." Vesper extends their hand, palm up. The veins beneath the pale skin pulse with something that is not quite the rhythm of a human heart. "I will give you what you need. My biometric signature, recorded on the equipment in the sub-basement, will open the scanner. But I want you to understand what it means that the door was built for us. We were always part of this. The question is whether we were the experiment or the experimenters." They press their thumb to a glass slide on the desk — the impression glows faintly blue-green for a moment before stabilizing. "Take it. The scanner will accept it. And when you\'re inside, remember that the people who built those locks knew exactly what we are."',
+        questGate: 'duskhollow_cistern_contamination_identified',
+        skillCheck: { skill: 'negotiation', dc: 11, successAppend: 'Vesper watches you take the biometric slide and something shifts behind their eyes — not relief, not fear. Recognition. "You\'re the first person who\'s asked for this who I believe will come back to tell me what they found. Most people who go to MERIDIAN are looking for answers. You\'re looking for the right questions. That is the only reason I\'m helping you." The slide is warm in your hand. It should not be warm. It is.' },
+        questFlagOnSuccess: { flag: 'sanguine_biometric_obtained', value: true },
+        reputationGrant: { faction: 'covenant_of_dusk', delta: 1 },
+      },
     ],
-    narrativeNotes: 'Vesper is the most intellectually complex NPC in the game. The blood tithe ethics debate is the heart of the Covenant quest chain. The hidden sub-basement access is either Perception 16 or Vesper\'s trust.',
+    narrativeNotes: 'Vesper is the most intellectually complex NPC in the game. The blood tithe ethics debate is the heart of the Covenant quest chain. The hidden sub-basement access is either Perception 16 or Vesper\'s trust. The biometric quest requires covenant_of_dusk reputation >= 1.',
   },
 
   {

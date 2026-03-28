@@ -21,9 +21,10 @@ export const THE_SCAR_ROOMS: Room[] = [
         destination: 'dp_12_sealed_door',
         descriptionVerbose: 'west, the mine utility entrance',
         hidden: true,
+        questGate: 'deep_utility_access',
         discoverSkill: 'perception',
         discoverDc: 13,
-        discoverMessage: 'You notice a section of crater wall with an unusual regularity — the stone is real but the rock face has a seam. A door, built into the crater wall, disguised as geology.',
+        discoverMessage: 'You notice a section of crater wall with an unusual regularity — the stone is real but the rock face has a seam. A door, built into the crater wall, disguised as geology. The Elder told you where to look.',
       },
     },
     items: [],
@@ -107,6 +108,11 @@ export const THE_SCAR_ROOMS: Room[] = [
         keywords: ['maintenance', 'hatch', 'hasp', 'south', 'kindling'],
         description: 'The maintenance hatch is standard access-control: a steel hasp with a government padlock. The Kindling faction knows how to open this — their tunnel approach comes up directly below it, and they have the correct shaped charge to remove the padlock hasp without damaging the pressure seal. Harrow\'s people have been planning this entry for over a year.',
         questGate: 'kindling_tunnel_access',
+      },
+      {
+        keywords: ['utility', 'mine', 'west', 'deep', 'pipeline'],
+        description: 'The mine utility entrance to the west — the Elder Sanguine showed you the route. The utility corridor connects through the old mine workings to a junction beneath the sealed door. The override sequence the Elder gave you bypasses the keycard reader entirely. This is the oldest path to MERIDIAN, maintained by the Lucid for fifteen years. The door in the crater wall is disguised as geology, but you know where the seam is now.',
+        questGate: 'deep_utility_access',
       },
       {
         keywords: ['seal', 'embossed', 'door', 'crest', 'symbol'],

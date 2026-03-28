@@ -385,8 +385,16 @@ export const THE_STACKS_ROOMS: Room[] = [
         description: 'On Lev\'s desk, locked in a lockbox: you can see the edge of a keycard through the gap. Black plastic, white text too small to read from here. This is what the Reclaimers are offering — the means to enter MERIDIAN. They found it, cleaned it, tested its validity. They need you to use it.',
         questGate: 'reclaimers_trusted',
       },
+      {
+        keywords: ['keycard', 'lev', 'meridian', 'access', 'lockbox', 'give', 'offer'],
+        description: 'You present Lev with what you found — the evidence of Field Station Echo, the second MERIDIAN site the Reclaimers have been looking for. Lev goes still. Not surprised — confirmed. They set the clipboard down, open the lockbox on the desk with a key from their pocket, and hold out the keycard. Black plastic, white text: MERIDIAN PROJECT — LEVEL 1 ACCESS — ALL AREAS. "I was going to make you earn this longer," Lev says. "But you already did the work. The keycard gets you through the front door. What you do inside is yours." They pause. "Come back. I want to know what\'s in there. I have wanted to know for seven years."',
+        questGate: 'discovered_field_station_echo',
+        skillCheck: { skill: 'lore', dc: 10, successAppend: 'You turn the keycard over. On the back, in small printed text: ISSUED TO: DR. ELIAS VANE, PROJECT DIRECTOR. Lev watches you read it and nods once. "Yes. The director\'s own card. We found it in his car, two miles from the crater rim. He drove out, left the card, and went back in. He wanted someone to follow him. That someone is you."' },
+        questFlagOnSuccess: { flag: 'reclaimers_meridian_keycard', value: true },
+        reputationGrant: { faction: 'reclaimers', delta: 1 },
+      },
     ],
-    narrativeNotes: 'Primary questgiver room. The MERIDIAN keycard quest originates here. The photograph humanizes Lev. The revenant cohort file is a significant player-mirror moment.',
+    narrativeNotes: 'Primary questgiver room. The MERIDIAN keycard quest originates here. The photograph humanizes Lev. The revenant cohort file is a significant player-mirror moment. The keycard quest requires discovered_field_station_echo from the comm center map room.',
   },
 
   {

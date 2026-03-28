@@ -2,7 +2,7 @@
 // lib/actions/social.ts — handleTalk, handleSearch, handleRep, handleQuests
 // ============================================================
 
-import type { GameMessage, FactionType, Direction, Player, SkillType, DialogueNode, DialogueBranch } from '@/types/game'
+import type { GameMessage, FactionType, Direction, Player, SkillType, DialogueNode, DialogueBranch, CycleSnapshot } from '@/types/game'
 import type { EngineCore } from './types'
 import { getNPC, getRevenantDialogue } from '@/data/npcs'
 import { findNpcTopic, getVisibleTopics, NPC_TOPICS } from '@/data/npcTopics'
@@ -49,6 +49,7 @@ function checkBranchGates(
   branch: DialogueBranch,
   player: Player,
   inventory: { itemId: string }[],
+  cycleHistory?: CycleSnapshot[],
 ): { passable: boolean; reason?: string } {
   const flags = player.questFlags ?? {}
   const rep = player.factionReputation ?? {}
@@ -74,6 +75,35 @@ function checkBranchGates(
     }
   }
 
+  // Echo gates — require cycle history from previous lives
+  const history = cycleHistory ?? []
+  const lastSnapshot = history.length > 0 ? history[history.length - 1] : undefined
+
+  if (branch.requiresCycleMin != null) {
+    if ((player.cycle ?? 1) < branch.requiresCycleMin) {
+      return { passable: false, reason: '(requires previous cycle history)' }
+    }
+  }
+
+  if (branch.requiresPreviousRelationship) {
+    const { npcId, relationship } = branch.requiresPreviousRelationship
+    if (!lastSnapshot || lastSnapshot.npcRelationships[npcId] !== relationship) {
+      return { passable: false, reason: '(requires previous cycle history)' }
+    }
+  }
+
+  if (branch.requiresPreviousEnding) {
+    if (!lastSnapshot || lastSnapshot.endingChoice !== branch.requiresPreviousEnding) {
+      return { passable: false, reason: '(requires previous cycle history)' }
+    }
+  }
+
+  if (branch.requiresPreviousQuest) {
+    if (!lastSnapshot || !lastSnapshot.questsCompleted.includes(branch.requiresPreviousQuest)) {
+      return { passable: false, reason: '(requires previous cycle history)' }
+    }
+  }
+
   // Skill checks are shown as requirement hints but are passable (roll happens on select)
   if (branch.skillCheck) {
     return { passable: true, reason: `(requires: ${branch.skillCheck.skill.replace(/_/g, ' ')} DC ${branch.skillCheck.dc})` }
@@ -90,6 +120,7 @@ function buildNodeDisplay(
   npcName: string,
   player: Player,
   inventory: { itemId: string }[],
+  cycleHistory?: CycleSnapshot[],
 ): GameMessage[] {
   const messages: GameMessage[] = []
 
@@ -101,7 +132,7 @@ function buildNodeDisplay(
     messages.push(msg(''))  // blank line separator
     for (let i = 0; i < node.branches.length; i++) {
       const branch = node.branches[i]!
-      const { passable, reason } = checkBranchGates(branch, player, inventory)
+      const { passable, reason } = checkBranchGates(branch, player, inventory, cycleHistory)
       const num = i + 1
       if (passable) {
         const hint = reason ? ` <keyword>${reason}</keyword>` : ''
@@ -164,7 +195,7 @@ async function applyNodeEffects(engine: EngineCore, node: DialogueNode): Promise
  * Start a dialogue tree for an NPC. Sets activeDialogue and displays the start node.
  */
 async function startDialogueTree(engine: EngineCore, npcId: string, tree: import('@/types/game').DialogueTree): Promise<void> {
-  const { player, inventory } = engine.getState()
+  const { player, inventory, cycleHistory } = engine.getState()
   if (!player) return
 
   const npc = getNPC(npcId)
@@ -189,7 +220,7 @@ async function startDialogueTree(engine: EngineCore, npcId: string, tree: import
   await applyNodeEffects(engine, startNode)
 
   // Display the node
-  const display = buildNodeDisplay(startNode, npcName, player, inventory)
+  const display = buildNodeDisplay(startNode, npcName, player, inventory, cycleHistory)
   engine._appendMessages(display)
 
   // If no branches, conversation ends immediately
@@ -205,7 +236,7 @@ async function startDialogueTree(engine: EngineCore, npcId: string, tree: import
 
 export async function handleDialogueChoice(engine: EngineCore, choiceStr: string | undefined): Promise<void> {
   const state = engine.getState()
-  const { player, inventory, activeDialogue } = state
+  const { player, inventory, activeDialogue, cycleHistory } = state
   if (!player || !activeDialogue) {
     engine._appendMessages([errorMsg("You're not in a conversation.")])
     return
@@ -236,7 +267,7 @@ export async function handleDialogueChoice(engine: EngineCore, choiceStr: string
   const npcName = npc?.name ?? activeDialogue.npcId
 
   // Check gates
-  const { passable } = checkBranchGates(branch, player, inventory)
+  const { passable } = checkBranchGates(branch, player, inventory, cycleHistory)
   if (!passable) {
     engine._appendMessages([errorMsg("You can't choose that option right now.")])
     return
@@ -285,7 +316,7 @@ export async function handleDialogueChoice(engine: EngineCore, choiceStr: string
   })
 
   // Display node
-  const display = buildNodeDisplay(nextNode, npcName, player, inventory)
+  const display = buildNodeDisplay(nextNode, npcName, player, inventory, cycleHistory)
   engine._appendMessages(display)
 
   // If no branches, conversation ends

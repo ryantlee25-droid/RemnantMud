@@ -6,6 +6,7 @@
 
 import type {
   Action,
+  CycleSnapshot,
   EndingChoice,
   GameState,
   GameMessage,
@@ -39,6 +40,7 @@ import { handleRest, handleCamp, handleDrink } from '@/lib/actions/survival'
 import { echoRetentionFactor } from '@/lib/fear'
 import { handleTrade, handleBuy, handleSell } from '@/lib/actions/trade'
 import { handleMap, handleTravel } from '@/lib/actions/travel'
+import { createCycleSnapshot, computeInheritedReputation } from '@/lib/echoes'
 
 // ------------------------------------------------------------
 // XP thresholds for level progression
@@ -332,7 +334,12 @@ export class GameEngine implements EngineCore {
     const updatedPlayer: Player = { ...player, hp: 0, isDead: true }
     this._setState({ player: updatedPlayer, combatState: null, playerDead: true })
 
-    // Persist death to DB
+    // Save cycle snapshot before wiping inventory
+    const snapshot = createCycleSnapshot(player)
+    const cycleHistory = [...(this.state.cycleHistory ?? []), snapshot]
+    this._setState({ cycleHistory })
+
+    // Persist death + cycle history to DB
     const supabase = createSupabaseBrowserClient()
     await supabase
       .from('players')
@@ -342,6 +349,11 @@ export class GameEngine implements EngineCore {
         total_deaths: (player.totalDeaths ?? 0) + 1,
       })
       .eq('id', player.id)
+
+    await supabase
+      .from('player_ledger')
+      .update({ cycle_history: cycleHistory })
+      .eq('player_id', player.id)
   }
 
   // ----------------------------------------------------------
@@ -626,6 +638,10 @@ export class GameEngine implements EngineCore {
       .eq('player_id', userId)
       .maybeSingle()
 
+    // Parse cycle history from ledger
+    const rawCycleHistory = ledgerRow?.cycle_history
+    const parsedCycleHistory: CycleSnapshot[] = Array.isArray(rawCycleHistory) ? rawCycleHistory : []
+
     const ledger: PlayerLedger | null = ledgerRow ? {
       playerId: ledgerRow.player_id,
       worldSeed: ledgerRow.world_seed,
@@ -637,6 +653,7 @@ export class GameEngine implements EngineCore {
       squirrelTrust: ledgerRow.squirrel_trust,
       squirrelCyclesKnown: ledgerRow.squirrel_cycles_known,
       squirrelName: ledgerRow.squirrel_name ?? undefined,
+      cycleHistory: parsedCycleHistory,
     } : null
 
     // Phase 5: faction memory rates would be loaded here from player_faction_memory table
@@ -679,6 +696,7 @@ export class GameEngine implements EngineCore {
       ledger,
       stash,
       roomsExplored: visitedCount ?? 0,
+      cycleHistory: parsedCycleHistory,
       log: [
         systemMsg(`Welcome back, ${player.name}.`),
         msg(currentRoom.visited ? currentRoom.shortDescription : this._getRoomDescriptionForTime(currentRoom, player.actionsTaken)),
@@ -720,6 +738,12 @@ export class GameEngine implements EngineCore {
     const newHp = 8 + (echoStats.vigor - 2) * 2
     const pressure = computePressure(newCycle)
 
+    // Compute inherited faction reputation from cycle history
+    const cycleHistory = this.state.cycleHistory ?? []
+    const lastSnapshot = cycleHistory.length > 0 ? cycleHistory[cycleHistory.length - 1] : undefined
+    const inheritedRep = lastSnapshot ? computeInheritedReputation(lastSnapshot) : {}
+    const hasInheritedRep = Object.keys(inheritedRep).length > 0
+
     // Reset player row
     await supabase
       .from('players')
@@ -734,6 +758,7 @@ export class GameEngine implements EngineCore {
         xp: 0,
         level: 1,
         actions_taken: 0,
+        faction_reputation: inheritedRep,
       })
       .eq('id', player.id)
 
@@ -774,6 +799,13 @@ export class GameEngine implements EngineCore {
       this._setState({ loading: false })
       throw new Error('Failed to reload player after rebirth')
     }
+
+    // Show echo message if inherited reputation was applied
+    if (hasInheritedRep) {
+      this._appendMessages([
+        msg('Echoes of your previous life linger. Some factions remember you.', 'echo'),
+      ])
+    }
   }
 
   // ----------------------------------------------------------
@@ -813,6 +845,12 @@ export class GameEngine implements EngineCore {
     const pressure = computePressure(newCycle)
     const newHp = 8 + (stats.vigor - 2) * 2
 
+    // Compute inherited faction reputation from cycle history
+    const cycleHistory = this.state.cycleHistory ?? []
+    const lastSnapshot = cycleHistory.length > 0 ? cycleHistory[cycleHistory.length - 1] : undefined
+    const inheritedRep = lastSnapshot ? computeInheritedReputation(lastSnapshot) : {}
+    const hasInheritedRep = Object.keys(inheritedRep).length > 0
+
     await supabase
       .from('players')
       .update({
@@ -830,6 +868,7 @@ export class GameEngine implements EngineCore {
         actions_taken: 0,
         personal_loss_type: personalLoss?.type ?? null,
         personal_loss_detail: personalLoss?.detail ?? null,
+        faction_reputation: inheritedRep,
       })
       .eq('id', player.id)
 
@@ -861,6 +900,13 @@ export class GameEngine implements EngineCore {
     if (!found) {
       this._setState({ loading: false })
       throw new Error('Failed to reload player after rebirth')
+    }
+
+    // Show echo message if inherited reputation was applied
+    if (hasInheritedRep) {
+      this._appendMessages([
+        msg('Echoes of your previous life linger. Some factions remember you.', 'echo'),
+      ])
     }
   }
 
@@ -956,6 +1002,17 @@ export class GameEngine implements EngineCore {
     // Detect ending trigger
     if (flag === 'charon_choice' && typeof value === 'string' && GameEngine.VALID_ENDINGS.has(value)) {
       const choice = value as EndingChoice
+
+      // Save cycle snapshot with the ending choice
+      const snapshot = createCycleSnapshot(player, choice)
+      const cycleHistory = [...(this.state.cycleHistory ?? []), snapshot]
+      this._setState({ cycleHistory })
+
+      const supabase2 = createSupabaseBrowserClient()
+      await supabase2
+        .from('player_ledger')
+        .update({ cycle_history: cycleHistory })
+        .eq('player_id', player.id)
 
       if (choice === 'seal') {
         // SEAL: facility self-destruct — show countdown, then auto-navigate to exit

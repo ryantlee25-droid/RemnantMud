@@ -529,6 +529,20 @@ export interface Player {
 }
 
 // ------------------------------------------------------------
+// Cycle Snapshot — captured at death / ending for echo system
+// ------------------------------------------------------------
+
+export interface CycleSnapshot {
+  cycle: number
+  endingChoice?: EndingChoice
+  factionsAligned: FactionType[]      // rep >= 2 at cycle end
+  factionsAntagonized: FactionType[]  // rep <= -2
+  npcRelationships: Record<string, 'trusted' | 'distrusted' | 'betrayed' | 'allied'>
+  questsCompleted: string[]           // key milestone flags
+  deathRoom?: string                  // room ID where player died
+}
+
+// ------------------------------------------------------------
 // Ledger — cross-cycle meta-progression
 // ------------------------------------------------------------
 
@@ -543,6 +557,7 @@ export interface PlayerLedger {
   squirrelTrust: number
   squirrelCyclesKnown: number
   squirrelName?: 'Chippy' | 'Stumpy'
+  cycleHistory?: CycleSnapshot[]
 }
 
 export interface StashItem {
@@ -649,6 +664,7 @@ export interface GameState {
   endingTriggered: boolean
   endingChoice: EndingChoice | null
   activeBuffs: ActiveBuff[]
+  cycleHistory?: CycleSnapshot[]
   pendingStatIncrease?: boolean  // true when player needs to choose a stat to boost
   activeDialogue?: {
     npcId: string
@@ -684,6 +700,14 @@ export interface DialogueBranch {
   skillCheck?: { skill: SkillType; dc: number }
   // What happens if skill check fails:
   failNode?: string
+  // Echo gates — branch only shown if cycle history conditions met:
+  requiresCycleMin?: number
+  requiresPreviousRelationship?: {
+    npcId: string
+    relationship: 'trusted' | 'distrusted' | 'betrayed' | 'allied'
+  }
+  requiresPreviousEnding?: EndingChoice
+  requiresPreviousQuest?: string
 }
 
 export interface DialogueTree {

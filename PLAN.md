@@ -894,3 +894,976 @@ Every task in this plan is complete when:
 - **Global styles**: `/Users/ryan/projects/mud-game/app/globals.css` — update CRT overlay scoping
 - **Theme system**: `/Users/ryan/projects/mud-game/lib/theme.ts` — ensure InventoryTab integrates correctly
 - **Modal screens**: `components/CharacterCreation.tsx`, `Prologue.tsx`, `DeathScreen.tsx`, `TheBetween.tsx`, `EndingScreen.tsx` — update to render inside frame
+
+---
+
+# Plan: Echoes — Narrative Persistence System
+
+_Created: 2026-03-27 | Type: New Feature_
+
+## Goal
+
+Implement an Echoes system where NPCs remember player decisions across death/rebirth cycles, creating persistent narrative threads that branch based on what happened in previous cycles. Players on cycle 2+ see dialogue options and NPC reactions that reference their prior choices.
+
+## Background
+
+The MUD has a death/rebirth cycle system (via `rebirthCharacter()` in gameEngine.ts). Currently, reputation resets each cycle, and dialogue trees have no awareness of prior cycles. This disconnects narrative consequence from player action. Echoes closes that loop: snapshots of key decisions (ending choice, faction alignments, NPC relationships, completed quests) persist in `player_ledger`, and dialogue branches visible on cycle 2+ reference them, creating the feeling that NPCs recognize the player's return.
+
+## Scope
+
+**In scope:**
+- Extend `PlayerLedger` with `cycleHistory` array tracking cycle-end state
+- Add cycle snapshot on death (via `_handlePlayerDeath`) and ending trigger (via `setQuestFlag`)
+- Compute `npcRelationships` from quest flags → dialogue gate conditions
+- Add DB migration to player_ledger schema
+- Extend `DialogueBranch` type with `requiresCycleMin`, `requiresPreviousRelationship`, `requiresPreviousEnding`, `requiresPreviousQuest`
+- Enhance `checkBranchGates()` to check echo conditions
+- Add 2-3 echo dialogue branches to 10 story-critical NPCs (Lev, Cross, Vesper, Harrow, Vane, Rook, Avery, Thorne, Echo, Sorrow)
+- Implement 50% reputation carryover on cycle 2+ start
+
+**Out of scope:**
+- Squirrel echo memory (separate system)
+- Room-specific cycle-gated content (already exists via `cycleGate`)
+- Faction/reputation evolution UI (meta-progression visible, but not a visual overhaul)
+- Testing against live players (testing harness only)
+
+## Technical Approach
+
+### A. Ledger Extension (types/game.ts + DB migration)
+
+Add to `PlayerLedger` interface:
+
+```typescript
+export interface CycleSnapshot {
+  cycle: number
+  endingChoice?: EndingChoice
+  factionsAligned: FactionType[]        // rep >= 2
+  factionsAntagonized: FactionType[]    // rep <= -2
+  npcRelationships: Record<string, 'trusted' | 'distrusted' | 'betrayed' | 'allied'>
+  questsCompleted: string[]             // key milestone flags
+  deathRoom?: string                    // room_id where player died (if death, not ending)
+}
+
+export interface PlayerLedger {
+  // ... existing fields
+  cycleHistory: CycleSnapshot[]         // NEW
+}
+```
+
+New migration: `20260328000001_echoes_cycle_history.sql` — add JSONB column `cycle_history` to `player_ledger` table, default `[]`.
+
+### B. Dialogue Branch Gate Extension (types/game.ts)
+
+Add to `DialogueBranch` interface:
+
+```typescript
+export interface DialogueBranch {
+  // ... existing fields
+  requiresCycleMin?: number                    // NEW: only visible on cycle N+
+  requiresPreviousRelationship?: {              // NEW: check cycleHistory
+    npcId: string
+    relationship: 'trusted' | 'distrusted' | 'betrayed' | 'allied'
+  }
+  requiresPreviousEnding?: EndingChoice         // NEW: 'cure' | 'weapon' | 'seal' | 'throne'
+  requiresPreviousQuest?: string                // NEW: quest flag that was true in a prior cycle
+}
+```
+
+### C. Snapshot Creation (lib/gameEngine.ts)
+
+Add new helper function `_createCycleSnapshot()`:
+
+- Reads current player state (cycle, currentRoomId, faction rep, quest flags)
+- Computes `npcRelationships` by matching quest flags to NPC relationship patterns (see Mapping Table below)
+- Filters `questsCompleted` for key milestone flags (e.g., `found_cure_research`, `discovered_charon_truth`)
+- Returns a `CycleSnapshot` object
+
+Call this in two places:
+1. **Death**: `_handlePlayerDeath()` — add `deathRoom` from `currentRoomId`
+2. **Ending**: `setQuestFlag()` when `flag === 'charon_choice'` — no `deathRoom`
+
+After snapshot is created, save it to `player_ledger.cycle_history` array (append, do NOT overwrite).
+
+### D. Reputation Carryover (lib/gameEngine.ts)
+
+In `rebirthCharacter()`, after computing echo stats, add reputation inheritance:
+
+- If ledger.cycleHistory exists and has >= 1 entry, find best rep per faction from all prior cycles
+- Start new cycle at `floor(bestRep * 0.5)` per faction, minimum `-2`, maximum `+2`
+- Example: previous Accord +3 → start cycle 2 at +1; previous Kindling -2 → start cycle 2 at -1
+
+Write inherited rep to player row during the rebirth update.
+
+### E. Echo Gate Check (lib/actions/social.ts)
+
+Enhance `checkBranchGates()` to handle new gate types:
+
+1. `requiresCycleMin`: check `player.cycle >= requiresCycleMin`
+2. `requiresPreviousRelationship`: search `ledger.cycleHistory` for an entry where `npcRelationships[npcId] === relationship`
+3. `requiresPreviousEnding`: search `ledger.cycleHistory` for entry with matching `endingChoice`
+4. `requiresPreviousQuest`: search `ledger.cycleHistory` for entry where quest flag exists in `questsCompleted`
+
+Return `passable: true` if gate satisfied, `reason` with hint text.
+
+### F. Echo Dialogue Branches (data/dialogueTrees.ts)
+
+For each of 10 story NPCs, add 2-3 new nodes + branches reachable only on cycle 2+. Examples:
+
+**Lev (cycle 2+):**
+- If `cycleHistory[previous].npcRelationships.lev === 'trusted'`: "You're back. I remember the data you showed me. Let's skip the formalities."
+- If `cycleHistory[previous].npcRelationships.lev === 'distrusted'`: "You're back. And still demanding. The keycard costs more this time."
+
+**Vane (cycle 2+, devastating):**
+- If `cycleHistory[previous].endingChoice` exists: "You've been here before. You chose [previous ending]. Was it the right choice?"
+
+**Cross (cycle 2+):**
+- If `cycleHistory[previous].questsCompleted` includes `'cross_expedition_sanctioned'`: "You've done this before. Permit's pre-approved."
+
+Node IDs follow pattern: `{npcId}_echo_cycle2_trust`, `{npcId}_echo_cycle2_ending`, etc.
+
+All branches gate with `requiresCycleMin: 2` at minimum.
+
+---
+
+## NPC Relationship Mapping
+
+Quest flag → (npcId, relationship):
+
+| Quest Flag | NPC | Relationship | Meaning |
+|---|---|---|---|
+| `lev_trusts_player` | lev | trusted | Lev accepted your research assistance |
+| `lev_distrusts_player` | lev | distrusted | Lev rejected your help |
+| `player_betrayed_vesper` | vesper | betrayed | You revealed Vesper's secret |
+| `vesper_shared_origin` | vesper | trusted | Vesper confessed origin to you |
+| `cross_expedition_sanctioned` | cross | allied | Cross endorsed your expedition |
+| `rook_offered_deal` + `rook_deal_accepted` | rook | allied | Rook made pact with you |
+| `avery_betrayed` | avery | betrayed | You turned against Avery |
+| `harrow_recognized_truth` | harrow | trusted | Harrow saw you see through doctrine |
+| `player_alignment_kindling` | harrow | allied | You aligned with Kindling |
+| `thorne_protected_camp` | thorne | trusted | Thorne defended you |
+| `echo_enabled_data_breach` | echo | allied | Echo helped you access secured data |
+| `sorrow_revealed_self` | sorrow | trusted | Sorrow showed true form |
+
+**Q: How to discover mapping?** Read dialogueTrees.ts for patterns showing quest flag setting. Each `onEnter.setFlag` or branch outcome shows the quest flag being set. Cross-reference with NPC dialogue to infer relationship type.
+
+---
+
+## Open Questions
+
+- [ ] **Key quest flags to snapshot**: Which flags count as "milestone"? Proposal: Any flag with name containing `_trusts_`, `_betrayed`, `_offered_deal`, `_recognized_truth`, `_shared_origin`, `_aligned_`, `_enabled_` → automatically included. Confirm this list with narrative design.
+- [ ] **NPC list for echo branches**: Confirmed 10 story NPCs (Lev, Cross, Vesper, Harrow, Vane, Rook, Avery, Thorne, Echo, Sorrow). Should Sorrow echo? Check if Sorrow appears in dialogue trees and has relationship flags.
+- [ ] **Reputation inheritance cap**: Proposal is ±2. Should it be different (±3, ±1)? Current max/min in-game is ±3, so capping at ±2 prevents instant "Blooded" without work.
+
+---
+
+## Definition of Done
+
+Every task in this plan is complete when:
+- [ ] Code written and self-reviewed
+- [ ] Tests written or updated for the changed logic
+- [ ] `code-reviewer` passes with no blockers
+- [ ] `test-runner` passes with no failures
+- [ ] MR opened via `git-agent` with coverage gaps (if any) noted in the description
+
+---
+
+## Tasks
+
+### Phase 1: Types & Database
+
+- [ ] **1. Extend types (types/game.ts)**
+  - Add `CycleSnapshot` interface with fields: cycle, endingChoice, factionsAligned, factionsAntagonized, npcRelationships, questsCompleted, deathRoom
+  - Add to `PlayerLedger`: `cycleHistory: CycleSnapshot[]`
+  - Extend `DialogueBranch`: add requiresCycleMin, requiresPreviousRelationship, requiresPreviousEnding, requiresPreviousQuest
+  - Tests: TypeScript compile check only (types are not unit-tested directly)
+  - Notes: No runtime logic yet; just signature validation
+
+- [ ] **2. Create database migration**
+  - File: `/Users/ryan/projects/mud-game/supabase/migrations/20260328000001_echoes_cycle_history.sql`
+  - Add JSONB column `cycle_history` to `player_ledger` table, default `'[]'`
+  - Add comment describing the column structure
+  - Tests: Run migration against local Supabase dev instance; verify column exists with correct type
+  - Notes: Reversible (drop column if needed); no RLS changes required (same row-level policy applies)
+
+### Phase 2: Engine — Snapshot & Reputation
+
+- [ ] **3. Implement cycle snapshot helper (lib/gameEngine.ts)**
+  - Add `_createCycleSnapshot()` method:
+    - Input: current player state, deathRoom (optional string)
+    - Output: CycleSnapshot object
+    - Logic: compute npcRelationships from questFlags using mapping table, filter questsCompleted for key flags (flags matching pattern `*_trusts_*`, `*_betrayed*`, etc.), collect factions with rep >= 2 or <= -2
+    - Tests: Unit test with mock player (cycle 2, various quest flags, faction rep) → verify snapshot structure and NPC mapping correctness
+  - Depends on: Task 1 (types)
+  - Notes: Do not call from anywhere yet; will be called in Tasks 4 & 5
+
+- [ ] **4. Add snapshot on death (lib/gameEngine.ts)**
+  - Modify `_handlePlayerDeath()`:
+    - Call `_createCycleSnapshot(deathRoom: currentRoomId)` after setting isDead = true
+    - Append snapshot to ledger.cycleHistory in Supabase (use `.update(..., {cycle_history: [...ledger.cycle_history, snapshot]})`)
+    - Tests: Integration test with mocked Supabase; mock a death at cycle 2 with known quest flags → verify snapshot persisted to DB with deathRoom set
+  - Depends on: Tasks 1, 3
+  - Notes: Timing: snapshot persisted BEFORE rebirth flow, so rebirth can read it
+
+- [ ] **5. Add snapshot on ending choice (lib/gameEngine.ts)**
+  - Modify `setQuestFlag()` where `flag === 'charon_choice'`:
+    - Call `_createCycleSnapshot()` with no deathRoom (ending, not death)
+    - Persist to ledger.cycleHistory the same way as Task 4
+    - Tests: Integration test; mock setting charon_choice to 'cure' at cycle 1 → verify snapshot appended to ledger, endingChoice === 'cure'
+  - Depends on: Tasks 1, 3
+  - Notes: Call this BEFORE the setTimeout logic that triggers endingTriggered
+
+- [ ] **6. Implement reputation carryover (lib/gameEngine.ts)**
+  - Modify `rebirthCharacter()`:
+    - After computing echo stats, before updating DB:
+      - If ledger.cycleHistory.length > 0, iterate all prior cycles
+      - For each faction in FactionType, find max(rep) across all prior cycles
+      - Compute inherited rep: `floor(bestRep * 0.5)`, clamped to [-2, +2]
+      - Add inherited rep to the player update query
+    - Tests: Unit test with mock ledger containing 2 cycles (Accord +3 in cycle 1, Salters -2 in cycle 1) → verify cycle 2 inherits Accord +1, Salters -1
+  - Depends on: Tasks 1, 4, 5
+  - Notes: Inherited rep is INITIAL rep for new cycle; players can raise/lower it during the cycle as normal
+
+### Phase 3: Dialogue — Gates & Branches
+
+- [ ] **7. Enhance branch gate check (lib/actions/social.ts)**
+  - Modify `checkBranchGates()`:
+    - Add handler for `branch.requiresCycleMin`: return passable if player.cycle >= requiresCycleMin
+    - Add handler for `branch.requiresPreviousRelationship`: search ledger.cycleHistory for entry with matching npcId/relationship, return passable if found
+    - Add handler for `branch.requiresPreviousEnding`: search ledger.cycleHistory for entry with matching endingChoice, return passable if found
+    - Add handler for `branch.requiresPreviousQuest`: search ledger.cycleHistory for entry with quest in questsCompleted, return passable if found
+    - Return reason hints like "(locked: requires cycle 2)" or "(available: previous Lev trust detected)"
+    - Tests: Unit test with mock player cycle 1 vs cycle 2, various ledger states → verify gates return correct passable/reason
+  - Depends on: Tasks 1, 4, 5
+  - Notes: All gates are optional — absent gate = no restriction
+
+- [ ] **8. Add echo branches for story NPCs (data/dialogueTrees.ts)**
+  - For each NPC in [Lev, Cross, Vesper, Harrow, Vane, Rook, Avery, Thorne, Echo, Sorrow]:
+    - Add 2–3 new nodes with IDs like `{npcId}_echo_cycle2_relationship`
+    - Add branches from root node that gate with `requiresCycleMin: 2` AND `requiresPreviousRelationship`/`requiresPreviousEnding`/`requiresPreviousQuest`
+    - Examples:
+      - Lev: `requiresCycleMin: 2 + requiresPreviousRelationship: { npcId: 'lev', relationship: 'trusted' }` → "You're back. I remember the data you showed me. Let's skip the formalities."
+      - Vane: `requiresCycleMin: 2 + requiresPreviousEnding: 'cure'` → "You've been here before. You chose cure. Was it the right choice? You look haunted by it."
+      - Cross: `requiresCycleMin: 2 + requiresPreviousQuest: 'cross_expedition_sanctioned'` → "You've done this before. Permit's pre-approved."
+    - Tests: Dialogue tree parse check (TypeScript compile + visual spot-check); manual test in dev: cycle 1 → set flags → trigger ending → rebirth → cycle 2 → talk to NPC → verify echo branch visible and functional
+  - Depends on: Tasks 1, 7
+  - Notes: These are purely additive — existing branches unchanged. Can be split by NPC group for parallel work.
+
+### Phase 4: Quality & MR
+
+- [ ] **9. Pre-MR pipeline**
+  1. TypeScript compile check: `npm run type-check`
+  2. Run `code-reviewer` agent → resolve any blockers
+  3. Run `test-runner` agent → fix failures, note coverage gaps
+  4. Run `git-agent` → create PR with description noting cycle snapshot structure and echo examples
+
+---
+
+## Parallelization
+
+Tasks can run in parallel once dependencies are met:
+
+- **Phase 1 (Types & DB)**: Tasks 1–2 can run in parallel (no inter-dependency)
+- **Phase 2 (Engine)**: Task 3 can run after Tasks 1–2; Tasks 4–5 can run in parallel after Task 3; Task 6 after Tasks 4–5
+- **Phase 3 (Dialogue)**: Task 7 after Task 1; Task 8 after Tasks 1, 7
+
+**Suggested execution order for single agent:**
+1. Task 1 (types)
+2. Task 2 (migration) in parallel with Task 3
+3. Tasks 4 and 5 in parallel
+4. Task 6
+5. Task 7
+6. Task 8 (can split by NPC if multiple agents available)
+7. Task 9
+
+## References
+
+- **Types**: `/Users/ryan/projects/mud-game/types/game.ts` (PlayerLedger, DialogueBranch, EndingChoice)
+- **Engine**: `/Users/ryan/projects/mud-game/lib/gameEngine.ts` (rebirthCharacter, _handlePlayerDeath, setQuestFlag)
+- **Dialogue gates**: `/Users/ryan/projects/mud-game/lib/actions/social.ts` (checkBranchGates)
+- **Dialogue trees**: `/Users/ryan/projects/mud-game/data/dialogueTrees.ts` (all 18 NPC trees)
+- **DB schema**: `/Users/ryan/projects/mud-game/supabase/migrations/20260327000001_cycle_system.sql` (player_ledger table)
+- **Existing cycle/rebirth**: `/Users/ryan/projects/mud-game/lib/gameEngine.ts` lines 698–777 (rebirthCharacter function)
+
+---
+
+# Plan: Enhanced Combat and Item Trait System
+_Created: 2026-03-27 | Type: New Feature_
+
+## Goal
+Implement a rich, tactical combat system with weapon traits, armor traits, class abilities, status effects, and enemy weaknesses that create emergent depth without slowing combat—enabling 3–8 turn fights with meaningful build choices and moment-to-moment tactical decisions.
+
+## Background
+The current combat system (`lib/combat.ts`) is straightforward: d10 + vigor vs. defense, weapon damage + vigor bonus, armor %-reduction. While mechanically sound, it lacks:
+- **Build differentiation**: players with identical stats play identically
+- **Tactical variety**: every turn is "attack" or "flee"
+- **Enemy asymmetry**: each enemy feels like the same fight with different numbers
+- **Emergent interactions**: weapon traits should create unexpected synergies
+
+This plan adds:
+1. Weapon/armor traits that scale with stats and create class/item synergies
+2. Class-unique once-per-fight combat abilities tied to character fantasy
+3. Status effects (bleed, burning, stunned, etc.) that persist 1–3 turns
+4. Enemy-specific weaknesses and resistances based on lore
+5. New combat verbs (`ability`, `defend`, `wait`, `analyze`)
+6. Item tiers for clear progression feedback
+
+## Scope
+
+**In scope:**
+- 6 trait categories (Damage, Utility, Special) with 20+ total traits
+- 7 class combat abilities (one per class)
+- 6 status conditions with mechanics (bleed, burn, stun, fear, poison, weak)
+- Enemy weakness/resistance table (all 15 enemies)
+- 5 armor traits
+- 5 combat tier levels
+- New action handlers: `ability`, `defend`, `wait`, `analyze`
+- Trait UI labels and combat flavor text
+
+**Out of scope:**
+- Equipment crafting or enchanting system
+- Cross-combat persistent effects
+- Trait stacking/combination rules (traits are additive, no cascades)
+- PvP trait balancing (single-player focus)
+- Damage type interactions beyond immunity (poison immunity on Shuffler; fear on Whisperer)
+
+## Technical Approach
+
+### File Structure
+New files to create:
+- `lib/traits/weapons.ts` — weapon trait definitions, scaling functions
+- `lib/traits/armor.ts` — armor trait definitions
+- `lib/traits/conditions.ts` — status condition logic (apply, tick, remove)
+- `lib/traits/weaknesses.ts` — enemy weakness/resistance lookup
+- `lib/abilities/class.ts` — class ability definitions, usage tracking
+- `types/traits.ts` — trait types, condition enums
+
+Existing files to modify:
+- `types/game.ts` — extend `Item` with traits, `CombatState` with conditions + ability used flag
+- `lib/combat.ts` — integrate traits into damage calculation, add condition application/ticking
+- `data/items.ts` — add trait assignments to all 151 items
+- `data/enemies.ts` — add weakness/resistance to all 15 enemies
+- `lib/actions/combat.ts` — new action handlers for ability/defend/wait/analyze
+- `lib/dice.ts` — condition-aware attack roll modifiers
+
+### Design Philosophy
+- **Traits are descriptions of mechanics, not hidden numbers**: when you hit with a Vicious weapon, the message says "Blood seeps from the wound" (bleed applied), not "Vicious trait triggered"
+- **Conditions are temporary debuffs only, never buffs**: keeping combat push-forward momentum
+- **Enemy weaknesses are narrative-rooted**: Brutes are armored (Heavy resist), Screamer's throat is fragile (Heavy weakness)
+- **Class abilities are once-per-fight power spikes**, not tactical bombs—Enforcer's Overwhelm costs 2 HP, Scout's Mark is free but uses action economy
+- **Tier progression is visible in UI**: players see "Scrap T1", "Salvage T2", etc. every time they equip
+
+---
+
+## Trait System Details
+
+### 1. Weapon Traits (20 total)
+
+Traits are applied at item definition time (`data/items.ts`). Each weapon gets 1–2 traits. Traits scale with specific stats or are always-on.
+
+#### Damage Traits (5)
+- **Keen** [Melee/Ranged]
+  - +1 crit chance per 2 reflex (max +2)
+  - Message: "You find an opening. The strike is precise." / "You carve a deep wound."
+  - Scales with reflex (precision > brute force)
+  - Weak against: Sanguine Feral (50% resist—too quick to crit)
+
+- **Heavy** [Melee]
+  - Damage +1 always. Crits stun enemy 1 turn (DC 11 STR save).
+  - Message: "Weight and momentum converge. It staggers." / "The impact drives the air from its lungs."
+  - Scales with vigor (only strong characters leverage it fully)
+  - Strong against: Brutes (Heavy crit stun breaks their pattern)
+
+- **Vicious** [Melee]
+  - Hit applies Bleed (1 HP/turn for 2 turns).
+  - Message: "Blood seeps from the wound."
+  - Scales with nothing (always triggers on hit)
+  - Weak against: Shuffler (immune to bleed—no circulation)
+
+- **Scorching** [Melee/Ranged]
+  - Hit applies Burning (2 HP/turn for 1 turn, then ends).
+  - Message: "Flames engulf the target."
+  - Scales with nothing (fixed damage)
+  - Strong against: Shuffler (2x burning damage—decomposing tissue lights easy)
+
+- **Draining** [Melee]
+  - On hit: recover 1 HP (min 1, max 3 based on vigor bonus).
+  - Message: "The weapon drinks. You feel strength return."
+  - Scales with vigor (higher vigor = more healing)
+  - Strong against: Whisperer (lifesteal resists psychic drain)
+
+#### Utility Traits (5)
+- **Quick** [Melee/Ranged]
+  - +1 initiative per 2 reflex.
+  - Message: "Your instincts are sharp. You strike first."
+  - Scales with reflex
+  - No weakness (initiative is universal)
+
+- **Precise** [Ranged]
+  - +1 to hit per 2 wits.
+  - Message: "You line up the shot carefully. It lands true."
+  - Scales with wits (smart aiming)
+  - Weak against: Brutes (armor makes precision less effective, -1 damage)
+
+- **Silenced** [Melee/Ranged]
+  - Attacks do not trigger noise encounters (no Hollow drawn).
+  - Message: "The attack is silent. No sound carries."
+  - Scales with nothing (always on)
+  - No weakness
+
+- **Blessed** [Melee]
+  - +1 damage per 2 presence (spiritual authority).
+  - Against Hollow: +2 bonus (holy power). Against Sanguine: +3 bonus (their ancient enemy).
+  - Message: "Divine authority courses through you." / "The blade glows faintly. The creature recoils."
+  - Scales with presence
+  - No weakness (always beneficial)
+
+- **Disrupting** [Melee]
+  - On crit: applies Weakened (1 turn, -50% damage output).
+  - Message: "Your strike destabilizes its form."
+  - Scales with nothing (crit-dependent)
+  - Strong against: Hive Mother (disrupts pheromonal coordination)
+
+#### Special Traits (3)
+- **Cursed** [Melee]
+  - +2 damage always. On hit: lose 1 HP (cost of using dark power).
+  - Message: "Dark power surges. The blow lands hard. You feel it drain you."
+  - Scales with nothing (fixed bonus and cost)
+  - Weak against: Warden class (conviction resists curses, negate cost)
+
+- **Sanguine-Forged** [Melee]
+  - Damage x1.5 against Sanguine only. Against Hollow: x0.5 damage (weapon is attuned to Sanguine biology).
+  - Message: "The blade resonates. The creature convulses." (vs Sanguine) / "The weapon feels inert against it." (vs Hollow)
+  - Scales with nothing (fixed multipliers)
+  - Weak against: Generic Hollow (half damage is a big miss)
+
+- **Verdant** [Melee]
+  - +1 max HP per hit (stacks up to +3 per fight).
+  - Message: "Life flows into you. You feel renewed."
+  - Scales with nothing (healing on hit)
+  - No weakness
+
+---
+
+### 2. Armor Traits (5)
+
+Armor traits modify damage intake, provide condition resistance, or grant special effects.
+
+- **Fortified**
+  - +1 flat damage reduction (in addition to % reduction).
+  - Heavy armor. Example: "This vest has steel plates."
+  - No weakness
+
+- **Reactive**
+  - 10% chance per turn to negate an incoming status condition.
+  - Magical armor. Example: "Runes shimmer across the surface."
+  - No weakness
+
+- **Insulated**
+  - 100% immunity to Burning condition.
+  - Specialized armor. Example: "Fire-resistant weave."
+  - No weakness
+
+- **Warded**
+  - -2 to any Fear/Psychic rolls (composure +2 bonus).
+  - Protective magic. Example: "Protective sigils glow faintly."
+  - No weakness
+
+- **Reflective**
+  - 5% chance per turn to reflect 1 attack back (attacker takes 1 damage).
+  - Mirrors or shiny surfaces. Example: "Polished chrome panels."
+  - No weakness
+
+---
+
+### 3. Status Conditions (6)
+
+Conditions are applied during combat and tick down each round. All damage is reduced if the player is Weakened; accuracy is reduced if Poisoned or Frightened, etc.
+
+| Condition | Duration | Effect | Application |
+|-----------|----------|--------|-------------|
+| **Bleed** | 2 turns | 1 HP/turn damage | Vicious trait, Brute claw attack |
+| **Burning** | 1 turn | 2 HP/turn damage | Scorching trait, environmental fire |
+| **Stunned** | 1 turn | Skip next action (pass turn) | Heavy crit, Brute charge (stun save), Enforcer Overwhelm |
+| **Poisoned** | 3 turns | -1 attack roll, 1 HP/turn damage | Whisperer attack, environmental |
+| **Frightened** | 2 turns | -2 to all rolls | Fear check failure (room entry), Whisperer scream |
+| **Weakened** | 1 turn | -50% damage output (round down) | Disrupting crit, Hive Mother presence |
+
+**Condition Interaction Rules:**
+- Conditions stack independently (can have Bleed + Poisoned at once)
+- Reactive armor can negate any condition on application (10% per application)
+- Warded armor prevents Fear application (100%)
+- Insulated armor prevents Burning application (100%)
+
+---
+
+### 4. Enemy Weaknesses & Resistances Table
+
+Each enemy has:
+- **1 weakness**: Trait or damage type that deals +2–5 damage
+- **1 resistance**: Trait or condition that deals -50% or is immune
+
+| Enemy | Weakness | Resistance | Rationale |
+|-------|----------|-----------|-----------|
+| Shuffler | Scorching (+2x) | Bleed (immune) | Shambling dead tissue; no circulation |
+| Remnant | Disrupting (+3 dmg) | Stun (50% resist) | Retained cognition can suppress paralysis |
+| Screamer | Heavy (+2 dmg) | Poison (immune) | Fragile vocal tissue; toxic biology |
+| Brute | Keen (+1 crit) | Heavy (50% resist) | Slow but heavily muscled; thick hide absorbs blunt |
+| Whisperer | Blessed (+3 dmg) | Fear (immunity) | Psychic entity; amplified by holy; causes fear itself |
+| Stalker | Fire (2x DOT) | Keen (50% resist) | Fast predator; quick reflexes dodge precision strikes |
+| Hive Mother | Disrupting (+4 dmg) | All DOT (50% resist) | Colony organism; bleeds spread; fire stops swarm coordination |
+| Sanguine Feral | Sanguine-Forged (x1.5) | Stun (immune) | Supernatural reflex; Sanguine weapons resonate |
+| Red Court Enforcer | Blessed (+2 dmg) | Poison (50% resist) | Corrupt Sanguine; holy power hurts; toxins adapted |
+| Elder Sanguine | Blessed (+5 dmg), Silver (2x) | Disrupting (immune) | Ancient predator; only holy/silver hurt; too evolved to disrupt |
+
+**Notes on Resistance:**
+- Immunity: condition/trait has 0% effect
+- 50% resist: condition half-damage (Bleed 0.5 HP/turn), halved duration (round down), or -1 accuracy modifier instead of -2
+- Weakness: +X damage flat, or multiplier (x2, x1.5), or guaranteed condition application
+
+---
+
+### 5. Class Combat Abilities (7 total)
+
+Each class gets ONE unique ability usable once per fight. Abilities are declared before the attack roll and resolve independently.
+
+#### Enforcer: Overwhelm
+- **Cost**: 2 HP
+- **Effect**: Your next attack ignores armor (damage vs enemy defense, no % reduction).
+- **Message**: "You drive through its defenses with raw power."
+- **Scaling**: None (flat effect)
+- **Lore**: Brute force combat mastery
+
+#### Scout: Mark Target
+- **Cost**: Free action (does not consume turn)
+- **Effect**: Next 2 of your attacks gain +3 to hit.
+- **Message**: "You sight the target. Weak points become clear."
+- **Scaling**: None (flat effect)
+- **Lore**: Tactical awareness
+
+#### Wraith: Shadowstrike
+- **Cost**: Free (requires you to be hidden/undetected)
+- **Effect**: Attack from stealth. Guaranteed critical hit if enemy has not seen you. Ends stealth.
+- **Message**: "You emerge from the dark. The strike finds the killing blow."
+- **Scaling**: None (crit is fixed)
+- **Lore**: Assassin's training
+
+#### Shepherd: Mend
+- **Cost**: Action (consumes turn)
+- **Effect**: Heal 1d6 + (presence mod) HP. Requires a field_medicine check (DC 8) to succeed. On failure: no healing but you don't lose the ability (retry next turn).
+- **Message**: "Hands steady. Focus shifts inward. Wounds knit."
+- **Scaling**: Presence (determines healing amount)
+- **Lore**: Field medicine mastery
+
+#### Reclaimer: Analyze
+- **Cost**: Free action (does not consume turn)
+- **Effect**: Reveal enemy's current HP%, all weaknesses, all resistances, and remaining ability uses.
+- **Message**: "You catalogue the thing's weaknesses. Knowledge is power."
+- **Scaling**: None (information only)
+- **Lore**: Encyclopedic understanding
+
+#### Warden: Brace
+- **Cost**: Action + initiative
+- **Effect**: Skip this turn. Reduce all incoming damage by 50% for the next incoming enemy attack.
+- **Message**: "You set your stance. The blow still lands, but glancing."
+- **Scaling**: None (fixed reduction)
+- **Lore**: Unwavering defense
+
+#### Broker: Intimidate
+- **Cost**: Action (consumes turn)
+- **Effect**: Enemy must roll an intimidation check (DC = your presence + wits/2, max DC 18). On failure: enemy skips next turn. On success: attack proceeds normally.
+- **Message**: "You bare teeth. Its resolve wavers." / "It hisses. Your bluff fails."
+- **Scaling**: Presence + Wits (determines DC)
+- **Lore**: Information broker's persuasion
+
+---
+
+### 6. New Combat Verbs
+
+**ability** — Use your class ability (once per fight)
+- Syntax: `ability` (no target needed; resolves against current enemy)
+- Checks if ability is available. If already used, error.
+- Executes ability (Overwhelm, Mark, Shadowstrike, Mend, Analyze, Brace, Intimidate)
+- Consumes turn (except Scout Mark, Wraith Shadowstrike, Reclaimer Analyze)
+- Follow-up turn is enemy's turn (if ability consumed action)
+
+**defend** — Defensive stance (skip attack, reduce incoming damage)
+- Syntax: `defend`
+- Your turn is consumed
+- Next incoming enemy attack: damage -30% (round down, min 1)
+- Stacks with armor (% reduction applies first, then -30%)
+- Message: "You brace for impact."
+
+**wait** — Patience bonus (skip attack, gain +2 on next attack)
+- Syntax: `wait`
+- Your turn is consumed
+- Next attack you make: +2 to hit (in addition to any trait bonuses)
+- Bonus consumed on next attack (expires if you defend/wait/ability instead)
+- Message: "You wait for the right moment."
+
+**analyze** — Scan the enemy (if not Reclaimer, DC 11 Wits check required)
+- Syntax: `analyze` or `scan`
+- For Reclaimer: free action, no check, full info
+- For others: consumes turn, needs Wits check; on success, reveal info; on failure, nothing
+- Info revealed: HP%, weaknesses, resistances, active conditions
+- Message: "You study its form." or "The details escape you."
+
+---
+
+### 7. Item Tier System
+
+Items are categorized into 5 tiers based on lore and mechanical power. UI shows tier on equip.
+
+| Tier | Name | Damage Range | Defense Range | Examples | When Found | Flavor |
+|------|------|--------------|---------------|----------|-----------|--------|
+| T1 | Scrap | 1–3 | 0–1 | Pipe wrench, scrap vest | Starting zones, surface | Salvaged junk |
+| T2 | Salvage | 4–5 | 1–2 | Combat knife, leather jacket | Lower zones | Pre-Collapse consumer goods |
+| T3 | Military | 6–8 | 2–3 | 9mm pistol, reinforced coat | Mid zones | Military/police stock |
+| T4 | Pre-Collapse | 10–12 | 3–4 | Shotgun, kevlar vest | Late zones, rare drops | Advanced tech |
+| T5 | MERIDIAN | Variable | Variable | Silver knife, hazmat suit | Quest reward only | Experimental/recovered artifacts |
+
+**Tier Assignment Rules:**
+- Weapons: damage stat determines tier
+- Armor: defense stat determines tier
+- Consumables: healing/stat bonus determines tier
+- Rarity: higher tiers are rarer in loot tables
+
+---
+
+## Tasks
+
+### Phase 1: Data Structures (2 tasks)
+These must complete first; all other tasks depend on them.
+
+- [ ] **Task 1: Create trait type definitions** (`types/traits.ts`)
+  - Define `WeaponTrait` interface: { id, name, description, category, statScaling?, effect }
+  - Define `ArmorTrait` interface: { id, name, description, effect }
+  - Define `Condition` enum: Bleed, Burning, Stunned, Poisoned, Frightened, Weakened
+  - Define `ConditionEffect` interface: { duration, damagePerTurn?, modifierPenalty?, skip? }
+  - Define `ItemTier` type: 'T1' | 'T2' | 'T3' | 'T4' | 'T5'
+  - Files: Create `/Users/ryan/projects/mud-game/types/traits.ts`
+  - Tests: Type imports succeed; no runtime logic to test
+
+- [ ] **Task 2: Extend game.ts with trait support**
+  - Add `traits?: string[]` to `Item` interface
+  - Add `conditions?: Partial<Record<Condition, number>>` to `CombatState` (duration remaining)
+  - Add `abilityUsed?: boolean` to `CombatState` (track once-per-fight ability)
+  - Add `braceDamageReduction?: number` to `CombatState` (Warden Brace defense bonus)
+  - Add `markedAttacks?: number` to `CombatState` (Scout Mark remaining uses)
+  - Add `waitBonus?: number` to `CombatState` (patience bonus, expires on attack)
+  - Add `tier?: ItemTier` to `Item` interface
+  - Files: Modify `/Users/ryan/projects/mud-game/types/game.ts`
+  - Tests: Type-check all usages; build passes
+
+---
+
+### Phase 2: Trait Definitions (3 tasks)
+Can run in parallel once Phase 1 is done.
+
+- [ ] **Task 3: Define all weapon traits** (`lib/traits/weapons.ts`)
+  - Export `WEAPON_TRAITS: Record<string, WeaponTrait>`
+  - Include all 20 traits: Keen, Heavy, Vicious, Scorching, Draining, Quick, Precise, Silenced, Blessed, Disrupting, Cursed, Sanguine-Forged, Verdant, +7 more
+  - Each trait: { id, name, description, category ('damage' | 'utility' | 'special'), statScaling? ('vigor' | 'reflex' | 'wits' | 'presence' | null) }
+  - Export helper: `applyWeaponTrait(trait, player, enemy, damage) => { damage, messages, conditions }`
+  - Files: Create `/Users/ryan/projects/mud-game/lib/traits/weapons.ts`
+  - Notes: Do NOT implement condition application yet (Task 5 handles that)
+  - Tests: Unit test each trait definition; verify scaling math
+
+- [ ] **Task 4: Define all armor traits** (`lib/traits/armor.ts`)
+  - Export `ARMOR_TRAITS: Record<string, ArmorTrait>`
+  - Include all 5 traits: Fortified, Reactive, Insulated, Warded, Reflective
+  - Each trait: { id, name, description, effect (function or string) }
+  - Export helper: `applyArmorTrait(trait, incomingDamage, condition?) => { damage, conditionNegated }`
+  - Files: Create `/Users/ryan/projects/mud-game/lib/traits/armor.ts`
+  - Tests: Unit test damage reduction logic; verify condition interaction
+
+- [ ] **Task 5: Define status conditions** (`lib/traits/conditions.ts`)
+  - Export `CONDITIONS: Record<Condition, ConditionEffect>`
+  - Include: Bleed (2 turns, 1 HP/turn), Burning (1 turn, 2 HP/turn), Stunned (1 turn, skip), Poisoned (3 turns, -1 roll, 1 HP/turn), Frightened (2 turns, -2 rolls), Weakened (1 turn, -50% dmg)
+  - Export helper: `applyCondition(state, condition, duration) => newState`
+  - Export helper: `tickConditions(state) => { newState, damageThisRound, messages }`
+  - Export helper: `rollWithConditions(roll, state) => modifiedRoll`
+  - Files: Create `/Users/ryan/projects/mud-game/lib/traits/conditions.ts`
+  - Tests: Unit test condition ticking, modifier application, damage calc
+
+---
+
+### Phase 3: Enemy Traits & Item Data (2 tasks)
+Can run in parallel once Phase 1 is done.
+
+- [ ] **Task 6: Add weakness/resistance table** (`lib/traits/weaknesses.ts`)
+  - Export `ENEMY_WEAKNESSES: Record<HollowType | string, { weakness: string, resistance: string }>`
+  - Map all 15 enemies to weakness + resistance
+  - Export helper: `getEnemyWeakness(enemy) => { trait, bonus }`
+  - Export helper: `getEnemyResistance(enemy) => { trait, percent }`
+  - Files: Create `/Users/ryan/projects/mud-game/lib/traits/weaknesses.ts`
+  - Tests: Unit test lookup for all 15 enemies; verify bonus/percent values
+
+- [ ] **Task 7: Assign traits and tiers to all items** (`data/items.ts`)
+  - Iterate all 151 items in `ITEMS` object
+  - Add `traits` array to each weapon (1–2 traits based on design)
+  - Add `tier` field to each item based on damage/defense
+  - Add `traits` array to each armor (0–1 traits)
+  - Examples:
+    - Pipe wrench: `traits: ['Heavy'], tier: 'T1'`
+    - Combat knife: `traits: ['Quick', 'Vicious'], tier: 'T2'`
+    - Silver knife: `traits: ['Blessed', 'Sanguine-Forged'], tier: 'T5'`
+    - Scrap vest: `traits: [], tier: 'T1'`
+    - Reinforced coat: `traits: ['Fortified'], tier: 'T3'`
+  - Verify all trait IDs exist in WEAPON_TRAITS / ARMOR_TRAITS
+  - Files: Modify `/Users/ryan/projects/mud-game/data/items.ts`
+  - Tests: Verify all items have tier; no invalid trait IDs; linting passes
+
+---
+
+### Phase 4: Class Abilities (1 task)
+
+- [ ] **Task 8: Define class combat abilities** (`lib/abilities/class.ts`)
+  - Export `CLASS_ABILITIES: Record<CharacterClass, ClassAbility>`
+  - ClassAbility interface: { id, name, description, cost ('free' | 'action' | 'hp'), effect (function) }
+  - Implement all 7:
+    - Enforcer Overwhelm: ignores armor on next attack
+    - Scout Mark: +3 to hit for next 2 attacks
+    - Wraith Shadowstrike: guaranteed crit if undetected
+    - Shepherd Mend: heal 1d6 + pres mod, DC 8 field_medicine check
+    - Reclaimer Analyze: free, reveal full enemy info
+    - Warden Brace: reduce next dmg 50%
+    - Broker Intimidate: DC = pres + wits/2, skip enemy turn on failure
+  - Export helper: `executeAbility(abilityId, player, state) => { success, messages, newState }`
+  - Files: Create `/Users/ryan/projects/mud-game/lib/abilities/class.ts`
+  - Tests: Unit test each ability; verify stat scaling and effect application
+
+---
+
+### Phase 5: Combat Integration (3 tasks)
+Can run in parallel once Phase 2 is done.
+
+- [ ] **Task 9: Integrate traits into combat.ts** (`lib/combat.ts`)
+  - Modify `playerAttack()` to:
+    - Look up weapon traits from equipped weapon
+    - Apply weapon trait effects after hit (damage mod, condition application)
+    - Integrate condition ticking (Bleed/Poison damage per round)
+    - Integrate condition modifiers (Poisoned/Frightened -1/-2 to rolls)
+    - Output trait flavor text in messages
+  - Modify `enemyAttack()` to:
+    - Check weakness/resistance table for enemy
+    - Apply weakness bonus or resistance reduction
+    - Output resistance message if applicable
+  - Modify `CombatState` management to:
+    - Initialize conditions as empty object
+    - Tick conditions each round (damage, decrement duration)
+    - Apply condition modifiers to rolls
+  - Files: Modify `/Users/ryan/projects/mud-game/lib/combat.ts`
+  - Depends on: Task 3, 5, 6
+  - Tests: Unit test trait application; integration test one full combat with traits; verify condition ticking
+
+- [ ] **Task 10: Integrate armor traits into damage calc** (`lib/combat.ts`)
+  - Modify damage reduction in `playerAttack()` and `enemyAttack()` to:
+    - Look up armor traits from equipped armor
+    - Apply armor trait effects (Fortified +1, Reactive 10% negate, Insulated immunity, Warded composure, Reflective reflect)
+    - Output armor trait flavor if triggered
+  - Files: Modify `/Users/ryan/projects/mud-game/lib/combat.ts`
+  - Depends on: Task 4
+  - Tests: Unit test each armor trait; verify damage reduction stacking
+
+- [ ] **Task 11: Integrate weakness/resistance into enemy attacks** (`lib/combat.ts`)
+  - Modify `enemyAttack()` to:
+    - Check player's armor for resistances (if implemented)
+    - Check if player has conditions that reduce defense
+    - Apply weakness damage if player has weakness trait
+    - Output weakness/resistance messages
+  - Files: Modify `/Users/ryan/projects/mud-game/lib/combat.ts`
+  - Depends on: Task 6
+  - Tests: Unit test weakness bonus; integration test with condition defense interaction
+
+---
+
+### Phase 6: New Combat Verbs (2 tasks)
+Can run in parallel once Phase 2 is done.
+
+- [ ] **Task 12: Implement ability/defend/wait verbs** (`lib/actions/combat.ts`)
+  - Add handler: `handleAbility(engine, player, state)` — call ClassAbility executor
+  - Add handler: `handleDefend(engine, player, state)` — set `braceDamageReduction: 0.3`
+  - Add handler: `handleWait(engine, player, state)` — set `waitBonus: 2`
+  - Integrate into action parser: route 'ability', 'defend', 'wait' to handlers
+  - Modify attack roll to check for `waitBonus` and apply it
+  - Modify damage reduction to check for `braceDamageReduction` and apply it
+  - Files: Modify `/Users/ryan/projects/mud-game/lib/actions/combat.ts`
+  - Depends on: Task 8
+  - Tests: Unit test each handler; integration test ability execution; verify wait/defend state transitions
+
+- [ ] **Task 13: Implement analyze verb** (`lib/actions/combat.ts`)
+  - Add handler: `handleAnalyze(engine, player, state)`
+  - If Reclaimer: free action, return full enemy info
+  - Else: DC 11 Wits check; on success, return full info; on failure, return nothing
+  - Output: enemy HP %, weaknesses, resistances, active conditions
+  - Files: Modify `/Users/ryan/projects/mud-game/lib/actions/combat.ts`
+  - Depends on: Task 6
+  - Tests: Unit test Reclaimer case; unit test other class cases (success/failure)
+
+---
+
+### Phase 7: UI & Messages (1 task)
+
+- [ ] **Task 14: Add trait flavor and tier display to UI** (`lib/richText.ts` + terminal component)
+  - Add trait descriptions to combat messages (already in handlers from earlier tasks)
+  - Add tier badge to item equip messages: "You equip the [Combat Knife (T2 Salvage)]"
+  - Add condition badges to combat state display: "[Bleed 1 turn] [Poisoned 2 turns]"
+  - Add ability status to combat prompt: "Available: `ability`" or "Ability used this fight"
+  - Add condition icons to enemy display (if UI supports)
+  - Files: Modify `/Users/ryan/projects/mud-game/lib/richText.ts` + terminal display component
+  - Tests: Visual regression test; verify all trait/tier/condition text appears correctly
+
+---
+
+### Phase 8: Testing & Polish (2 tasks)
+
+- [ ] **Task 15: Write integration tests** (`__tests__/combat-traits.test.ts`)
+  - Test a full combat loop with all trait categories (weapon damage, utility, special)
+  - Test condition application and ticking (Bleed, Burning, Stun, Poison, Fear, Weakened)
+  - Test armor trait interactions (Fortified, Reactive, Insulated)
+  - Test enemy weakness/resistance application
+  - Test each class ability in isolation
+  - Test ability + trait stacking (e.g., Heavy crit + Enforcer Overwhelm)
+  - Test condition resist (Warden Brace vs Burning, etc.)
+  - Files: Create `/Users/ryan/projects/mud-game/__tests__/combat-traits.test.ts`
+  - Depends on: All Phase 2–6 tasks
+  - Tests: 30+ assertions covering all trait combinations
+
+- [ ] **Task 16: Pre-MR pipeline**
+  1. code-reviewer: self-review all trait files; check for bugs, missed edge cases, performance issues
+  2. test-runner: `npm test` — all new tests pass; coverage > 85% for trait modules
+  3. git-agent: commit and open MR with description of trait system, tiers, abilities
+
+---
+
+## Definition of Done
+
+Every task in this plan is complete when:
+- [ ] Code written and self-reviewed
+- [ ] Tests written or updated for the changed logic
+- [ ] `code-reviewer` passes with no blockers
+- [ ] `test-runner` passes with no failures
+- [ ] MR opened via `git-agent` with coverage gaps (if any) noted in the description
+
+---
+
+## Effort Breakdown by Phase
+
+| Phase | Tasks | Estimated Effort | Parallelism |
+|-------|-------|------------------|-------------|
+| 1: Data Structures | 2 | 4–6 hours | Sequential (tasks 1→2) |
+| 2: Trait Definitions | 3 | 8–10 hours | Parallel (3, 4, 5) |
+| 3: Enemy & Item Data | 2 | 6–8 hours | Parallel (6, 7) |
+| 4: Class Abilities | 1 | 4–6 hours | Sequential |
+| 5: Combat Integration | 3 | 12–15 hours | Sequential (9→10→11) |
+| 6: New Verbs | 2 | 6–8 hours | Parallel (12, 13) |
+| 7: UI & Messages | 1 | 3–4 hours | Sequential |
+| 8: Testing & Polish | 2 | 6–8 hours | Sequential (15→16) |
+| **Total** | **16** | **50–65 hours** | |
+
+**Estimated Duration**: 2–3 weeks for a single developer working part-time (20 hrs/week)
+
+---
+
+## References
+
+- Current combat system: `/Users/ryan/projects/mud-game/lib/combat.ts`
+- Current item data: `/Users/ryan/projects/mud-game/data/items.ts`
+- Current enemy data: `/Users/ryan/projects/mud-game/data/enemies.ts`
+- Type definitions: `/Users/ryan/projects/mud-game/types/game.ts`
+- Skill bonuses: `/Users/ryan/projects/mud-game/lib/skillBonus.ts`
+- Fear system: `/Users/ryan/projects/mud-game/lib/fear.ts`
+- Combat actions: `/Users/ryan/projects/mud-game/lib/actions/combat.ts`
+
+---
+
+## Example Trait Assignments (Reference for Task 7)
+
+**Melee Weapons:**
+- Pipe wrench: Heavy, T1
+- Combat knife: Quick + Vicious, T2
+- Machete: Vicious, T2
+- Silver knife: Blessed + Sanguine-Forged, T5
+- Tomahawk: Heavy + Keen, T2
+
+**Ranged Weapons:**
+- Hunting rifle (any): Precise + Quick, T2–T3
+- 9mm pistol: Quick, T2
+- Shotgun: Heavy, T3–T4
+
+**Armor:**
+- Scrap vest: none, T1
+- Leather jacket: none, T2
+- Reinforced coat: Fortified, T3
+- Kevlar vest: Warded, T3–T4
+- Hazmat suit: Insulated, T5
+
+**Consumables:**
+- Bandages: Healing +3, T1
+- Quiet drops: none, T2
+- Sanguine blood vial: Special (quest item), T5
+
+---
+
+## Open Questions
+
+- **Q1**: Should traits be visible in `examine weapon` output before equip?
+  - **A** (assumption): Yes. Players should see "Combat Knife (Quick, Vicious)" in examine.
+
+- **Q2**: Can conditions be cured with consumables mid-fight?
+  - **A** (assumption): No (out of scope). Conditions are temporary; fight ends or you manage.
+
+- **Q3**: Does Reactive armor trigger on every condition application, or once per turn?
+  - **A** (assumption): Every condition application (up to 10% per condition type per turn).
+
+- **Q4**: If an enemy has both weakness and player has trait that applies that weakness, does it stack?
+  - **A** (assumption): No. Weakness is applied once (+2–5 damage), not multiplied. Condition still applies (Bleed, Burn).
+
+- **Q5**: What happens if Warden uses Brace but Brute charges through?
+  - **A** (assumption): Brace applies after all other calculations. Brute charge (2x) → armor % → Fortified → Brace (all stack in order).
+
+---
+
+## Migration & Rollout
+
+**Backward compatibility**: This is a new system on top of existing combat. No existing data breaks—items without traits work fine (treat as empty array).
+
+**Rollout strategy**:
+1. Merge Phase 1–2 (data structures + trait definitions) with no gameplay changes
+2. Merge Phase 3–4 (enemy/item data + abilities) with no gameplay changes
+3. Merge Phase 5 (combat integration) — THIS IS THE FEATURE LAUNCH
+4. Merge Phase 6–7 (verbs + UI) as refinement
+5. Phase 8 (testing) is ongoing; tests should pass before each merge
+
+---
+
+## Appendix: Full Trait List for Implementation
+
+**Damage Traits (5):**
+1. Keen — +1 crit chance per 2 reflex
+2. Heavy — +1 damage, crit stun
+3. Vicious — bleed on hit
+4. Scorching — burning on hit
+5. Draining — lifesteal on hit
+
+**Utility Traits (5):**
+6. Quick — +1 initiative per 2 reflex
+7. Precise — +1 to hit per 2 wits
+8. Silenced — no noise encounter
+9. Blessed — +1 damage per 2 presence, +2 vs Hollow, +3 vs Sanguine
+10. Disrupting — weakened on crit
+
+**Special Traits (3):**
+11. Cursed — +2 damage, lose 1 HP
+12. Sanguine-Forged — x1.5 vs Sanguine, x0.5 vs Hollow
+13. Verdant — +1 max HP per hit (cap +3/fight)
+
+**Additional Traits (optional, for full 20):**
+14. Whirling — next attack hits multiple enemies if available
+15. Dragonslayer — +4 damage vs dragons (future enemy type)
+16. Life-Steal — on crit, drain 1d6 HP to self
+17. Rending — apply Weakened on crit
+18. Infectious — Poisoned applies instead of bleed (custom condition)
+19. Soulbound — damage increases with kills this fight (+1 per kill, max +5)
+20. Reforged — armor +1 on hit (scales off damage), capped
+

@@ -22,6 +22,20 @@ const levTree: DialogueTree = {
       speaker: 'Lev',
       text: `${rt.npc('Lev')} looks up from a tablet, eyes already cataloguing you. "You're back. Cycle count consistent with projections — memory degradation within expected parameters." A pause. "That was clinical. I'm aware. Sit down if you have questions."`,
       branches: [
+        // ---- Echo branches (cycle 2+) ----
+        {
+          label: '"You gave me the keycard last time. I brought back your data."',
+          targetNode: 'lev_echo_trusted',
+          requiresCycleMin: 2,
+          requiresPreviousRelationship: { npcId: 'lev', relationship: 'trusted' },
+        },
+        {
+          label: '"We\'ve done this before, Lev."',
+          targetNode: 'lev_echo_distrusted',
+          requiresCycleMin: 2,
+          requiresPreviousRelationship: { npcId: 'lev', relationship: 'distrusted' },
+        },
+        // ---- Standard branches ----
         {
           label: `Ask about ${rt.keyword('CHARON-7')} research`,
           targetNode: 'lev_charon',
@@ -42,6 +56,46 @@ const levTree: DialogueTree = {
         },
         {
           label: '"I should go."',
+          targetNode: 'lev_leave',
+        },
+      ],
+    },
+
+    // ---- Echo: Trusted (cycle 2+) ----
+    lev_echo_trusted: {
+      id: 'lev_echo_trusted',
+      speaker: 'Lev',
+      text: `${rt.npc('Lev')}'s hands go still on the tablet. For a fraction of a second something crosses their face — not surprise, recognition. The clinical mask slips and underneath it is a person who remembers. "You're back. I remember the data. The viable samples, the sequencing work — you brought it all." They open the desk drawer without hesitation. The ${rt.item('MERIDIAN Keycard')} is already in their hand. "Skip the formalities. You've earned this twice over. I don't need to test someone who already passed." A pause. "That sounded like sentiment. It was data-driven sentiment. There's a difference."`,
+      onEnter: {
+        setFlag: { reclaimers_meridian_keycard: true, lev_trusts_player: true, lev_echo_acknowledged: true },
+        grantItem: ['meridian_keycard'],
+        grantRep: { faction: 'reclaimers', delta: 1 },
+      },
+      branches: [
+        {
+          label: '"Thank you, Lev. I\'ll bring back more this time."',
+          targetNode: 'lev_keycard_end',
+        },
+      ],
+    },
+
+    // ---- Echo: Distrusted (cycle 2+) ----
+    lev_echo_distrusted: {
+      id: 'lev_echo_distrusted',
+      speaker: 'Lev',
+      text: `${rt.npc('Lev')}'s expression hardens — the clinical detachment sharpening into something with edges. "You again." They don't open the drawer. "Last time you took the keycard and I received nothing. No data. No samples. No professional courtesy." They adjust the tablet, not looking at you. "The keycard costs trust you haven't earned. Twice." A deliberate silence. "Bring me a ${rt.item('Viable R-8 Sample')} from the field station. Not a promise. Physical evidence. Then we discuss access."`,
+      onEnter: {
+        setFlag: 'lev_echo_acknowledged',
+      },
+      branches: [
+        {
+          label: `[Lore DC 16] "I know what happened in the lower wing. Let me explain."`,
+          targetNode: 'lev_keycard_lore_success',
+          skillCheck: { skill: 'lore', dc: 16 },
+          failNode: 'lev_keycard_fail',
+        },
+        {
+          label: '"I understand. I\'ll find the sample."',
           targetNode: 'lev_leave',
         },
       ],
@@ -236,6 +290,14 @@ const sparksTree: DialogueTree = {
       speaker: 'Sparks',
       text: `${rt.npc('Sparks')} is hunched over a gutted shortwave radio, soldering iron in one hand, frequency chart in the other. She barely looks up. "Signal's still there. Every day. Same twelve words. I'm not crazy — I know what 'not crazy' sounds like and this is it."`,
       branches: [
+        // ---- Echo branches (cycle 2+) ----
+        {
+          label: '"The signal changed after I went north. I can tell you what happened."',
+          targetNode: 'sparks_echo_broadcaster',
+          requiresCycleMin: 2,
+          requiresPreviousQuest: 'sparks_mentioned_broadcaster',
+        },
+        // ---- Standard branches ----
         {
           label: `"Tell me about the ${rt.keyword('signal')}."`,
           targetNode: 'sparks_signal',
@@ -251,6 +313,64 @@ const sparksTree: DialogueTree = {
         },
         {
           label: '"I\'ll let you work."',
+          targetNode: 'sparks_leave',
+        },
+      ],
+    },
+
+    // ---- Echo: Broadcaster knowledge (cycle 2+) ----
+    sparks_echo_broadcaster: {
+      id: 'sparks_echo_broadcaster',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} drops the soldering iron. It clatters on the bench and she doesn't notice. "You — wait. Wait." She grabs the frequency chart, flipping to a page dense with annotations. "The signal changed after you went north last time. The modulation shifted — same twelve words but the cadence is different. Faster. Like whoever's down there knows someone actually came." She looks at you with an intensity that borders on desperate. "What happened in there? What did you find?"`,
+      onEnter: {
+        setFlag: 'sparks_echo_acknowledged',
+      },
+      branches: [
+        {
+          label: '"There\'s a man down there. Dr. Vane. He\'s been broadcasting for seven years."',
+          targetNode: 'sparks_echo_vane_reveal',
+        },
+        {
+          label: '"The facility is intact. That\'s all I can say."',
+          targetNode: 'sparks_echo_partial',
+        },
+      ],
+    },
+
+    sparks_echo_vane_reveal: {
+      id: 'sparks_echo_vane_reveal',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} sits down. Hard. Like her legs decided before she did. "Seven years." She says it twice, the second time quieter. "Seven years. Alone. Adjusting the modulation by hand every time the atmosphere shifts." Her voice cracks — not with sadness, with vindication and the specific grief that comes with being right about something terrible. "I told ${rt.npc('Lev')}. I told everyone. 'Interesting.' They said 'interesting.'" She wipes her eyes with the back of her soldering hand. "Thank you. For — I wasn't crazy. I knew I wasn't crazy."`,
+      onEnter: {
+        setFlag: { sparks_knows_vane: true, sparks_shared_decode: true, sparks_mentioned_broadcaster: true },
+      },
+      branches: [
+        {
+          label: `"I need a ${rt.item('signal receiver')} for the field."`,
+          targetNode: 'sparks_equipment',
+        },
+        {
+          label: '"You were never crazy, Sparks."',
+          targetNode: 'sparks_leave',
+        },
+      ],
+    },
+
+    sparks_echo_partial: {
+      id: 'sparks_echo_partial',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} stares at you. The hope doesn't leave her face but it rearranges into something harder, more patient. "Intact. Okay. Okay." She's scribbling notes already, cross-referencing the frequency shift against her charts. "That's — that's enough. For now. The signal changed because something happened when you were there, and you're telling me the something is real." She taps the chart. "I can work with that. I can definitely work with that."`,
+      onEnter: {
+        setFlag: { sparks_echo_acknowledged: true, sparks_shared_decode: true },
+      },
+      branches: [
+        {
+          label: `"I need a ${rt.item('signal receiver')} for the field."`,
+          targetNode: 'sparks_equipment',
+        },
+        {
+          label: '"Keep listening, Sparks."',
           targetNode: 'sparks_leave',
         },
       ],
@@ -408,6 +528,20 @@ const crossTree: DialogueTree = {
       speaker: 'Marshal Cross',
       text: `${rt.npc('Marshal Cross')} looks up from a report. One glance — hands, belt, posture — and she has you categorized. "You have sixty seconds. Use them."`,
       branches: [
+        // ---- Echo branches (cycle 2+) ----
+        {
+          label: '"You\'ve done this march before. So have I."',
+          targetNode: 'cross_echo_sanctioned',
+          requiresCycleMin: 2,
+          requiresPreviousQuest: 'cross_expedition_sanctioned',
+        },
+        {
+          label: '"We\'ve met before, Marshal. I know how this conversation goes."',
+          targetNode: 'cross_echo_distrust',
+          requiresCycleMin: 2,
+          requiresPreviousRelationship: { npcId: 'marshal_cross', relationship: 'distrusted' },
+        },
+        // ---- Standard branches ----
         {
           label: `Ask about ${rt.keyword('Accord')} law.`,
           targetNode: 'cross_law',
@@ -428,6 +562,66 @@ const crossTree: DialogueTree = {
         },
         {
           label: '"I should go."',
+          targetNode: 'cross_leave',
+        },
+      ],
+    },
+
+    // ---- Echo: Previous expedition sanctioned (cycle 2+) ----
+    cross_echo_sanctioned: {
+      id: 'cross_echo_sanctioned',
+      speaker: 'Marshal Cross',
+      text: `${rt.npc('Marshal Cross')} stops reading. She looks at you — not the sixty-second assessment, something longer, something that searches for a thing she can't name. "You've done this march before. I can see it in how you walk." The military cadence softens for exactly one sentence. "Permit's pre-approved." She pulls the document from the drawer — already stamped, already signed. She was expecting you. "Route maps, supply draw, full backing. Same terms as last time." She slides the papers across. "Don't make me regret trusting someone twice."`,
+      onEnter: {
+        setFlag: { cross_expedition_sanctioned: true, cross_echo_acknowledged: true },
+        grantRep: { faction: 'accord', delta: 1 },
+      },
+      branches: [
+        {
+          label: '"Yes, Marshal."',
+          targetNode: 'cross_leave',
+        },
+      ],
+    },
+
+    // ---- Echo: Cross didn't trust player (cycle 2+) ----
+    cross_echo_distrust: {
+      id: 'cross_echo_distrust',
+      speaker: 'Marshal Cross',
+      text: `${rt.npc('Marshal Cross')} sets the report down. Slowly. "I've heard stories about the last you." She doesn't explain how she knows — the Accord keeps records, or the world remembers in ways that don't require paper. "Convince me this version is different."`,
+      onEnter: {
+        setFlag: 'cross_echo_acknowledged',
+      },
+      branches: [
+        {
+          label: `[Negotiation DC 14] "Last time I didn't understand the stakes. Now I do. Eight hundred people — I remember the weight."`,
+          targetNode: 'cross_exp_presence_success',
+          skillCheck: { skill: 'negotiation', dc: 14 },
+          failNode: 'cross_echo_distrust_fail',
+        },
+        {
+          label: `"I know about the ${rt.keyword('Kindling')} tunnels."`,
+          targetNode: 'cross_exp_barter',
+          requiresFlag: 'harrow_mentioned_tunnels',
+        },
+        {
+          label: '"Fair. I\'ll earn it the hard way."',
+          targetNode: 'cross_leave',
+        },
+      ],
+    },
+
+    cross_echo_distrust_fail: {
+      id: 'cross_echo_distrust_fail',
+      speaker: 'Marshal Cross',
+      text: `"Words." One word, military-flat. "Same words, different day. I don't authorize expeditions on vocabulary." She picks the report back up. "Bring me something concrete. Intel, proof, someone who'll vouch for you. Then we talk."`,
+      branches: [
+        {
+          label: `Ask about ${rt.keyword('Accord')} law.`,
+          targetNode: 'cross_law',
+        },
+        {
+          label: '"Understood."',
           targetNode: 'cross_leave',
         },
       ],
@@ -668,6 +862,14 @@ const briggsTree: DialogueTree = {
       speaker: 'Warlord Briggs',
       text: `${rt.npc('Briggs')} doesn't look up from the sidearm he's cleaning. The cloth moves in slow, precise circles. "State your business."`,
       branches: [
+        // ---- Echo branches (cycle 2+) ----
+        {
+          label: '"You already told me the truth, Briggs. About the bombing."',
+          targetNode: 'briggs_echo_confessed',
+          requiresCycleMin: 2,
+          requiresPreviousQuest: 'briggs_confessed_bombing',
+        },
+        // ---- Standard branches ----
         {
           label: `"What's ${rt.keyword('Salt Creek')} about?"`,
           targetNode: 'briggs_salt_creek',
@@ -695,6 +897,43 @@ const briggsTree: DialogueTree = {
         },
         {
           label: '"Nothing. Leaving."',
+          targetNode: 'briggs_leave',
+        },
+      ],
+    },
+
+    // ---- Echo: Confession already happened (cycle 2+) ----
+    briggs_echo_confessed: {
+      id: 'briggs_echo_confessed',
+      speaker: 'Warlord Briggs',
+      text: `${rt.npc('Briggs')}'s hands stop. The cloth goes flat on the table. He looks at you — not the assessment of a soldier sizing up a stranger, but the recognition of a man who gave away something heavy and is seeing the person he gave it to walk back through the door. "You know the truth already." His voice is quieter than before. Gruff but stripped of the defensive edge. "The facility. The bombing. The deployment orders." He pushes the sidearm aside. Full attention. "What do you want this time?"`,
+      onEnter: {
+        setFlag: { briggs_confessed_bombing: true, briggs_echo_acknowledged: true },
+      },
+      branches: [
+        {
+          label: `"I need soldiers for the ${rt.keyword('Scar')}. Same as before."`,
+          targetNode: 'briggs_military_support',
+        },
+        {
+          label: '"Just your support. Whatever you can give."',
+          targetNode: 'briggs_echo_support',
+        },
+      ],
+    },
+
+    briggs_echo_support: {
+      id: 'briggs_echo_support',
+      speaker: 'Warlord Briggs',
+      text: `"Support." He says the word like he's testing the weight of it. "Last time you took those papers and you did something with them. I don't know what — the cycle took you before I found out." He reaches into his vest. The same papers. The same fold marks. "Take them again. Sergeant Kade's team is ready — they're always ready. I told them someone might come." He sets the ${rt.item("Commander's Notes")} on the table. "This time, come back and tell me what happened. That's not an order. It's a request from someone who's been carrying this for too long."`,
+      onEnter: {
+        setFlag: { salter_expedition_backing: true },
+        grantItem: ['commanders_notes'],
+        grantRep: { faction: 'salters', delta: 1 },
+      },
+      branches: [
+        {
+          label: '"I\'ll come back. You have my word."',
           targetNode: 'briggs_leave',
         },
       ],
@@ -898,6 +1137,14 @@ const patchTree: DialogueTree = {
       speaker: 'Patch',
       text: `${rt.npc('Patch')} doesn't look up from the suture kit. "You're here. Good. I've got questions. You've got questions. One of us has something the other wants. Let's find out who goes first."`,
       branches: [
+        // ---- Echo branches (cycle 2+) ----
+        {
+          label: '"Back from the dead, Patch. Literally."',
+          targetNode: 'patch_echo_return',
+          requiresCycleMin: 2,
+          requiresPreviousQuest: 'patch_mentioned_scar',
+        },
+        // ---- Standard branches ----
         {
           label: 'I have something to trade for information.',
           targetNode: 'patch_trade_intel',
@@ -905,6 +1152,58 @@ const patchTree: DialogueTree = {
         {
           label: 'What do you know about the factions out here?',
           targetNode: 'patch_faction_talk',
+        },
+      ],
+    },
+
+    // ---- Echo: Return after Scar (cycle 2+) ----
+    patch_echo_return: {
+      id: 'patch_echo_return',
+      speaker: 'Patch',
+      text: `${rt.npc('Patch')} looks up. Actually looks up — the suture kit forgotten, the transactional mask slipping for half a second into something like genuine surprise. "Back from the dead. Literally." One shoulder shrug, but slower than usual. "What did you find up north? The Scar — you went in. I heard things. Movement reports, supply chain disruptions, radio chatter. Something changed after you were there."`,
+      onEnter: {
+        setFlag: { patch_echo_acknowledged: true, patch_mentioned_scar: true },
+      },
+      branches: [
+        {
+          label: '"The facility is intact. There\'s someone alive inside."',
+          targetNode: 'patch_echo_intel_exchange',
+        },
+        {
+          label: '"Information costs, Patch. You know that."',
+          targetNode: 'patch_echo_trade',
+        },
+      ],
+    },
+
+    patch_echo_intel_exchange: {
+      id: 'patch_echo_intel_exchange',
+      speaker: 'Patch',
+      text: `${rt.npc('Patch')} sets the suture kit down. Fully. Both hands flat on the table — the posture of someone recalibrating their entire information network. "Intact. Someone alive." The staccato delivery breaks for one word: "Who?" Then, without waiting: "Never mind. That's worth more than I can pay right now." A vial appears from somewhere — ${rt.item('Purified Stims')}, military grade. "Take these. And take this —" A folded paper with coordinates, patrol schedules, supply route timings. "Everything I've got on the northern approach. Current as of yesterday. You gave me something worth the whole kit."`,
+      onEnter: {
+        setFlag: 'patch_shared_northern_intel',
+        grantItem: ['purified_stims'],
+      },
+      branches: [
+        {
+          label: '"Fair trade. Keep listening, Patch."',
+          targetNode: 'patch_closure',
+        },
+      ],
+    },
+
+    patch_echo_trade: {
+      id: 'patch_echo_trade',
+      speaker: 'Patch',
+      text: `${rt.npc('Patch')} almost smiles. Almost. "Now you're talking my language." The suture kit slides aside, replaced by a barter-ready expression. "I've got new intel — ${rt.keyword('Kindling')} movement patterns, ${rt.keyword('Red Court')} supply lines, Accord patrol gaps. Fresh. Actionable." One finger taps the table. "Your turn. What's worth what."`,
+      branches: [
+        {
+          label: 'I have something to trade for information.',
+          targetNode: 'patch_trade_intel',
+        },
+        {
+          label: '"Later. I know where to find you."',
+          targetNode: 'patch_closure',
         },
       ],
     },
@@ -1621,6 +1920,26 @@ const harrowTree: DialogueTree = {
       speaker: 'Deacon Harrow',
       text: `${rt.npc('Deacon Harrow')} turns to you the way a flame turns toward oxygen — not aggressive, just drawn. "You've come to the flame." The greeting is warm. Too warm. The warmth of a man who has been expecting you specifically, even though he has never seen your face. "We don't get many visitors who stay long enough to hear what we're offering. Sit. Talk. The fire's patience is longer than mine, but I'll try."`,
       branches: [
+        // ---- Echo branches (cycle 2+) ----
+        {
+          label: '"Your sister\'s name was Elena. I know what the first lesson cost."',
+          targetNode: 'harrow_echo_truth',
+          requiresCycleMin: 2,
+          requiresPreviousQuest: 'harrow_recognized_truth',
+        },
+        {
+          label: '"The flame remembers its own, Deacon."',
+          targetNode: 'harrow_echo_faithful',
+          requiresCycleMin: 2,
+          requiresPreviousQuest: 'player_alignment_kindling',
+        },
+        {
+          label: '"We\'ve met before, Harrow."',
+          targetNode: 'harrow_echo_deceived',
+          requiresCycleMin: 2,
+          requiresPreviousQuest: 'player_deceived_harrow',
+        },
+        // ---- Standard branches ----
         {
           label: `Ask about the ${rt.keyword('Kindling')} faith.`,
           targetNode: 'harrow_faith',
@@ -1638,6 +1957,67 @@ const harrowTree: DialogueTree = {
           label: 'Ask about the tunnel beneath The Ember.',
           targetNode: 'harrow_tunnel_gate',
           requiresRep: { faction: 'kindling', min: 1 },
+        },
+        {
+          label: '"I should go."',
+          targetNode: 'harrow_leave',
+        },
+      ],
+    },
+
+    // ---- Echo: Recognized truth (cycle 2+) ----
+    harrow_echo_truth: {
+      id: 'harrow_echo_truth',
+      speaker: 'Deacon Harrow',
+      text: `${rt.npc('Deacon Harrow')} goes still. Not the stillness of composure — the stillness of a wound being touched by someone who knows exactly where it is. "Your eyes are different this time. You've already seen through the doctrine." He does not reach for the mask. For the first time, the man stands where the leader usually is. "Elena." He says the name like setting something down after carrying it too long. "You already know the way. The crypt entrance — behind the altar. The faithful won't stop you." He produces the brass key and holds it out. "Go see what we built on top of her grave. And when you come back, tell me if the lesson was wasted. You're the only person who's earned that answer twice."`,
+      onEnter: {
+        setFlag: { kindling_tunnel_access: true, harrow_recognized_truth: true, harrow_echo_acknowledged: true },
+      },
+      branches: [
+        {
+          label: '"I\'ll tell you. I promise."',
+          targetNode: 'harrow_leave',
+        },
+      ],
+    },
+
+    // ---- Echo: Faithful (cycle 2+) ----
+    harrow_echo_faithful: {
+      id: 'harrow_echo_faithful',
+      speaker: 'Deacon Harrow',
+      text: `Something moves across ${rt.npc('Deacon Harrow')}'s face that is not surprise — it is the recognition of a prayer being answered. "Welcome back, faithful. The flame remembers its own." He places a hand on your shoulder. The grip is firm, warm, and this time it carries the weight of genuine reunion rather than recruitment. "The tunnel is open to you. It was always open to you. We kept your place by the fire." His eyes are bright with something that might be tears if Harrow were a man who permitted himself tears. "The ${rt.keyword('Kindling')} endures because people come back. You came back."`,
+      onEnter: {
+        setFlag: { kindling_tunnel_access: true, player_alignment_kindling: true, harrow_echo_acknowledged: true },
+        grantRep: { faction: 'kindling', delta: 1 },
+      },
+      branches: [
+        {
+          label: '"The fire brought me home."',
+          targetNode: 'harrow_leave',
+        },
+      ],
+    },
+
+    // ---- Echo: Deceived (cycle 2+) ----
+    harrow_echo_deceived: {
+      id: 'harrow_echo_deceived',
+      speaker: 'Deacon Harrow',
+      text: `${rt.npc('Deacon Harrow')}'s warmth doesn't leave his face. That's the part that's wrong. The warmth is still there but something beneath it has changed temperature — not cold, watchful. "Something about you is wrong. The flame sees deceit." He doesn't explain how he knows. The man who reads rooms for a living has read you, and this time the margin notes are in red. "You lied to me once. The fire remembers that too." His hands fold. The calm conviction is still there but it has edges now. "You may stay. You may speak. But every word you say will cost more than it did before. That is the weight of broken trust in the house of the flame."`,
+      onEnter: {
+        setFlag: 'harrow_echo_acknowledged',
+      },
+      branches: [
+        {
+          label: `[Presence DC 13] "I lied. I know that. But the fire showed me something real since then."`,
+          targetNode: 'harrow_tunnel_join',
+          skillCheck: { skill: 'presence', dc: 13 },
+          failNode: 'harrow_tunnel_join_fail',
+        },
+        {
+          label: `[Lore DC 14] "I know about Elena. I know what the first lesson cost. That's not a lie."`,
+          targetNode: 'harrow_tunnel_truth',
+          skillCheck: { skill: 'lore', dc: 14 },
+          failNode: 'harrow_tunnel_truth_fail',
         },
         {
           label: '"I should go."',
@@ -1890,6 +2270,20 @@ const averyTree: DialogueTree = {
       speaker: 'Avery',
       text: `${rt.npc('Avery')} glances toward the stairs, then back. The check is automatic — the habit of someone who has been overheard before and learned from it. "You're not one of us. Good." The word 'good' comes out quieter than the rest, as if it surprised him too. "I mean — I can talk to you. Without it getting reported to ${rt.npc('Harrow')} as a spiritual development opportunity." A ghost of a smile that doesn't survive contact with his eyes.`,
       branches: [
+        // ---- Echo branches (cycle 2+) ----
+        {
+          label: '"Avery. You made it out last time. I helped you leave."',
+          targetNode: 'avery_echo_left',
+          requiresCycleMin: 2,
+          requiresPreviousQuest: 'avery_will_leave',
+        },
+        {
+          label: '"Avery... I\'m sorry about last time."',
+          targetNode: 'avery_echo_betrayed',
+          requiresCycleMin: 2,
+          requiresPreviousQuest: 'avery_betrayed',
+        },
+        // ---- Standard branches ----
         {
           label: '"You have doubts about the Kindling."',
           targetNode: 'avery_doubt',
@@ -1900,6 +2294,79 @@ const averyTree: DialogueTree = {
         },
         {
           label: '"I should go."',
+          targetNode: 'avery_leave',
+        },
+      ],
+    },
+
+    // ---- Echo: Avery left (cycle 2+) ----
+    avery_echo_left: {
+      id: 'avery_echo_left',
+      speaker: 'Avery',
+      text: `${rt.npc('Avery')} stares at you. The glance toward the stairs doesn't happen — the habit is gone, replaced by the posture of someone who no longer needs to check. Because ${rt.npc('Avery')} is not in the bell tower. ${rt.npc('Avery')} is here, in ${rt.keyword('Crossroads')}, wearing different clothes and standing straighter and looking at you with eyes that are still afraid but afraid of different things now. "You helped me leave. I made it to ${rt.keyword('Crossroads')}." The ghost smile from before — except this time it reaches his eyes. "${rt.npc('Patch')} gave me work. Medical supply runs. Turns out I'm good at logistics when I'm not spending all my energy on being terrified." He grips your arm — the same grip, brief and hard. "Thank you. For making it real instead of just a thought I had at three in the morning."`,
+      onEnter: {
+        setFlag: 'avery_echo_acknowledged',
+      },
+      branches: [
+        {
+          label: '"I\'m glad you made it, Avery."',
+          targetNode: 'avery_echo_left_closure',
+        },
+        {
+          label: '"What have you heard since you left the Kindling?"',
+          targetNode: 'avery_echo_left_intel',
+        },
+      ],
+    },
+
+    avery_echo_left_closure: {
+      id: 'avery_echo_left_closure',
+      speaker: 'Avery',
+      text: `He nods. The nod is different — less furtive, more grounded. "I'm glad too. Most days." A pause. "Some days I still check the stairs. Force of habit." The smile again. "But the stairs don't go anywhere dangerous anymore."`,
+    },
+
+    avery_echo_left_intel: {
+      id: 'avery_echo_left_intel',
+      speaker: 'Avery',
+      text: `"The ${rt.keyword('Kindling')} is growing. ${rt.npc('Harrow')}'s been recruiting harder since I left — or since someone left, he probably doesn't know it was me specifically." ${rt.npc('Avery')} lowers his voice — old habit, new context. "The purification rate has increased. Three this month. ${rt.npc('Patch')} has been tracking the casualties through medical supply requests. The numbers don't look good." He meets your eyes. "I can't go back in there. But if you're going — be careful. ${rt.npc('Harrow')} remembers faces better than he lets on."`,
+      onEnter: {
+        setFlag: 'avery_shared_kindling_intel',
+      },
+      branches: [
+        {
+          label: '"Thank you, Avery. Stay safe."',
+          targetNode: 'avery_echo_left_closure',
+        },
+      ],
+    },
+
+    // ---- Echo: Avery betrayed (cycle 2+) ----
+    avery_echo_betrayed: {
+      id: 'avery_echo_betrayed',
+      speaker: 'Avery',
+      text: `${rt.npc('Avery')} is not in the bell tower. A young ${rt.keyword('Kindling')} member stands where he used to sit — different face, same nervous posture, same automatic glance toward the stairs. They look at you without recognition. "${rt.npc('Avery')}?" A pause. "Haven't heard that name in a while. He was reassigned after his — spiritual reassessment." The words are ${rt.npc('Harrow')}'s words in someone else's mouth. "I think he's in the lower chambers now. Or he left. People leave sometimes." They don't sound convinced of either option. The bell tower is the same. The stone is the same. The absence is specific and heavy.`,
+      onEnter: {
+        setFlag: 'avery_echo_acknowledged',
+      },
+      branches: [
+        {
+          label: '"What happened to him?"',
+          targetNode: 'avery_echo_betrayed_detail',
+        },
+        {
+          label: '"I should go."',
+          targetNode: 'avery_leave',
+        },
+      ],
+    },
+
+    avery_echo_betrayed_detail: {
+      id: 'avery_echo_betrayed_detail',
+      speaker: 'Kindling Acolyte',
+      text: `The acolyte shifts their weight. "I don't — ${rt.npc('Harrow')} said it was a matter of faith. That ${rt.npc('Avery')} needed guidance. Intensive guidance." They glance at the stairs again. "I was given this post two weeks ago. They told me to watch and pray." The silence that follows is the specific silence of a question the acolyte has learned not to ask.`,
+      branches: [
+        {
+          label: '"I understand. Thank you."',
           targetNode: 'avery_leave',
         },
       ],
@@ -2043,6 +2510,32 @@ const vaneTree: DialogueTree = {
         setFlag: 'vane_introduced',
       },
       branches: [
+        // ---- Echo branches (cycle 2+) ----
+        {
+          label: '"I\'ve been here before, Vane."',
+          targetNode: 'vane_echo_return',
+          requiresCycleMin: 2,
+          requiresPreviousEnding: 'cure',
+        },
+        {
+          label: '"I\'ve been here before, Vane."',
+          targetNode: 'vane_echo_return',
+          requiresCycleMin: 2,
+          requiresPreviousEnding: 'weapon',
+        },
+        {
+          label: '"I\'ve been here before, Vane."',
+          targetNode: 'vane_echo_return',
+          requiresCycleMin: 2,
+          requiresPreviousEnding: 'seal',
+        },
+        {
+          label: '"I\'ve been here before, Vane."',
+          targetNode: 'vane_echo_return',
+          requiresCycleMin: 2,
+          requiresPreviousEnding: 'throne',
+        },
+        // ---- Standard branches ----
         {
           label: '"Who are you?"',
           targetNode: 'vane_who',
@@ -2059,6 +2552,87 @@ const vaneTree: DialogueTree = {
         {
           label: '"I should go."',
           targetNode: 'vane_leave',
+        },
+      ],
+    },
+
+    // ---- Echo: Return after any ending (cycle 2+) ----
+    vane_echo_return: {
+      id: 'vane_echo_return',
+      speaker: 'The Broadcaster',
+      text: `${rt.npc('The Broadcaster')} looks at you. The recognition is slow — not because he doesn't remember, but because he is allowing himself to believe it. Seven years alone, and now someone who has been here before. "You've been here before." It is not a question. "You chose. The terminals. The Core. I watched the readouts change and then — nothing. The cycle took you back." He is quiet for a long time. The broadcast console hums through its loop. "Was it the right choice?"`,
+      onEnter: {
+        setFlag: { vane_echo_acknowledged: true, vane_introduced: true },
+      },
+      branches: [
+        {
+          label: '"No. I need to try again."',
+          targetNode: 'vane_echo_try_again',
+        },
+        {
+          label: '"Yes. But I need to see the alternatives."',
+          targetNode: 'vane_echo_alternatives',
+        },
+        {
+          label: '"I don\'t remember."',
+          targetNode: 'vane_echo_forgotten',
+        },
+      ],
+    },
+
+    vane_echo_try_again: {
+      id: 'vane_echo_try_again',
+      speaker: 'The Broadcaster',
+      text: `${rt.npc('The Broadcaster')} nods. The motion is small, precise, and carries the weight of a man who has run every model and understands why none of them satisfied. "That's why you came back. The terminals are waiting. They always are." He stands — slowly, the way he does everything — and adjusts the broadcast console one final time. "I ran every utilitarian calculus. Every moral framework. Seven years." A pause that stretches like the silence between signal loops. "Maybe the answer isn't in the math. Maybe it's in the second try." He looks at you with something that might be hope, if Vane still had access to the unguarded version of it. "Go. The Core is still there. I'll keep the signal running — in case there's a third."`,
+      onEnter: {
+        setFlag: 'vane_described_core',
+      },
+      branches: [
+        {
+          label: '"Thank you, Vane."',
+          targetNode: 'vane_farewell',
+        },
+        {
+          label: `Ask about ${rt.keyword('CHARON-7')}.`,
+          targetNode: 'vane_charon',
+        },
+      ],
+    },
+
+    vane_echo_alternatives: {
+      id: 'vane_echo_alternatives',
+      speaker: 'The Broadcaster',
+      text: `"Curiosity or guilt." ${rt.npc('The Broadcaster')} says it without judgment — an observation from someone who has catalogued every human motivation that could possibly bring a person to this room. "Either works." He settles back into the chair. "The four terminals are still active. Cure, weapon, containment, dominion. Each one is still irreversible. Each one is still — depending on your perspective — the right answer." His hands rest on the console. "The difference is you've seen one outcome. That's more data than I ever had." He meets your eyes. "More data than anyone has ever had. Use it."`,
+      onEnter: {
+        setFlag: 'vane_described_core',
+      },
+      branches: [
+        {
+          label: '"I will."',
+          targetNode: 'vane_farewell',
+        },
+        {
+          label: `Ask about ${rt.keyword('CHARON-7')}.`,
+          targetNode: 'vane_charon',
+        },
+      ],
+    },
+
+    vane_echo_forgotten: {
+      id: 'vane_echo_forgotten',
+      speaker: 'The Broadcaster',
+      text: `${rt.npc('The Broadcaster')} is quiet for a very long time. When he speaks, the exhausted precision gives way to something gentler — the voice of a scientist confronting data that hurts. "${rt.keyword('CHARON-7')} takes more each time. The protein refolding degrades neural pathways. Memory is the first casualty." He looks at the broadcast console, then at his hands, then at you. "But the choice — the choice you remember. Everyone does." A pause. "You chose. I saw the readouts change. The specifics may have dissolved but something in you carried the weight of it back here. That's why you're standing in my room again instead of somewhere else." He stands. "The terminals are waiting. The Core is patient. And this time — maybe this time the math comes out different."`,
+      onEnter: {
+        setFlag: 'vane_described_core',
+      },
+      branches: [
+        {
+          label: '"Then I\'ll choose again."',
+          targetNode: 'vane_farewell',
+        },
+        {
+          label: '"Who are you?"',
+          targetNode: 'vane_who',
         },
       ],
     },
@@ -2516,6 +3090,20 @@ const vesperTree: DialogueTree = {
       speaker: 'Vesper',
       text: `${rt.npc('Vesper')} is seated in the deepest shadow of the chamber, equidistant from every light source — a habit that has become architecture. She regards you without surprise. "Sit. You've walked a long way to stand in a doorway." The chair opposite is already pulled out. She anticipated company, or she always anticipates company. Both are unsettling in exactly the same way.`,
       branches: [
+        // ---- Echo branches (cycle 2+) ----
+        {
+          label: '"You told me about the graduate students. About the first choice."',
+          targetNode: 'vesper_echo_shared_origin',
+          requiresCycleMin: 2,
+          requiresPreviousQuest: 'vesper_shared_origin',
+        },
+        {
+          label: '"We need to talk, Vesper. About what happened last time."',
+          targetNode: 'vesper_echo_betrayed',
+          requiresCycleMin: 2,
+          requiresPreviousRelationship: { npcId: 'vesper', relationship: 'betrayed' },
+        },
+        // ---- Standard branches ----
         {
           label: `Ask about the ${rt.keyword('Sanguine')} and the Covenant.`,
           targetNode: 'vesper_sanguine',
@@ -2540,6 +3128,76 @@ const vesperTree: DialogueTree = {
         },
         {
           label: '"I should go."',
+          targetNode: 'vesper_leave',
+        },
+      ],
+    },
+
+    // ---- Echo: Shared origin story (cycle 2+) ----
+    vesper_echo_shared_origin: {
+      id: 'vesper_echo_shared_origin',
+      speaker: 'Vesper',
+      text: `${rt.npc('Vesper')}'s composure does not break. But something behind it shifts — a recognition that bypasses the practiced detachment entirely. "You know what I am. The office. The papers on Kant. The heartbeats through two floors of concrete." She is quiet for a long moment. "We can dispense with the philosophy." She opens the drawer without preamble. The ${rt.item('Sanguine Biometric Slide')} is already in her hand. "You earned this once. The Covenant remembers, even if I pretend not to. And yet —" The familiar pause. This time she finishes it. "And yet I am glad you came back."`,
+      onEnter: {
+        setFlag: { sanguine_biometric_obtained: true, vesper_shared_origin: true, vesper_echo_acknowledged: true },
+        grantRep: { faction: 'covenant_of_dusk', delta: 2 },
+      },
+      branches: [
+        {
+          label: '"Thank you, Vesper. I won\'t waste it."',
+          targetNode: 'vesper_biometric_end',
+        },
+      ],
+    },
+
+    // ---- Echo: Betrayed (cycle 2+) ----
+    vesper_echo_betrayed: {
+      id: 'vesper_echo_betrayed',
+      speaker: 'Vesper',
+      text: `The practiced stillness holds. But underneath it, something cold and heavy moves. "I remember you." ${rt.npc('Vesper')}'s voice drops below its register — not anger, something older and more tired than anger. "The memory is unpleasant. You took what I offered in trust and carried it to ${rt.npc('Castellan Rook')} like currency." She does not look away. "You have one explanation. Make it comprehensive."`,
+      onEnter: {
+        setFlag: 'vesper_echo_acknowledged',
+      },
+      branches: [
+        {
+          label: `[Negotiation DC 15] "I was wrong. I understand that now. The Covenant deserves better than what I did."`,
+          targetNode: 'vesper_echo_forgiveness',
+          skillCheck: { skill: 'negotiation', dc: 15 },
+          failNode: 'vesper_echo_refused',
+        },
+        {
+          label: '"I have no excuse."',
+          targetNode: 'vesper_echo_refused',
+        },
+      ],
+    },
+
+    vesper_echo_forgiveness: {
+      id: 'vesper_echo_forgiveness',
+      speaker: 'Vesper',
+      text: `The silence stretches. ${rt.npc('Vesper')} studies you with the attention of someone deciding whether to rebuild a bridge or let the river take it. "Remorse is not trust. And yet — remorse is the prerequisite." She folds her hands. "The biometric access is not available to you. Not today. But the door to this chamber remains open. That is what forgiveness looks like in the Covenant — not restoration, but the possibility of restoration." A page turns in the book she was not reading. "Come back. Prove it wasn't just words. I have time."`,
+      onEnter: {
+        setFlag: 'vesper_considering_forgiveness',
+      },
+      branches: [
+        {
+          label: '"I will."',
+          targetNode: 'vesper_leave',
+        },
+      ],
+    },
+
+    vesper_echo_refused: {
+      id: 'vesper_echo_refused',
+      speaker: 'Vesper',
+      text: `"No." The word is quiet and final and carries the weight of a philosophical tradition that ${rt.npc('Vesper')} has spent a lifetime constructing. "You do not get to stand in the place where you broke trust and ask for it back with nothing but presence." She returns to her book. "The Covenant's door is open. That is policy, not forgiveness. The difference matters."`,
+      branches: [
+        {
+          label: `Ask about the ${rt.keyword('Sanguine')} and the Covenant.`,
+          targetNode: 'vesper_sanguine',
+        },
+        {
+          label: '"I understand."',
           targetNode: 'vesper_leave',
         },
       ],
@@ -2745,6 +3403,20 @@ const rookTree: DialogueTree = {
       speaker: 'Castellan Rook',
       text: `${rt.npc('Castellan Rook')} regards you from behind the desk with an attention that is not hostile and is not friendly and is not anything that wastes energy on being a category. "You're either very brave or very lost. Both conditions have a limited shelf life here." The lamp is the only light. The shadows are deliberate — Rook has arranged the room so that the visitor is always more visible than the host. "Sit, if you intend to be useful. Stand, if you intend to be brief."`,
       branches: [
+        // ---- Echo branches (cycle 2+) ----
+        {
+          label: '"Our arrangement still stands, Castellan."',
+          targetNode: 'rook_echo_deal',
+          requiresCycleMin: 2,
+          requiresPreviousQuest: 'rook_offered_deal',
+        },
+        {
+          label: '"You said I proved useful once. I\'m back."',
+          targetNode: 'rook_echo_indebted',
+          requiresCycleMin: 2,
+          requiresPreviousQuest: 'rook_indebted',
+        },
+        // ---- Standard branches ----
         {
           label: `Ask about the ${rt.keyword('Red Court')}.`,
           targetNode: 'rook_red_court',
@@ -2760,6 +3432,48 @@ const rookTree: DialogueTree = {
         {
           label: '"I should go."',
           targetNode: 'rook_leave',
+        },
+      ],
+    },
+
+    // ---- Echo: Deal accepted (cycle 2+) ----
+    rook_echo_deal: {
+      id: 'rook_echo_deal',
+      speaker: 'Castellan Rook',
+      text: `${rt.npc('Castellan Rook')} does not look surprised. The lamp flickers and the shadows rearrange and Rook remains perfectly, professionally still. "Our arrangement stands. The ${rt.keyword('Red Court')} remembers its investments." A thin smile — not warm, appreciative in the way a ledger appreciates a balanced column. "Safe passage through all controlled corridors. Unescorted. Unquestioned. The terms are unchanged." A sealed pass appears on the desk — already prepared, already bearing your description. "I anticipated your return. Predictability is not a criticism — in the Court's economy, reliability is the most valuable asset." The smile sharpens. "Welcome back."`,
+      onEnter: {
+        setFlag: { rook_offered_deal: true, rook_echo_acknowledged: true },
+      },
+      branches: [
+        {
+          label: '"I\'ll make it worth your investment."',
+          targetNode: 'rook_leave',
+        },
+        {
+          label: `Ask about ${rt.npc('Vesper')}.`,
+          targetNode: 'rook_vesper',
+        },
+      ],
+    },
+
+    // ---- Echo: Previously indebted (cycle 2+) ----
+    rook_echo_indebted: {
+      id: 'rook_echo_indebted',
+      speaker: 'Castellan Rook',
+      text: `${rt.npc('Castellan Rook')} tilts their head — a micro-movement that carries the weight of recollection. "You proved useful once. The intelligence you provided had — operational value." The flat pragmatism holds but something underneath it has adjusted. The visitor's chair is slightly closer to the desk than before. "Prove it again." A document slides across — not the full alliance protocol, something smaller. A specific request. "One task. The yield reports from ${rt.keyword('Duskhollow')} — the Covenant's actual numbers, not the ones they publish. Bring me that, and the Court's resources become available to you. Properly, this time."`,
+      onEnter: {
+        setFlag: 'rook_echo_acknowledged',
+      },
+      branches: [
+        {
+          label: `[Negotiation DC 10] "I have value beyond errands, Castellan. Full terms or nothing."`,
+          targetNode: 'rook_alliance_useful',
+          skillCheck: { skill: 'negotiation', dc: 10 },
+          failNode: 'rook_alliance_fail',
+        },
+        {
+          label: '"I\'ll get your numbers."',
+          targetNode: 'rook_alliance_end',
         },
       ],
     },

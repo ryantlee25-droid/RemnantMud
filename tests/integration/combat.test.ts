@@ -17,6 +17,11 @@ vi.mock('@/lib/combat', () => ({
     playerGoesFirst: true,
     turn: 1,
     active: true,
+    playerConditions: [],
+    enemyConditions: [],
+    abilityUsed: false,
+    defendingThisTurn: false,
+    waitingBonus: 0,
   })),
   playerAttack: vi.fn((_player: Player, state: CombatState, _range?: [number, number]) => ({
     result: {
@@ -158,13 +163,16 @@ describe('handleAttack', () => {
 
   it('enemy takes damage and drops loot on kill', async () => {
     // Enemy has 5 HP, playerAttack does 5 damage => defeated
+    // Use chance: 1.0 to guarantee loot drop (handleEnemyDefeated re-rolls loot)
     const enemy: Enemy = {
       id: 'shuffler', name: 'Shuffler', description: 'A shambling corpse.',
       hp: 5, maxHp: 5, attack: 2, defense: 8, damage: [1, 3],
-      xp: 10, loot: [{ itemId: 'scrap_metal', chance: 0.5 }],
+      xp: 10, loot: [{ itemId: 'scrap_metal', chance: 1.0 }],
     }
     const combatState: CombatState = {
       enemy, enemyHp: 5, playerGoesFirst: true, turn: 1, active: true,
+      playerConditions: [], enemyConditions: [], abilityUsed: false,
+      defendingThisTurn: false, waitingBonus: 0,
     }
     const engine = makeEngine({
       currentRoom: makeRoom({ enemies: ['shuffler'] }),
@@ -207,7 +215,7 @@ describe('handleFlee', () => {
       xp: 10, loot: [],
     }
     const engine = makeEngine({
-      combatState: { enemy, enemyHp: 5, playerGoesFirst: true, turn: 1, active: true },
+      combatState: { enemy, enemyHp: 5, playerGoesFirst: true, turn: 1, active: true, playerConditions: [], enemyConditions: [], abilityUsed: false, defendingThisTurn: false, waitingBonus: 0 },
     })
 
     await handleFlee(engine)

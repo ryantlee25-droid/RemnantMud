@@ -6,6 +6,7 @@ import type { GameMessage, Stat } from '@/types/game'
 import type { EngineCore } from './types'
 import { statModifier } from '@/lib/dice'
 import { rt } from '@/lib/richText'
+import { WEAPON_TRAITS, ARMOR_TRAITS } from '@/types/traits'
 
 const VALID_STATS: Set<string> = new Set(['vigor', 'grit', 'reflex', 'wits', 'presence', 'shadow'])
 const STAT_BOOST_MAX = 9  // stat increase can push one stat to 9
@@ -68,7 +69,20 @@ export async function handleInventory(engine: EngineCore): Promise<void> {
   const lines = inventory.map((ii) => {
     const equipped = ii.equipped ? ' [equipped]' : ''
     const qty = ii.quantity > 1 ? ` x${ii.quantity}` : ''
-    return `${rt.item(ii.item.name)}${qty}${equipped}`
+
+    // Show damage/defense and traits for weapons/armor
+    let details = ''
+    if (ii.item.type === 'weapon' && ii.item.damage) {
+      const traitNames = (ii.item.weaponTraits ?? []).map(t => rt.trait(WEAPON_TRAITS[t].name))
+      const traitStr = traitNames.length > 0 ? ` [${traitNames.join(', ')}]` : ''
+      details = ` (${ii.item.damage} dmg)${traitStr}`
+    } else if (ii.item.type === 'armor' && ii.item.defense) {
+      const traitNames = (ii.item.armorTraits ?? []).map(t => rt.trait(ARMOR_TRAITS[t].name))
+      const traitStr = traitNames.length > 0 ? ` [${traitNames.join(', ')}]` : ''
+      details = ` (${ii.item.defense} def)${traitStr}`
+    }
+
+    return `${rt.item(ii.item.name)}${details}${qty}${equipped}`
   })
 
   engine._appendMessages([
@@ -87,6 +101,10 @@ export async function handleHelp(engine: EngineCore): Promise<void> {
     '  equip [item]                  — equip a weapon or armor',
     '  unequip [item]                — remove equipped item',
     '  attack [enemy]                — start or continue combat',
+    '  defend / block                — skip attack, reduce incoming damage',
+    '  wait                          — skip attack, gain +3 accuracy next turn',
+    '  ability / special             — use class combat ability (once per fight)',
+    '  analyze / scan                — study the enemy (Reclaimer: free; others: Wits check)',
     '  flee                          — attempt to flee combat',
     '  talk [person]                 — speak with an NPC',
     '  search                        — search the room',

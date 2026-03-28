@@ -4,6 +4,8 @@
 // All game interfaces live here. No `any` allowed.
 // ============================================================
 
+import type { ActiveCondition, WeaponTraitId, ArmorTraitId, EnemyResistance } from '@/types/traits'
+
 // ------------------------------------------------------------
 // Primitives
 // ------------------------------------------------------------
@@ -390,6 +392,9 @@ export interface Item {
   usable?: boolean       // can "use" command be run on it
   useText?: string       // text displayed when using it
   loreText?: string      // for lore items, the vignette text
+  weaponTraits?: WeaponTraitId[]
+  armorTraits?: ArmorTraitId[]
+  tier?: 1 | 2 | 3 | 4 | 5  // Scrap/Salvage/Military/PreCollapse/MERIDIAN
 }
 
 export interface InventoryItem {
@@ -423,6 +428,7 @@ export interface Enemy {
   xp: number
   loot: LootEntry[]
   flavorText?: string[]  // varied combat descriptions
+  resistanceProfile?: EnemyResistance
 }
 
 // ------------------------------------------------------------
@@ -595,6 +601,23 @@ export interface CombatState {
   fearRoundsRemaining?: number   // rounds of fear penalty left (decrements each round)
   additionalEnemies?: Enemy[]   // extra enemies summoned (e.g. by screamer)
   lastRoomId?: string           // room before combat started (for flee escape)
+  playerConditions: ActiveCondition[]
+  enemyConditions: ActiveCondition[]
+  abilityUsed: boolean
+  defendingThisTurn: boolean
+  waitingBonus: number           // +3 accuracy from wait command
+  // Class ability state
+  overwhelmActive?: boolean       // Enforcer: next attack auto-hits, ignores armor
+  markTargetBonus?: number        // Scout: accuracy bonus for next N attacks
+  markTargetAttacks?: number      // Scout: remaining attacks with mark bonus
+  shadowstrikeActive?: boolean    // Wraith: guaranteed crit next attack
+  braceActive?: boolean           // Warden: reduce incoming damage 60% this turn
+  enemyIntimidated?: boolean      // Broker: enemy skips next turn
+  enemyEnraged?: boolean          // Broker: enemy gets +2 damage (failed intimidate)
+  cantFlee?: boolean              // Wraith: can't flee after using shadowstrike
+  // Transient flags set by playerAttack for the action handler to consume
+  _suppressNoise?: boolean        // silenced trait: suppress noise encounter on kill
+  _healPlayer?: number            // draining trait: HP to restore after attack
 }
 
 export interface CombatResult {

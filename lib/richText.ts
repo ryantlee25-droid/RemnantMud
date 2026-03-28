@@ -12,4 +12,6 @@ export const rt = {
   exit: (dir: string) => `<exit>${dir}</exit>`,
   keyword: (word: string) => `<keyword>${word}</keyword>`,
   currency: (amount: string) => `<currency>${amount}</currency>`,
+  condition: (name: string) => `<condition>${name}</condition>`,
+  trait: (name: string) => `<trait>${name}</trait>`,
 }

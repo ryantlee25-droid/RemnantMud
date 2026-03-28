@@ -6,11 +6,15 @@ import type {
   FleeResult,
   GameMessage,
   HollowType,
+  Item,
 } from '@/types/game'
+import type { ConditionId } from '@/types/traits'
 import { roll1d10, rollCheck, rollDamage, statModifier, DC } from '@/lib/dice'
 import { getClassSkillBonus } from '@/lib/skillBonus'
 import { getItem } from '@/data/items'
 import { resistWhisperer } from '@/lib/fear'
+import { resolveWeaponTraits, resolveArmorTraits } from '@/lib/traits'
+import { applyCondition, totalRollPenalty } from '@/lib/conditions'
 import { rt } from '@/lib/richText'
 
 // ------------------------------------------------------------
@@ -70,6 +74,11 @@ export function startCombat(player: Player, enemy: Enemy): CombatState {
     playerGoesFirst,
     turn: 1,
     active: true,
+    playerConditions: [],
+    enemyConditions: [],
+    abilityUsed: false,
+    defendingThisTurn: false,
+    waitingBonus: 0,
   }
 }
 
@@ -80,32 +89,55 @@ export function startCombat(player: Player, enemy: Enemy): CombatState {
 /**
  * Player attacks the enemy using their Body modifier vs the enemy's defense DC.
  * All weapons are treated as melee / short-range for the MVP.
+ * Now integrates weapon traits, conditions, waiting bonus, and defending state.
  * Returns a CombatResult and the updated CombatState.
  */
 export function playerAttack(
   player: Player,
   state: CombatState,
   playerDamageRange: [number, number] = [1, 3],
+  weapon?: Item,
 ): { result: CombatResult; newState: CombatState } {
   const { enemy } = state
+  const messages: GameMessage[] = []
 
-  // Apply whisperer debuff + fear penalty: subtract from effective stat for the attack roll
+  // If defending this turn, deal 0 damage — skip attack entirely
+  if (state.defendingThisTurn) {
+    messages.push(msg(`You hold your ground, bracing for the next blow.`))
+    const newState: CombatState = { ...state, turn: state.turn + 1 }
+    return {
+      result: { hit: false, damage: 0, critical: false, fumble: false, messages },
+      newState,
+    }
+  }
+
+  // Apply whisperer debuff + fear penalty + condition roll penalties
   const debuffPenalty = (state.whispererDebuff ?? 0) > 0 ? state.whispererDebuff! : 0
   const fearPenalty = state.fearPenalty ?? 0
-  const effectiveVigor = player.vigor - debuffPenalty - fearPenalty
+  const conditionPenalty = totalRollPenalty(state.playerConditions)
+  const effectiveVigor = player.vigor - debuffPenalty - fearPenalty + conditionPenalty
 
-  const check = rollCheck(effectiveVigor, enemy.defense)
+  // Add waiting bonus to the attack roll
+  const waitingBonus = state.waitingBonus ?? 0
+  const effectiveDefense = Math.max(1, enemy.defense - waitingBonus)
 
-  const messages: GameMessage[] = []
+  const check = rollCheck(effectiveVigor, effectiveDefense)
+
+  if (waitingBonus > 0) {
+    messages.push(msg(`Patience pays off — +${waitingBonus} to your attack.`))
+  }
 
   // Decrement whisperer debuff even on miss/fumble (it was consumed this round)
   const debuffAfterRound = debuffPenalty > 0 ? Math.max(0, debuffPenalty - 1) : state.whispererDebuff
+
+  // Reset waiting bonus after use
+  const baseStateUpdates = { whispererDebuff: debuffAfterRound, waitingBonus: 0 }
 
   if (check.fumble) {
     messages.push(
       msg(`You swing wildly. ${rt.enemy(enemy.name)} sidesteps and you nearly fall.`),
     )
-    const newState: CombatState = { ...state, turn: state.turn + 1, whispererDebuff: debuffAfterRound }
+    const newState: CombatState = { ...state, ...baseStateUpdates, turn: state.turn + 1 }
     return {
       result: { hit: false, damage: 0, critical: false, fumble: true, messages },
       newState,
@@ -114,7 +146,7 @@ export function playerAttack(
 
   if (!check.success) {
     messages.push(msg(`You lunge at ${rt.enemy(enemy.name)}. It glances off nothing.`))
-    const newState: CombatState = { ...state, turn: state.turn + 1, whispererDebuff: debuffAfterRound }
+    const newState: CombatState = { ...state, ...baseStateUpdates, turn: state.turn + 1 }
     return {
       result: { hit: false, damage: 0, critical: false, fumble: false, messages },
       newState,
@@ -127,6 +159,44 @@ export function playerAttack(
   if (check.critical) {
     damage = Math.ceil(damage * 1.5)
   }
+
+  // Resolve weapon traits
+  let traitBonusDamage = 0
+  let healPlayer = 0
+  let suppressNoise = false
+  let updatedEnemyConditions = [...state.enemyConditions]
+
+  if (weapon) {
+    const traitResult = resolveWeaponTraits(player, weapon, enemy, check.critical, damage)
+    traitBonusDamage = traitResult.bonusDamage
+    healPlayer = traitResult.healPlayer
+    suppressNoise = traitResult.suppressNoise
+
+    // Apply conditions from weapon traits to enemy
+    for (const condId of traitResult.conditionsToApply) {
+      const immunities = enemy.resistanceProfile?.conditionImmunities
+      const condResult = applyCondition(updatedEnemyConditions, condId, weapon.name, immunities)
+      updatedEnemyConditions = condResult.conditions
+    }
+
+    // Show trait messages
+    for (const traitMsg of traitResult.messages) {
+      messages.push(msg(`[${rt.keyword('TRAIT')}] ${traitMsg}`))
+    }
+  }
+
+  // Add trait bonus damage
+  damage += traitBonusDamage
+
+  // Weakened condition: halve final damage
+  const isWeakened = state.playerConditions.some(c => c.id === 'weakened')
+  if (isWeakened) {
+    damage = Math.ceil(damage / 2)
+    messages.push(msg(`Weakened — your damage is halved.`))
+  }
+
+  // Floor damage at 1 on a hit
+  damage = Math.max(1, damage)
 
   const newEnemyHp = Math.max(0, state.enemyHp - damage)
   const enemyDefeated = newEnemyHp <= 0
@@ -150,6 +220,11 @@ export function playerAttack(
     }
   }
 
+  // Apply draining heal
+  if (healPlayer > 0) {
+    messages.push(msg(`[${rt.keyword('DRAINING')}] You recover ${healPlayer} HP.`))
+  }
+
   let loot: string[] | undefined
   if (enemyDefeated) {
     messages.push(msg(`${rt.enemy(enemy.name)} collapses. Silence.`))
@@ -162,10 +237,14 @@ export function playerAttack(
 
   const newState: CombatState = {
     ...state,
+    ...baseStateUpdates,
     enemyHp: newEnemyHp,
+    enemyConditions: updatedEnemyConditions,
     active: !enemyDefeated,
     turn: state.turn + 1,
-    whispererDebuff: debuffAfterRound,
+    // Store trait flags for the combat action handler
+    _suppressNoise: suppressNoise,
+    _healPlayer: healPlayer,
   }
 
   return {
@@ -256,11 +335,14 @@ export function applyHollowRoundEffects(
  * - brute: first attack is a charge (double damage), then cooldown for 1 turn
  * - hive_mother: all other Hollow deal +1 damage while she lives
  * - whisperer debuff is applied via applyHollowRoundEffects before this call
+ * Also integrates: defending damage reduction, armor traits (fortified/reactive),
+ * and enemy condition application (e.g., brute charge → bleeding).
  * Returns damage dealt, messages, and updated state.
  */
 export function enemyAttack(
   player: Player,
   state: CombatState,
+  armor?: Item,
 ): { damage: number; messages: GameMessage[]; newState: CombatState } {
   const { enemy } = state
   const messages: GameMessage[] = []
@@ -322,6 +404,59 @@ export function enemyAttack(
     }
   }
 
+  // Defending this turn: reduce incoming damage by 30%
+  if (state.defendingThisTurn && damage > 0) {
+    const reduced = Math.ceil(damage * 0.70)
+    messages.push(msg(`Your defensive stance absorbs some of the blow. [${damage} → ${reduced}]`))
+    damage = reduced
+  }
+
+  // Armor trait: Fortified flat reduction (applied after % reduction)
+  let updatedPlayerConditions = [...state.playerConditions]
+  if (armor) {
+    // Determine incoming conditions from enemy attack
+    const incomingConditions: ConditionId[] = []
+    if (isBruteCharge) {
+      incomingConditions.push('bleeding')
+    }
+
+    const armorResult = resolveArmorTraits(armor, incomingConditions, 0)
+
+    // Fortified: flat damage reduction
+    if (armorResult.flatReduction > 0 && damage > 0) {
+      const before = damage
+      damage = Math.max(1, damage - armorResult.flatReduction)
+      if (before !== damage) {
+        messages.push(msg(`[${rt.keyword('FORTIFIED')}] Armor absorbs ${before - damage} damage.`))
+      }
+    }
+
+    // Reactive / Insulated: block conditions
+    const survivingConditions = incomingConditions.filter(c => !armorResult.conditionsBlocked.includes(c))
+
+    for (const blocked of armorResult.conditionsBlocked) {
+      messages.push(msg(`[${rt.keyword('REACTIVE')}] Armor blocks ${blocked}.`))
+    }
+
+    // Apply surviving conditions to player
+    for (const condId of survivingConditions) {
+      const condResult = applyCondition(updatedPlayerConditions, condId, enemy.name)
+      updatedPlayerConditions = condResult.conditions
+      if (condResult.applied) {
+        messages.push(msg(`[${rt.keyword('CONDITION')}] ${condId} applied by ${rt.enemy(enemy.name)}.`))
+      }
+    }
+  } else {
+    // No armor — apply brute charge bleeding directly
+    if (isBruteCharge) {
+      const condResult = applyCondition(updatedPlayerConditions, 'bleeding', enemy.name)
+      updatedPlayerConditions = condResult.conditions
+      if (condResult.applied) {
+        messages.push(msg(`[${rt.keyword('CONDITION')}] The charge tears you open — bleeding.`))
+      }
+    }
+  }
+
   const playerDefeated = player.hp - damage <= 0
   if (playerDefeated) {
     messages.push(msg(`You drop. Everything goes dark.`, 'narrative'))
@@ -329,6 +464,7 @@ export function enemyAttack(
 
   const newState: CombatState = {
     ...state,
+    playerConditions: updatedPlayerConditions,
     active: !playerDefeated,
     turn: state.turn + 1,
     // Track brute charge state

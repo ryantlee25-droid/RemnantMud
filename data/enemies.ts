@@ -1,4 +1,5 @@
 import type { Enemy } from '@/types/game'
+import type { EnemyResistance } from '@/types/traits'
 
 // CHARON-7 infection spectrum and Sanguine predators.
 // The Hollow are not zombies. The Sanguine are not vampires.
@@ -32,6 +33,13 @@ export const ENEMIES: Record<string, Enemy> = {
       'It shambles through the debris without registering it.',
       'Something in it is still moving toward something it can no longer name.',
     ],
+    resistanceProfile: {
+      weaknesses: {
+        scorching: { bonusDamage: 0, description: 'Dead tissue ignites easily. Burn damage doubled.' },
+      },
+      resistances: {},
+      conditionImmunities: ['bleeding'],
+    },
   },
 
   remnant: {
@@ -59,6 +67,13 @@ export const ENEMIES: Record<string, Enemy> = {
       'It moves in the stuttering half-patterns of someone who used to know exactly what they were doing.',
       'A remnant of competence, wearing the skin of the person who had it.',
     ],
+    resistanceProfile: {
+      weaknesses: {
+        disrupting: { bonusDamage: 3, description: 'Residual neural patterns disrupted. +3 damage.' },
+      },
+      resistances: {},
+      conditionImmunities: [],
+    },
   },
 
   screamer: {
@@ -79,6 +94,13 @@ export const ENEMIES: Record<string, Enemy> = {
       'It screams and screams and the echo carries it farther than you want to think about.',
       'The vocalization is less a cry than a broadcast. Something out there is receiving it.',
     ],
+    resistanceProfile: {
+      weaknesses: {
+        heavy: { bonusDamage: 2, description: 'Blunt trauma silences the modified throat. +2 damage.' },
+      },
+      resistances: {},
+      conditionImmunities: ['poisoned'],
+    },
   },
 
   stalker: {
@@ -106,6 +128,15 @@ export const ENEMIES: Record<string, Enemy> = {
       'The patience is the worst part. It followed you for three rooms before it decided you were close enough.',
       'It emerges from the shadows with the economy of something that has learned to spend its energy precisely.',
     ],
+    resistanceProfile: {
+      weaknesses: {
+        scorching: { bonusDamage: 0, description: 'Quick reflexes mean nothing when the fire catches. Burn damage doubled.' },
+      },
+      resistances: {
+        keen: { reduction: 50, description: 'Quick reflexes deflect precise strikes. Keen damage halved.' },
+      },
+      conditionImmunities: [],
+    },
   },
 
   brute: {
@@ -133,6 +164,15 @@ export const ENEMIES: Record<string, Enemy> = {
       'The impact carries you three feet. The wall was there first, which was unfortunate.',
       'It moves with the patient violence of something that has never had to hurry.',
     ],
+    resistanceProfile: {
+      weaknesses: {
+        keen: { bonusDamage: 0, description: 'Keen edges find the gaps in thick hide. Critical hits bypass armor.' },
+      },
+      resistances: {
+        heavy: { reduction: 50, description: 'Thick hide absorbs blunt force. Heavy bonus damage halved.' },
+      },
+      conditionImmunities: [],
+    },
   },
 
   whisperer: {
@@ -157,6 +197,13 @@ export const ENEMIES: Record<string, Enemy> = {
       '"Don\'t go," it says. You go. You go fast.',
       'It holds a conversation with itself in voices that don\'t belong to it, and two of them sound like people you have lost.',
     ],
+    resistanceProfile: {
+      weaknesses: {
+        blessed: { bonusDamage: 3, description: 'Consecrated steel disrupts the vocal mimicry. +3 damage.' },
+      },
+      resistances: {},
+      conditionImmunities: ['frightened'],
+    },
   },
 
   hive_mother: {
@@ -182,6 +229,13 @@ export const ENEMIES: Record<string, Enemy> = {
       'Something shifts in the air, a signal below the threshold of your hearing, and the herd realigns.',
       'It watches you with eyes that are not processing you as prey. It is processing you as a problem to be solved.',
     ],
+    resistanceProfile: {
+      weaknesses: {
+        disrupting: { bonusDamage: 4, description: 'Severing strike disrupts the pheromonal colony link. +4 damage.' },
+      },
+      resistances: {},
+      conditionImmunities: [],
+    },
   },
 
   // ----------------------------------------------------------
@@ -207,6 +261,15 @@ export const ENEMIES: Record<string, Enemy> = {
       'There is no threat display. No warning. Just the sudden, complete fact of it.',
       'It closes the distance between you in a way that your eyes report incorrectly.',
     ],
+    resistanceProfile: {
+      weaknesses: {
+        blessed: { bonusDamage: 4, description: 'Consecrated steel burns Sanguine biology. +4 damage.' },
+      },
+      resistances: {
+        draining: { reduction: 100, description: 'Sanguine blood cannot be drained. Immune to draining effects.' },
+      },
+      conditionImmunities: [],
+    },
   },
 
   red_court_enforcer: {
@@ -231,6 +294,13 @@ export const ENEMIES: Record<string, Enemy> = {
       'It doesn\'t rush. Rushing is for things that are not certain of the outcome.',
       'It coordinates with something outside the room. There was a signal you didn\'t see.',
     ],
+    resistanceProfile: {
+      weaknesses: {
+        precise: { bonusDamage: 2, description: 'Tactical gear has gaps a precise strike can find. +2 damage.' },
+      },
+      resistances: {},
+      conditionImmunities: ['frightened'],
+    },
   },
 
   elder_sanguine: {
@@ -256,6 +326,15 @@ export const ENEMIES: Record<string, Enemy> = {
       'It does not bleed the way things should bleed. Something in the biology has changed.',
       'The patience is the most frightening part. It will wait. It has always waited.',
     ],
+    resistanceProfile: {
+      weaknesses: {
+        blessed: { bonusDamage: 5, description: 'Seven years of CHARON-7 refinement unravels against consecrated steel. +5 damage.' },
+      },
+      resistances: {
+        disrupting: { reduction: 100, description: 'Individual predator, no colony link to sever. Immune to disrupting.' },
+      },
+      conditionImmunities: [],
+    },
   },
 
   // ----------------------------------------------------------
@@ -283,6 +362,13 @@ export const ENEMIES: Record<string, Enemy> = {
       'You move left. The turret was already tracking left when you decided to move.',
       'No hesitation, no warning shot. Authorization expired seven years ago and it has been patient.',
     ],
+    resistanceProfile: {
+      weaknesses: {
+        disrupting: { bonusDamage: 3, description: 'Electromagnetic disruption shorts the targeting circuits. +3 damage.' },
+      },
+      resistances: {},
+      conditionImmunities: ['bleeding', 'burning', 'stunned', 'frightened', 'poisoned', 'weakened'],
+    },
   },
 
   meridian_ancient_hollow: {
@@ -307,6 +393,13 @@ export const ENEMIES: Record<string, Enemy> = {
       'The silver eyes track you the way a camera tracks movement. Cold. Accurate. Tireless.',
       'Whatever it was remembering when it became this, it has spent seven years practicing it.',
     ],
+    resistanceProfile: {
+      weaknesses: {
+        blessed: { bonusDamage: 3, description: 'Seven years of CHARON-7 calcification reacts violently to consecrated steel. +3 damage.' },
+      },
+      resistances: {},
+      conditionImmunities: ['frightened'],
+    },
   },
 
   // ----------------------------------------------------------
@@ -335,6 +428,13 @@ export const ENEMIES: Record<string, Enemy> = {
       'It moves through the dark like it was made for it, because it was.',
       'Whatever it was before CHARON-7, what it is now has fully replaced the question.',
     ],
+    resistanceProfile: {
+      weaknesses: {
+        blessed: { bonusDamage: 5, description: 'Eleven years of CHARON-7 integration shatters against consecrated steel. +5 damage.' },
+      },
+      resistances: {},
+      conditionImmunities: [],
+    },
   },
 
   hive_mother_the_deep: {
@@ -358,6 +458,13 @@ export const ENEMIES: Record<string, Enemy> = {
       'Something below the threshold of hearing shifts, and the distant shuffling in the tunnels gets louder.',
       'It points. Not at you. At where you will be.',
     ],
+    resistanceProfile: {
+      weaknesses: {
+        disrupting: { bonusDamage: 4, description: 'Severing strike disrupts the concentrated pheromonal link. +4 damage.' },
+      },
+      resistances: {},
+      conditionImmunities: [],
+    },
   },
 
   hollow_brute_deep: {
@@ -381,6 +488,15 @@ export const ENEMIES: Record<string, Enemy> = {
       'It moves in the dark without sound until it is very close and then it is too late for the sound to matter.',
       'The weight of it shakes the floor when it lands.',
     ],
+    resistanceProfile: {
+      weaknesses: {
+        keen: { bonusDamage: 0, description: 'Keen edges find the gaps in thick hide. Critical hits bypass armor.' },
+      },
+      resistances: {
+        heavy: { reduction: 50, description: 'Adapted underground hide absorbs blunt force. Heavy bonus damage halved.' },
+      },
+      conditionImmunities: [],
+    },
   },
 
   hollow_remnant_deep: {
@@ -404,6 +520,13 @@ export const ENEMIES: Record<string, Enemy> = {
       'It moves with the muscle memory of someone who spent years in these tunnels.',
       'The lamp has been on for seven years. That\'s what it runs on — whatever CHARON-7 made of the body.',
     ],
+    resistanceProfile: {
+      weaknesses: {
+        disrupting: { bonusDamage: 3, description: 'Residual neural patterns disrupted. +3 damage.' },
+      },
+      resistances: {},
+      conditionImmunities: [],
+    },
   },
 }
 

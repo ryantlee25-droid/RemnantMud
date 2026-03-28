@@ -31,7 +31,8 @@ import { ALL_ROOMS } from '@/data/rooms/index'
 import { quantityRoll, computePressure, pressureModifier } from '@/lib/spawn'
 import type { EngineCore } from '@/lib/actions/types'
 import { handleMove, handleLook, exitsLine, npcsLine, enemiesLine } from '@/lib/actions/movement'
-import { handleAttack, handleFlee } from '@/lib/actions/combat'
+import { handleAttack, handleFlee, handleDefend, handleWait, handleAnalyze } from '@/lib/actions/combat'
+import { handleAbility } from '@/lib/abilities'
 import { handleTake, handleDrop, handleEquip, handleUnequip, handleUse, handleStash, handleUnstash, handleStashList, handleRead, handleJournal } from '@/lib/actions/items'
 import { handleTalk, handleSearch, handleRep, handleQuests, handleDialogueChoice, handleDialogueLeave, handleDialogueBlocked } from '@/lib/actions/social'
 import { handleStats, handleInventory, handleHelp, handleBoost } from '@/lib/actions/system'
@@ -1056,6 +1057,7 @@ export class GameEngine implements EngineCore {
   // Actions that advance in-world time (exclude meta/info commands)
   private static readonly TIME_ADVANCING_VERBS = new Set([
     'go', 'take', 'drop', 'attack', 'flee', 'talk', 'search', 'use', 'open', 'rest', 'camp', 'drink', 'buy', 'sell',
+    'ability', 'defend', 'wait', 'analyze',
   ])
 
   async executeAction(action: Action): Promise<GameMessage[]> {
@@ -1088,6 +1090,14 @@ export class GameEngine implements EngineCore {
       case 'attack':   await handleAttack(this, action.noun)
         break
       case 'flee':     await handleFlee(this)
+        break
+      case 'ability':  await handleAbility(this)
+        break
+      case 'defend':   await handleDefend(this)
+        break
+      case 'wait':     await handleWait(this)
+        break
+      case 'analyze':  await handleAnalyze(this)
         break
       case 'talk':     await handleTalk(this, action.noun)
         break

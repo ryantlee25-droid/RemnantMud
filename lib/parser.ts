@@ -55,6 +55,17 @@ const COMBAT_VERBS: Record<string, string> = {
   run: 'flee',
   escape: 'flee',
   retreat: 'flee',
+  ability: 'ability',
+  special: 'ability',
+  power: 'ability',
+  defend: 'defend',
+  block: 'defend',
+  guard: 'defend',
+  wait: 'wait',
+  patience: 'wait',
+  analyze: 'analyze',
+  scan: 'analyze',
+  study: 'analyze',
 }
 
 const SURVIVAL_VERBS: Record<string, string> = {

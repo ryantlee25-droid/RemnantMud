@@ -12,16 +12,18 @@ import type { GameMessage } from '@/types/game'
 // colored <span> elements while leaving plain text untouched.
 // ------------------------------------------------------------
 
-const TAG_NAMES = ['item', 'npc', 'enemy', 'exit', 'keyword', 'currency'] as const
+const TAG_NAMES = ['item', 'npc', 'enemy', 'exit', 'keyword', 'currency', 'condition', 'trait'] as const
 type RichTag = (typeof TAG_NAMES)[number]
 
 const TAG_COLOR: Record<RichTag, string> = {
-  item:     'text-cyan-300',
-  npc:      'text-green-400',
-  enemy:    'text-red-400',
-  exit:     'text-yellow-300',
-  keyword:  'text-cyan-400',
-  currency: 'text-yellow-400',
+  item:      'text-cyan-300',
+  npc:       'text-green-400',
+  enemy:     'text-red-400',
+  exit:      'text-yellow-300',
+  keyword:   'text-cyan-400',
+  currency:  'text-yellow-400',
+  condition: 'text-orange-400',
+  trait:     'text-purple-400',
 }
 
 const TAG_PATTERN = new RegExp(

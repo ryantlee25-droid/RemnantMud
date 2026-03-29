@@ -108,7 +108,7 @@ export default function StatTab() {
   const armor = equippedArmor(inventory)
 
   return (
-    <div className="overflow-y-auto flex-1 font-mono text-sm text-amber-400 p-4 space-y-5">
+    <div className="overflow-y-auto flex-1 font-mono text-sm text-amber-400 p-2 space-y-2">
       {/* Pending stat increase banner */}
       {state.pendingStatIncrease && (
         <div className="border border-green-700 bg-green-950 text-green-400 px-3 py-2 text-xs uppercase tracking-widest text-center animate-pulse">
@@ -118,7 +118,7 @@ export default function StatTab() {
 
       {/* CHARACTER header */}
       <section>
-        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">Character</h2>
+        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">Character</h2>
         <div className="space-y-1">
           <div className="flex justify-between">
             <span>
@@ -161,8 +161,8 @@ export default function StatTab() {
 
       {/* STATS */}
       <section>
-        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">Stats</h2>
-        <div className="grid grid-cols-2 gap-x-6 gap-y-1">
+        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">Stats</h2>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-0.5">
           {stats.map((stat) => {
             const value = player[stat]
             const mod = statModifier(value)
@@ -186,7 +186,7 @@ export default function StatTab() {
 
       {/* EQUIPPED */}
       <section>
-        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">Equipped</h2>
+        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">Equipped</h2>
         <div className="space-y-1">
           <div>
             <span className="text-amber-600">Weapon: </span>
@@ -214,8 +214,8 @@ export default function StatTab() {
       {/* EQUIPMENT TRAITS */}
       {(weapon?.traits.length || armor?.traits.length) ? (
         <section>
-          <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">Equipment Traits</h2>
-          <div className="space-y-2">
+          <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">Equipment Traits</h2>
+          <div className="space-y-1">
             {weapon && weapon.traits.length > 0 && (
               <div>
                 <div>
@@ -250,7 +250,7 @@ export default function StatTab() {
 
       {/* CLASS ABILITY */}
       <section>
-        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">Class Ability</h2>
+        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">Class Ability</h2>
         <div className="space-y-1">
           <div>
             <span className="text-purple-400 font-bold">{CLASS_ABILITY[player.characterClass].name}</span>
@@ -271,10 +271,10 @@ export default function StatTab() {
 
       {/* SKILLS */}
       <section>
-        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">
+        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">
           Skills <span className="normal-case tracking-normal">(derived from stats)</span>
         </h2>
-        <div className="grid grid-cols-2 gap-x-6 gap-y-1">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-0.5">
           {Object.entries(SKILL_STAT_MAP).map(([skill, stat]) => {
             const mod = statModifier(player[stat])
             return (

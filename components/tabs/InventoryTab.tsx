@@ -58,10 +58,10 @@ export default function InventoryTab() {
   if (!player) return null
 
   return (
-    <div className="overflow-y-auto flex-1 font-mono text-sm text-amber-400 p-4 space-y-5">
+    <div className="overflow-y-auto flex-1 font-mono text-sm text-amber-400 p-2 space-y-2">
       {/* INVENTORY */}
       <section>
-        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">Inventory</h2>
+        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">Inventory</h2>
         {inventory.length === 0 ? (
           <div className="text-amber-600 text-xs italic">Nothing.</div>
         ) : (
@@ -81,8 +81,8 @@ export default function InventoryTab() {
       </section>
 
       {/* STASH */}
-      <section className="border-t border-amber-900 pt-3">
-        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">
+      <section className="border-t border-amber-900 pt-1">
+        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">
           Stash ({state.stash.length}/20)
         </h2>
         {state.stash.length === 0 ? (
@@ -103,9 +103,9 @@ export default function InventoryTab() {
       </section>
 
       {/* DISPLAY / THEME */}
-      <section className="border-t border-amber-900 pt-3">
-        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">Display</h2>
-        <div className="flex items-center gap-3">
+      <section className="border-t border-amber-900 pt-1">
+        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">Display</h2>
+        <div className="flex items-center gap-2">
           {THEMES.map((theme) => (
             <button
               key={theme.id}
@@ -124,7 +124,7 @@ export default function InventoryTab() {
       </section>
 
       {/* SAVE */}
-      <section className="border-t border-amber-900 pt-3">
+      <section className="border-t border-amber-900 pt-1">
         <div className="flex items-center gap-2">
           <button
             onClick={handleSave}

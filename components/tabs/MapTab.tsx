@@ -117,11 +117,11 @@ export default function MapTab() {
   )
 
   return (
-    <div className="overflow-y-auto flex-1 font-mono text-sm text-amber-400 p-4 space-y-5">
+    <div className="overflow-y-auto flex-1 font-mono text-sm text-amber-400 p-2 space-y-2">
       {/* Header */}
       <section>
-        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">Waypoints</h2>
-        <p className="text-amber-600 text-xs mb-3">
+        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">Waypoints</h2>
+        <p className="text-amber-600 text-xs mb-1">
           You must be at a waypoint to fast travel. Type &quot;travel [name]&quot;.
         </p>
       </section>
@@ -138,10 +138,10 @@ export default function MapTab() {
 
           return (
             <section key={group.zone}>
-              <h3 className="text-amber-600 text-xs uppercase tracking-widest mb-1">
+              <h3 className="text-amber-600 text-xs uppercase tracking-widest mb-0.5">
                 {group.label}
               </h3>
-              <div className="space-y-0.5 ml-2">
+              <div className="space-y-0 ml-2">
                 {group.waypoints.map((wp) => (
                   <div
                     key={wp.room.id}

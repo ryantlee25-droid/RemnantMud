@@ -69,10 +69,10 @@ export default function DataTab() {
   )
 
   return (
-    <div className="overflow-y-auto flex-1 font-mono text-sm text-amber-400 p-4 space-y-5">
+    <div className="overflow-y-auto flex-1 font-mono text-sm text-amber-400 p-2 space-y-2">
       {/* FACTION STANDING */}
       <section>
-        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">
+        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">
           Faction Standing
         </h2>
         <div className="space-y-1">
@@ -103,8 +103,8 @@ export default function DataTab() {
       </section>
 
       {/* QUEST FLAGS */}
-      <section className="border-t border-amber-900 pt-3">
-        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">
+      <section className="border-t border-amber-900 pt-1">
+        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">
           Quest Flags
         </h2>
         {activeFlags.length === 0 ? (
@@ -127,8 +127,8 @@ export default function DataTab() {
       </section>
 
       {/* BESTIARY */}
-      <section className="border-t border-amber-900 pt-3">
-        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">
+      <section className="border-t border-amber-900 pt-1">
+        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">
           Bestiary
         </h2>
         {(() => {
@@ -137,7 +137,7 @@ export default function DataTab() {
           const totalEnemies = Object.keys(ENEMIES).length
           return (
             <>
-              <div className="text-amber-500 text-xs mb-2">
+              <div className="text-amber-500 text-xs mb-1">
                 {discovered.length} / {totalEnemies} enemies discovered
               </div>
               {discovered.length === 0 ? (
@@ -168,8 +168,8 @@ export default function DataTab() {
       </section>
 
       {/* LORE ITEMS READ */}
-      <section className="border-t border-amber-900 pt-3">
-        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-2">
+      <section className="border-t border-amber-900 pt-1">
+        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">
           Lore Items
         </h2>
         {loreItems.length === 0 ? (

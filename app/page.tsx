@@ -123,7 +123,16 @@ export default function GamePage() {
         user = DEV_USER
       } else {
         const supabase = createSupabaseBrowserClient()
-        const { data } = await supabase.auth.getUser()
+        // getUser() verifies with the Supabase server and auto-refreshes
+        // expired access tokens using the refresh token in cookies.
+        // proxy.ts also refreshes on every request, so cookies should be
+        // fresh by the time this runs.
+        const { data, error: authError } = await supabase.auth.getUser()
+        if (authError && !data.user) {
+          // Access token expired and refresh failed — clear stale session
+          // so the user gets a clean login prompt instead of a loop
+          await supabase.auth.signOut()
+        }
         user = data.user
       }
 

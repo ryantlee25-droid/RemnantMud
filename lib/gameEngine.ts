@@ -403,31 +403,41 @@ export class GameEngine implements EngineCore {
       narrativeKeys: player.narrativeKeys ?? [],
     }
 
+    const payload = {
+      hp: player.hp,
+      max_hp: player.maxHp,
+      current_room_id: player.currentRoomId,
+      xp: player.xp,
+      level: player.level,
+      actions_taken: player.actionsTaken ?? 0,
+      vigor: player.vigor,
+      grit: player.grit,
+      reflex: player.reflex,
+      wits: player.wits,
+      presence: player.presence,
+      shadow: player.shadow,
+      faction_reputation: player.factionReputation ?? {},
+      quest_flags: player.questFlags ?? {},
+      active_buffs: JSON.stringify(this.state.activeBuffs ?? []),
+      pending_stat_increase: this.state.pendingStatIncrease ?? false,
+      narrative_progress: narrativeProgress,
+    }
+
     const { error } = await supabase
       .from('players')
-      .update({
-        hp: player.hp,
-        max_hp: player.maxHp,
-        current_room_id: player.currentRoomId,
-        xp: player.xp,
-        level: player.level,
-        actions_taken: player.actionsTaken ?? 0,
-        vigor: player.vigor,
-        grit: player.grit,
-        reflex: player.reflex,
-        wits: player.wits,
-        presence: player.presence,
-        shadow: player.shadow,
-        faction_reputation: player.factionReputation ?? {},
-        quest_flags: player.questFlags ?? {},
-        active_buffs: JSON.stringify(this.state.activeBuffs ?? []),
-        pending_stat_increase: this.state.pendingStatIncrease ?? false,
-        narrative_progress: narrativeProgress,
-      })
+      .update(payload)
       .eq('id', player.id)
     if (error) {
       console.error('Failed to save player:', error.message)
-      this._appendMessages([systemMsg('Warning: Failed to save progress.')])
+      // Retry once — transient auth/network failures are common
+      const { error: retryError } = await supabase
+        .from('players')
+        .update(payload)
+        .eq('id', player.id)
+      if (retryError) {
+        console.error('Save retry failed:', retryError.message)
+        this._appendMessages([systemMsg('Warning: Save failed. Your session may have expired — try reloading the page.')])
+      }
     }
   }
 
@@ -1783,18 +1793,9 @@ export class GameEngine implements EngineCore {
       }
     }
 
-    // ----------------------------------------------------------
-    // Narrative pipeline — runs after every time-advancing action.
-    // Messages are appended AFTER the action result messages.
-    // ----------------------------------------------------------
-    if (GameEngine.TIME_ADVANCING_VERBS.has(action.verb) && this.state.player) {
-      const narrativeMessages = await this._runNarrativePipeline(action, prevRoomId, wasInCombat)
-      if (narrativeMessages.length > 0) {
-        this._appendMessages(narrativeMessages)
-      }
-    }
-
-    // Advance in-world time for meaningful actions
+    // Advance in-world time for meaningful actions (must happen BEFORE
+    // the narrative pipeline so pressure, narrator, and world events all
+    // operate on the updated action count).
     if (GameEngine.TIME_ADVANCING_VERBS.has(action.verb) && this.state.player) {
       const oldCount = this.state.player.actionsTaken ?? 0
       const newCount = oldCount + 1
@@ -1837,6 +1838,17 @@ export class GameEngine implements EngineCore {
           const label = statNames.join(', ')
           this._appendMessages([msg(`The stim effect wears off. Your ${label} returns to normal.`)])
         }
+      }
+    }
+
+    // ----------------------------------------------------------
+    // Narrative pipeline — runs AFTER actionsTaken is incremented
+    // so pressure, narrator, and world events see the correct count.
+    // ----------------------------------------------------------
+    if (GameEngine.TIME_ADVANCING_VERBS.has(action.verb) && this.state.player) {
+      const narrativeMessages = await this._runNarrativePipeline(action, prevRoomId, wasInCombat)
+      if (narrativeMessages.length > 0) {
+        this._appendMessages(narrativeMessages)
       }
     }
 

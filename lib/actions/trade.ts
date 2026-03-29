@@ -7,7 +7,7 @@ import type { GameMessage } from '@/types/game'
 import type { EngineCore } from './types'
 import { getNPC } from '@/data/npcs'
 import { getItem } from '@/data/items'
-import { getInventory, addItem, removeItem } from '@/lib/inventory'
+import { getInventory, addItem, removeItem, groupAndFormatItems } from '@/lib/inventory'
 import { rt } from '@/lib/richText'
 import { msg, systemMsg, errorMsg } from '@/lib/messages'
 
@@ -97,11 +97,15 @@ export async function handleTrade(engine: EngineCore, noun: string | undefined):
 
   const lines: string[] = [`${rt.npc(npcName)}'s wares:`]
 
-  for (const itemId of trader.tradeInventory) {
-    const item = getItem(itemId)
+  // NOTE: adjacent section above (greeting dispatch) owned by Rider C per convoy contract
+  // Wares display section — Rider D (item-stacking), convoy remnant-ux-0329 CONTRACT C7
+  const waresGrouped = groupAndFormatItems(trader.tradeInventory)
+  for (const grouped of waresGrouped) {
+    const item = getItem(grouped.itemId)
     if (!item) continue
-    lines.push(`  ${rt.item(item.name)} — ${rt.currency(`${item.value} rounds`)}`)
+    lines.push(`  ${rt.item(grouped.displayName)} — ${rt.currency(`${item.value} rounds`)}`)
   }
+  // NOTE: adjacent section below (budget display) owned by Rider C per convoy contract
 
   const playerRounds = getPlayerCurrency(engine)
   lines.push(`\nYou have ${rt.currency(`${playerRounds} .22 LR rounds`)}.`)

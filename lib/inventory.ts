@@ -256,3 +256,64 @@ export async function getEquipped(
 
   return null
 }
+
+// ------------------------------------------------------------
+// Item stacking / display grouping (CONTRACT C2 — convoy remnant-ux-0329)
+// ------------------------------------------------------------
+
+export interface GroupedItem {
+  itemId: string
+  name: string
+  count: number
+  displayName: string  // pre-formatted: "Bandages x3" or "Bandages"
+}
+
+/**
+ * Default stack format: "{Name} x{count}" for count > 1, or just "{Name}" for count === 1.
+ * Canonical format per CONTRACT C2: single space before x, no parens, no brackets.
+ * Examples: "Wild Herbs x3", "Bandages x5", "Pipe Wrench"
+ */
+export function defaultStackFormat(name: string, count: number): string {
+  return count > 1 ? `${name} x${count}` : name
+}
+
+/**
+ * Groups item IDs by type and returns sorted array for display.
+ * Items with count === 1 return name only.
+ * Items with count > 1 return "Name xN".
+ *
+ * @param itemIds - Array of item ID strings (may contain duplicates for stacked items)
+ * @param format  - Optional custom formatter; defaults to defaultStackFormat
+ * @returns       - Array of GroupedItem sorted alphabetically by name
+ */
+export function groupAndFormatItems(
+  itemIds: string[],
+  format: (name: string, count: number) => string = defaultStackFormat
+): GroupedItem[] {
+  // Count occurrences of each itemId
+  const counts = new Map<string, number>()
+  for (const id of itemIds) {
+    counts.set(id, (counts.get(id) ?? 0) + 1)
+  }
+
+  // Build GroupedItem array (one entry per unique itemId, preserving first-seen order)
+  const grouped: GroupedItem[] = []
+  const seen = new Set<string>()
+
+  for (const id of itemIds) {
+    if (seen.has(id)) continue
+    seen.add(id)
+
+    const item = getItem(id)
+    const name = item?.name ?? id
+    const count = counts.get(id) ?? 1
+    const displayName = format(name, count)
+
+    grouped.push({ itemId: id, name, count, displayName })
+  }
+
+  // Sort alphabetically by name for stable display ordering
+  grouped.sort((a, b) => a.name.localeCompare(b.name))
+
+  return grouped
+}

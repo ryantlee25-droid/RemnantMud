@@ -69,10 +69,7 @@ export default function InventoryTab() {
             {inventory.map((ii) => (
               <div key={ii.id} className="flex justify-between items-center">
                 <span className={ii.equipped ? 'text-amber-200' : 'text-amber-400'}>
-                  {ii.item.name}
-                  {ii.quantity > 1 && (
-                    <span className="text-amber-700"> x{ii.quantity}</span>
-                  )}
+                  {ii.quantity > 1 ? `${ii.item.name} x${ii.quantity}` : ii.item.name}
                 </span>
                 {ii.equipped && (
                   <span className="text-xs text-amber-600">[eq]</span>
@@ -96,10 +93,9 @@ export default function InventoryTab() {
           <div className="space-y-1">
             {state.stash.map((si) => (
               <div key={si.id} className="flex justify-between items-center">
-                <span className="text-amber-500 text-xs">{si.item.name}</span>
-                {si.quantity > 1 && (
-                  <span className="text-amber-600 text-xs">x{si.quantity}</span>
-                )}
+                <span className="text-amber-500 text-xs">
+                  {si.quantity > 1 ? `${si.item.name} x${si.quantity}` : si.item.name}
+                </span>
               </div>
             ))}
           </div>

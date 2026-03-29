@@ -6,6 +6,7 @@ import type { GameMessage, Room, Direction, Player, TimeOfDay } from '@/types/ga
 import type { EngineCore } from './types'
 import { getRoom, canMove, markVisited, getExits } from '@/lib/world'
 import { getItem } from '@/data/items'
+import { groupAndFormatItems } from '@/lib/inventory'
 import { getEnemy } from '@/data/enemies'
 import { getNPC } from '@/data/npcs'
 import { getStatForSkill } from '@/lib/skillBonus'
@@ -52,9 +53,8 @@ export function exitsLine(room: Room): string {
 
 export function itemsLine(room: Room): string {
   if (room.items.length === 0) return ''
-  const names = room.items
-    .map((id) => rt.item(getItem(id)?.name ?? id))
-    .join(', ')
+  const grouped = groupAndFormatItems(room.items)
+  const names = grouped.map((g) => rt.item(g.displayName)).join(', ')
   return `You see: ${names}.`
 }
 

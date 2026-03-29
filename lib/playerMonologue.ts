@@ -155,7 +155,7 @@ export function getPhysicalStateNarration(
   if (inCombat) return null
 
   const hpPercent = maxHp > 0 ? hp / maxHp : 1
-  const actionsSinceRest = lastRestAt != null ? actionsTaken - lastRestAt : 0
+  const actionsSinceRest = lastRestAt != null ? actionsTaken - lastRestAt : actionsTaken
 
   // Priority order: critical state first
 

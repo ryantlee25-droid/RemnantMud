@@ -262,18 +262,6 @@ export const INITIATIVE_TRIGGERS: InitiativeTrigger[] = [
 ]
 
 // ------------------------------------------------------------
-// Cooldown state (in-memory, per session)
-// ------------------------------------------------------------
-
-// Last action count when an initiative event fired
-let lastInitiativeActionCount = 0
-
-/** Reset for testing purposes only. */
-export function _resetInitiativeCooldown(): void {
-  lastInitiativeActionCount = 0
-}
-
-// ------------------------------------------------------------
 // Main trigger check
 // ------------------------------------------------------------
 
@@ -281,8 +269,12 @@ export function _resetInitiativeCooldown(): void {
  * Check if any NPC should appear seeking the player.
  * Called by Rider H on room entry only.
  *
- * Returns the first matching trigger, or null if none qualify
- * or if the cooldown (30 actions) has not elapsed.
+ * Accepts lastInitiativeAction as a parameter (caller-managed) so
+ * this function is safe across serverless request boundaries where
+ * module-level state does not survive between invocations.
+ *
+ * Returns { trigger, updatedLastAction } — caller stores the
+ * returned lastAction value alongside player state.
  *
  * 5–10% spawn chance per room entry when conditions are met.
  */
@@ -290,23 +282,27 @@ export function checkInitiativeTriggers(
   playerState: Player,
   _currentRoom: string,
   actionCount: number,
-): InitiativeTrigger | null {
+  lastInitiativeAction: number,
+): { trigger: InitiativeTrigger | null; updatedLastAction: number } {
   // Enforce 30-action cooldown
-  if (actionCount - lastInitiativeActionCount < 30) return null
+  if (actionCount - lastInitiativeAction < 30) {
+    return { trigger: null, updatedLastAction: lastInitiativeAction }
+  }
 
   // 5–10% chance per room entry
   const spawnRoll = Math.random()
-  if (spawnRoll > 0.10) return null
+  if (spawnRoll > 0.10) {
+    return { trigger: null, updatedLastAction: lastInitiativeAction }
+  }
 
   // Find first trigger whose condition passes
   for (const trigger of INITIATIVE_TRIGGERS) {
     if (trigger.condition(playerState)) {
-      lastInitiativeActionCount = actionCount
-      return trigger
+      return { trigger, updatedLastAction: actionCount }
     }
   }
 
-  return null
+  return { trigger: null, updatedLastAction: lastInitiativeAction }
 }
 
 // ------------------------------------------------------------

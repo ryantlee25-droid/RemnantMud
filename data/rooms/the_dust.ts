@@ -410,9 +410,9 @@ export const THE_DUST_ROOMS: Room[] = [
     difficulty: 3,
     visited: false,
     flags: { waterSource: true, scavengingZone: false },
-    description: 'The tower stands sixty feet tall on four steel legs, painted white once, now rust-streaked and sun-blistered. The tank is still half-full — the water reads safe by sight (green-blue, minimal film), but you\'d want to filter it. The ladder up is intact except for the eighth rung, which has rusted through. A chain lock at the base is decorative — it was cut long ago and re-hung to look closed. At the top, you can see the ghost town below, the alkali flat, the ranch to the west, and on a clear day, the smudge of smoke that is someone\'s chimney thirty miles out.',
+    description: 'The tower stands sixty feet on four rust-streaked legs, painted white once, the paint now peeling in curls that catch the wind. The tank is still half-full and the water smells clean — mineral-chalky, cold even in summer heat, better than anything the Dust otherwise offers. Someone has spray-painted the base legs in three different hands over three different years: WE WERE HERE (black, old), KEEP GOING NORTH (red, faded), and most recently, in yellow: WHAT NORTH? The chain lock at the base is cut and re-hung to look closed. From the top, the ghost town is a circuit board below, the alkali flat a bleached mirror to the east, the ranch compound a dark cluster to the west. A lookout position and a water source in a zone where both are scarce.',
     descriptionNight: 'The water tower at night is a tower of stars. Climb it and the world falls away below — the ghost town becomes a geometry of dark shapes, the alkali flat becomes a mirror for the sky. The water in the tank moves slightly, almost imperceptibly, rocking with the wind that finds the tower\'s altitude.',
-    shortDescription: 'A water tower. Half-full. Sixty-foot view.',
+    shortDescription: 'A water tower. Half-full. Sixty-foot view. Someone was here before you.',
     exits: { east: 'du_04_ghost_main', west: 'du_10_ranch', up: 'du_07_water_tower' },
     richExits: {
       east: { destination: 'du_04_ghost_main', descriptionVerbose: 'east to Main Street' },
@@ -429,7 +429,7 @@ export const THE_DUST_ROOMS: Room[] = [
     extras: [
       {
         keywords: ['ladder', 'rung', 'climb'],
-        description: 'The ladder\'s missing eighth rung forces a dynamic move — you have to skip it with momentum or use the vertical uprights as handholds. There\'s a rope tied to the ninth rung by a previous climber. The rope\'s still there. Whether it\'ll hold is a different question.',
+        description: 'The ladder\'s missing eighth rung forces a dynamic move — skip it with momentum or use the vertical uprights as handholds. Someone has tied a rope to the ninth rung. The rope\'s still there. Whether it\'ll hold is a different question.',
         skillCheck: { skill: 'climbing', dc: 8, successAppend: 'From the top: the ghost town is a circuit board below you, roads and buildings laid out with a small-town logic that made sense once. You can see the alkali flat, the boneyard south, the ranch to the west. And north, past the dust, something glints. Metal or glass. You make a note.' },
       },
       {
@@ -437,8 +437,12 @@ export const THE_DUST_ROOMS: Room[] = [
         description: 'The water smells mineral-clean, which in the Dust means nobody\'s been upstream of it lately. A quick taste test: slightly chalky, slightly alkaline, better than anything you\'ve had today. The tank access hatch has been left open — the rain that gets in is probably an improvement.',
       },
       {
-        keywords: ['view', 'top', 'horizon', 'distance'],
-        description: 'From the top, the Four Corners spreads out like a map — distant mesas, the long silver thread of the highway east, the smudge of the ghost town below. On a clear day you can see the Rocky Mountain foothills to the north. On a very clear night you can see the Scar valley, though most people think that orange flicker is just a wildfire.',
+        keywords: ['graffiti', 'writing', 'paint', 'legs', 'tower'],
+        description: 'Three messages in three different hands, painted on the steel legs at eye level. The oldest: WE WERE HERE, in black house paint, cracked with age. Below it, in red spray: KEEP GOING NORTH. Below that, recent enough that the yellow paint still has some sheen: WHAT NORTH? The three-year conversation between strangers who never met, each answering the last person who came here alone.',
+      },
+      {
+        keywords: ['view', 'top', 'horizon', 'distance', 'lookout'],
+        description: 'From the top, the Four Corners spreads out like a map — distant mesas, the long silver thread of the highway east, the ghost town below. On a clear day you can see the Rocky Mountain foothills to the north. On a very clear night you can see the Scar valley, though most people think that orange flicker is just a wildfire.',
         cycleGate: 2,
       },
       {
@@ -446,6 +450,12 @@ export const THE_DUST_ROOMS: Room[] = [
         description: 'The chain lock is cut — whoever cut it rehung it through the hasp to look closed from a distance. Practical deception. The water here has been quietly available to anyone who bothered to look closely.',
       },
     ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'Wind finds the tower at this height. The steel legs hum a low note that you feel more than hear.', chance: 0.25, time: null },
+        { line: 'From here you can see why people came to the Dust: the open country has a terrible clarity. Nothing hidden. Nothing soft. Everything at its actual scale.', chance: 0.20, time: ['day'] },
+      ],
+    },
     hollowEncounter: {
       baseChance: 0.15,
       timeModifier: { day: 0.5, night: 1.5, dawn: 0.8, dusk: 1.2 },
@@ -528,9 +538,9 @@ export const THE_DUST_ROOMS: Room[] = [
     difficulty: 3,
     visited: false,
     flags: { dark: false, scavengingZone: false },
-    description: 'This stretch of open desert produces mirages visible from a mile out — shimmering water-shapes that the heat manufactures from cruelty and atmospheric science. Up close, the shimmer is disorienting. Distance warps. Things that aren\'t there briefly are. The ground here is fractured ceramic clay, each piece curled up at the edges like a dried leaf. The smell is mineral and hot and slightly wrong. Your shadow bends. Your water tastes like you already drank it.',
-    descriptionNight: 'At night the Mirage produces something different — cold air inversions that make distant lights seem close. The stars reflect off patches of mica in the clay. A dark shape on the horizon may be a building, a Hollow, or nothing at all. Perception becomes a liability here. Trust your feet over your eyes.',
-    shortDescription: 'Open desert. Heat mirages. Perception unreliable.',
+    description: 'The shimmer is specific here, not generic: the heat bends the air into a small town that doesn\'t exist — storefronts, a water tower, a gas station with intact pumps, the way the ghost town looked before the Collapse. It holds for four or five seconds before your brain catches up with your eyes. The ground is fractured ceramic clay, each piece curled at the edges like a dried leaf. The smell is mineral and hot and something underneath that you associate with old electronics, old ozone, old purpose. Your shadow is slightly wrong. Your water tastes like you already drank it.',
+    descriptionNight: 'At night the Mirage produces something different — cold air inversions that make distant lights seem close. The stars reflect off patches of mica in the clay. A shape on the horizon may be a building, a Hollow, or nothing at all. And occasionally: a light that moves at walking pace, stops, moves again, then is gone. Perception becomes a liability here. Trust your feet over your eyes.',
+    shortDescription: 'Open desert. The heat shows you a town that isn\'t there. Perception unreliable.',
     exits: { south: 'du_03_alkali_flat', west: 'du_11_radio_tower', east: 'du_10_ranch' },
     richExits: {
       south: { destination: 'du_03_alkali_flat', descriptionVerbose: 'south across the alkali flat' },
@@ -542,9 +552,9 @@ export const THE_DUST_ROOMS: Room[] = [
     npcs: [],
     extras: [
       {
-        keywords: ['shimmer', 'mirage', 'water', 'illusion'],
-        description: 'You walk toward the shimmer. It retreats at exactly your pace. The physics of it are simple: bent light, differential air densities, brain trying to make sense of input that doesn\'t add up. Understanding the mechanism doesn\'t make the water-shape less convincing. You stop walking before you know you\'ve decided to.',
-        skillCheck: { skill: 'perception', dc: 12, successAppend: 'Wait — that one isn\'t moving. You walk toward it and it stays put. Not a mirage. A figure, sitting, motionless in the open heat. Human-shaped. It doesn\'t react when you approach. It\'s been here a while.' },
+        keywords: ['shimmer', 'mirage', 'town', 'illusion', 'water'],
+        description: 'You walk toward the shimmer. It holds longer than it should — storefronts, a water tower, a gas station with intact pumps, the ghost town as it looked before whatever happened to it happened. Then it shreds. The physics are simple: bent light, differential air densities, your brain\'s desperate assembly of familiar shapes from noise. Understanding the mechanism doesn\'t make the loss less specific when it dissolves.',
+        skillCheck: { skill: 'perception', dc: 12, successAppend: 'Wait — that shape isn\'t moving. You walk toward it and it stays put. Not a mirage. A figure, sitting motionless in the open heat. Human-shaped. It doesn\'t react when you approach. It\'s been here a while.' },
       },
       {
         keywords: ['clay', 'ground', 'fractured', 'ceramic'],
@@ -555,6 +565,13 @@ export const THE_DUST_ROOMS: Room[] = [
         description: 'Your shadow stretches wrong here — something about the angle or the reflective clay surface distorts it. It\'s a few degrees shorter than it should be, or longer. It moves a half-second behind you. The sun out here isn\'t the sun you know from before. It\'s harder and closer and it means you differently.',
       },
     ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The shimmer shows you something for a moment — a complete building, a street, the ghost town intact. Then heat-distortion shreds it. You know what you saw.', chance: 0.30, time: ['day'] },
+        { line: 'Your mouth is dry. The mirage offers water and you know it isn\'t water and your body doesn\'t fully accept the reasoning.', chance: 0.25, time: ['day'] },
+        { line: 'A sound carries from the right direction to be the ghost town, but the ghost town is silent. The clay plays tricks with sound the same way it plays tricks with light.', chance: 0.20, time: null },
+      ],
+    },
     hollowEncounter: {
       baseChance: 0.25,
       timeModifier: { day: 1.5, night: 1.5, dawn: 1.0, dusk: 1.2 },
@@ -571,7 +588,7 @@ export const THE_DUST_ROOMS: Room[] = [
         ],
       },
     },
-    narrativeNotes: 'Disorienting zone. Whisperer spawn is thematically appropriate — the Mirage produces hallucinations, the Whisperer is a walking hallucination. Perception check reveals a hidden encounter.',
+    narrativeNotes: 'Disorienting zone. Whisperer spawn is thematically appropriate — the Mirage produces hallucinations, the Whisperer is a walking hallucination. Perception check reveals a hidden encounter. The mirage now shows a specific vision: the ghost town intact, pre-Collapse.',
   },
 
   {

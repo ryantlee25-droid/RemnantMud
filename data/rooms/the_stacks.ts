@@ -343,9 +343,9 @@ export const THE_STACKS_ROOMS: Room[] = [
     difficulty: 2,
     visited: false,
     flags: { noCombat: true, questHub: true },
-    description: 'Lev\'s office is organized in layers — the desk surface is working space, beneath it is filing space, the walls are reference space, the floor under the desk is archive space. A single personal object: a photograph in a small frame, face-down on the bookshelf. On the desk, a folder labeled REVENANT COHORT — CYCLE OBSERVATIONS sits open. Inside: you, or someone who cycles the way you cycle, documented across multiple iterations. Lev has been watching. Lev has been waiting. Lev is about to ask you something important.',
-    descriptionNight: 'Lev is usually in this office at night. Reading, making notes, running through analysis. The photograph stays face-down. The REVENANT COHORT folder is always out. At night Lev is quieter — the questions more direct, as if the dark takes away the professional courtesy and leaves only the actual curiosity.',
-    shortDescription: 'Lev\'s office. Quest hub. MERIDIAN keycard quest.',
+    description: 'Lev\'s office tells you who Lev is before Lev speaks. The wall behind the desk is all references: maps with annotation layers, printouts with dense handwritten margins, a MERIDIAN site diagram covered in question marks. A coffee mug with a ring-stained bottom sits on a research journal that was clearly being used as a coaster while Lev was reading something else. Three other mugs at various distances suggest a working radius. On the bookshelf: a photograph in a small frame, face-down, always face-down. On the desk: a folder labeled REVENANT COHORT — CYCLE OBSERVATIONS, open. Inside it: you, or someone who cycles the way you cycle, documented across multiple iterations. Lev has been watching. Lev has been waiting. Lev is about to ask you something.',
+    descriptionNight: 'Lev is usually in this office at night. The coffee is always fresh, which means either Lev doesn\'t sleep or keeps very odd hours — the mug near the lamp is still warm. The photograph stays face-down. The REVENANT COHORT folder is always out. At night Lev is quieter — the questions more direct, as if the dark takes away the professional courtesy and leaves only the actual curiosity.',
+    shortDescription: 'Lev\'s office. Three coffee mugs. A face-down photograph. A folder with your name in it.',
     exits: { south: 'st_07_comm_center', west: 'st_04_research_lab' },
     richExits: {
       south: { destination: 'st_07_comm_center', descriptionVerbose: 'south to the comm center' },
@@ -376,6 +376,15 @@ export const THE_STACKS_ROOMS: Room[] = [
         description: 'You pick up the photograph carefully. A family: Lev (younger, clearly), two children, and a partner. All four are laughing at something outside the frame. The date on the back: 2030. One year before the Collapse. You set it back down face-down because that is how Lev keeps it.',
       },
       {
+        keywords: ['coffee', 'mug', 'cup', 'ring', 'stain'],
+        description: 'You count four mugs in various positions around the office. The one on the lamp table is warm. The one on the research journal has been there long enough that the ring stain has dried and been added to several times, a Venn diagram of caffeine and urgency. The one on the windowsill is a trophy — it has WORLD\'S OKAYEST SCIENTIST printed on it in faded letters, a pre-Collapse joke gift that Lev has kept for seven years and still uses.',
+      },
+      {
+        keywords: ['wall', 'reference', 'maps', 'annotations', 'research', 'printouts'],
+        description: 'The reference wall is a biography of an obsession. Maps of the Scar valley with topographic markings. Photographs of the MERIDIAN crater rim from multiple approach vectors. Printouts from the server archive with dense marginalia in two different pen colors — Lev\'s analytical system, you learn if you ask: blue for established fact, red for inference or hypothesis. There is significantly more red than blue on the MERIDIAN pages. The question marks outnumber the answers.',
+        skillCheck: { skill: 'lore', dc: 10, successAppend: 'One section of the wall is dedicated to a single diagram: the CHARON-7 divergence timeline. R-1 is marked as the prototype, with a date of 2028 and an arrow labeled SANGUINE EXPRESSION. R-8 is marked as a derivation, 2030, HOLLOW EXPRESSION. Between them: a date in red with a question mark — 2029. Something happened in 2029 that Lev has circled seven times and still can\'t account for.' },
+      },
+      {
         keywords: ['folder', 'revenant', 'cohort', 'files'],
         description: 'The file on you is thorough. Physical descriptions from multiple observations. Skill retention percentages across cycles. Notes on personality shifts between deaths. The final entry reads: "Subject demonstrates unusual coherence. Memory fragmentation within expected range but integration significantly above. Query: is subject aware they are being studied? Should we ask?"',
         cycleGate: 2,
@@ -394,7 +403,13 @@ export const THE_STACKS_ROOMS: Room[] = [
         reputationGrant: { faction: 'reclaimers', delta: 1 },
       },
     ],
-    narrativeNotes: 'Primary questgiver room. The MERIDIAN keycard quest originates here. The photograph humanizes Lev. The revenant cohort file is a significant player-mirror moment. The keycard quest requires discovered_field_station_echo from the comm center map room.',
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The reference wall has a quality you recognize: something built over years, each addition placed with the precision of someone who knows it won\'t be the last addition.', chance: 0.25, time: null },
+        { line: 'The coffee mug on the lamp table is warm. Lev was here recently, or is coming back.', chance: 0.20, time: null },
+      ],
+    },
+    narrativeNotes: 'Primary questgiver room. The MERIDIAN keycard quest originates here. The photograph humanizes Lev. The revenant cohort file is a significant player-mirror moment. New extras: coffee mugs (personality), reference wall (CHARON-7 timeline lore hook). The keycard quest requires discovered_field_station_echo from the comm center map room.',
   },
 
   {

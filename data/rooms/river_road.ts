@@ -417,11 +417,11 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     visited: false,
     flags: { safeRest: false, waterSource: true },
     description:
-      'A mile south of the broken bridge, the Animas widens and shallows over a broad gravel bar. Ankle-deep at the edges, knee-deep at the center. Cart tracks mark the crossing on both banks — this is where heavy loads go. The water is cold and fast but manageable. Flat stones break the current into channels. Someone has placed stepping stones across the deepest section, not quite evenly spaced.',
+      'A mile south of the broken bridge, the Animas widens and shallows over a broad gravel bar. Ankle-deep at the edges, knee-deep at the center — the cold hits your shins like a physical argument. Cart tracks scar both banks where wheels have been hauled through the shallows, the ruts deep enough to hold water after the last crossing. Flat stones break the current into channels you can feel pushing sideways against your boots if you stop moving. Someone placed stepping stones across the deepest section: flat river slabs, not quite evenly spaced, settled at the angle the current pushed them to years ago. The water is clear down to gravel and the pale flash of trout. The far bank is thirty feet away and the current is faster than it looks.',
     descriptionNight:
-      'The ford is audible as a broad hiss of water over stone. In moonlight, the shallows are silver sheets. The stepping stones are dark humps in the current. Missing one would mean wet boots at best, a dunking at worst.',
+      'The ford is audible before it\'s visible — a broad hiss of water over stone that fills the valley. In moonlight, the shallows are silver sheets of moving light. The stepping stones are dark humps in the current, and the gaps between them require trust you don\'t fully have. The water is the same cold it is in daylight. It doesn\'t adjust for the dark.',
     shortDescription:
-      'A mile south of the broken bridge, the Animas widens and shallows over a broad gravel bar.',
+      'The Animas widens and shallows at the ford — knee-deep, cold, fast, and thirty feet to the other bank.',
     exits: {
       north: 'rr_02_bridge_ruins',
       east: 'rr_03_east_bank',
@@ -434,19 +434,32 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       {
         keywords: ['stepping stones', 'stones', 'crossing'],
         description:
-          'Flat stones, placed deliberately but not recently — they\'ve settled into the riverbed. The gaps between them are a long stride for a tall person, a jump for a short one. Whoever placed them wasn\'t thinking about children.',
+          'Flat stones, placed deliberately but not recently — they\'ve settled into the riverbed at current-pushed angles. The gaps between them are a long stride for a tall person, a jump for a short one. Whoever placed them wasn\'t thinking about children. They\'re deep enough that the water runs over them at the edges; you have to feel for the center of each stone through the current pressure on your boot.',
       },
       {
         keywords: ['cart tracks', 'tracks', 'banks'],
         description:
-          'Deep ruts on both banks where carts have been hauled through the shallows. The Drifters use this crossing for their trade caravans. It adds two hours versus the bridge, but a loaded cart can\'t cross on cable and plank.',
+          'Deep ruts on both banks where carts have been hauled through the shallows, the mud below the waterline preserved cold and dense. The Drifters use this crossing for their trade caravans. It adds two hours versus the bridge, but a loaded cart can\'t cross on cable and plank. The ruts are the Drifters\' signature on this land: regular, practical, unannounced.',
       },
       {
-        keywords: ['water', 'river', 'current'],
+        keywords: ['water', 'river', 'current', 'cold'],
         description:
-          'Cold. Mountain snowmelt cold. Your legs will ache after thirty seconds. But the water is clean and the footing is solid gravel. Worse crossings exist.',
+          'Mountain snowmelt cold — the kind that removes sensation from your lower legs in thirty seconds and starts on your knees by sixty. The current is stronger at mid-crossing than it looks from the bank: you can feel it as a constant lateral push that wants you downstream. The footing is solid gravel but the gravel shifts where the current has scoured it. You place each foot carefully. You take your time.',
+        skillCheck: { skill: 'survival', dc: 7, successAppend: 'You read the current before you commit to the line: the shallower channel runs north of the stepping stones, slightly longer but with less lateral force. The difference between this crossing and a dunking is which line you choose. You choose the shallow line.' },
+      },
+      {
+        keywords: ['depth', 'footing', 'balance', 'wade', 'wading'],
+        description:
+          'At the center of the crossing, knee-deep, with the current pushing and the cold working up your thighs, you understand why people use this ford instead of the bridge: this discomfort is honest. The cable bridge might be easier but the ford asks something of you and pays you in the knowledge that you did it. The water is so clear you can watch your own boots on the gravel bottom, picking their way forward.',
       },
     ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The river sounds like static here — broad and white-noise constant. After a moment it stops sounding like static and starts sounding like something speaking very fast in a language you almost know.', chance: 0.25, time: null },
+        { line: 'Halfway across, your boots find the gravel and the cold finds your knees and the current makes its case and you are exactly as committed as you are going to be.', chance: 0.20, time: null },
+        { line: 'A trout holds position in the current three feet to your right, perfectly still in the moving water, doing effortlessly what costs you everything.', chance: 0.15, time: ['day', 'dawn'] },
+      ],
+    },
     personalLossEchoes: {
       child: 'The stepping stones are spaced for a tall person\'s stride. You think about small legs and the math of it — the gap too wide, the water too fast, the hand you would have offered. The stones don\'t care who crosses them. You do.',
       partner: 'Cold water. You remember wading somewhere together, the shock of it, the laughter. The Animas doesn\'t care about your memory. It runs over the stones the same way it would have run over both of you, and you cross alone and your boots are wet and that\'s all.',

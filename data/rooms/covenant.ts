@@ -1640,6 +1640,12 @@ export const COVENANT_ROOMS: Room[] = [
       },
     ],
     itemSpawns: [],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The corridor smells of lime wash — recent application. The cells are maintained. The maintenance is not comfort; it is procedure.', chance: 0.25, time: null },
+        { line: 'From behind one of the steel doors: nothing. The nothing is deliberate. Someone in there has learned not to make sounds that don\'t accomplish anything.', chance: 0.20, time: null },
+      ],
+    },
     narrativeNotes: 'Tonal counterpoint to the Accord\'s official justice rhetoric. Not a corruption reveal — the system is doing what bureaucratic systems do under pressure. The injustice is structural, not personal, which is harder to resolve.',
   },
 
@@ -1706,6 +1712,12 @@ export const COVENANT_ROOMS: Room[] = [
       },
     ],
     itemSpawns: [],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The wind comes up from the south, carrying road dust and the faint smell of whatever is burning two miles out. The sentry notes the direction without looking away from the scope.', chance: 0.25, time: ['day', 'dusk'] },
+        { line: 'A shape on the road at distance. It resolves into a person, alone, moving at walking pace. The sentry picks up the radio. Then puts it back down. Continues watching.', chance: 0.20, time: ['day'] },
+      ],
+    },
   },
 
   // ----------------------------------------------------------
@@ -1759,6 +1771,12 @@ export const COVENANT_ROOMS: Room[] = [
       },
     ],
     itemSpawns: [],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The DEFERRED stamp hits the ledger with a sound that is not loud but carries. The person at the front of the queue takes the ledger back and looks at it. They knew what it would say.', chance: 0.30, time: ['day'] },
+        { line: 'A child in the queue is asleep, standing, weight distributed between the two adults on either side. The adults don\'t shift or adjust. They have done this before.', chance: 0.20, time: null },
+      ],
+    },
     narrativeNotes: 'The Accord\'s intake system shown from the outside. The moral tension here is structural — Covenant can\'t absorb unlimited refugees and the intake system is a real solution to a real problem, but that doesn\'t make the people in the queue less real. Quest hooks: vouching for specific refugees, investigating the long-deferred cases, learning the council\'s actual review process.',
   },
 
@@ -1835,6 +1853,12 @@ export const COVENANT_ROOMS: Room[] = [
         depletion: { cooldownMinutes: { min: 180, max: 360 }, respawnChance: 0.35 },
       },
     ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The shelves are silent. The ledger is open. The system is running. You can feel the precision of it as a kind of presence — someone\'s will, imposed on disorder, still holding.', chance: 0.25, time: null },
+        { line: 'Okafor initiates the transfer receipt with a single precise stroke. The runner has already left by the time the pen lifts. This is how supply logistics works at speed.', chance: 0.20, time: ['day'] },
+      ],
+    },
     narrativeNotes: 'Logistics hub adjacent to granary. Okafor is a key NPC for the supply investigation quest. The ledger discrepancy here is a clue that can either exonerate or implicate her — designed to be ambiguous until Act II resolution.',
   },
 
@@ -1904,6 +1928,12 @@ export const COVENANT_ROOMS: Room[] = [
         depletion: { cooldownMinutes: { min: 99999, max: 99999 }, respawnChance: 0.0 },
       },
     ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The equipment hum is continuous — a frequency just below conversation level that you stop noticing after two minutes and start noticing again after ten.', chance: 0.25, time: null },
+        { line: 'Static. Then something that might be words, might be pattern. The operator writes nothing. Continues listening.', chance: 0.20, time: ['night'] },
+      ],
+    },
     narrativeNotes: 'Act II signal mystery node. Connects the MERIDIAN radio signal thread (established in earlier lore items) to Covenant\'s active intelligence capability. The operator\'s edited log entry is a significant detail for players tracking the MERIDIAN arc. Signal post connects south to cv_14_wall_north, sitting on the north wall infrastructure.',
   },
 ]

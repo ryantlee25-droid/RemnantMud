@@ -116,8 +116,32 @@ export const SALT_CREEK_ROOMS: Room[] = [
         keywords: ['stakes', 'warning', 'signs', 'markers'],
         description: 'At regular intervals, wooden stakes with red-painted tops mark distances from the inner wall — 80 meters, 60 meters, 40 meters, 20 meters. Range markers for the defenders. The numbers are large and legible. This is also intentional.',
       },
+      {
+        keywords: ['dead', 'bones', 'history', 'who', 'used', 'tested'],
+        description: 'The kill zone has been used. Not recently — Briggs established discipline early and the perimeter challenges have been mostly non-lethal since year two. But in year one, before the doctrine solidified, six people crossed this ground in ways that the sentries interpreted as hostile. Three of those interpretations were correct. Briggs addressed the other three instances in a closed meeting with the watch commanders. The policy changed. The distance markers date from afterward.',
+        skillCheck: { skill: 'lore', dc: 11, successAppend: 'The kill zone doctrine has a second function that Salters don\'t discuss with outsiders: it tests the will of people who want entry. Anyone who is sufficiently motivated to walk a hundred meters of completely exposed ground under rifle sights, at a pace, without running — that person wants in enough to be useful. Cowards and threats both fail the crossing for different reasons. Everyone who passed it with dignity got a second look from Briggs.' },
+      },
     ],
-    npcSpawns: [],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'Your boots leave marks in the treated soil. No other marks are fresh. You are the only person who has crossed this ground today, which means you are the most interesting thing on this side of the wall.', chance: 0.30, time: ['day'] },
+        { line: 'Somewhere on the inner wall, a scope catches light. Not a threat. An assessment.', chance: 0.25, time: ['day', 'dawn', 'dusk'] },
+      ],
+    },
+    npcSpawns: [
+      {
+        npcId: 'salter_perimeter_worker',
+        spawnChance: 0.35,
+        spawnType: 'patrol',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'A Salter walks the kill zone\'s edge with a salt spreader — a repurposed seed spreader loaded with coarse mineral salt. They work methodically, treating the sections where new growth has begun to show. They don\'t acknowledge you. The work continues whether you\'re here or not.', weight: 3 },
+          { desc: 'A Salter is at the range marker stakes, checking each one with a plumb line, adjusting the ones that have shifted. They measure the distance from the wall, mark it in a ledger, move on. Precision work. Briggs requires it.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.0, neutral: 0.6, wary: 0.3, hostile: 0.1 },
+        dialogueTree: 'sc_perimeter_worker',
+      },
+    ],
     itemSpawns: [],
   },
 

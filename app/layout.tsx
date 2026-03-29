@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { GameProvider } from '@/lib/gameContext'
 import ThemeLoader from '@/components/ThemeLoader'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 export const metadata: Metadata = {
   title: 'The Remnant — Post-Apocalyptic Text MUD',
@@ -26,6 +28,8 @@ export default function RootLayout({
           <ThemeLoader />
           {children}
         </GameProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )

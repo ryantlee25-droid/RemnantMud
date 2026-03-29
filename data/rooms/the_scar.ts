@@ -72,6 +72,16 @@ export const THE_SCAR_ROOMS: Room[] = [
       ],
       awarenessRoll: { unaware: 0.2, awarePassive: 0.35, awareAggressive: 0.45 },
     },
+    itemSpawns: [
+      {
+        entityId: 'bombing_site_notes',
+        spawnChance: 0.80,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.4, max: 0.8 },
+        groundDescription: 'A water-damaged field notebook lies near a shattered perimeter marker, the pages stiff with crater residue and years of chemical exposure.',
+        depletion: { cooldownMinutes: { min: 99999, max: 99999 }, respawnChance: 0.0 },
+      },
+    ],
     narrativeNotes: 'Act III entry. The Crater Rim is where the lie is made visually obvious. Five extras because this room carries enormous narrative weight. The chemical exposure timer establishes urgency without an artificial countdown.',
   },
 

@@ -83,7 +83,7 @@ const levTree: DialogueTree = {
     lev_echo_distrusted: {
       id: 'lev_echo_distrusted',
       speaker: 'Lev',
-      text: `${rt.npc('Lev')}'s expression hardens — the clinical detachment sharpening into something with edges. "You again." They don't open the drawer. "Last time you took the keycard and I received nothing. No data. No samples. No professional courtesy." They adjust the tablet, not looking at you. "The keycard costs trust you haven't earned. Twice." A deliberate silence. "The field station east of the Stacks. There were sequencing records there — R-8 integration data. If any survived, bring me what you find. Not a promise. Physical evidence. Then we discuss access."`,
+      text: `${rt.npc('Lev')}'s expression hardens — the clinical detachment sharpening into something with edges. "You again." They don't open the drawer. "Last time you took the keycard and I received nothing. No data. No samples. No professional courtesy." They adjust the tablet, not looking at you. "The keycard costs trust you haven't earned. Twice." A deliberate silence. "The field station east of the Stacks — two kilometers past the reading room exit, follow the old access road through the industrial district. There were sequencing records there — R-8 integration data. If any survived, bring me what you find. Not a promise. Physical evidence. Then we discuss access."`,
       onEnter: {
         setFlag: 'lev_echo_acknowledged',
       },

@@ -168,3 +168,28 @@ tests/          Vitest test suite
   integration/  Integration tests (combat, dialogue, trade, inventory, etc.)
   mocks/        Test mocks (Supabase client)
 ```
+
+## Release Notes
+
+### 2026-03-29 — Quest completability audit (convoy remnant-ux-0329 / rider-quest-audit)
+
+Fixed two critical quest-blocking bugs and improved navigation clarity across all major quest chains.
+
+**Critical fixes:**
+- Added missing item `bombing_site_notes` to `data/items.ts` and seeded it at `scar_01_crater_rim` (80% spawn, one-time). Without this item the Briggs confession route via "Give bombing site notes" was silently blocked, preventing `briggs_confessed_bombing` and `sc_briggs_meridian_revelation`.
+- Added missing item `commanders_notes` to `data/items.ts`. Briggs grants this item via `grantItem` in two dialogue nodes; without a definition the engine would error on that grant.
+
+**Additional item definitions:**
+- Added `purified_stims` (consumable) — granted by Patch in the cycle-2 echo exchange.
+- Added `sanguine_biometric_slide` (key) — Vesper's biometric authorization, referenced in Duskhollow dialogue.
+
+**Quest direction improvements (9 entries in `data/questDescriptions.ts`):**
+- Kindling/Ember quests now give "northeast of Crossroads, through the Pine Sea" with chapel crypt directions.
+- MERIDIAN entry quests reference "Pine Sea north to the Scar overlook."
+- Deep utility access references "west wall of the Scar crater."
+- Duskhollow entry references "west of the Pine Sea, through the old estate road."
+- Field station quest now tells players Lev will trade the keycard for the data, and gives the route.
+
+**Lev dialogue (`data/dialogueTrees.ts`):** `lev_echo_distrusted` node now gives concrete directions to the field station: "two kilometers past the reading room exit, follow the old access road through the industrial district."
+
+**Investigated:** "Maintenance window. You let the system run its own diagnostics for a while." — confirmed intentional flavor text for the Reclaimer character class `safe_rest` trigger in `data/playerMonologues/class_reclaimer.ts`. Not a bug.

@@ -197,7 +197,16 @@ export function generateNarratorVoice(
     return buildNarratorMessage(voice.text)
   }
 
-  // Pool fully exhausted for this session
+  // Pool fully exhausted — reset and retry once so the system is self-healing
+  // rather than going permanently silent after all 109 entries are used.
+  _usedIds.clear()
+  const retryPool = NARRATOR_WHISPER_POOL.filter((v) => v.act === undefined || v.act === act)
+  const retryVoice = selectFromPool(retryPool, _usedIds)
+  if (retryVoice) {
+    _usedIds.add(retryVoice.id)
+    return buildNarratorMessage(retryVoice.text)
+  }
+
   return null
 }
 

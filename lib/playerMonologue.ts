@@ -110,7 +110,15 @@ export async function generateMonologue(
   if (!pool || pool.lines.length === 0) return null
 
   // Filter out already-used lines (session dedup)
-  const available = pool.lines.filter((l) => !_usedLines.has(l))
+  let available = pool.lines.filter((l) => !_usedLines.has(l))
+
+  // Pool exhausted — reset and retry once so the system is self-healing
+  // rather than going silent when all lines have been seen this session.
+  if (available.length === 0) {
+    _usedLines.clear()
+    available = pool.lines.filter((l) => !_usedLines.has(l))
+  }
+
   if (available.length === 0) return null
 
   const line = available[Math.floor(Math.random() * available.length)]

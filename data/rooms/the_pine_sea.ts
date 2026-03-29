@@ -444,6 +444,11 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
         keywords: ['back', 'return', 'leave', 'choice'],
         description: 'You could go back. You\'ve done enough. You know enough. You could take what you know to any of the factions and let them decide what to do with it. The Scar is down there and it\'s been down there for seven years and it\'ll be down there longer. You don\'t have to be the one. You stand with that thought for a moment and learn something about yourself from how long you hold it before putting it down.',
       },
+      {
+        keywords: ['overlook', 'position', 'vantage', 'view'],
+        description: 'You are standing at the highest accessible point before the Scar. The facility is below you and the path down is in front of you. This is the last place you can see it without being in it.',
+        questFlagOnSuccess: { flag: 'scar_overlook_visited', value: true },
+      },
     ],
     hollowEncounter: {
       baseChance: 0.08,

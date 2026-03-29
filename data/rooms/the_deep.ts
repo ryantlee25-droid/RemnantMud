@@ -151,6 +151,12 @@ export const THE_DEEP_ROOMS: Room[] = [
         description: 'Your boots leave clean prints. Other prints are already here: bare feet, narrow and long, multiple sizes. The Hollow in the deep have been shedding their footwear over years — the prints are smooth at the toe, no arch impression, toes spreading wide to grip the wet rock. They\'ve been down here long enough to adapt.',
         skillCheck: { skill: 'tracking', dc: 12, successAppend: 'Two sets of prints are different: shod, heavy, military boots. Two people. Coming from the east junction, heading west toward the ore room. The prints are old — months at least, partially filled. They didn\'t come back out through the upper shaft. Either they\'re still here or they found another way.' },
       },
+      {
+        keywords: ['equipment', 'mounting', 'bracket', 'stencil', 'placard', 'marking'],
+        description: 'Bolted to the shaft wall at frame 21: an old equipment mounting bracket, the steel corroded but structurally sound. The placard beneath it has been damp for years, but the lettering is still legible under your light — stenciled in the institutional font of government procurement. MERIDIAN PROJECT — RESEARCH ANNEX SEVEN. UTILITY CORRIDOR ACCESS POINT. DATE INSTALLED: 03-2024.',
+        skillCheck: { skill: 'lore', dc: 10, successAppend: 'March 2024. More than seven years ago. The mine wasn\'t converted after the Collapse — it was already integrated into MERIDIAN\'s infrastructure before it. The Hollows in the Deep weren\'t survivors who fled underground after 2031. They were here when CHARON-7 first activated in the research annex below. The adaptation isn\'t coincidence. They\'ve been down here since the beginning.' },
+        questFlagOnSuccess: { flag: 'explained_hollow_adaptation', value: true },
+      },
     ],
     hollowEncounter: {
       baseChance: 0.55,
@@ -163,7 +169,7 @@ export const THE_DEEP_ROOMS: Room[] = [
       ],
       awarenessRoll: { unaware: 0.15, awarePassive: 0.3, awareAggressive: 0.55 },
     },
-    narrativeNotes: 'The adapted bare-foot Hollow prints establish that the Deep\'s population has been here for years and has changed. The military boot prints create a mystery that can resolve in the office.',
+    narrativeNotes: 'The adapted bare-foot Hollow prints establish that the Deep\'s population has been here for years and has changed. The military boot prints create a mystery that can resolve in the office. The MERIDIAN placard (Lore DC 10) confirms the mine was integrated pre-Collapse — sets explained_hollow_adaptation.',
   },
 
   {

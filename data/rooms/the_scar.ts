@@ -49,8 +49,14 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
       {
         keywords: ['bombing', 'lie', 'military', 'history'],
-        description: 'The standard narrative: MERIDIAN was a bioweapons lab, the Collapse was an accident, the military bombed the facility to prevent further spread. You\'re standing in the bombing\'s aftermath, looking at an intact facility with working power and a radio signal that has been broadcasting for seven years. The lie required specific knowledge of what would survive. The bombers knew what they were preserving.',
-        skillCheck: { skill: 'lore', dc: 9, successAppend: 'Warlord Briggs was MERIDIAN perimeter security. Salt Creek Stronghold knows something about this. Someone in the military chain knew the facility would survive. Someone chose not to pursue the follow-up. That decision is a person. That person has been living with it for seven years.' },
+        description: 'The standard narrative: MERIDIAN was a bioweapons lab, the Collapse was an accident, the military bombed the facility to prevent further spread. You\'re standing in the bombing\'s aftermath, looking at an intact facility with working power and a radio signal that has been broadcasting for nearly seven years. The lie required specific knowledge of what would survive. The bombers knew what they were preserving.',
+        skillCheck: { skill: 'lore', dc: 9, successAppend: 'Warlord Briggs was MERIDIAN perimeter security. Salt Creek Stronghold knows something about this. Someone in the military chain knew the facility would survive. Someone chose not to pursue the follow-up. That decision is a person. That person has been living with it for nearly seven years.' },
+      },
+      {
+        keywords: ['terminal', 'log', 'broadcast log', 'signal log', 'history'],
+        description: 'A log terminal near the crater rim comm relay shows broadcast history. First transmission date: six months after the Collapse. The signal didn\'t start the moment MERIDIAN went dark — it started after Vane completed facility lockdown and confirmed the automated systems were stable enough to begin broadcasting.',
+        skillCheck: { skill: 'electronics', dc: 9, successAppend: 'The gap between Collapse and first broadcast: 187 days. Nearly six months of silence while one person secured a facility alone. The signal has been running for six and a half years, not seven. The distinction matters — it means Vane wasn\'t broadcasting from day one. There was a period of preparation, of decision.' },
+        questFlagOnSuccess: { flag: 'meridian_timeline_clarified', value: true },
       },
       {
         keywords: ['cracks', 'floor', 'glow', 'blue'],
@@ -198,8 +204,13 @@ export const THE_SCAR_ROOMS: Room[] = [
         description: 'Personnel count: 1 (prior to your entry). Someone has been in this facility continuously since lockdown. Not an automated system. PERSONNEL COUNT tracks biological signatures, not electronic ones. This is a person. This is the broadcaster. This is who has been calling you here for years.',
         skillCheck: { skill: 'electronics', dc: 8, successAppend: 'The count changed when you entered: 2. For the first time in seven years, this facility has two living people inside it. The broadcaster knows you\'ve arrived. The facility told them the moment the decon system activated.' },
       },
+      {
+        keywords: ['panel', 'maintenance panel', 'diagnostic', 'automation', 'systems'],
+        description: 'A wall-mounted maintenance panel beside the decontamination station. The display shows a rotating diagnostic summary: AUTOMATED SYSTEMS NOMINAL. DAYS SINCE LAST MANUAL MAINTENANCE CYCLE: 2,387. The facility was designed to run without regular human intervention — military redundancy specs, deep battery backups, self-correcting subroutines. One person doesn\'t have to maintain all of it. One person has to maintain almost none of it.',
+        skillCheck: { skill: 'electronics', dc: 8, successAppend: 'The system architecture confirms it: the facility was built for a skeleton crew in a worst-case scenario. Life support, decontamination, power management — all automated to function indefinitely with minimal input. The broadcaster isn\'t an engineer keeping systems alive. They\'re a passenger in a machine that was designed to outlast its purpose.' },
+      },
     ],
-    narrativeNotes: 'Eerie functionality establishes the MERIDIAN atmosphere. The personnel count (1, then 2) is a critical revelation — the broadcaster is definitively alive and knows you\'re here. The Reclaimers-as-MERIDIAN-mirror note deepens Lev\'s backstory.',
+    narrativeNotes: 'Eerie functionality establishes the MERIDIAN atmosphere. The personnel count (1, then 2) is a critical revelation — the broadcaster is definitively alive and knows you\'re here. The Reclaimers-as-MERIDIAN-mirror note deepens Lev\'s backstory. The maintenance panel (Electronics DC 8) confirms facility automation — clarifies how one person survives here.',
   },
 
   {

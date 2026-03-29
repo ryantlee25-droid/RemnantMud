@@ -81,7 +81,7 @@ export default function TheBetween({ cycle, onContinue, inheritedFactions, disco
   }, [fragments])
 
   return (
-    <div className="flex flex-col items-center justify-center flex-1 overflow-y-auto font-mono text-amber-400 p-6" role="region" aria-live="polite" aria-label="Between cycles">
+    <div className="flex flex-col items-center flex-1 overflow-y-auto font-mono text-amber-400 p-6 pt-12" role="region" aria-live="polite" aria-label="Between cycles">
       <div className="max-w-xl w-full space-y-8">
 
         {/* Header */}

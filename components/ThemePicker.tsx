@@ -23,7 +23,7 @@ export default function ThemePicker({ onSelect }: ThemePickerProps) {
 
   return (
     <div
-      className="flex items-center justify-center flex-1 overflow-y-auto font-mono p-4"
+      className="flex flex-col items-start flex-1 overflow-y-auto font-mono p-4"
       style={{ filter: THEMES.find((t) => t.id === preview)?.filter ?? 'none' }}
     >
       <div className="w-full max-w-lg text-amber-400">

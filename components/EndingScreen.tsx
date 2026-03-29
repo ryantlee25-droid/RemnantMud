@@ -96,7 +96,7 @@ export default function EndingScreen({
   }, [choice])
 
   return (
-    <div className="flex flex-col items-center justify-center flex-1 overflow-y-auto font-mono text-amber-400 p-6" role="region" aria-live="polite" aria-label="Game ending">
+    <div className="flex flex-col items-center flex-1 overflow-y-auto font-mono text-amber-400 p-6 pt-8" role="region" aria-live="polite" aria-label="Game ending">
       <div className="max-w-xl w-full space-y-8 py-12">
 
         {/* Logo + ending name */}

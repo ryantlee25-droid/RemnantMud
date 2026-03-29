@@ -182,7 +182,7 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
   }
 
   return (
-    <div className="flex items-center justify-center flex-1 overflow-y-auto font-mono p-4">
+    <div className="flex flex-col items-start flex-1 overflow-y-auto font-mono p-4">
       <div className="w-full max-w-lg text-amber-400">
         <div className="mb-6">
           <div className="text-amber-600 text-xs uppercase tracking-widest mb-1">

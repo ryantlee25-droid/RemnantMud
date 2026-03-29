@@ -63,7 +63,7 @@ export default function PipBoyFrame({
           {showStatus && <StatusBar />}
 
           {/* Content area */}
-          <div className="flex-1 overflow-hidden flex flex-col">
+          <div className="flex-1 overflow-y-auto flex flex-col">
             {children}
           </div>
 

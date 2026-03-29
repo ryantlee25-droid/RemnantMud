@@ -48,7 +48,7 @@ export default memo(function StatusBar() {
     : ''
 
   return (
-    <div className="bg-black border-b border-amber-900 px-4 py-1 font-mono text-xs text-amber-400 select-none">
+    <div className="bg-black border-b border-amber-900 px-4 py-1 font-mono text-xs text-amber-400 select-none whitespace-nowrap overflow-x-auto">
       {isDevMode() && (
         <>
           <span className="text-amber-700">[DEV]</span>

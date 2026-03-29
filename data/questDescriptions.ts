@@ -36,7 +36,7 @@ export const QUEST_DESCRIPTIONS: QuestEntry[] = [
     title: 'The MERIDIAN Connection',
     description: 'The archive sub-facility and the MERIDIAN installation are the same project — different floors of the same buried structure. The research that produced CHARON-7 was funded and directed from within MERIDIAN itself, insulated from any oversight that might have asked the obvious question: what is the acceptable casualty count for a successful trial.',
     category: 'main',
-    hint: 'The Elder in The Deep claims to have been an early CHARON-7 subject. They may know the name behind File 47-B.',
+    hint: 'The Elder in The Deep claims to have been an early CHARON-7 subject. The Deep lies beneath the Pine Sea — follow the mine shaft entrance east of the Pine Sea camp.',
     completionFlag: 'elder_lore_tier_3',
   },
 
@@ -70,7 +70,7 @@ export const QUEST_DESCRIPTIONS: QuestEntry[] = [
     title: 'The MERIDIAN Keycard',
     description: 'You carry — or know how to obtain — a MERIDIAN access keycard. The Reclaimers traced its origin to a facility that has been officially nonexistent for seven years. The Stacks believes it opens something in the Scar. They\'re right. The question is what you find when it does.',
     category: 'main',
-    hint: 'The keycard opens a restricted entry point in the Scar. Prepare before you use it.',
+    hint: 'The keycard opens the blast door at the MERIDIAN facility — follow the Pine Sea north to the Scar overlook, then descend into the crater. Prepare before you go.',
     completionFlag: 'charon_choice',
   },
 
@@ -79,7 +79,7 @@ export const QUEST_DESCRIPTIONS: QuestEntry[] = [
     title: 'Sanguine Biometric',
     description: 'Vesper provided biometric authorization data — the genetic key to the Sanguine entry protocols built into the MERIDIAN facility. The Red Court doesn\'t know you have this. Vesper gave it with conditions you may or may not be able to honor.',
     category: 'main',
-    hint: 'The biometric unlocks a second access route into the Scar facility. Vesper\'s trust may depend on what you do with it.',
+    hint: 'The biometric panel is at the MERIDIAN main entrance — the blast door north of the Pine Sea. Use it at the blue biometric reader. Vesper\'s trust may depend on what you do with it.',
     completionFlag: 'charon_choice',
   },
 
@@ -88,7 +88,7 @@ export const QUEST_DESCRIPTIONS: QuestEntry[] = [
     title: 'The Tunnel Route',
     description: 'The Kindling showed you the tunnel system that bypasses the main Scar approaches — a route the Ember\'s faithful have been mapping for years, quietly, without telling the Accord or the Salters. It comes up inside the MERIDIAN perimeter. Harrow gave you this with the expectation that you understand what it means to owe the Kindling a debt.',
     category: 'main',
-    hint: 'Three routes into the Scar facility are now known. Each carries the weight of who helped you find it.',
+    hint: 'The Kindling tunnel enters from beneath The Ember — the passage runs north from the crypt under the chapel. The Ember is northeast of Crossroads, through the Pine Sea.',
     completionFlag: 'charon_choice',
   },
 
@@ -97,7 +97,7 @@ export const QUEST_DESCRIPTIONS: QuestEntry[] = [
     title: 'Utility Override',
     description: 'The Elder granted you the override sequence for the Deep\'s utility passage — the maintenance route that connects the Lucid\'s home territory to the sub-facility infrastructure. They measured you carefully before they gave it. Whatever they saw, they decided you were worth the risk.',
     category: 'main',
-    hint: 'The utility passage leads directly toward the archive lower levels. The Elder will want to know what you find.',
+    hint: 'The utility passage entrance is on the west wall of the Scar crater, disguised as rock. The Deep lies beneath the Pine Sea — follow the mine shafts down.',
     completionFlag: 'charon_choice',
   },
 
@@ -206,7 +206,7 @@ export const QUEST_DESCRIPTIONS: QuestEntry[] = [
     title: 'The Kindling',
     description: 'You made contact with the Kindling — the Ember\'s true believers. They speak about purification the way engineers speak about load-bearing structures: precisely, with full understanding of what fails when the math is wrong. Harrow is their voice. What Harrow believes runs deeper than rhetoric.',
     category: 'faction',
-    hint: 'The Kindling know things about the tunnel network and the Scar approaches that the Accord doesn\'t. Harrow doesn\'t give information freely.',
+    hint: 'The Kindling are based at The Ember — northeast of Crossroads, through the industrial remnants of the Pine Sea. Deacon Harrow leads from the nave. He doesn\'t give information freely.',
   },
 
   {
@@ -214,7 +214,7 @@ export const QUEST_DESCRIPTIONS: QuestEntry[] = [
     title: 'The Tunnel System',
     description: 'Harrow referenced the tunnels — a network of maintained passages beneath the Ember and extending toward the Scar, built during the first cycle and kept from every faction except the Kindling\'s inner circle. He mentioned them. He did not offer them. There is a distance between those two things.',
     category: 'faction',
-    hint: 'The tunnels are the key the Kindling hold. Harrow\'s trust is the door.',
+    hint: 'The tunnel entrance is beneath the altar in The Ember\'s lower crypt. Harrow\'s trust is the door — or his sister\'s name.',
   },
 
   {
@@ -296,7 +296,7 @@ export const QUEST_DESCRIPTIONS: QuestEntry[] = [
     title: 'The Field Station Echo',
     description: 'The Stacks archive contains a cycle-echo signal from a MERIDIAN field monitoring station — a ghost broadcast, automated, repeating telemetry from equipment that has been running unsupervised for seven years. The data it transmits is partial and corrupted. What remains is enough to triangulate the station\'s location.',
     category: 'faction',
-    hint: 'Lev wants this data. The station itself may still be functional.',
+    hint: 'Lev wants this data and will trade the MERIDIAN Keycard for it. The field station is east of The Stacks — past the reading room exit, through the old industrial district.',
     completionFlag: 'reclaimers_meridian_keycard',
   },
 
@@ -341,7 +341,7 @@ export const QUEST_DESCRIPTIONS: QuestEntry[] = [
     title: 'Duskhollow Invitation',
     description: 'You received an invitation to Duskhollow — the Covenant of Dusk\'s settlement, unreachable without one. The Sanguine don\'t permit casual visitors. Someone weighed you against their usual criteria and found you worth the risk of letting inside.',
     category: 'faction',
-    hint: 'Duskhollow is the only settlement where the Sanguine coexist openly with humans. Treat the invitation with the seriousness it was given.',
+    hint: 'Duskhollow lies west of the Pine Sea, reachable through the old estate road. The invitation is required — the gate does not open without it.',
   },
 
   {

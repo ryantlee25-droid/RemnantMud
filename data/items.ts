@@ -375,6 +375,26 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
   },
 
+  sanguine_biometric_slide: {
+    id: 'sanguine_biometric_slide',
+    name: 'Sanguine Biometric Slide',
+    description: 'A slim translucent slide keyed to Vesper\'s genetic authority. The Covenant of Dusk\'s biometric clearance in physical form. Cold to the touch in a way that isn\'t temperature.',
+    type: 'key',
+    weight: 0,
+    value: 0,
+  },
+
+  purified_stims: {
+    id: 'purified_stims',
+    name: 'Purified Stims',
+    description: 'Military-grade stimulant compound, Patch\'s formulation. Cleaner than the standard waste-circuit product. The vial is labeled in a cramped shorthand that only Patch can read.',
+    type: 'consumable',
+    weight: 0,
+    value: 15,
+    usable: true,
+    useText: 'The stim hits fast and clean — no edge shake, no crash taste. You feel more alert than circumstances warrant. You can work with that.',
+  },
+
   // ----------------------------------------------------------
   // Lore Items — Crossroads
   // ----------------------------------------------------------
@@ -521,6 +541,28 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'What we are: the last professional military force in the Four Corners. What we do: protect the living from everything that wants them dead. What we don\'t do: negotiate with Sanguine. Treat. Coexist. The Accord calls this "hardline." We call it "looking at what those things actually are." — Warlord Briggs, Salt Creek Compact, 2036.',
+  },
+
+  bombing_site_notes: {
+    id: 'bombing_site_notes',
+    name: 'Bombing Site Notes',
+    description: 'A water-damaged field notebook, pages stiff with crater residue. The entries are tactical observations from someone at the perimeter during the bombing.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'DAY 1. 0340 hrs. Strike confirmed. Surface structures destroyed. Per protocol: no re-entry. DAY 1. 1200 hrs. Facility power still active — thermal signature unchanged. Structure intact below grade. DAY 2. Command told us to file it as destroyed and move out. The power readings contradict this. Nobody in my chain wants to hear it. DAY 3. Three names in the roll call are wrong — two soldiers on perimeter acknowledged they saw movement after the strike. They have been reassigned. I am writing this down because this did not happen the way the report says it happened. — Sgt. D. Briggs, USMC, MERIDIAN perimeter detail.',
+  },
+
+  commanders_notes: {
+    id: 'commanders_notes',
+    name: "Commander's Notes",
+    description: 'A folded set of deployment orders and field notes, kept in Briggs\'s vest for years. The paper is worn at the creases.',
+    type: 'key',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'OPERATION MERIDIAN SEAL — CLASSIFIED. Unit: 3rd Battalion, B Company, Perimeter Security Command. Issued: 14 October 2031. Objective: Maintain outer perimeter, prevent civilian re-entry, confirm detonation coverage. Actual outcome: [Handwritten margin] The facility is intact. I watched it happen. The bombs hit the surface. The bunker survived. I was ordered not to report the power signature. I am keeping this in case someone needs to know it was real. — Major D. Briggs.',
   },
 
   // ----------------------------------------------------------

@@ -145,14 +145,26 @@ export function checkNarrativeUnlock(
   const unlocked = checkNarrativeGate(gate, playerKeys)
 
   if (unlocked) {
-    const unlockMsg = UNLOCK_NARRATIONS[gate.keyId]
+    // For allOf gates the keyId may be absent — use the first key's narration
+    const unlockKey = gate.keyId ?? gate.allOf?.[0]
+    const unlockMsg = unlockKey ? UNLOCK_NARRATIONS[unlockKey] : undefined
     return {
       unlocked: true,
       narration: unlockMsg ? [msg(unlockMsg)] : [],
     }
   }
 
-  const hint = getNarrativeKeyHint(gate.keyId, playerKeys)
+  // For allOf gates, find the first unsatisfied key and show its hint
+  if (gate.allOf && gate.allOf.length > 0) {
+    const firstUnsatisfied = gate.allOf.find((k) => !playerKeys.includes(k))
+    const hint = firstUnsatisfied ? getNarrativeKeyHint(firstUnsatisfied, playerKeys) : null
+    return {
+      unlocked: false,
+      narration: hint ? [hint] : [],
+    }
+  }
+
+  const hint = gate.keyId ? getNarrativeKeyHint(gate.keyId, playerKeys) : null
   return {
     unlocked: false,
     narration: hint ? [hint] : [],

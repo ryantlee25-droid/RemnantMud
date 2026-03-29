@@ -10,6 +10,7 @@ import { getItem } from '@/data/items'
 import { getInventory, addItem, removeItem, groupAndFormatItems } from '@/lib/inventory'
 import { rt } from '@/lib/richText'
 import { msg, systemMsg, errorMsg } from '@/lib/messages'
+import { dispatchVendorGreeting, dispatchVendorBudget, dispatchVendorComment } from './vendorDialogue'
 
 // ------------------------------------------------------------
 // Currency helpers
@@ -95,6 +96,13 @@ export async function handleTrade(engine: EngineCore, noun: string | undefined):
   const npc = getNPC(trader.npcId)
   const npcName = npc?.name ?? 'Trader'
 
+  // Rider C: dispatch vendor greeting before wares listing
+  if (npc) {
+    const greeting = dispatchVendorGreeting(npc)
+    if (greeting) engine._appendMessages([greeting])
+  }
+
+  // NOTE: adjacent section owned by Rider D per convoy contract (wares display formatting)
   const lines: string[] = [`${rt.npc(npcName)}'s wares:`]
 
   // NOTE: adjacent section above (greeting dispatch) owned by Rider C per convoy contract
@@ -112,6 +120,12 @@ export async function handleTrade(engine: EngineCore, noun: string | undefined):
   lines.push(`Type "buy <item>" to purchase or "sell <item>" to sell.`)
 
   engine._appendMessages([systemMsg(lines.join('\n'))])
+
+  // Rider C: dispatch vendor budget display after wares listing
+  if (npc) {
+    const budget = dispatchVendorBudget(npc)
+    if (budget) engine._appendMessages([budget])
+  }
 }
 
 /**
@@ -135,6 +149,7 @@ export async function handleBuy(engine: EngineCore, noun: string | undefined): P
 
   const nounLower = noun.toLowerCase()
 
+  // NOTE: adjacent section owned by Rider D per convoy contract (wares display formatting)
   // Match item name against the NPC's trade inventory
   let matchedItemId: string | undefined
   for (const itemId of trader.tradeInventory) {
@@ -143,6 +158,13 @@ export async function handleBuy(engine: EngineCore, noun: string | undefined): P
       matchedItemId = itemId
       break
     }
+  }
+
+  // Rider C: .22LR currency protection — reject buy attempts on ammo_22lr
+  // Error message uses system type (not error type — this is lore, not a crash)
+  if (matchedItemId === CURRENCY_ITEM_ID) {
+    engine._appendMessages([systemMsg("That's currency. Nobody sells rounds for rounds.")])
+    return
   }
 
   if (!matchedItemId) {
@@ -228,4 +250,11 @@ export async function handleSell(engine: EngineCore, noun: string | undefined): 
   engine._setState({ inventory: updatedInventory })
 
   engine._appendMessages([msg(`You sell the ${rt.item(invItem.item.name)} for ${rt.currency(`${sellPrice} rounds`)}.`)])
+
+  // Rider C: dispatch vendor comment on the sold item (optional, personality flavor)
+  const sellNpc = getNPC(trader.npcId)
+  if (sellNpc) {
+    const comment = dispatchVendorComment(sellNpc, invItem.itemId)
+    if (comment) engine._appendMessages([comment])
+  }
 }

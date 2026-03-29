@@ -443,6 +443,11 @@ export interface NPC {
   dialogue: string
   faction?: FactionType
   isNamed?: boolean      // key story NPC
+  // Vendor fields — optional; only set on NPCs with tradeInventory
+  vendorGreeting?: string                          // shown when player opens trade
+  vendorFarewell?: string                          // shown when player closes trade
+  vendorBudget?: number                            // NPC's .22LR available for purchases; if absent, don't display
+  vendorComments?: Record<string, string[]>        // itemId -> random comment pool for that item
 }
 
 // ------------------------------------------------------------

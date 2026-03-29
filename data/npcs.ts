@@ -46,6 +46,27 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'crossroads',
     spawnChance: 0.85,
     dispositionRoll: { friendly: 0.30, neutral: 0.50, wary: 0.15, hostile: 0.05 },
+    vendorGreeting: "You're buying bandages. That's either optimism or planning. Which one are you?",
+    vendorFarewell: "Try not to need me again. But you will.",
+    vendorBudget: 40,
+    vendorComments: {
+      antibiotics_01: [
+        "These are broad-spectrum. Don't use them unless you're sure it's bacterial. The world doesn't need more resistant strains.",
+        "Take the full course. Half a course is worse than none.",
+      ],
+      bandages: [
+        "You're buying bandages. That's either optimism or planning.",
+        "Clean wound first. Bandage second. In that order. Always.",
+      ],
+      quiet_drops: [
+        "Sedative. Calibrated dose. Not for recreational use — the math is tight.",
+        "Those are for pain management or extraction scenarios. You'll know which one when you need them.",
+      ],
+      stim_shot: [
+        "Stimulant. It works. It also costs you later. Factor that in.",
+        "One use. The crash hits in four hours. Plan around it.",
+      ],
+    },
     activityPool: [
       {
         activity: 'is cataloguing medical supplies with a worn clipboard, making small marks in a cramped shorthand only they can read',
@@ -368,6 +389,22 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'crossroads',
     spawnChance: 0.90,
     dispositionRoll: { friendly: 0.60, neutral: 0.30, wary: 0.08, hostile: 0.02 },
+    vendorGreeting: "You look thin. Take the jerky. Don't argue.",
+    vendorFarewell: "You come back when you're hungry. That's all I ask.",
+    vendorBudget: 30,
+    vendorComments: {
+      elk_jerky: [
+        "I dried that myself. Don't tell me it's too salty — it's supposed to be salty. Salt keeps you alive.",
+        "Good for three weeks in a dry pack. Longer if you're careful.",
+      ],
+      boiled_rations: [
+        "Hot food. Eat it while it's hot. Don't let it get cold — it's worse cold.",
+        "I know what's in it. It's good. Trust me.",
+      ],
+      purification_tabs: [
+        "Take the tabs. I don't care if you think the water looks clean. Take the tabs.",
+      ],
+    },
     activityPool: [
       {
         activity: 'is ladling something hot from a large pot into bowls, moving with the practiced efficiency of someone who has done this ten thousand times',
@@ -635,6 +672,25 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'crossroads',
     spawnChance: 0.75,
     dispositionRoll: { friendly: 0.20, neutral: 0.60, wary: 0.15, hostile: 0.05 },
+    vendorGreeting: "Rounds up front. I don't run credit.",
+    vendorFarewell: "Keep it clean. Keep it loaded. Don't point it at anything you don't intend to drop.",
+    vendorBudget: 80,
+    vendorComments: {
+      '22_rifle': [
+        "Twenty-two LR platform. Accurate past fifty meters if you know what you're doing. Light round, but it works.",
+        "Best trade value on the table. What you lose in stopping power you make up in ammo availability.",
+      ],
+      '9mm_pistol': [
+        "Nine-millimeter. Standard platform. Spare parts everywhere. Good choice if you want something you can maintain.",
+        "Fifteen in the magazine. Keep two on you. At minimum.",
+      ],
+      ammo_9mm: [
+        "Nine-mil. Stockpile if you're running that platform. It goes fast.",
+      ],
+      ammo_shotgun_shell: [
+        "Short-range solution. Inside twenty meters it's decisive. Past that, you're wasting shells.",
+      ],
+    },
     activityPool: [
       { activity: 'is running an oiled cloth along a rifle barrel, not looking up', weight: 3, timeRestrict: ['day'] },
       { activity: 'is negotiating with a trader over a firearm laid between them, the price clearly not yet settled', weight: 2 },
@@ -651,6 +707,18 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'crossroads',
     spawnChance: 0.65,
     dispositionRoll: { friendly: 0.20, neutral: 0.60, wary: 0.15, hostile: 0.05 },
+    vendorGreeting: "Tell me what you're building and I'll tell you if I have what you need.",
+    vendorFarewell: "If it doesn't work, it's the assembly, not the component. Come back and we'll diagnose it.",
+    vendorBudget: 50,
+    vendorComments: {
+      electronics_salvage: [
+        "Pre-Collapse capacitors and boards. Test each one before you solder. Half of them are borderline.",
+        "Salvage quality. Functional but not certified. You get what that means.",
+      ],
+      crafting_components: [
+        "General fabrication stock. Reclaimers use this across three different build types.",
+      ],
+    },
     activityPool: [
       { activity: 'is sorting electronics salvage into categorized bins, occasionally holding a component up to the light', weight: 3 },
       { activity: 'is repairing something small and intricate on a work mat, tools laid out with precision', weight: 2, timeRestrict: ['day'] },
@@ -1092,6 +1160,22 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'covenant',
     spawnChance: 0.75,
     dispositionRoll: { friendly: 0.15, neutral: 0.65, wary: 0.15, hostile: 0.05 },
+    vendorGreeting: "Rounds up front. Registration papers checked at the gate — any discrepancy is your problem, not mine.",
+    vendorFarewell: "Inventory is logged. If you're carrying anything you didn't buy here, make sure it's registered.",
+    vendorBudget: 120,
+    vendorComments: {
+      ar_platform_rifle: [
+        "Accord-surplus. Full inspection log attached. This is not the cheapest thing on the table. It is the most reliable.",
+        "That platform takes standard 5.56. Parts are cross-compatible with most military surplus. Factor that in.",
+      ],
+      body_armor_military: [
+        "Level III plate. Pre-Collapse manufacture. The certification date is old but the steel is not.",
+        "That stops rifle rounds at standard ranges. It doesn't stop everything. Don't act like it does.",
+      ],
+      fragmentation_grenade: [
+        "Handle carefully. Safety pin, then throw. Do not throw and then pull the pin. I shouldn't have to say that.",
+      ],
+    },
     activityPool: [
       { activity: 'is field-stripping and inspecting a weapon at the workbench, the process systematic and thorough', weight: 3, timeRestrict: ['day'] },
       { activity: 'is reviewing the registration ledger, running a finger down the columns', weight: 2 },
@@ -1359,6 +1443,18 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'covenant',
     spawnChance: 0.70,
     dispositionRoll: { friendly: 0.35, neutral: 0.50, wary: 0.10, hostile: 0.05 },
+    vendorGreeting: "The Accord ensures fair pricing. Have a look at what I've got.",
+    vendorFarewell: "Safe travels. Come back if you need anything.",
+    vendorBudget: 25,
+    vendorComments: {
+      canned_food: [
+        "Locally canned. The dates on the labels are approximate — they're hand-stamped. Everything here is fresh from this season.",
+        "Covenant produce. You won't find better shelf-stable food this side of the creek.",
+      ],
+      purification_tabs: [
+        "Settlement-issue purification tabs. Standard Accord stock. These are the real ones.",
+      ],
+    },
     activityPool: [
       { activity: 'is arranging their stall inventory with a merchant\'s eye for display', weight: 3, timeRestrict: ['dawn', 'day'] },
       { activity: 'is completing a transaction, counting out the payment with careful precision', weight: 2, timeRestrict: ['day'] },
@@ -1375,6 +1471,21 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'covenant',
     spawnChance: 0.70,
     dispositionRoll: { friendly: 0.20, neutral: 0.60, wary: 0.15, hostile: 0.05 },
+    vendorGreeting: "The Accord ensures fair pricing. What are you looking for?",
+    vendorFarewell: "Transaction logged. Settlement thanks you for your contribution to the supply chain.",
+    vendorBudget: 90,
+    vendorComments: {
+      field_dressing: [
+        "Settlement-issue. Sterile. These are allocated against projected casualty rates. Use them appropriately.",
+        "Pack two. One for immediate application, one for follow-up. That's protocol.",
+      ],
+      bandages: [
+        "Basic wound management. Available because demand is consistent. Keep your stock current.",
+      ],
+      basic_repair_kit: [
+        "Standard kit. Covers field maintenance for most common equipment. The Accord distributes these at cost.",
+      ],
+    },
     activityPool: [
       { activity: 'is reviewing supply manifests at the depot table, making notations and calculations', weight: 3, timeRestrict: ['day'] },
       { activity: 'is supervising an incoming supply delivery, checking items against the manifest', weight: 2 },
@@ -1440,6 +1551,17 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'salt_creek',
     spawnChance: 0.65,
     dispositionRoll: { friendly: 0.10, neutral: 0.65, wary: 0.20, hostile: 0.05 },
+    vendorGreeting: "Make it quick.",
+    vendorFarewell: "That's it.",
+    vendorBudget: 40,
+    vendorComments: {
+      scrap_metal: [
+        "Grade-two salvage. Good for fabrication if you know what you're doing with it.",
+      ],
+      basic_repair_kit: [
+        "Field kit. Covers the basics. If your problem is more than basic, you need a bench and more time.",
+      ],
+    },
     activityPool: [
       { activity: 'is doing precision repair work on a mechanical component, tools arranged in exact order', weight: 4 },
       { activity: 'is reading a technical schematic, holding it at arm\'s length, referencing something in the vehicle beside them', weight: 2 },
@@ -1455,6 +1577,25 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'salt_creek',
     spawnChance: 0.70,
     dispositionRoll: { friendly: 0.30, neutral: 0.55, wary: 0.10, hostile: 0.05 },
+    vendorGreeting: "Limited stock. Tell me what you need and I'll tell you what I can actually give you.",
+    vendorFarewell: "Stay out of the line of fire if you can help it.",
+    vendorBudget: 35,
+    vendorComments: {
+      field_dressing: [
+        "Apply pressure first. Then the dressing. Dressing doesn't replace pressure, it supplements it.",
+        "These are Salter-issue. Sterile. Last I checked.",
+      ],
+      antiseptic: [
+        "It's going to hurt. That's how you know it's working. Apply to the wound, not around it.",
+        "Don't skimp on this. Infection out here is a death sentence on a slow timer.",
+      ],
+      pain_tabs: [
+        "One dose, four hours. Don't stack them. I mean that — the interaction is bad.",
+      ],
+      antibiotics_single_dose: [
+        "Single course. Start it the moment you think you need it. Waiting costs you.",
+      ],
+    },
     activityPool: [
       { activity: 'is inventorying medical supplies with careful attention, noting shortfalls', weight: 3 },
       { activity: 'is treating a minor wound on a soldier who is trying not to show it hurts', weight: 2, timeRestrict: ['day'] },
@@ -1848,6 +1989,23 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'crossroads',
     spawnChance: 0.85,
     dispositionRoll: { friendly: 0.55, neutral: 0.35, wary: 0.08, hostile: 0.02 },
+    vendorGreeting: "You look thin. Sit down. Tell me what you need and I'll tell you what I have.",
+    vendorFarewell: "Come back when you're hungry. You will be.",
+    vendorBudget: 30,
+    vendorComments: {
+      elk_jerky: [
+        "That's good protein. Dried it myself. Don't argue with me about the salt content.",
+        "Elk jerky keeps three weeks in your pack. Less if you're near moisture.",
+      ],
+      boiled_rations: [
+        "Hot or cold, it doesn't matter. What matters is that you eat it.",
+        "I know it doesn't look like much. It has everything you need. Eat it.",
+      ],
+      purification_tabs: [
+        "You need those. Whatever water source you're using, you need those.",
+        "One tab per liter. Two if the source looks wrong. Don't guess with water.",
+      ],
+    },
     activityPool: [
       { activity: 'is serving hot food from the stall with the practiced efficiency of someone who has done this ten thousand times', weight: 4, timeRestrict: ['dawn', 'day', 'dusk'] },
       { activity: 'is listening to someone tell their story while working, her attention genuine', weight: 2 },
@@ -2026,6 +2184,22 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'crossroads',
     spawnChance: 0.70,
     dispositionRoll: { friendly: 0.15, neutral: 0.55, wary: 0.25, hostile: 0.05 },
+    vendorGreeting: "What do you need? I don't do custom orders without a deposit.",
+    vendorFarewell: "That'll hold. I put my name on it.",
+    vendorBudget: 45,
+    vendorComments: {
+      scrap_vest: [
+        "Steel plate between the layers. Won't stop a rifle round but it'll redirect a knife. That's the difference between a scar and a funeral.",
+        "I made that one last week. The stitching is double-reinforced at the stress points.",
+      ],
+      pistol_holster: [
+        "Draw from that holster twenty times before you need to do it for real. Muscle memory is the only kind that works under stress.",
+        "Adjusted for right-hand draw. Tell me if you're left-handed and I'll flip the retention loop.",
+      ],
+      runners_kit: [
+        "Light harness with attachment points. Built for people who move fast and can't afford to drop anything.",
+      ],
+    },
     activityPool: [
       {
         activity: 'drives an awl through a belt blank, his massive hands steady as a surgeon\'s. He doesn\'t look up.',

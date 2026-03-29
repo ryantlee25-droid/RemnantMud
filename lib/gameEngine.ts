@@ -301,30 +301,39 @@ export class GameEngine implements EngineCore {
     const { player } = this.state
     if (!player) return
     const supabase = createSupabaseBrowserClient()
+    const payload = {
+      hp: player.hp,
+      max_hp: player.maxHp,
+      current_room_id: player.currentRoomId,
+      xp: player.xp,
+      level: player.level,
+      actions_taken: player.actionsTaken ?? 0,
+      vigor: player.vigor,
+      grit: player.grit,
+      reflex: player.reflex,
+      wits: player.wits,
+      presence: player.presence,
+      shadow: player.shadow,
+      faction_reputation: player.factionReputation ?? {},
+      quest_flags: player.questFlags ?? {},
+      active_buffs: JSON.stringify(this.state.activeBuffs ?? []),
+      pending_stat_increase: this.state.pendingStatIncrease ?? false,
+    }
     const { error } = await supabase
       .from('players')
-      .update({
-        hp: player.hp,
-        max_hp: player.maxHp,
-        current_room_id: player.currentRoomId,
-        xp: player.xp,
-        level: player.level,
-        actions_taken: player.actionsTaken ?? 0,
-        vigor: player.vigor,
-        grit: player.grit,
-        reflex: player.reflex,
-        wits: player.wits,
-        presence: player.presence,
-        shadow: player.shadow,
-        faction_reputation: player.factionReputation ?? {},
-        quest_flags: player.questFlags ?? {},
-        active_buffs: JSON.stringify(this.state.activeBuffs ?? []),
-        pending_stat_increase: this.state.pendingStatIncrease ?? false,
-      })
+      .update(payload)
       .eq('id', player.id)
     if (error) {
       console.error('Failed to save player:', error.message)
-      this._appendMessages([systemMsg('Warning: Failed to save progress.')])
+      // Retry once — transient auth/network failures are common
+      const { error: retryError } = await supabase
+        .from('players')
+        .update(payload)
+        .eq('id', player.id)
+      if (retryError) {
+        console.error('Save retry failed:', retryError.message)
+        this._appendMessages([systemMsg('⚠ Save failed. Your session may have expired — try reloading the page.')])
+      }
     }
   }
 

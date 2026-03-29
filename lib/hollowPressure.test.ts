@@ -3,7 +3,7 @@
 // Convoy: remnant-narrative-0329 | Rider B
 // ============================================================
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import {
   computePressure,
   applyPressureDelta,
@@ -17,7 +17,6 @@ import {
   checkInitiativeTriggers,
   getInitiativeNarration,
   INITIATIVE_TRIGGERS,
-  _resetInitiativeCooldown,
 } from '@/lib/npcInitiative'
 import type { Player } from '@/types/game'
 
@@ -345,23 +344,18 @@ describe('INITIATIVE_TRIGGERS static data', () => {
 // ------------------------------------------------------------
 
 describe('checkInitiativeTriggers cooldown', () => {
-  beforeEach(() => {
-    _resetInitiativeCooldown()
-    vi.restoreAllMocks()
-  })
-
   it('returns null when fewer than 30 actions have elapsed since last event', () => {
-    // First call fires (mock random to ensure it passes the spawn check)
     vi.spyOn(Math, 'random').mockReturnValue(0.05)
     const player = makePlayer({
       totalDeaths: 2,
       questFlags: {},
     })
-    // Fire one event to set the cooldown
-    checkInitiativeTriggers(player, 'room_a', 100)
-    // Try again at action 115 (only 15 elapsed)
-    const result = checkInitiativeTriggers(player, 'room_b', 115)
-    expect(result).toBeNull()
+    // First call at action 100, lastAction=0 → fires, returns updatedLastAction=100
+    const first = checkInitiativeTriggers(player, 'room_a', 100, 0)
+    // Try again at action 115 with lastAction=100 (only 15 elapsed)
+    const result = checkInitiativeTriggers(player, 'room_b', 115, first.updatedLastAction)
+    expect(result.trigger).toBeNull()
+    vi.restoreAllMocks()
   })
 
   it('allows a new event after 30 actions have elapsed', () => {
@@ -370,13 +364,11 @@ describe('checkInitiativeTriggers cooldown', () => {
       totalDeaths: 2,
       questFlags: {},
     })
-    // First event
-    checkInitiativeTriggers(player, 'room_a', 100)
+    const first = checkInitiativeTriggers(player, 'room_a', 100, 0)
     // 31 actions later
-    const result = checkInitiativeTriggers(player, 'room_b', 131)
-    // May or may not fire depending on conditions, but cooldown is not blocking
-    // Just verify it doesn't throw
-    expect(result === null || typeof result === 'object').toBe(true)
+    const result = checkInitiativeTriggers(player, 'room_b', 131, first.updatedLastAction)
+    expect(result.trigger === null || typeof result.trigger === 'object').toBe(true)
+    vi.restoreAllMocks()
   })
 })
 
@@ -385,18 +377,14 @@ describe('checkInitiativeTriggers cooldown', () => {
 // ------------------------------------------------------------
 
 describe('checkInitiativeTriggers spawn chance', () => {
-  beforeEach(() => {
-    _resetInitiativeCooldown()
-  })
-
   it('returns null when random roll > 0.10', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.50)
     const player = makePlayer({
       totalDeaths: 2,
       questFlags: {},
     })
-    const result = checkInitiativeTriggers(player, 'room_a', 50)
-    expect(result).toBeNull()
+    const result = checkInitiativeTriggers(player, 'room_a', 50, 0)
+    expect(result.trigger).toBeNull()
     vi.restoreAllMocks()
   })
 
@@ -406,9 +394,9 @@ describe('checkInitiativeTriggers spawn chance', () => {
       totalDeaths: 2,    // patch trigger condition
       questFlags: {},
     })
-    const result = checkInitiativeTriggers(player, 'room_a', 50)
-    expect(result).not.toBeNull()
-    expect(result?.npcId).toBe('patch')
+    const result = checkInitiativeTriggers(player, 'room_a', 50, 0)
+    expect(result.trigger).not.toBeNull()
+    expect(result.trigger?.npcId).toBe('patch')
     vi.restoreAllMocks()
   })
 })
@@ -419,7 +407,6 @@ describe('checkInitiativeTriggers spawn chance', () => {
 
 describe('checkInitiativeTriggers trigger conditions', () => {
   beforeEach(() => {
-    _resetInitiativeCooldown()
     vi.spyOn(Math, 'random').mockReturnValue(0.05)
   })
 
@@ -429,9 +416,9 @@ describe('checkInitiativeTriggers trigger conditions', () => {
 
   it('patch trigger fires after 2 deaths when flag not set', () => {
     const player = makePlayer({ totalDeaths: 2, questFlags: {} })
-    const result = checkInitiativeTriggers(player, 'room', 50)
-    expect(result?.npcId).toBe('patch')
-    expect(result?.initiativeMessage).toBe('patch_found_you_after_deaths')
+    const result = checkInitiativeTriggers(player, 'room', 50, 0)
+    expect(result.trigger?.npcId).toBe('patch')
+    expect(result.trigger?.initiativeMessage).toBe('patch_found_you_after_deaths')
   })
 
   it('patch trigger does not fire if already seen (flag set)', () => {
@@ -439,10 +426,9 @@ describe('checkInitiativeTriggers trigger conditions', () => {
       totalDeaths: 2,
       questFlags: { patch_found_you_after_deaths: true },
     })
-    const result = checkInitiativeTriggers(player, 'room', 50)
-    // Could be a different trigger or null, but NOT the patch death trigger
-    if (result !== null) {
-      expect(result.initiativeMessage).not.toBe('patch_found_you_after_deaths')
+    const result = checkInitiativeTriggers(player, 'room', 50, 0)
+    if (result.trigger !== null) {
+      expect(result.trigger.initiativeMessage).not.toBe('patch_found_you_after_deaths')
     }
   })
 
@@ -452,9 +438,9 @@ describe('checkInitiativeTriggers trigger conditions', () => {
       factionReputation: { salters: -1 },
       questFlags: {},
     })
-    const result = checkInitiativeTriggers(player, 'room', 50)
-    expect(result?.npcId).toBe('marshal_cross')
-    expect(result?.initiativeMessage).toBe('cross_runner_sent')
+    const result = checkInitiativeTriggers(player, 'room', 50, 0)
+    expect(result.trigger?.npcId).toBe('marshal_cross')
+    expect(result.trigger?.initiativeMessage).toBe('cross_runner_sent')
   })
 
   it('lev fires when meridian_data_found is set', () => {
@@ -463,9 +449,9 @@ describe('checkInitiativeTriggers trigger conditions', () => {
       factionReputation: {},
       questFlags: { meridian_data_found: true },
     })
-    const result = checkInitiativeTriggers(player, 'room', 50)
-    expect(result?.npcId).toBe('lev')
-    expect(result?.initiativeMessage).toBe('lev_meridian_contact')
+    const result = checkInitiativeTriggers(player, 'room', 50, 0)
+    expect(result.trigger?.npcId).toBe('lev')
+    expect(result.trigger?.initiativeMessage).toBe('lev_meridian_contact')
   })
 
   it('drifter fires after 50 actions without NPC contact', () => {
@@ -475,8 +461,8 @@ describe('checkInitiativeTriggers trigger conditions', () => {
       factionReputation: {},
       questFlags: { last_npc_contact_action: 20 },  // 60 actions gap
     })
-    const result = checkInitiativeTriggers(player, 'room', 50)
-    expect(result?.npcId).toBe('drifter_newcomer')
+    const result = checkInitiativeTriggers(player, 'room', 50, 0)
+    expect(result.trigger?.npcId).toBe('drifter_newcomer')
   })
 
   it('drifter does not fire when contact was recent (< 50 actions)', () => {
@@ -486,10 +472,9 @@ describe('checkInitiativeTriggers trigger conditions', () => {
       factionReputation: {},
       questFlags: { last_npc_contact_action: 40 }, // only 20 actions gap
     })
-    // No trigger should fire for drifter — check it's not returned
-    const result = checkInitiativeTriggers(player, 'room', 50)
-    if (result !== null) {
-      expect(result.npcId).not.toBe('drifter_newcomer')
+    const result = checkInitiativeTriggers(player, 'room', 50, 0)
+    if (result.trigger !== null) {
+      expect(result.trigger.npcId).not.toBe('drifter_newcomer')
     }
   })
 })

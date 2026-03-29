@@ -10,6 +10,7 @@ import type {
   GameMessage,
   Player,
 } from '@/types/game'
+import { msg } from '@/lib/messages'
 
 // ------------------------------------------------------------
 // Quest flag → NPC relationship mapping
@@ -122,38 +123,6 @@ export function createCycleSnapshot(
 // APPEND-ONLY: no changes to existing exports above this line.
 // ============================================================
 
-/**
- * Returns cross-cycle consequence messages to display at the
- * start of a new cycle. Real implementation on rider-consequences.
- */
-export function getCrossCycleConsequences(
-  _cycleHistory: CycleSnapshot[],
-  _currentPlayer: Player,
-): GameMessage[] {
-  return []
-}
-
-/**
- * Returns graffiti changes driven by cycle history.
- * Real implementation on rider-consequences.
- */
-export function getGraffitiChange(
-  _cycleHistory: CycleSnapshot[],
-): Array<{ roomId: string; newGraffiti: string }> {
-  return []
-}
-
-/**
- * Returns a cycle-aware NPC dialogue override, or null.
- * Real implementation on rider-consequences.
- */
-export function getCycleAwareDialogue(
-  _npcId: string,
-  _cycleHistory: CycleSnapshot[],
-): string | null {
-  return null
-}
-
 // ------------------------------------------------------------
 // computeInheritedReputation
 // Returns 50% of aligned/antagonized faction rep from a previous
@@ -188,9 +157,6 @@ export function computeInheritedReputation(
 // empty rooms, changed graffiti, NPCs who watched your
 // previous self and are watching you now.
 // ============================================================
-
-import type { GameMessage } from '@/types/game'
-import { msg } from '@/lib/messages'
 
 // ------------------------------------------------------------
 // getCrossCycleConsequences

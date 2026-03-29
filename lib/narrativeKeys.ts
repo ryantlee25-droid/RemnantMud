@@ -375,7 +375,7 @@ const UNLOCK_NARRATIONS: Record<string, string> = {
     'The authorization reader recognizes the name from the' +
     ' MERIDIAN personnel file. The door opens. The past opens with it.',
   deep_pool_passage:
-    'Dr. Osei's notation gives you the safe path. The chemical' +
+    'Dr. Osei\'s notation gives you the safe path. The chemical' +
     ' markers re-read correctly. The cave mouth is passable.',
   pens_ward_c:
     'You know what the red wristband means now. The reader confirms it.' +

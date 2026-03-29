@@ -33,12 +33,12 @@ export const CROSSROADS_ROOMS: Room[] = [
       },
       south: {
         destination: 'br_01_canyon_mouth',
-        descriptionVerbose: 'Highway 550, south toward The Breaks',
+        descriptionVerbose: 'Highway 550 south — the pavement ends at canyon country. Rough wilderness, no settlements.',
         skillGate: { skill: 'survival', dc: 5, failMessage: 'The road south looks rough. You\'re not sure you\'re ready for open wilderness.' },
       },
       west: {
         destination: 'du_01_dust_edge',
-        descriptionVerbose: 'Highway 160, west into The Dust',
+        descriptionVerbose: 'Highway 160 west — heat shimmer on cracked asphalt, nothing on the horizon for miles.',
         skillGate: { skill: 'survival', dc: 8, failMessage: 'The heat shimmer to the west is brutal. You\'d need more experience to survive out there.' },
       },
     },
@@ -551,7 +551,7 @@ export const CROSSROADS_ROOMS: Room[] = [
     description:
       'A section of chain-link fence has been repurposed as the market\'s job board — a ten-foot wall of pinned notes, offers, requests, and warnings. This is how work gets done in the Four Corners. Need a caravan guard? Post it. Need a building cleared of Hollow? Post it. A wooden bench sits in front of it, worn smooth by the backsides of people reading slowly.',
     descriptionNight:
-      'The job board is unreadable in the dark. But the bench is occupied. Two figures sit at opposite ends, not speaking, just waiting for morning.',
+      'The job board is unreadable in the dark. But the bench is occupied — two shapes at opposite ends, still and quiet, waiting for morning. Not your business.',
     shortDescription:
       'A section of chain-link fence has been repurposed as the market\'s job board.',
     exits: {
@@ -683,6 +683,12 @@ export const CROSSROADS_ROOMS: Room[] = [
       south: 'cr_09_campground',
       north: 'st_01_approach',
     },
+    richExits: {
+      north: {
+        destination: 'st_01_approach',
+        descriptionVerbose: 'a rocky trail descends the rise and continues north toward the ruined building complex known as The Stacks — harder country',
+      },
+    },
     items: [],
     enemies: [],
     npcs: [],
@@ -737,7 +743,7 @@ export const CROSSROADS_ROOMS: Room[] = [
     richExits: {
       down: {
         destination: 'cr_12_gas_station_basement',
-        descriptionVerbose: 'the crawlspace beneath the floor',
+        descriptionVerbose: 'a pried-up floor panel drops into a concrete utility space below, cool and dark',
         hidden: true,
         discoverSkill: 'scavenging',
         discoverDc: 10,
@@ -825,6 +831,12 @@ export const CROSSROADS_ROOMS: Room[] = [
       'A concrete box six feet deep, eight feet square.',
     exits: {
       up: 'cr_11_old_gas_station',
+    },
+    richExits: {
+      up: {
+        destination: 'cr_11_old_gas_station',
+        descriptionVerbose: 'the open floor panel leads back up into the ruined gas station above',
+      },
     },
     items: [],
     enemies: [],

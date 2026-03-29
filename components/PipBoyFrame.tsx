@@ -49,8 +49,8 @@ export default function PipBoyFrame({
                   onClick={() => onTabChange?.(tab)}
                   className={`px-3 sm:px-4 py-2 text-xs uppercase tracking-widest font-mono transition-colors ${
                     activeTab === tab
-                      ? 'text-amber-300 border-b-2 border-amber-400'
-                      : 'text-amber-700 hover:text-amber-500'
+                      ? 'text-amber-400 border-b-2 border-amber-500'
+                      : 'text-amber-800 hover:text-amber-600'
                   }`}
                 >
                   {tab}

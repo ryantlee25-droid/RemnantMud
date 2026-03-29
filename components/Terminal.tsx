@@ -16,14 +16,14 @@ const TAG_NAMES = ['item', 'npc', 'enemy', 'exit', 'keyword', 'currency', 'condi
 type RichTag = (typeof TAG_NAMES)[number]
 
 const TAG_COLOR: Record<RichTag, string> = {
-  item:      'text-cyan-300',
-  npc:       'text-green-400',
-  enemy:     'text-red-400',
-  exit:      'text-yellow-300',
-  keyword:   'text-cyan-400',
-  currency:  'text-yellow-400',
-  condition: 'text-orange-400',
-  trait:     'text-purple-400',
+  item:      'text-amber-500',
+  npc:       'text-amber-700',
+  enemy:     'text-red-700',
+  exit:      'text-amber-600',
+  keyword:   'text-amber-500',
+  currency:  'text-amber-600',
+  condition: 'text-orange-600',
+  trait:     'text-amber-600',
 }
 
 const TAG_PATTERN = new RegExp(
@@ -76,10 +76,10 @@ interface TerminalProps {
 function messageColor(type: GameMessage['type']): string {
   switch (type) {
     case 'narrative': return 'text-amber-400'
-    case 'combat':    return 'text-red-500'
-    case 'system':    return 'text-blue-400'
-    case 'error':     return 'text-red-400'
-    case 'echo':      return 'text-amber-600'
+    case 'combat':    return 'text-red-700'
+    case 'system':    return 'text-amber-300'
+    case 'error':     return 'text-red-600'
+    case 'echo':      return 'text-amber-700'
     default:          return 'text-amber-400'
   }
 }

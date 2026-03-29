@@ -25,10 +25,10 @@ function formatZone(zone: string): string {
 }
 
 const TIME_COLORS: Record<TimeOfDay, string> = {
-  dawn:  'text-orange-300',
-  day:   'text-amber-300',
-  dusk:  'text-orange-500',
-  night: 'text-blue-400',
+  dawn:  'text-orange-500',
+  day:   'text-amber-400',
+  dusk:  'text-orange-600',
+  night: 'text-amber-800',
 }
 
 // ------------------------------------------------------------
@@ -42,10 +42,10 @@ const EMPTY_SEG = '\u2591'
 const PRESSURE_SEGMENTS = 10
 
 function pressureColor(level: number): string {
-  if (level >= 9) return 'text-red-500'
-  if (level >= 7) return 'text-amber-400'
-  if (level >= 4) return 'text-amber-500'
-  return 'text-amber-600'
+  if (level >= 9) return 'text-red-700'
+  if (level >= 7) return 'text-amber-500'
+  if (level >= 4) return 'text-amber-600'
+  return 'text-amber-700'
 }
 
 function PressureMeter({ level }: { level: number }) {
@@ -106,7 +106,7 @@ export default memo(function StatusBar() {
       <span className="mx-2 opacity-40">|</span>
       <PressureMeter level={hollowPressure} />
       {combatIndicator && (
-        <span className="text-red-400">{combatIndicator}</span>
+        <span className="text-red-700">{combatIndicator}</span>
       )}
     </div>
   )

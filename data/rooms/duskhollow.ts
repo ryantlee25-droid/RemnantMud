@@ -1073,9 +1073,9 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     environmentalRolls: {
       ambientSoundPool: {
         night: [
-          { sound: 'Low voices, close, overlapping like water over stones.', weight: 3 },
+          { sound: 'Low voices carry from deeper in the market — close enough to be present, too low to make out words.', weight: 3 },
           { sound: 'The soft sound of goods being set down and picked up and set down again.', weight: 2 },
-          { sound: 'Someone laughing quietly — the specific laugh of someone who has remembered they can.', weight: 1 },
+          { sound: 'Laughter from somewhere in the hollow — quiet, brief, the sound of people who haven\'t forgotten how.', weight: 1 },
         ],
         dusk: [
           { sound: 'The market setting up: blankets unfolding, the dull sound of goods placed on cloth.', weight: 3 },

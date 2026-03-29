@@ -41,14 +41,16 @@ function createQueryBuilder(tableName: string) {
   const table = tables[tableName] ?? []
   let filters: Array<{ col: string; val: any }> = []
   let selectCols = '*'
+  let selectCount = false
   let pendingInsert: any = null
   let pendingUpdate: any = null
   let pendingDelete = false
   let pendingUpsert: any = null
 
   const builder: any = {
-    select(cols?: string) {
+    select(cols?: string, opts?: { count?: string; head?: boolean }) {
       selectCols = cols ?? '*'
+      if (opts?.count === 'exact') selectCount = true
       return builder
     },
     eq(col: string, val: any) {
@@ -104,7 +106,12 @@ function createQueryBuilder(tableName: string) {
 
       if (pendingUpsert) {
         for (const row of pendingUpsert) {
-          const idx = table.findIndex((r: any) => r.id === row.id || (r.player_id === row.player_id && r.item_id === row.item_id))
+          const idx = table.findIndex((r: any) =>
+            r.id === row.id ||
+            (r.player_id === row.player_id && r.item_id === row.item_id) ||
+            (r.player_id === row.player_id && r.room_id === row.room_id) ||
+            (tableName === 'generated_rooms' && r.player_id === row.player_id && r.id === row.id)
+          )
           if (idx >= 0) {
             table[idx] = { ...table[idx], ...row }
           } else {
@@ -132,7 +139,9 @@ function createQueryBuilder(tableName: string) {
 
       // Select
       const results = table.filter((r: any) => filters.every(f => r[f.col] === f.val))
-      return resolve({ data: deepClone(results), error: null })
+      const response: any = { data: deepClone(results), error: null }
+      if (selectCount) response.count = results.length
+      return resolve(response)
     },
   }
 

@@ -9,6 +9,9 @@
 import { msg } from '@/lib/messages'
 import type { GameMessage, Player } from '@/types/game'
 import type { WorldEvent } from '@/types/convoy-contracts'
+import { ACT1_EVENTS } from '@/data/worldEvents/act1_events'
+import { ACT2_EVENTS } from '@/data/worldEvents/act2_events'
+import { ACT3_EVENTS } from '@/data/worldEvents/act3_events'
 
 // ============================================================
 // Core Scheduling
@@ -30,8 +33,6 @@ export function getScheduledEvents(
   currentAct: 1 | 2 | 3,
   playerState: Pick<Player, 'factionReputation' | 'questFlags'>
 ): WorldEvent[] {
-  // Lazy import at call site to avoid circular deps when test data
-  // is loaded. The actual event arrays are passed in via ALL_WORLD_EVENTS.
   return ALL_WORLD_EVENTS.filter(event => {
     // Act gate — exact match only (no bleed between acts)
     if (event.act !== currentAct) return false
@@ -75,14 +76,10 @@ export function executeWorldEvent(
 }
 
 // ============================================================
-// Master event registry — populated by data files below.
+// Master event registry — populated by data files above.
 // Data files import nothing from lib (per architectural invariant 4.3).
 // This file is the sole aggregation point.
 // ============================================================
-
-import { ACT1_EVENTS } from '@/data/worldEvents/act1_events'
-import { ACT2_EVENTS } from '@/data/worldEvents/act2_events'
-import { ACT3_EVENTS } from '@/data/worldEvents/act3_events'
 
 export const ALL_WORLD_EVENTS: WorldEvent[] = [
   ...ACT1_EVENTS,

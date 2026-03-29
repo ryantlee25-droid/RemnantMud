@@ -1877,6 +1877,25 @@ export const NPCS: Record<string, RichNPC> = {
     ],
   },
 
+  // --- [RIDER E: remnant-story-0329] Dory — Covenant blood tithe volunteer ---
+  dory: {
+    id: 'dory',
+    name: 'Dory',
+    description: "A woman in her late thirties with a compression bandage on her left wrist and the specific composure of someone who has run the numbers and made a decision they can live with. She isn't performing contentment or performing suffering. She's just here, which is its own kind of statement.",
+    dialogue: "The math works out. I know how that sounds. It sounds like something a person says when they've stopped thinking about it. But I haven't stopped thinking about it — I've just finished thinking about it, and the math still works out.",
+    faction: 'covenant_of_dusk',
+    isNamed: true,
+    zone: 'duskhollow',
+    spawnChance: 0.90,
+    dispositionRoll: { friendly: 0.40, neutral: 0.45, wary: 0.10, hostile: 0.05 },
+    activityPool: [
+      { activity: 'sits in one of the collection chairs with her sleeves rolled to the elbow, waiting with the matter-of-fact patience of someone at a clinic appointment', weight: 3, timeRestrict: ['dusk', 'night'] },
+      { activity: 'adjusts the compression bandage on her wrist with practiced efficiency, checking the tension', weight: 2, timeRestrict: ['dusk', 'night'] },
+      { activity: "is reading a folded piece of paper — a letter or a list, the kind of thing you carry when you need to remember why you're doing something", weight: 1, timeRestrict: ['dusk'] },
+    ],
+  },
+  // --- [/RIDER E] ---
+
   // ----------------------------------------------------------
   // THE EMBER / KINDLING zone NPCs
   // ----------------------------------------------------------

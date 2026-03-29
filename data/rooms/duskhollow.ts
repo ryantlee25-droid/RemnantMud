@@ -287,8 +287,31 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         dialogueTree: 'tithe_human_perspective',
         narrativeNotes: 'Appears during night and dusk hours',
       },
+      // --- [RIDER E: remnant-story-0329] Dory tithe witness scene ---
+      {
+        npcId: 'dory',
+        spawnChance: 0.90,
+        spawnType: 'event',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          {
+            desc: 'The sanctuary is different now. The candles have been arranged in a specific pattern — not decoration, protocol. A woman sits in a high-backed chair, her sleeves rolled to the elbow, her expression composed. Not afraid. Resigned in the way that someone who has made a calculation is resigned. A Sanguine kneels beside her. Their movements are careful, deliberate, almost tender. The woman closes her eyes. The Sanguine places their mouth against the inside of her wrist. There is no violence in it. That is somehow worse.',
+            weight: 3,
+            timeRestrict: ['dusk', 'night'],
+          },
+        ],
+        dispositionRoll: { neutral: 0.7, wary: 0.2, friendly: 0.1 },
+        narrativeNotes: 'Witness scene. Gate: covenant_of_dusk_invited. Exclude: witnessed_tithe_system. Sets witnessed_tithe_system via extras below.',
+      },
+      // --- [/RIDER E] ---
     ],
     extras: [
+      // --- [RIDER E] Tithe witness trigger ---
+      {
+        keywords: ['woman', 'dory', 'tithe', 'witness', 'scene'],
+        description: 'The arrangement here is formal in a way the chart and the chairs did not prepare you for. It is not a procedure. It is a covenant. The word lands with its full weight.',
+        questFlagOnSuccess: { flag: 'witnessed_tithe_system', value: true },
+      },
       {
         keywords: ['chart', 'names', 'schedule', 'record'],
         description: 'The chart tracks four people: MAYA (weekly, 400ml, GREEN). TORRES (biweekly, 350ml, GREEN). CHEN (weekly, 425ml, YELLOW). DALE (triweekly, 300ml, GREEN). The yellow indicator for Chen has a handwritten note: "Recommend reduction to biweekly pending iron recovery." Someone monitors health here. The concern is about supply continuity, but it\'s still concern.',
@@ -302,6 +325,24 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         keywords: ['anticoagulant', 'chemicals', 'supplies', 'storage'],
         description: 'The supplies are well-stocked and organized. A second inventory list is maintained separately: expiration dates, reorder points, current quantities. Someone keeps this room supplied. The supply chain for anticoagulants in a post-Collapse world is not trivial. The Covenant has relationships you don\'t fully see.',
       },
+    ],
+      // --- [RIDER E] Post-tithe extras (gated on witnessed_tithe_system) ---
+      {
+        keywords: ['woman', 'wrist', 'marks', 'dory'],
+        description: 'She is still here, after. The compress on her wrist is clean and tight. She sees you looking. \'Everyone looks at the wrists,\' she says.',
+        questGate: 'witnessed_tithe_system',
+      },
+      {
+        keywords: ['why', 'chose', 'choice'],
+        description: '\'I chose this. That\'s the part people forget. My son needed medicine the Covenant provides. The math works out.\' She looks at the compress. \'The math has always worked out.\'',
+        questGate: 'witnessed_tithe_system',
+      },
+      {
+        keywords: ['hurt', 'pain', 'feel'],
+        description: '\'It doesn\'t hurt. Not the way you\'d think. It\'s like giving blood at a clinic. Except the clinic is a candlelit room and the nurse has been alive for two hundred years.\'',
+        questGate: 'witnessed_tithe_system',
+      },
+      // --- [/RIDER E] ---
     ],
     narrativeNotes: 'Central to the blood tithe questline. The chart with real names and health monitoring is the room\'s moral fulcrum — consent, care, exploitation, all present simultaneously. The human resident NPC perspective is critical.',
   },

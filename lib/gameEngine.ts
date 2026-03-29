@@ -23,6 +23,7 @@ import type {
   CharacterClass,
   SpawnedNPC,
 } from '@/types/game'
+import type { Companion, SecondaryEffect } from '@/types/convoy-contracts'
 import { CLASS_DEFINITIONS } from '@/types/game'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 import { getRoom, markVisited, persistWorld } from '@/lib/world'
@@ -48,6 +49,86 @@ import { createCycleSnapshot, computeInheritedReputation } from '@/lib/echoes'
 import { suggestVerb as parserSuggestVerb } from '@/lib/parser'
 
 // ------------------------------------------------------------
+// Narrative Overhaul imports (convoy remnant-narrative-0329)
+// These modules live on their respective Rider branches and will
+// be available after those branches are merged into staging.
+// ------------------------------------------------------------
+
+// Rider A — World Events
+import {
+  getScheduledEvents,
+  executeWorldEvent,
+} from '@/lib/worldEvents'
+
+// Rider B — Dread & Tension
+import {
+  computePressure as computeHollowPressure,
+  applyPressureDelta,
+  getPressureNarration,
+  getMundaneHorrorNarration,
+  shouldTriggerSwarm,
+} from '@/lib/hollowPressure'
+import {
+  checkInitiativeTriggers,
+  getInitiativeNarration,
+} from '@/lib/npcInitiative'
+
+// Rider C — Companion System
+import {
+  getCompanionCommentary,
+  getPersonalMoment,
+} from '@/lib/companionSystem'
+
+// Rider D — Consequence Cascades
+import {
+  getFactionRipple,
+  getDelayedRippleNarration,
+} from '@/lib/factionWeb'
+// Note: getCrossCycleConsequences, getGraffitiChange, getCycleAwareDialogue
+// are exported from @/lib/echoes and available to action handlers.
+// They are not called in the central dispatch pipeline — they are
+// context-specific (cycle start, room graffiti, NPC dialogue respectively).
+
+// Rider F — Player Voice
+import {
+  shouldTriggerMonologue,
+  generateMonologue,
+  getPhysicalStateNarration,
+  getReputationVoice,
+  resetMonologueSession,
+} from '@/lib/playerMonologue'
+
+// Rider G — Narrator Voice
+import {
+  shouldNarratorSpeak,
+  generateNarratorVoice,
+  getNarratorActTransition,
+  clearNarratorSession,
+} from '@/lib/narratorVoice'
+
+// ------------------------------------------------------------
+// Narrative session state (ephemeral — reset per session load)
+// NOT stored on Player or in DB. Lost on page refresh, which is
+// acceptable since these are fire-control counters, not progress.
+// ------------------------------------------------------------
+
+interface NarrativeSession {
+  /** actionsTaken when pressure last incremented */
+  lastPressureTick: number
+  /** actionsTaken when narrator last fired */
+  lastNarratorAction: number
+  /** Zone the player was in at the previous room-entry */
+  previousZone: string | null
+  /** Pending faction ripple effects awaiting delayed narration */
+  pendingRipples: Array<{
+    effect: SecondaryEffect
+    enqueuedAt: number
+  }>
+  /** Whether the post-combat flag is active for this action */
+  isPostCombat: boolean
+}
+
+// ------------------------------------------------------------
 // XP thresholds for level progression
 // Index = level you're advancing TO (e.g. XP_THRESHOLDS[2] = 100 means level 2 requires 100 XP)
 // ------------------------------------------------------------
@@ -68,6 +149,10 @@ export const XP_THRESHOLDS: Record<number, number> = {
 export function xpForNextLevel(currentLevel: number): number | null {
   return XP_THRESHOLDS[currentLevel + 1] ?? null
 }
+
+// Re-export pressure delta for use by action handlers (rest, combat resolution)
+// so they can adjust hollowPressure without importing hollowPressure.ts directly.
+export { applyPressureDelta }
 
 // Alias for gameEngine internal use
 function rollQuantity(q: QuantityConfig): number {
@@ -119,6 +204,15 @@ export class GameEngine implements EngineCore {
     activeBuffs: [],
     pendingStatIncrease: false,
     weather: 'clear',
+  }
+
+  /** Narrative session state — ephemeral per browser session, not persisted to DB. */
+  private narrativeSession: NarrativeSession = {
+    lastPressureTick: 0,
+    lastNarratorAction: 0,
+    previousZone: null,
+    pendingRipples: [],
+    isPostCombat: false,
   }
 
   private listeners: Array<(state: GameState) => void> = []
@@ -301,6 +395,14 @@ export class GameEngine implements EngineCore {
     const { player } = this.state
     if (!player) return
     const supabase = createSupabaseBrowserClient()
+
+    // Pack narrative fields into JSON for player_progression column.
+    // CONTRACT §4.2: stored as JSON in existing table, no ALTER TABLE.
+    const narrativeProgress = {
+      hollowPressure: player.hollowPressure ?? 0,
+      narrativeKeys: player.narrativeKeys ?? [],
+    }
+
     const { error } = await supabase
       .from('players')
       .update({
@@ -320,6 +422,7 @@ export class GameEngine implements EngineCore {
         quest_flags: player.questFlags ?? {},
         active_buffs: JSON.stringify(this.state.activeBuffs ?? []),
         pending_stat_increase: this.state.pendingStatIncrease ?? false,
+        narrative_progress: narrativeProgress,
       })
       .eq('id', player.id)
     if (error) {
@@ -519,6 +622,10 @@ export class GameEngine implements EngineCore {
       isDead: false,
       factionReputation: {},
       questFlags: {},
+      // Narrative overhaul defaults (convoy remnant-narrative-0329)
+      hollowPressure: 0,
+      narrativeKeys: [],
+      currentCompanion: undefined,
     }
 
     const rawStartRoom = await getRoom(startRoomId, user.id)
@@ -558,6 +665,9 @@ export class GameEngine implements EngineCore {
     if (startRoom.items.length > 0) await handleTutorialHint(this, 'first_item')
     if (startRoom.enemies.length > 0) await handleTutorialHint(this, 'first_enemy')
     if (startRoom.npcs.length > 0) await handleTutorialHint(this, 'first_npc')
+
+    // Reset narrative session for new character
+    this._resetNarrativeSession()
   }
 
   // ----------------------------------------------------------
@@ -614,6 +724,13 @@ export class GameEngine implements EngineCore {
       pending_stat_increase: boolean | null
     }
 
+    // Parse narrative fields stored as JSON in player_progression
+    // Provide safe defaults for saves that predate this convoy.
+    const rawNarrativeProgress = (row as Record<string, unknown>).narrative_progress as
+      { hollowPressure?: number; narrativeKeys?: string[] } | null | undefined
+    const restoredHollowPressure = rawNarrativeProgress?.hollowPressure ?? 0
+    const restoredNarrativeKeys = rawNarrativeProgress?.narrativeKeys ?? []
+
     const player: Player = {
       id: row.id,
       name: row.name,
@@ -639,6 +756,11 @@ export class GameEngine implements EngineCore {
       isDead: row.is_dead ?? false,
       factionReputation: (row.faction_reputation as Partial<Record<FactionType, number>>) ?? {},
       questFlags: (row.quest_flags as Record<string, boolean | number>) ?? {},
+      // Narrative overhaul fields (convoy remnant-narrative-0329)
+      // Safe defaults ensure backwards-compatibility with pre-convoy saves.
+      hollowPressure: Math.max(0, Math.min(10, restoredHollowPressure)),
+      narrativeKeys: Array.isArray(restoredNarrativeKeys) ? restoredNarrativeKeys : [],
+      currentCompanion: undefined,  // Companions are not persisted across sessions
     }
 
     const [rawCurrentRoom, inventory] = await Promise.all([
@@ -845,6 +967,9 @@ export class GameEngine implements EngineCore {
         msg('Echoes of your previous life linger. Some factions remember you.', 'echo'),
       ])
     }
+
+    // Reset narrative session for new cycle
+    this._resetNarrativeSession()
   }
 
   // ----------------------------------------------------------
@@ -948,6 +1073,9 @@ export class GameEngine implements EngineCore {
         msg('Echoes of your previous life linger. Some factions remember you.', 'echo'),
       ])
     }
+
+    // Reset narrative session for new cycle
+    this._resetNarrativeSession()
   }
 
   // ----------------------------------------------------------
@@ -985,6 +1113,12 @@ export class GameEngine implements EngineCore {
     const newFactionRep = { ...(player.factionReputation ?? {}), [faction]: newRep }
     const updatedPlayer: Player = { ...player, factionReputation: newFactionRep }
     this._setState({ player: updatedPlayer })
+
+    // Fire faction ripple narration (Rider D — cascade effects)
+    const rippleMessages = this._applyFactionRipple(faction, effectiveDelta)
+    if (rippleMessages.length > 0) {
+      this._appendMessages(rippleMessages)
+    }
 
     // Persist
     const supabase = createSupabaseBrowserClient()
@@ -1040,6 +1174,19 @@ export class GameEngine implements EngineCore {
       .update({ quest_flags: newFlags })
       .eq('id', player.id)
     if (flagError) console.error('Failed to persist quest flag:', flagError.message)
+
+    // Detect act transitions and fire narrator voice for them
+    if (flag === 'act1_complete' && value) {
+      const transitionMsgs = getNarratorActTransition(1, 2)
+      if (transitionMsgs.length > 0) {
+        this._appendMessages(transitionMsgs)
+      }
+    } else if (flag === 'act2_complete' && value) {
+      const transitionMsgs = getNarratorActTransition(2, 3)
+      if (transitionMsgs.length > 0) {
+        this._appendMessages(transitionMsgs)
+      }
+    }
 
     // Detect ending trigger
     if (flag === 'charon_choice' && typeof value === 'string' && GameEngine.VALID_ENDINGS.has(value)) {
@@ -1156,6 +1303,282 @@ export class GameEngine implements EngineCore {
   }
 
   // ----------------------------------------------------------
+  // Act detection (derived from quest flags)
+  // ----------------------------------------------------------
+
+  /** Returns the current narrative act based on quest flags. */
+  getCurrentAct(): 1 | 2 | 3 {
+    const flags = this.state.player?.questFlags ?? {}
+    if (flags['act2_complete']) return 3
+    if (flags['act1_complete']) return 2
+    return 1
+  }
+
+  // ----------------------------------------------------------
+  // Narrative pipeline
+  // Runs AFTER every time-advancing action (see executeAction).
+  // Returns additional GameMessage[] to be appended to the log.
+  // ----------------------------------------------------------
+
+  /**
+   * Apply faction ripple: call when faction rep changes.
+   * Enqueues delayed effects; dispatches immediate narration.
+   * Returns GameMessage[] for immediate dispatch.
+   */
+  _applyFactionRipple(faction: FactionType, repDelta: number): GameMessage[] {
+    const { player } = this.state
+    if (!player) return []
+    const { effects, narration } = getFactionRipple(faction, repDelta, player)
+    // Enqueue effects with delay
+    const now = player.actionsTaken ?? 0
+    for (const effect of effects) {
+      if (effect.delayActionCount > 0) {
+        this.narrativeSession.pendingRipples.push({ effect, enqueuedAt: now })
+      }
+    }
+    return narration
+  }
+
+  /**
+   * Core narrative middleware — called at the end of every
+   * time-advancing action (after the action handler runs).
+   */
+  private async _runNarrativePipeline(
+    action: Action,
+    prevRoomId: string | null,
+    wasInCombat: boolean,
+  ): Promise<GameMessage[]> {
+    const { player, currentRoom, combatState, ledger } = this.state
+    if (!player || !currentRoom) return []
+
+    const narrativeMessages: GameMessage[] = []
+    const actionCount = player.actionsTaken ?? 0
+    const currentAct = this.getCurrentAct()
+    const isRoomEntry = (action.verb === 'go' || action.verb === 'sneak' ||
+      action.verb === 'climb' || action.verb === 'swim') &&
+      currentRoom.id !== prevRoomId
+    const inCombat = !!(combatState?.active)
+    const zoneChanged = isRoomEntry &&
+      this.narrativeSession.previousZone !== null &&
+      this.narrativeSession.previousZone !== currentRoom.zone
+
+    // ----------------------------------------------------------
+    // a) World events (every 30–50 actions, staggered by event)
+    // ----------------------------------------------------------
+    if (actionCount > 0) {
+      const scheduled = getScheduledEvents(actionCount, currentAct, player)
+      for (const event of scheduled) {
+        narrativeMessages.push(...executeWorldEvent(event, player))
+      }
+    }
+
+    // ----------------------------------------------------------
+    // b) Pressure tick
+    // +1 per 10 actions; read from hollowPressure.ts logic
+    // ----------------------------------------------------------
+    const prevPressure = player.hollowPressure ?? 0
+    const newPressure = computeHollowPressure(
+      prevPressure,
+      actionCount,
+      this.narrativeSession.lastPressureTick,
+    )
+    if (newPressure !== prevPressure) {
+      // Pressure incremented — update tick marker
+      this.narrativeSession.lastPressureTick = actionCount
+      const updatedPlayer: Player = { ...player, hollowPressure: newPressure }
+      this._setState({ player: updatedPlayer })
+
+      // Set initiative eligibility flag when pressure is high
+      if (newPressure >= 6) {
+        const flags = { ...(updatedPlayer.questFlags ?? {}), pressure_high_warning_eligible: true }
+        this._setState({ player: { ...updatedPlayer, questFlags: flags } })
+      }
+    }
+    const effectivePressure = newPressure
+
+    // Check swarm trigger at pressure 10
+    if (shouldTriggerSwarm(effectivePressure)) {
+      const swarmEvents = getScheduledEvents(actionCount, currentAct, {
+        ...(this.state.player ?? player),
+        questFlags: { ...(player.questFlags ?? {}), swarm_imminent: true },
+      })
+      for (const event of swarmEvents) {
+        narrativeMessages.push(...executeWorldEvent(event, this.state.player ?? player))
+      }
+    }
+
+    // ----------------------------------------------------------
+    // c) Room-entry events
+    // ----------------------------------------------------------
+    if (isRoomEntry) {
+      // Pressure narration (ambient dread on room entry)
+      const pressureNarr = getPressureNarration(effectivePressure as import('@/types/convoy-contracts').PressureLevel)
+      narrativeMessages.push(...pressureNarr)
+
+      // Mundane horror (3% chance, fires internally in function)
+      const horror = getMundaneHorrorNarration(currentRoom.id)
+      if (horror) narrativeMessages.push(horror)
+
+      // Companion commentary (20% chance, enforced inside function)
+      const companion = (this.state.player ?? player).currentCompanion
+      if (companion) {
+        const roomsTogether = actionCount - companion.joinedAt
+        const ctx = {
+          zone: currentRoom.zone,
+          difficulty: currentRoom.difficulty,
+          timeOfDay: computeTimeOfDay(actionCount),
+          playerHpPercent: player.hp / player.maxHp,
+          isPostCombat: this.narrativeSession.isPostCombat,
+          isPostDiscovery: false,
+          isSafeRest: !!(currentRoom.flags?.safeRest),
+          roomsTogether,
+        }
+        const commentary = getCompanionCommentary(companion, ctx)
+        if (commentary) narrativeMessages.push(commentary)
+        // Personal moments (5% chance, requires roomsTogether >= 10)
+        const moment = getPersonalMoment(companion, roomsTogether)
+        if (moment) narrativeMessages.push(moment)
+      }
+
+      // Player physical state narration
+      const physical = getPhysicalStateNarration({
+        hp: player.hp,
+        maxHp: player.maxHp,
+        cycle: player.cycle ?? 1,
+        actionsTaken: actionCount,
+        lastRestAt: 0,    // conservative default; no separate lastRestAt tracking yet
+        inCombat,
+        conditions: [],   // active conditions live in combatState; empty outside combat
+      })
+      if (physical) narrativeMessages.push(physical)
+
+      // Reputation voice on zone change (30% chance, enforced inside function)
+      if (zoneChanged) {
+        const repVoice = getReputationVoice(
+          player.factionReputation ?? {},
+          currentRoom.zone,
+          player.cycle ?? 1,
+        )
+        if (repVoice) narrativeMessages.push(repVoice)
+      }
+
+      // NPC initiative (once per NPC per cycle, 5–10% chance)
+      const trigger = checkInitiativeTriggers(player, currentRoom.id, actionCount)
+      if (trigger) {
+        const initiativeMessages = getInitiativeNarration(trigger)
+        narrativeMessages.push(...initiativeMessages)
+        // Mark trigger as fired so it doesn't repeat
+        const flags = {
+          ...(this.state.player?.questFlags ?? player.questFlags ?? {}),
+          [trigger.initiativeMessage]: true,
+        }
+        this._setState({ player: { ...(this.state.player ?? player), questFlags: flags } })
+      }
+
+      // Update zone tracking for next room entry
+      this.narrativeSession.previousZone = currentRoom.zone
+    }
+
+    // ----------------------------------------------------------
+    // d) Monologue OR narrator — only one fires per action
+    //    per CONTRACT §4.4 invariant
+    // ----------------------------------------------------------
+    if (!inCombat) {
+      const monologueFired = shouldTriggerMonologue()
+      if (monologueFired) {
+        // Derive monologue trigger from game context
+        const hpPercent = player.hp / player.maxHp
+        let trigger: import('@/types/convoy-contracts').MonologueTrigger = 'safe_rest'
+        if (hpPercent <= 0.25) trigger = 'low_hp'
+        else if (this.narrativeSession.isPostCombat) trigger = 'post_combat'
+        else if (effectivePressure >= 7) trigger = 'in_danger'
+        else if (currentRoom.flags?.safeRest) trigger = 'safe_rest'
+
+        const monologueContext: import('@/types/convoy-contracts').MonologueContext = {
+          trigger,
+          roomData: {
+            roomId: currentRoom.id,
+            hasEnemies: currentRoom.enemies.length > 0,
+            zoneType: currentRoom.zone,
+          },
+        }
+        const monologue = await generateMonologue(
+          monologueContext,
+          player.characterClass,
+          player.personalLossType ?? 'community',
+          player.personalLossDetail,
+        )
+        if (monologue) narrativeMessages.push(monologue)
+      } else if (
+        shouldNarratorSpeak(
+          actionCount,
+          this.narrativeSession.lastNarratorAction,
+          effectivePressure,
+          inCombat,
+        )
+      ) {
+        const recentDeath = player.hp / player.maxHp < 0.2 && wasInCombat
+        const narratorMsg = generateNarratorVoice({
+          act: currentAct,
+          zone: currentRoom.zone,
+          cycle: player.cycle ?? 1,
+          pressure: effectivePressure,
+          questFlags: Object.keys(player.questFlags ?? {}).filter(
+            k => !!(player.questFlags?.[k])
+          ),
+          playerHP: player.hp,
+          playerMaxHP: player.maxHp,
+          personalLoss: player.personalLossType,
+          recentDeath,
+        })
+        if (narratorMsg) {
+          narrativeMessages.push(narratorMsg)
+          this.narrativeSession.lastNarratorAction = actionCount
+        }
+      }
+    }
+
+    // ----------------------------------------------------------
+    // e) Delayed faction ripple narration
+    // ----------------------------------------------------------
+    const stillPending: typeof this.narrativeSession.pendingRipples = []
+    for (const pending of this.narrativeSession.pendingRipples) {
+      const elapsed = actionCount - pending.enqueuedAt
+      const rippleMsg = getDelayedRippleNarration(pending.effect, elapsed)
+      if (rippleMsg) {
+        narrativeMessages.push(rippleMsg)
+        // Drop from pending — narration fired
+      } else {
+        stillPending.push(pending)
+      }
+    }
+    this.narrativeSession.pendingRipples = stillPending
+
+    // ----------------------------------------------------------
+    // f) Clear post-combat flag for next action
+    // ----------------------------------------------------------
+    this.narrativeSession.isPostCombat = wasInCombat && !inCombat
+
+    return narrativeMessages
+  }
+
+  // ----------------------------------------------------------
+  // Reset narrative session (call on new game / rebirth)
+  // ----------------------------------------------------------
+
+  _resetNarrativeSession(): void {
+    this.narrativeSession = {
+      lastPressureTick: 0,
+      lastNarratorAction: 0,
+      previousZone: null,
+      pendingRipples: [],
+      isPostCombat: false,
+    }
+    clearNarratorSession()
+    resetMonologueSession()
+  }
+
+  // ----------------------------------------------------------
   // Sneak handler
   // ----------------------------------------------------------
 
@@ -1218,6 +1641,10 @@ export class GameEngine implements EngineCore {
     if (this.state.pendingStatIncrease && action.verb !== 'boost' && action.verb !== 'help' && action.verb !== 'stats') {
       this._appendMessages([systemMsg("You have a stat increase pending. Type 'boost [stat]' to choose.")])
     }
+
+    // Capture pre-action state for narrative pipeline
+    const prevRoomId = this.state.currentRoom?.id ?? null
+    const wasInCombat = !!(this.state.combatState?.active)
 
     try {
     switch (action.verb) {
@@ -1353,6 +1780,17 @@ export class GameEngine implements EngineCore {
         } else {
           this._appendMessages([{ id: crypto.randomUUID(), text: `Unknown command. Type 'help' for a list of commands.`, type: 'error' }])
         }
+      }
+    }
+
+    // ----------------------------------------------------------
+    // Narrative pipeline — runs after every time-advancing action.
+    // Messages are appended AFTER the action result messages.
+    // ----------------------------------------------------------
+    if (GameEngine.TIME_ADVANCING_VERBS.has(action.verb) && this.state.player) {
+      const narrativeMessages = await this._runNarrativePipeline(action, prevRoomId, wasInCombat)
+      if (narrativeMessages.length > 0) {
+        this._appendMessages(narrativeMessages)
       }
     }
 

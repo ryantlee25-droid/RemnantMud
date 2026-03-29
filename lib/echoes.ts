@@ -7,6 +7,7 @@ import type {
   CycleSnapshot,
   EndingChoice,
   FactionType,
+  GameMessage,
   Player,
 } from '@/types/game'
 
@@ -111,6 +112,46 @@ export function createCycleSnapshot(
   }
 
   return snapshot
+}
+
+// ============================================================
+// Narrative Overhaul additions — convoy remnant-narrative-0329
+// Rider D (consequences) appends these exports.
+// Real implementations live on rider-consequences branch.
+// These stubs satisfy gameEngine.ts imports until merge.
+// APPEND-ONLY: no changes to existing exports above this line.
+// ============================================================
+
+/**
+ * Returns cross-cycle consequence messages to display at the
+ * start of a new cycle. Real implementation on rider-consequences.
+ */
+export function getCrossCycleConsequences(
+  _cycleHistory: CycleSnapshot[],
+  _currentPlayer: Player,
+): GameMessage[] {
+  return []
+}
+
+/**
+ * Returns graffiti changes driven by cycle history.
+ * Real implementation on rider-consequences.
+ */
+export function getGraffitiChange(
+  _cycleHistory: CycleSnapshot[],
+): Array<{ roomId: string; newGraffiti: string }> {
+  return []
+}
+
+/**
+ * Returns a cycle-aware NPC dialogue override, or null.
+ * Real implementation on rider-consequences.
+ */
+export function getCycleAwareDialogue(
+  _npcId: string,
+  _cycleHistory: CycleSnapshot[],
+): string | null {
+  return null
 }
 
 // ------------------------------------------------------------

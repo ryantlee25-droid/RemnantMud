@@ -31,6 +31,35 @@ const TIME_COLORS: Record<TimeOfDay, string> = {
   night: 'text-blue-400',
 }
 
+// ------------------------------------------------------------
+// Pressure meter — renders [PRESSURE: ▰▰▰▰░░░░░░] with
+// color scaling based on hollowPressure level (0–10).
+// Segments: 10 total. Filled = ▰, Empty = ░.
+// ------------------------------------------------------------
+
+const FILLED_SEG = '\u25B0'
+const EMPTY_SEG = '\u2591'
+const PRESSURE_SEGMENTS = 10
+
+function pressureColor(level: number): string {
+  if (level >= 9) return 'text-red-500'
+  if (level >= 7) return 'text-amber-400'
+  if (level >= 4) return 'text-amber-500'
+  return 'text-amber-600'
+}
+
+function PressureMeter({ level }: { level: number }) {
+  const filled = Math.max(0, Math.min(PRESSURE_SEGMENTS, level))
+  const segments = Array.from({ length: PRESSURE_SEGMENTS }, (_, i) =>
+    i < filled ? FILLED_SEG : EMPTY_SEG
+  ).join('')
+  return (
+    <span className={pressureColor(level)}>
+      [PRESSURE: {segments}]
+    </span>
+  )
+}
+
 export default memo(function StatusBar() {
   const { state } = useGame()
   const { player, currentRoom, combatState } = state
@@ -46,6 +75,7 @@ export default memo(function StatusBar() {
   const combatIndicator = combatState?.active
     ? ` | COMBAT: ${combatState.enemy.name} [${combatState.enemyHp}/${combatState.enemy.maxHp}]`
     : ''
+  const hollowPressure = player.hollowPressure ?? 0
 
   return (
     <div className="bg-black border-b border-amber-900 px-4 py-1 font-mono text-xs text-amber-400 select-none whitespace-nowrap overflow-x-auto">
@@ -73,6 +103,8 @@ export default memo(function StatusBar() {
       Lv {player.level} | XP: {player.xp}/{xpForNextLevel(player.level) ?? 'MAX'}
       <span className="mx-2 opacity-40">|</span>
       <span className="opacity-60">Cycle {cycle}</span>
+      <span className="mx-2 opacity-40">|</span>
+      <PressureMeter level={hollowPressure} />
       {combatIndicator && (
         <span className="text-red-400">{combatIndicator}</span>
       )}

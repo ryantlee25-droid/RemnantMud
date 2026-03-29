@@ -533,6 +533,19 @@ export interface Player {
   factionReputation?: Partial<Record<FactionType, number>>
   // Quest flags: stored as JSON in DB
   questFlags?: Record<string, string | boolean | number>
+  // --------------------------------------------------------
+  // Narrative Overhaul fields (convoy remnant-narrative-0329)
+  // Optional with defaults to preserve backwards-compatibility
+  // with existing saves and test helpers that predate this convoy.
+  // Rider H initializes these on new characters and loads them
+  // from narrative_progress JSON column on loadPlayer.
+  // --------------------------------------------------------
+  /** Dread / tension meter. 0 = quiet, 10 = swarm trigger. Defaults to 0. */
+  hollowPressure?: number
+  /** Narrative keys learned by the player (discovery system). Defaults to []. */
+  narrativeKeys?: string[]
+  /** Active companion NPC, if any. */
+  currentCompanion?: import('@/types/convoy-contracts').Companion
 }
 
 // ------------------------------------------------------------

@@ -26,6 +26,7 @@ import StatTab from '@/components/tabs/StatTab'
 import InventoryTab from '@/components/tabs/InventoryTab'
 import MapTab from '@/components/tabs/MapTab'
 import DataTab from '@/components/tabs/DataTab'
+import CommandsTab from '@/components/tabs/CommandsTab'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 
 type AuthPhase = 'checking' | 'unauthenticated' | 'loading-player' | 'prologue' | 'no-player' | 'ready'
@@ -90,9 +91,9 @@ export default function GamePage() {
         return
       }
 
-      // Number key shortcuts: 1=TERM, 2=STAT, 3=INV, 4=MAP, 5=DATA
+      // Number key shortcuts: 1=TERM, 2=STAT, 3=INV, 4=MAP, 5=DATA, 6=CMD
       const num = parseInt(e.key, 10)
-      if (num >= 1 && num <= 5) {
+      if (num >= 1 && num <= 6) {
         setActiveTab(TAB_IDS[num - 1])
         return
       }
@@ -379,6 +380,7 @@ export default function GamePage() {
       {isGamePhase && !showThemePicker && activeTab === 'INV' && <InventoryTab />}
       {isGamePhase && !showThemePicker && activeTab === 'MAP' && <MapTab />}
       {isGamePhase && !showThemePicker && activeTab === 'DATA' && <DataTab />}
+      {isGamePhase && !showThemePicker && activeTab === 'CMD' && <CommandsTab />}
     </PipBoyFrame>
     </ErrorBoundary>
   )

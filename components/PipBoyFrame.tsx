@@ -10,7 +10,7 @@ import React from 'react'
 import StatusBar from '@/components/StatusBar'
 import CommandInput from '@/components/CommandInput'
 
-export const TAB_IDS = ['TERM', 'STAT', 'INV', 'MAP', 'DATA'] as const
+export const TAB_IDS = ['TERM', 'STAT', 'INV', 'MAP', 'DATA', 'CMD'] as const
 export type TabId = (typeof TAB_IDS)[number]
 
 interface PipBoyFrameProps {

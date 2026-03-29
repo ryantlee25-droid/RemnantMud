@@ -307,6 +307,10 @@ export const COVENANT_ROOMS: Room[] = [
       north: 'cv_22_council_chamber',
     },
     richExits: {
+      down: {
+        destination: 'cv_04_courthouse',
+        descriptionVerbose: 'the stairs descend back to the courthouse main floor below',
+      },
       north: {
         destination: 'cv_22_council_chamber',
         reputationGate: { faction: 'accord', minLevel: 2 },
@@ -787,7 +791,12 @@ export const COVENANT_ROOMS: Room[] = [
       up: 'cv_04_courthouse',
       east: 'cv_24_holding_cells',
     },
-    richExits: {},
+    richExits: {
+      up: {
+        destination: 'cv_04_courthouse',
+        descriptionVerbose: 'a stairwell climbs back up to the courthouse main floor',
+      },
+    },
     items: [],
     enemies: [],
     npcs: [],
@@ -1133,7 +1142,7 @@ export const COVENANT_ROOMS: Room[] = [
         destination: 'cv_04_courthouse',
         reputationGate: { faction: 'accord', minLevel: 2 },
         cycleGate: 2,
-        descriptionVerbose: 'access to the basement — Trusted Accord standing and Cycle 2+ required',
+        descriptionVerbose: 'the stairs climb back up to the courthouse main floor — restricted access',
       },
       south: {
         destination: 'cv_20_underground_archive',
@@ -1210,7 +1219,7 @@ export const COVENANT_ROOMS: Room[] = [
     richExits: {
       down: {
         destination: 'cv_03_main_street',
-        descriptionVerbose: 'the access hatch back down to Main Street',
+        descriptionVerbose: 'a metal access hatch with a ladder leads back down through the building to Main Street',
       },
     },
     items: [],

@@ -44,10 +44,21 @@ function reputationLabel(level: number): string {
 // Room display helpers
 // ------------------------------------------------------------
 
+const CARDINAL_DIRECTIONS = new Set(['north', 'south', 'east', 'west'])
+
+function formatExitWithDescription(direction: string, room: Room): string {
+  const richExit = room.richExits?.[direction as Direction]
+  const verbose = richExit?.descriptionVerbose
+  if (verbose && !CARDINAL_DIRECTIONS.has(direction)) {
+    return `${rt.exit(direction)} (${verbose})`
+  }
+  return rt.exit(direction)
+}
+
 export function exitsLine(room: Room): string {
   const exits = getExits(room)
   if (exits.length === 0) return 'There are no obvious exits.'
-  return `Exits: ${exits.map((e) => rt.exit(e.direction)).join(', ')}.`
+  return `Exits: ${exits.map((e) => formatExitWithDescription(e.direction, room)).join(', ')}.`
 }
 
 export function itemsLine(room: Room): string {

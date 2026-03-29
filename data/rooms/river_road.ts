@@ -809,7 +809,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     richExits: {
       down: {
         destination: 'rr_10b_bus_interior',
-        descriptionVerbose: 'climb into the bus through the emergency exit',
+        descriptionVerbose: 'the emergency exit hatch hangs open on the bus\'s underside — dark inside, and something moving',
         skillGate: { skill: 'vigor', dc: 8, failMessage: 'The sounds from inside the bus root you to the spot. You\'re not ready for this.' },
       },
     },
@@ -871,6 +871,12 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       'The bus is on its side, so the floor is the windows and the ceiling is the opposite row of seats.',
     exits: {
       up: 'rr_10_overturned_bus',
+    },
+    richExits: {
+      up: {
+        destination: 'rr_10_overturned_bus',
+        descriptionVerbose: 'the emergency exit hatch above — daylight and open air, if you can get there',
+      },
     },
     items: [],
     enemies: [],
@@ -1448,6 +1454,10 @@ export const RIVER_ROAD_ROOMS: Room[] = [
         locked: true,
         lockedBy: 'room_key_motel',
       },
+      up: {
+        destination: 'rr_22_motel_second_floor',
+        descriptionVerbose: 'a concrete stairwell at the building corner climbs to the second-floor walkway',
+      },
     },
     items: [],
     enemies: [],
@@ -1597,6 +1607,12 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       'The second-floor walkway runs the length of the building, an exterior corridor with a rusted iron railing overlooking the parking lot.',
     exits: {
       down: 'rr_20_abandoned_motel',
+    },
+    richExits: {
+      down: {
+        destination: 'rr_20_abandoned_motel',
+        descriptionVerbose: 'the concrete stairwell at the building corner descends back to the parking lot below',
+      },
     },
     items: [],
     enemies: [],

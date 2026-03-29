@@ -166,7 +166,7 @@ export const BREAKS_ROOMS: Room[] = [
       up: {
         destination: 'br_04_ledge_trail',
         skillGate: { skill: 'climbing', dc: 10, failMessage: 'The ledge access is a technical climb. You can see the handholds, but making that sequence without the skill for it ends badly.' },
-        descriptionVerbose: 'a chimney exit to the ledge trail above — Climbing DC 10',
+        descriptionVerbose: 'a narrow chimney climb leads up the canyon wall to a ledge trail thirty meters above the slot floor',
       },
     },
     items: [],
@@ -230,7 +230,12 @@ export const BREAKS_ROOMS: Room[] = [
       north: 'br_07_canyon_crossroads',
       south: 'br_06_the_overhang',
     },
-    richExits: {},
+    richExits: {
+      down: {
+        destination: 'br_03_narrow_slot_canyon',
+        descriptionVerbose: 'a chimney crack descends back into the slot canyon floor thirty meters below',
+      },
+    },
     items: [],
     enemies: [],
     npcs: [],
@@ -427,7 +432,12 @@ export const BREAKS_ROOMS: Room[] = [
       west: 'br_08_nesting_gallery',
       up: 'br_12_canyon_rim_west',
     },
-    richExits: {},
+    richExits: {
+      up: {
+        destination: 'br_12_canyon_rim_west',
+        descriptionVerbose: 'a broken talus slope climbs steeply to the west canyon rim above — exposed and slow going',
+      },
+    },
     items: [],
     enemies: [],
     npcs: [],
@@ -705,7 +715,12 @@ export const BREAKS_ROOMS: Room[] = [
       down: 'br_07_canyon_crossroads',
       east: 'br_13_canyon_rim_east',
     },
-    richExits: {},
+    richExits: {
+      down: {
+        destination: 'br_07_canyon_crossroads',
+        descriptionVerbose: 'the talus slope drops steeply back down into the canyon crossroads below',
+      },
+    },
     items: [],
     enemies: [],
     npcs: [],
@@ -889,7 +904,12 @@ export const BREAKS_ROOMS: Room[] = [
       down: 'br_07_canyon_crossroads',
       east: 'br_18_the_chimney',
     },
-    richExits: {},
+    richExits: {
+      down: {
+        destination: 'br_07_canyon_crossroads',
+        descriptionVerbose: 'the mesa edge drops back into the canyon system — a steep descent to the canyon crossroads below',
+      },
+    },
     items: [],
     enemies: [],
     npcs: [],
@@ -1025,7 +1045,7 @@ export const BREAKS_ROOMS: Room[] = [
       up: {
         destination: 'br_18_the_chimney',
         skillGate: { skill: 'climbing', dc: 11, failMessage: 'The chimney walls are smooth from wind polish. You can see the holds, but the sequence requires a confidence in vertical movement that you haven\'t earned yet.' },
-        descriptionVerbose: 'a vertical chimney in the rock, climbing up — Climbing DC 11',
+        descriptionVerbose: 'a smooth-walled vertical chimney rises from the passage — wind-polished rock, sixty feet to open sky',
       },
     },
     items: [],
@@ -1096,11 +1116,11 @@ export const BREAKS_ROOMS: Room[] = [
     richExits: {
       down: {
         destination: 'br_17_wind_carved_passage',
-        descriptionVerbose: 'down the chimney to the wind-carved passage below',
+        descriptionVerbose: 'the sandstone ledges descend back through the shaft to the wind-carved passage sixty feet below',
       },
       west: {
         destination: 'br_15_mesa_top',
-        descriptionVerbose: 'west along the rim trail to the mesa top',
+        descriptionVerbose: 'west along the rim trail to the mesa top — exposed, no cover',
       },
     },
     items: [],
@@ -1190,7 +1210,7 @@ export const BREAKS_ROOMS: Room[] = [
         discoverDc: 12,
         discoverMessage: 'Behind the juniper\'s root mass, where the edge fracture has opened a gap in the rock face, you notice airflow — cool and damp, rising from below. A narrow chimney descends into darkness. It\'s passable.',
         skillGate: { skill: 'climbing', dc: 12, failMessage: 'The descent is a tight chimney with minimal holds. You can feel the damp air rising from below but the route down requires more skill than you currently possess.' },
-        descriptionVerbose: 'a narrow chimney behind the juniper roots, descending — Perception DC 12 to discover, Climbing DC 12 to descend',
+        descriptionVerbose: 'a tight chimney behind the juniper roots drops into cool, damp darkness — damp air rises from somewhere below',
       },
     },
     items: [],
@@ -1260,7 +1280,7 @@ export const BREAKS_ROOMS: Room[] = [
     richExits: {
       up: {
         destination: 'br_19_bleached_mesa_edge',
-        descriptionVerbose: 'up the chimney to the bleached mesa edge',
+        descriptionVerbose: 'the chimney climbs back up through the mesa rock to the bleached white edge above',
       },
     },
     items: [],

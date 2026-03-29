@@ -110,7 +110,7 @@ export default function Terminal({ messages }: TerminalProps) {
   )
 
   return (
-    <div className="flex-1 overflow-y-auto bg-black font-mono text-sm leading-relaxed px-3 sm:px-4 py-3 select-text" role="log" aria-live="polite" aria-label="Game messages">
+    <div className="flex-1 overflow-y-auto bg-black font-mono text-sm leading-snug px-2 sm:px-3 py-1 select-text" role="log" aria-live="polite" aria-label="Game messages">
       {visible.map((m) => (
         <MessageLine key={m.id} message={m} />
       ))}

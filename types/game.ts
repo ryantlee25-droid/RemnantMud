@@ -705,6 +705,7 @@ export interface GameState {
   cycleHistory?: CycleSnapshot[]
   pendingStatIncrease?: boolean  // true when player needs to choose a stat to boost
   weather?: 'clear' | 'overcast' | 'rain' | 'dust_storm' | 'fog'
+  lastInitiativeAction?: number  // action count when NPC initiative last fired
   activeDialogue?: {
     npcId: string
     treeId: string

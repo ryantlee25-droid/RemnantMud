@@ -1473,7 +1473,10 @@ export class GameEngine implements EngineCore {
       }
 
       // NPC initiative (once per NPC per cycle, 5–10% chance)
-      const trigger = checkInitiativeTriggers(player, currentRoom.id, actionCount)
+      // lastInitiativeAction is caller-managed state (survives serverless boundaries)
+      const lastInitiativeAction = this.state.lastInitiativeAction ?? 0
+      const { trigger, updatedLastAction } = checkInitiativeTriggers(player, currentRoom.id, actionCount, lastInitiativeAction)
+      this._setState({ lastInitiativeAction: updatedLastAction })
       if (trigger) {
         const initiativeMessages = getInitiativeNarration(trigger)
         narrativeMessages.push(...initiativeMessages)

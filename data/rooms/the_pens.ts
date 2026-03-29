@@ -248,9 +248,9 @@ export const THE_PENS_ROOMS: Room[] = [
     difficulty: 2,
     visited: false,
     flags: { noCombat: true },
-    description: 'The blue-wristband corridor is maintained — lights working, floor swept — but the texture is different from Ward A. The donors here move less freely. Not restricted: the doors are open, the corridor access unrestricted. But they move like people who have been somewhere long enough to develop the economy of motion of someone who has accepted their range. A few sit in the corridor itself, backs against the wall, doing nothing in particular. Blue wristbands on every wrist — A-positive, voluntary, but the "voluntary" has a quality here that feels more calculated and less chosen. A bulletin board has the same laminated sheets as Ward A, but fewer handwritten additions. The birthdays board is empty.',
-    descriptionNight: 'The Ward B corridor at night is quieter than the day would suggest it should be. The donors who are awake are awake the way people are awake who can\'t sleep rather than the way people are awake who chose to stay up.',
-    shortDescription: 'Ward B corridor. Blue wristbands. Still maintained. Quieter.',
+    description: 'The blue-wristband corridor is maintained — lights working, floor swept, the clinical smell of disinfectant applied on schedule. But the temperature is different from Ward A: cooler by two degrees, the ventilation more aggressive, the lighting colder. A-positive donors are less in demand than O-negative; the benefits package reflects this. The donors here move with the economy of motion of people who have calculated their situation precisely and found that the calculation comes out the same every time. A bulletin board carries the same laminated schedules as Ward A. No handwritten additions. The birthdays board is empty. Someone put it up optimistically and no one has written anything on it.',
+    descriptionNight: 'The Ward B corridor at night is quieter than the day would suggest it should be. The donors who are awake are awake the way people are awake who can\'t sleep rather than the way people are awake who chose to stay up. The cold fluorescent light runs all night. No one has asked for it to be dimmed. No one expects accommodation.',
+    shortDescription: 'Ward B corridor. Blue wristbands. Colder. Quieter. The birthday board is empty.',
     exits: { west: 'pens_02_intake_hall', north: 'pens_07_cafeteria' },
     richExits: {
       west: { destination: 'pens_02_intake_hall', descriptionVerbose: 'back west to the intake hall' },
@@ -273,7 +273,19 @@ export const THE_PENS_ROOMS: Room[] = [
         description: 'The person sitting against the wall nearest you has been watching the corridor entrance since you arrived. Not watching you specifically. Watching it. When you meet their eyes they look away first, without expression, and go back to watching the corridor entrance.',
         skillCheck: { skill: 'perception', dc: 10, successAppend: 'They are watching for something specific — someone specific, by the pattern of their attention. They look when a door opens. They look when someone new comes in. They are waiting for someone who has not arrived in a long time.' },
       },
+      {
+        keywords: ['schedule', 'draw', 'frequency', 'extraction', 'calendar'],
+        description: 'The draw schedule in Ward B is posted on the back of the clinic door: A-positive donors, bi-weekly draws, ten-day minimum recovery interval. Same schedule as Ward A on paper. But the recovery room in Ward B runs at higher utilization — the bed count and the rotation log suggest the actual recovery window here is shorter. The paperwork says ten days. The log says seven.',
+        skillCheck: { skill: 'field_medicine', dc: 12, successAppend: 'Seven-day recovery instead of ten for a regular bi-weekly draw is within acceptable medical parameters — technically. But it narrows the margin. Over six months, the cumulative difference in iron levels and platelet recovery between a seven-day and ten-day rotation becomes significant. Someone knows this. The question is whether the someone who knows it is the same someone who set the schedule.' },
+      },
     ],
+    personalLossEchoes: {
+      child: 'The empty birthday board. Someone put it up expecting names and dates, the small celebrations that make a place feel like somewhere people live. No one wrote anything. You think about birthdays you kept track of — a specific date, a specific cake, a specific small face — and the calendar that stopped mattering when they were gone.',
+      partner: 'Two degrees colder than the other corridor, which is already cold. The ventilation hums a slightly higher pitch. You notice these things the way you notice the absence of a person in a room — not a dramatic absence, just the wrong temperature, the wrong frequency, the space where warmth used to be.',
+      community: 'Ward B donors don\'t talk to each other the way Ward A donors do. They sit alone or in pairs. The community here is thinner — lower incentives, lower demand, less reason to invest in the place. Your community had every reason to invest and still lost the thread. You\'re not sure which is worse.',
+      identity: 'Blue wristband: A-positive. You look at the wristbands. You don\'t know your blood type with certainty, which means you don\'t know which corridor you\'d be in, which schedule you\'d be on, which version of this calculus would be yours. The form at intake asks for blood type self-reported. You would have to guess.',
+      promise: 'Voluntary status, technically. The schedule is shorter than it should be and the recovery window has been trimmed and the birthday board is empty and the people here made a calculation that worked out to: this, for as long as this is what works out. You made a promise that was supposed to prevent this from being anyone\'s best option. It didn\'t work. You kept the promise anyway. It didn\'t matter.',
+    },
     hollowEncounter: {
       baseChance: 0.02,
       timeModifier: { day: 0.4, night: 0.6, dawn: 0.4, dusk: 0.5 },
@@ -281,7 +293,7 @@ export const THE_PENS_ROOMS: Room[] = [
         { type: 'shuffler', weight: 100, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
     },
-    narrativeNotes: 'pens_06. Ward B is the same system, different texture. The missing birthday calendar and the Wednesday office hours note do the work. Same facility, slightly different flavor of resignation.',
+    narrativeNotes: 'pens_06. Ward B is the same system, colder and more controlled. The missing birthday calendar, the shortened recovery window in the draw schedule, and the Wednesday office hours note do the work. The ethical horror here is procedural optimization, not cruelty.',
   },
 
   {

@@ -357,7 +357,7 @@ export const BREAKS_ROOMS: Room[] = [
     difficulty: 2,
     visited: false,
     flags: { safeRest: true, campfireAllowed: true },
-    description: 'A natural shelter — a sandstone overhang that provides cover from rain, shade from midday sun, and a defensible position with sightlines on three approach directions. Dry, sheltered, with a blackened fire circle at the back wall that has been used dozens of times. The smoke staining on the overhang ceiling tells the history of those fires in overlapping layers. On the back wall, under the overhang\'s deepest protection, the cave paintings: ancient pictographs in red ochre — hunting scenes, animal silhouettes, hand prints. Overlaid on them, in more recent layers: graffiti, tags, small drawings, a name and a date from 1987, a memorial to someone who died here in 2033. The wall is a three-thousand-year conversation that people have been adding to for as long as there\'s been anyone to add.',
+    description: 'A natural shelter on the canyon wall — a sandstone overhang forty feet above the canyon floor, accessible by the ledge trail, with sightlines on three approach directions and a drop below you that you feel in your knees when you stand at the edge. Dry, sheltered, with a blackened fire circle at the back wall that has been used hundreds of times. On the back wall: ancient pictographs in red ochre — hunting scenes, animal silhouettes, hand prints three thousand years old. Overlaid in more recent layers: graffiti, tags, a memorial to someone who died here in 2033. The wall is a three-thousand-year conversation that people have been adding to for as long as there\'s been anyone to add.',
     descriptionNight: 'The overhang at night is the safest rest in The Breaks. The fire circle, the stone shelter, the limited approach routes — it\'s the right room for this. With a fire, the warmth reflects from the back wall and the space becomes, briefly, comfortable. The cave paintings move in firelight.',
     descriptionDawn: 'Dawn under the overhang is indirect — the sandstone ceiling catches reflected light from the canyon floor and glows a soft amber that intensifies as the sun rises. The cave paintings are clearest at this hour, the red ochre warming in the reflected light, the hunting scenes and handprints vivid against the pale stone. The fire circle holds gray ash and the specific warmth of coals that burned through the night. The air smells of juniper smoke and the mineral cold of the canyon morning. Someone\'s handprint on the wall, three thousand years old, catches the same dawn light it caught when it was made.',
     shortDescription: 'A dry overhang with a fire circle, three-thousand-year-old paintings, and graffiti from 1987 and 2033 added to the conversation.',
@@ -386,7 +386,18 @@ export const BREAKS_ROOMS: Room[] = [
         keywords: ['handprints', 'hands', 'palm', 'print'],
         description: 'The handprints are clustered at about shoulder height — adults. Some lower — children, maybe, or the same adults kneeling. They\'re pressed flat against the stone with pigment on the palm, a direct touch. Three thousand years ago, a person stood here and put their hand to this rock as a statement of presence: I was here. The rock kept it. You put your hand over one of the larger prints. Close. Not quite matching.',
       },
+      {
+        keywords: ['edge', 'drop', 'height', 'cliff', 'below', 'view', 'exposed'],
+        description: 'The overhang\'s lip is the edge of the world. Forty feet of air between your boots and the canyon floor, the slot canyon\'s narrow corridor below looking like a scratch in the earth from up here. The exposure is total at the rim — wind, height, the very specific vulnerability of standing on stone with nothing between you and a long fall but your own sense of balance. Step back two feet and it\'s fine. Step forward one foot and it isn\'t. You stay back two feet.',
+        skillCheck: { skill: 'perception', dc: 10, successAppend: 'From the overhang\'s edge you can see the full length of the slot canyon — the ledge trail above, the hollow of the canyon floor below, the two exits north and south. Also: a figure moving on the canyon floor, too far to identify, moving with the specific unhurried consistency of something that doesn\'t get tired.' },
+      },
     ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'Wind comes up the canyon wall and hits the overhang from below — not cold, just present, reminding you what forty feet of air feels like when it moves.', chance: 0.25, time: null },
+        { line: 'From here you can hear the canyon but not see its depths. Sound travels up. Not all of the sounds make sense.', chance: 0.20, time: null },
+      ],
+    },
     npcSpawns: [
       {
         npcId: 'breaks_wanderer_at_rest',

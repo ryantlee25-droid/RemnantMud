@@ -381,9 +381,9 @@ export const EMBER_ROOMS: Room[] = [
     difficulty: 2,
     visited: false,
     flags: { noCombat: true },
-    description: 'The original bell is still here — cast iron, pre-Collapse, rung twice daily for the Assembly. The tower stairwell is stone, narrow and winding, the steps worn by the feet that have used them for longer than the Kindling has existed. At the top, a platform wide enough for two people and an unrestricted view of the surrounding country. Someone is already there. A young man in Kindling robes stands with his back to you, looking south, not toward The Ember below but away from it. When he hears you on the stairs he turns: late twenties, clear eyes, the expression of someone in the middle of something internal that the arrival of another person has interrupted. He is, you realize, not here for the view. He is here because it is the only place in The Ember where you are alone.',
-    descriptionNight: 'The bell tower at night is darker than anywhere else at The Ember. No torches reach this high. The stars, if the sky is clear, are full and specific. The young man is sometimes still here at night. Sometimes he leaves before you arrive and you find only the view.',
-    shortDescription: 'The stone tower, the iron bell, and a young man standing away from The Ember below, needing to be where no one can hear him think.',
+    description: 'The bell tower is the highest point at The Ember — stone stairs winding three stories to a platform where the iron bell hangs on its beam, the rope descending to the nave below. From this height, the entire settlement is visible as a system: the cleared approach road, the brazier-lit gate, the dormitory and Harrow\'s chamber, and rising from the nave\'s center in a single clean column, the coal pit smoke. Straight up, past your eye level, continuing into open sky. The Kindling built The Ember so the fire is always central, always rising. From the ground you feel it as warmth and devotion. From up here you see the architecture of it: a settlement organized around a single vertical intention. The young man at the south face is not looking at this. He is looking past it, at the canyon country below, at the directions you can still go.',
+    descriptionNight: 'The bell tower at night is darker than anywhere else at The Ember. No torches reach this high. The stars, if the sky is clear, are full and specific. The coal pit smoke below is invisible but you can smell it — coal and incense from the evening Assembly, rising past you in the dark. The young man is sometimes still here at night. Sometimes he leaves before you arrive and you find only the view and the smell of the fire below.',
+    shortDescription: 'The stone tower, the iron bell, the Kindling\'s fire visible from above as a system — and a young man looking the other direction.',
     exits: {
       down: 'em_03_the_nave',
     },
@@ -405,7 +405,18 @@ export const EMBER_ROOMS: Room[] = [
         description: '"I don\'t think I\'m asking the right questions," the young man says, if you stay long enough for him to say something. His name is Avery. He\'s been with the Kindling for two years. "Harrow says doubt is the fire burning away false certainty. But what if the certainty that\'s burning is the one I need?" He looks back south. "What\'s out there? Past the canyons. Just... what\'s out there?"',
         skillCheck: { skill: 'negotiation', dc: 10, successAppend: 'You have something to say that Avery needs to hear. Or you have questions that let him say it himself. Either way, after an hour he\'s still in the tower but he\'s standing differently — facing The Ember, not away from it, which might mean he\'s found something or might mean he\'s decided to stop looking for it.' },
       },
+      {
+        keywords: ['settlement', 'layout', 'below', 'ember', 'design', 'architecture'],
+        description: 'From the tower you can see what you can\'t see from inside: The Ember is arranged as a wheel. The coal pit is the hub. Everything else — dormitory, gate, Harrow\'s chamber, the purification room — radiates outward from it. The cleared ground outside the settlement is a ring. The approach road is a spoke. Someone planned this. Whether it is beautiful or unsettling depends on what you believe about the person who planned it.',
+        skillCheck: { skill: 'lore', dc: 10, successAppend: 'The wheel layout is not accidental — it matches the Kindling\'s cosmological schema, which places the fire at the center of everything. Harrow didn\'t adapt the settlement to the doctrine. He built the settlement as a physical statement of the doctrine. You are standing inside a theological argument made of stone and cleared ground.' },
+      },
     ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The bell is above you and the rope hangs through the floor. The rope moves slightly in the tower\'s updraft. It has been moving like this for seven years of twice-daily Assemblies.', chance: 0.25, time: null },
+        { line: 'The coal pit smoke column rises past you, visible for a moment, dispersing twenty feet above the platform. It smells like the Assembly smells from inside: coal and cedar and something the Kindling adds that you don\'t have a name for.', chance: 0.20, time: ['day', 'dawn'] },
+      ],
+    },
     npcSpawns: [
       {
         npcId: 'kindling_doubter_avery',

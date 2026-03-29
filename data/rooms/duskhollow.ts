@@ -557,9 +557,9 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     difficulty: 3,
     visited: false,
     flags: { hiddenRoom: true, dark: true, questHub: true },
-    description: 'Below the study, accessed through a bookshelf that swings on a counterweighted hinge, a room that wasn\'t in the original house plans. Stone walls, a single light, and a server rack that shouldn\'t exist — running, blinking, humming with the data of decades. The Covenant of Dusk maintains biometric records here: retinal scans, genetic sequences, physiological data on every Sanguine who has ever passed through Duskhollow. This data is what opens MERIDIAN\'s biometric locks. Vesper knows you\'re looking for it. The question Vesper is asking is: what will you do with it?',
-    descriptionNight: 'The sub-basement runs the same at night. The server\'s fans don\'t know what time it is. The data accumulates.',
-    shortDescription: 'Hidden sub-basement. Sanguine biometric data. MERIDIAN access.',
+    description: 'Below the study, through a bookshelf on a counterweighted hinge, a room that wasn\'t in the original house plans. The walls are older than the rest of Duskhollow — dressed stone in a style that predates the Victorian architecture above, which means this sub-basement was here before the house was built around it. Someone built a cellar centuries ago, and the Covenant found it, and now it holds a server rack humming with decades of biometric data. The smell is cold stone and ozone and old damp that no ventilation system has quite solved. Retinal scans, genetic sequences, physiological data on every Sanguine who has ever passed through. This data is what opens MERIDIAN\'s biometric locks. Vesper knows you\'re looking for it. The question Vesper is asking is: what will you do with it?',
+    descriptionNight: 'The sub-basement runs the same at night. The server\'s fans don\'t know what time it is. The data accumulates. The stone walls are very old and the cold they hold is a different kind of cold from the surface.',
+    shortDescription: 'Hidden sub-basement. Stone older than the house. Sanguine biometric data. MERIDIAN access.',
     exits: { up: 'dh_04_vespers_study' },
     richExits: {
       up: { destination: 'dh_04_vespers_study', descriptionVerbose: 'back up through the bookshelf passage' },
@@ -578,7 +578,22 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         description: 'The oldest records date from the late 1990s. The Covenant of Dusk was here before MERIDIAN. They were watching. Providing samples. One entry from 2025 is a research agreement: MERIDIAN FACILITY — DUSKHOLLOW COVENANT MEMORANDUM OF UNDERSTANDING. The Covenant participated in MERIDIAN\'s development willingly. They were partners.',
         cycleGate: 2,
       },
+      {
+        keywords: ['walls', 'stone', 'old', 'construction', 'cellar', 'original'],
+        description: 'The stone is not the same stone as the house above. Up there: Victorian coursed masonry, nineteenth century, limestone cut to fit. Down here: rougher work, older, the mortar a different composition that has carbonated over centuries into something nearly as hard as the stone itself. Someone built this cellar before there was a house. Before there was a Duskhollow. The Covenant found it and understood what it was: a room that was already keeping secrets.',
+        skillCheck: { skill: 'lore', dc: 11, successAppend: 'The construction style matches Spanish colonial foundations from the seventeenth century — the region had significant colonial presence before American settlement. Someone was here three hundred years ago, building underground, building to last, building something they didn\'t want found. The Covenant of Dusk has been here longer than the house. Possibly longer than the country.' },
+      },
+      {
+        keywords: ['smell', 'air', 'cold', 'temperature', 'damp'],
+        description: 'The cold here is different from the surface cold — older, bone-deep, the temperature of earth that hasn\'t seen direct sunlight in three centuries. The damp smells of limestone and time. Whatever was stored here before the server rack, before the Covenant, before the house — whatever this room\'s first purpose was — the stone remembers the weight of it without telling you what it was.',
+      },
     ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The server fans are the only sound. The stone walls absorb everything else. You are aware of how far below the study you are, and how thick the stone is above you.', chance: 0.30, time: null },
+        { line: 'A drop of water falls from somewhere in the ceiling — the seam between old stone and new mortar, where three centuries of small compromises have accumulated. The drop hits the floor and is the loudest thing in the room.', chance: 0.20, time: null },
+      ],
+    },
     hollowEncounter: {
       baseChance: 0.90,
       timeModifier: { night: 1.5, dawn: 1.0, dusk: 1.2, day: 0.8 },

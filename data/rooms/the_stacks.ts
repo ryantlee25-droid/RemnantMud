@@ -973,7 +973,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     environmentalRolls: {
       flavorLines: [
         { line: 'The reading room is warm. The lamp hums at its lowest setting. For a moment, nothing is wrong.', chance: 0.30, time: ['night'] },
-        { line: 'Someone turns a page. The sound is impossibly loud in the silence, and then it isn\'t.', chance: 0.25, time: null },
+        { line: 'A page rustles somewhere — paper settling in the warmth, or the draft from the door you just opened. The sound dissolves into the room\'s quiet.', chance: 0.25, time: null },
       ],
     },
     personalLossEchoes: {
@@ -1292,7 +1292,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     ],
     environmentalRolls: {
       flavorLines: [
-        { line: 'Someone has added a new pin to the central map. You don\'t recognize the location. Someone does.', chance: 0.25, time: ['day'] },
+        { line: 'A new pin has been added to the central map since your last visit. You don\'t recognize the location. Someone does.', chance: 0.25, time: ['day'] },
         { line: 'The plotter runs in the corner, printing a new route chart. The sound is the sound of preparation.', chance: 0.20, time: null },
       ],
     },

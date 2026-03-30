@@ -60,10 +60,10 @@ describe('getScheduledEvents', () => {
     expect(found).toBeDefined()
   })
 
-  it('fires at 60 actions for events with triggerActionCount=30', () => {
+  it('fires at 60 actions for events with triggerActionCount=15', () => {
     const results = getScheduledEvents(60, 1, basePlayer)
-    const thirtyInterval = results.filter(e => e.triggerActionCount === 30)
-    expect(thirtyInterval.length).toBeGreaterThanOrEqual(1)
+    const fifteenInterval = results.filter(e => e.triggerActionCount === 15)
+    expect(fifteenInterval.length).toBeGreaterThanOrEqual(1)
   })
 })
 
@@ -128,7 +128,7 @@ describe('getScheduledEvents — quest gates', () => {
   })
 
   it('fires act2 events when act1_complete flag is set', () => {
-    const results = getScheduledEvents(30, 2, {
+    const results = getScheduledEvents(18, 2, {
       ...basePlayer,
       questFlags: { act1_complete: true },
     })
@@ -144,7 +144,7 @@ describe('getScheduledEvents — quest gates', () => {
   })
 
   it('fires act3 events when act2_complete flag is set', () => {
-    const results = getScheduledEvents(30, 3, {
+    const results = getScheduledEvents(18, 3, {
       ...basePlayer,
       questFlags: { act1_complete: true, act2_complete: true },
     })
@@ -165,13 +165,13 @@ describe('getScheduledEvents — quest gates', () => {
 
 describe('getScheduledEvents — faction gates', () => {
   it('respects minRep: event only fires when rep meets minimum', () => {
-    // we_a1_11_red_court_rumor has maxRep: 1
+    // we_a1_11_red_court_rumor has maxRep: 1 and triggerActionCount: 17
     // Should fire when player rep with red_court is <= 1
-    const withLowRep = getScheduledEvents(40, 1, {
+    const withLowRep = getScheduledEvents(34, 1, {
       ...basePlayer,
       factionReputation: { red_court: -2 },
     })
-    const withHighRep = getScheduledEvents(40, 1, {
+    const withHighRep = getScheduledEvents(34, 1, {
       ...basePlayer,
       factionReputation: { red_court: 3 },
     })

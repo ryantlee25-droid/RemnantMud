@@ -10,51 +10,55 @@ import type { EngineCore } from '@/lib/actions/types'
 // Mock external modules before importing handlers
 // ------------------------------------------------------------
 
-vi.mock('@/lib/combat', () => ({
-  startCombat: vi.fn((player: Player, enemy: Enemy) => ({
-    enemy,
-    enemyHp: enemy.hp,
-    playerGoesFirst: true,
-    turn: 1,
-    active: true,
-    playerConditions: [],
-    enemyConditions: [],
-    abilityUsed: false,
-    defendingThisTurn: false,
-    waitingBonus: 0,
-  })),
-  playerAttack: vi.fn((_player: Player, state: CombatState, _range?: [number, number]) => ({
-    result: {
-      hit: true,
-      damage: 5,
-      critical: false,
-      fumble: false,
-      messages: [{ id: '1', text: 'You hit.', type: 'combat' as const }],
-      enemyDefeated: state.enemyHp <= 5,
-      loot: state.enemyHp <= 5 ? ['scrap_metal'] : undefined,
-    },
-    newState: {
-      ...state,
-      enemyHp: Math.max(0, state.enemyHp - 5),
-      active: state.enemyHp > 5,
-      turn: state.turn + 1,
-    },
-  })),
-  enemyAttack: vi.fn((_player: Player, state: CombatState) => ({
-    damage: 3,
-    messages: [{ id: '2', text: 'Enemy hits you. [3 damage]', type: 'combat' as const }],
-    newState: { ...state, turn: state.turn + 1 },
-  })),
-  flee: vi.fn((_player: Player, _state: CombatState) => ({
-    result: { success: true, messages: [{ id: '3', text: 'You flee!', type: 'combat' as const }] },
-    freeAttack: null,
-  })),
-  applyHollowRoundEffects: vi.fn((state: CombatState) => ({
-    messages: [],
-    newState: state,
-  })),
-  enemyHpIndicator: vi.fn(() => 'wounded'),
-}))
+vi.mock('@/lib/combat', async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    startCombat: vi.fn((player: Player, enemy: Enemy) => ({
+      enemy,
+      enemyHp: enemy.hp,
+      playerGoesFirst: true,
+      turn: 1,
+      active: true,
+      playerConditions: [],
+      enemyConditions: [],
+      abilityUsed: false,
+      defendingThisTurn: false,
+      waitingBonus: 0,
+    })),
+    playerAttack: vi.fn((_player: Player, state: CombatState, _range?: [number, number]) => ({
+      result: {
+        hit: true,
+        damage: 5,
+        critical: false,
+        fumble: false,
+        messages: [{ id: '1', text: 'You hit.', type: 'combat' as const }],
+        enemyDefeated: state.enemyHp <= 5,
+        loot: state.enemyHp <= 5 ? ['scrap_metal'] : undefined,
+      },
+      newState: {
+        ...state,
+        enemyHp: Math.max(0, state.enemyHp - 5),
+        active: state.enemyHp > 5,
+        turn: state.turn + 1,
+      },
+    })),
+    enemyAttack: vi.fn((_player: Player, state: CombatState) => ({
+      damage: 3,
+      messages: [{ id: '2', text: 'Enemy hits you. [3 damage]', type: 'combat' as const }],
+      newState: { ...state, turn: state.turn + 1 },
+    })),
+    flee: vi.fn((_player: Player, _state: CombatState) => ({
+      result: { success: true, messages: [{ id: '3', text: 'You flee!', type: 'combat' as const }] },
+      freeAttack: null,
+    })),
+    applyHollowRoundEffects: vi.fn((state: CombatState) => ({
+      messages: [],
+      newState: state,
+    })),
+    enemyHpIndicator: vi.fn(() => 'wounded'),
+  }
+})
 
 vi.mock('@/data/enemies', () => ({
   getEnemy: vi.fn((id: string) => {

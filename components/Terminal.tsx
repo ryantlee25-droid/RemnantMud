@@ -6,6 +6,7 @@
 
 import React, { memo, useEffect, useMemo, useRef } from 'react'
 import type { GameMessage } from '@/types/game'
+import { TAG_COLOR, MESSAGE_COLOR } from '@/lib/ansiColors'
 
 // ------------------------------------------------------------
 // Rich-text tag parser — turns <item>...</item> etc. into
@@ -13,18 +14,6 @@ import type { GameMessage } from '@/types/game'
 // ------------------------------------------------------------
 
 const TAG_NAMES = ['item', 'npc', 'enemy', 'exit', 'keyword', 'currency', 'condition', 'trait'] as const
-type RichTag = (typeof TAG_NAMES)[number]
-
-const TAG_COLOR: Record<RichTag, string> = {
-  item:      'text-amber-500',
-  npc:       'text-amber-700',
-  enemy:     'text-red-700',
-  exit:      'text-amber-600',
-  keyword:   'text-amber-500',
-  currency:  'text-amber-600',
-  condition: 'text-orange-600',
-  trait:     'text-amber-600',
-}
 
 const TAG_PATTERN = new RegExp(
   `<(${TAG_NAMES.join('|')})>(.*?)<\\/\\1>`,
@@ -45,7 +34,7 @@ function parseRichText(text: string): React.ReactNode {
       nodes.push(text.slice(lastIndex, match.index))
     }
 
-    const tag = match[1] as RichTag
+    const tag = match[1] as string
     const inner = match[2]
     nodes.push(
       <span key={key++} className={TAG_COLOR[tag]}>{inner}</span>,
@@ -74,14 +63,7 @@ interface TerminalProps {
 }
 
 function messageColor(type: GameMessage['type']): string {
-  switch (type) {
-    case 'narrative': return 'text-amber-400'
-    case 'combat':    return 'text-red-700'
-    case 'system':    return 'text-amber-300'
-    case 'error':     return 'text-red-600'
-    case 'echo':      return 'text-amber-700'
-    default:          return 'text-amber-400'
-  }
+  return MESSAGE_COLOR[type] ?? 'text-gray-300'
 }
 
 const MAX_VISIBLE_MESSAGES = 500

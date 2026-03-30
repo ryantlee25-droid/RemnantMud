@@ -20,14 +20,14 @@ Seven years after the CHARON-7 bioweapon escaped the MERIDIAN facility, humanity
 - Trading economy using .22 LR rounds as currency
 - Death/rebirth cycle with stat echo retention
 - Personal loss system that haunts the world
-- PipBoy-style terminal UI with CRT aesthetic
+- Split-pane terminal UI with ANSI color palette
 
 ## Tech Stack
 
 - **Framework**: Next.js 16 (App Router)
 - **Database**: Supabase (Postgres + Auth + RLS)
 - **Styling**: Tailwind CSS 4
-- **Testing**: Vitest (263+ tests)
+- **Testing**: Vitest (417+ tests)
 - **Deployment**: Vercel
 
 ## Getting Started
@@ -157,7 +157,7 @@ app/            Next.js pages and layouts (App Router)
   landing/      Static marketing / landing page
   login/        Authentication flow
   auth/         Auth callback handler
-components/     React UI (PipBoy frame, tabs, terminal, modals)
+components/     React UI (split-pane layout, terminal, sidebar, command input)
 lib/            Game engine, parser, action handlers, combat, dialogue
   actions/      Individual verb handlers
 data/           Rooms, NPCs, items, enemies, dialogue trees
@@ -170,6 +170,10 @@ tests/          Vitest test suite
 ```
 
 ## Release Notes
+
+### 2026-03-29 — UX rewrite cleanup: delete dead tab components, fix Vercel build
+
+Committed the remaining UX rewrite deletions that were staged but not pushed. The Vercel build failed because `components/tabs/InventoryTab.tsx` still imported the deleted `@/lib/theme` module. This commit deletes all 5 tab components (`CommandsTab`, `DataTab`, `InventoryTab`, `MapTab`, `StatTab`), moves their stats/inventory/equipment display logic into terminal-printed commands (`stats`, `inventory`, `equipment`, `hint`), updates `Terminal.tsx` to use centralized ANSI color constants, adds an HP prompt to `CommandInput`, and cleans up the parser and game engine.
 
 ### 2026-03-29 — Quest completability audit (convoy remnant-ux-0329 / rider-quest-audit)
 

@@ -141,10 +141,14 @@ const INTERACTION_VERBS: Record<string, string> = {
 
 const SYSTEM_VERBS: Record<string, string> = {
   stats: 'stats',
+  score: 'stats',
   status: 'stats',
   character: 'stats',
   char: 'stats',
+  equipment: 'equipment',
+  eq: 'equipment',
   help: 'help',
+  h: 'help',
   '?': 'help',
   save: 'save',
   quit: 'quit',

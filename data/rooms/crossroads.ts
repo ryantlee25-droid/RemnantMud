@@ -574,6 +574,23 @@ export const CROSSROADS_ROOMS: Room[] = [
         description:
           'The bench is a church pew. Someone carried it from a chapel and didn\'t sand off the hymnal rack. People sit and read the board and rest their hands where prayer books used to go.',
       },
+      // --- [RIDER A] Echo examination extras ---
+      {
+        keywords: ['figure', 'echo', 'person', 'crouching', 'shadow'],
+        description: 'The eyes track you. There\'s something behind them — not intelligence exactly, but recognition. Like a dream trying to remember the dreamer. The mouth moves occasionally, shaping sounds that don\'t quite become words. You get the sense that whatever is looking at you from behind those eyes is very tired, and has been trying to say something for a very long time.',
+      },
+      {
+        keywords: ['scratches', 'patterns', 'writing', 'letters', 'fingers', 'wall', 'concrete'],
+        description: 'The marks on the wall are deliberate. Not random. There\'s a pattern — E-C-H... The letters trail off into trembling lines, then start again. E-C-H-O. Over and over. Someone is trying to remember their name. The concrete is scored deep enough that this has been happening for months. Maybe years.',
+        questFlagOnSuccess: { flag: 'echo_encountered', value: true },
+      },
+      {
+        keywords: ['military', 'signals', 'training', 'hands', 'movement'],
+        description: 'The finger movements aren\'t just letters. There\'s a rhythm — a cadence you\'ve seen before in military field signals. Tap-pause-tap-tap. Whoever this was, they were trained. The signal repeats: ALL CLEAR. ALL CLEAR. ALL CLEAR. Endlessly. As if the last order they received is the only one they can still follow.',
+        skillCheck: { skill: 'lore', dc: 8, successAppend: 'The signal pattern matches MERIDIAN security protocols — you\'ve seen the same cadence on documents in the Stacks. Echo was military. Echo was MERIDIAN.' },
+        questFlagOnSuccess: { flag: 'echo_meridian_connection', value: true },
+      },
+      // --- [/RIDER A] ---
     ],
     npcSpawns: [
       {
@@ -585,6 +602,19 @@ export const CROSSROADS_ROOMS: Room[] = [
         ],
         questGiver: ['quest_caravan_guard', 'quest_clearing_job', 'quest_missing_person'],
       },
+      // --- [RIDER A: remnant-story-0329] Echo — Named Hollow NPC ---
+      {
+        npcId: 'echo_hollow',
+        spawnChance: 0.30,
+        activityPool: [
+          { desc: 'A figure crouches at the far end of the fence, partially hidden by the shadow of the overhang. The fingers move against the concrete — slow, deliberate, repeating. Not random. Not quite language. The space between the two.', weight: 3 },
+          { desc: 'Something sits in the dark beneath the job board. It doesn\'t move when you look at it. Then the head turns — slowly, tracking you with the attention of something that remembers what attention was for.', weight: 2, timeRestrict: ['night', 'dusk'] },
+          { desc: 'In the early light, the figure near the fence is almost human. Almost. The posture is wrong — knees at an angle that suggests the joints have been reset by something other than medicine. The fingers haven\'t stopped.', weight: 2, timeRestrict: ['dawn'] },
+        ],
+        dispositionRoll: { neutral: 0.7, wary: 0.3 },
+        narrativeNotes: 'Echo — the emotional linchpin of the game. A Hollow who retains fragments of identity. Sets echo_encountered on examination. Connects to MERIDIAN holding cells later.',
+      },
+      // --- [/RIDER A] ---
     ],
     itemSpawns: [],
   },

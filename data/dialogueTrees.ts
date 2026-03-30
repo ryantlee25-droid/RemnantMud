@@ -3628,6 +3628,613 @@ const rookTree: DialogueTree = {
 // Registry — keyed by dialogue tree ID (referenced in npcSpawns)
 // ------------------------------------------------------------
 
+// ============================================================
+// === CONVOY remnant-story-0329 Rider A: Echo ===
+// ============================================================
+
+// --- PART 1: echoTree ---
+// Insert this const before the DIALOGUE_TREES export object
+
+const echoTree: DialogueTree = {
+  npcId: 'echo_hollow',
+  startNode: 'echo_start',
+  nodes: {
+    echo_start: {
+      id: 'echo_start',
+      speaker: 'Echo',
+      text: `The figure\'s head turns toward you. The mouth opens. "H...home. Was... home. Before the..." The words trail off into something that is almost a sound and almost not. The finger movements stop. The eyes are looking at you with a quality that is not quite recognition and not quite its absence.`,
+      branches: [
+        {
+          label: '"Do you remember your name?"',
+          targetNode: 'echo_name',
+        },
+        {
+          label: '"What happened to you?"',
+          targetNode: 'echo_happened',
+        },
+        {
+          label: '"I\'ve seen you here before."',
+          targetNode: 'echo_recognition',
+          requiresCycleMin: 2,
+        },
+        {
+          label: 'Back away slowly.',
+          targetNode: 'echo_leave',
+        },
+      ],
+    },
+
+    echo_name: {
+      id: 'echo_name',
+      speaker: 'Echo',
+      text: `The finger movements resume against the concrete. E. C. H. O. E. C. H. O. "E...cho. Echo." The word comes out with the quality of a person testing whether a thing they\'ve been told is true. "That\'s what... they called. They called. What they called." The eyes refocus on you. "You know. You know what I... called."`,
+      onEnter: {
+        setFlag: { echo_encountered: true },
+      },
+      branches: [
+        {
+          label: '"Your name is Echo."',
+          targetNode: 'echo_name_confirmed',
+        },
+        {
+          label: '"I don\'t know. Can you remember?"',
+          targetNode: 'echo_name_unknown',
+        },
+        {
+          label: '[Presence 3+ or Wits 3+] "You wrote it on the wall. You\'ve been writing it for days."',
+          targetNode: 'echo_wall_recognition',
+          skillCheck: { skill: 'presence', dc: 3 },
+          failNode: 'echo_name_unknown',
+        },
+      ],
+    },
+
+    echo_name_confirmed: {
+      id: 'echo_name_confirmed',
+      speaker: 'Echo',
+      text: `Something moves in the figure\'s expression — not relief exactly, but a reorientation. Like a compass finding north. "Echo." Said more firmly. "Echo. Echo." Then, quieter: "The fire. Before the fire, what... I was. I was..." The sentence doesn\'t finish. The word \'fire\' hangs there, specific and significant.`,
+      onEnter: {
+        setFlag: { player_showed_hollow_mercy: true },
+        grantRep: { faction: 'covenant_of_dusk', delta: 1 },
+      },
+      branches: [
+        {
+          label: '"What fire? What do you remember?"',
+          targetNode: 'echo_fire',
+        },
+        {
+          label: 'Stay present with Echo. Don\'t push.',
+          targetNode: 'echo_presence',
+          requiresCycleMin: 3,
+        },
+      ],
+    },
+
+    echo_name_unknown: {
+      id: 'echo_name_unknown',
+      speaker: 'Echo',
+      text: `The head tilts. The fingers resume. E. C. H. O. "Remember. Remember the..." A pause that goes on long enough that you think the sentence is done. Then: "Water. Remember the water. The river. Before." The eyes are somewhere else now, somewhere that might be a specific place, might be a category of place, might be both.`,
+      branches: [
+        {
+          label: '"The river? Where?"',
+          targetNode: 'echo_river',
+        },
+        {
+          label: 'Leave Echo to it.',
+          targetNode: 'echo_leave',
+        },
+      ],
+    },
+
+    echo_wall_recognition: {
+      id: 'echo_wall_recognition',
+      speaker: 'Echo',
+      text: `The figure looks at the wall. At the scratches. At you. At the wall again. Something resolves. "Days. Days and... days. Writing because. Because it goes. Everything goes." A breath that is almost a sigh. "But not. Not this. I can make it. Not go. If I keep. Keep writing." The eyes come back to yours. "You... came back. You... different. Come back. Come... back before."`,
+      onEnter: {
+        setFlag: { echo_encountered: true },
+      },
+      branches: [
+        {
+          label: '"Yes. I\'ve come back before."',
+          targetNode: 'echo_recognition_affirm',
+          requiresCycleMin: 2,
+        },
+        {
+          label: '"This is the first time."',
+          targetNode: 'echo_recognition_deny',
+        },
+      ],
+    },
+
+    echo_recognition_affirm: {
+      id: 'echo_recognition_affirm',
+      speaker: 'Echo',
+      text: `"Again. You... again. I... remember." The word has weight, coming from something that seems to be losing the capacity for it. "Remember the... fire. The fire." The finger movements change — not the name anymore. Something else. Something that might be a date, or a location, or a word in a language that used to mean something. "You. You are. Different kind. Not like. The others."`,
+      onEnter: {
+        setFlag: { echo_recognized_player: true },
+      },
+      branches: [
+        {
+          label: '"What others?"',
+          targetNode: 'echo_others',
+        },
+        {
+          label: '"The fire — what happened?"',
+          targetNode: 'echo_fire',
+        },
+      ],
+    },
+
+    echo_recognition_deny: {
+      id: 'echo_recognition_deny',
+      speaker: 'Echo',
+      text: `The figure considers this. The consideration takes longer than it should. "First. But. You feel. Feel like. Not first." The eyes track you with an attention that is doing its best to mean something. "My head. Makes things. Wrong order. Before after. After before." A pause. "Sorry. Sorry." The word is careful, deliberate. Someone taught Echo how to apologize and Echo still uses it.`,
+      onEnter: {
+        setFlag: { player_showed_hollow_mercy: true },
+      },
+      branches: [
+        {
+          label: '"You don\'t need to apologize."',
+          targetNode: 'echo_name_confirmed',
+        },
+        {
+          label: 'Give Echo space.',
+          targetNode: 'echo_leave',
+        },
+      ],
+    },
+
+    echo_happened: {
+      id: 'echo_happened',
+      speaker: 'Echo',
+      text: `The figure\'s mouth works. "Happened. Happened when. When the. When the..." The fingers press hard against the concrete, hard enough to leave a mark. "I was. There was a building. There was. People I knew. And then the. The thing that comes. When something comes. From the outside and the inside at. The same. At the same time." The eyes find yours. "You know. You look like you know."`,
+      branches: [
+        {
+          label: '"CHARON-7. The virus."',
+          targetNode: 'echo_charon',
+        },
+        {
+          label: '"I don\'t know. Tell me."',
+          targetNode: 'echo_happened_more',
+        },
+        {
+          label: '[Deny] "You\'re a Hollow. You don\'t have a history anymore."',
+          targetNode: 'echo_deny_agency',
+        },
+      ],
+    },
+
+    echo_deny_agency: {
+      id: 'echo_deny_agency',
+      speaker: 'Echo',
+      text: `The head turns away. The finger movements stop. A long silence, longer than the previous silences. When Echo speaks again, the voice is quieter and has lost some of its searching quality. "Had. Had history. Had. Before." The word \'before\' lands like something being set down and not picked up again. "Still. Still have. The scratches." The fingers resume, but slower.`,
+      onEnter: {
+        setFlag: { player_denied_hollow_agency: true },
+        grantRep: { faction: 'covenant_of_dusk', delta: -1 },
+      },
+      branches: [
+        {
+          label: 'Leave Echo alone.',
+          targetNode: 'echo_leave',
+        },
+        {
+          label: '"I was wrong. You do have a history."',
+          targetNode: 'echo_recant',
+        },
+      ],
+    },
+
+    echo_recant: {
+      id: 'echo_recant',
+      speaker: 'Echo',
+      text: `The head turns back. The eyes find yours again with an effort that is visible. "Said wrong." Echo says it for you, carefully. "Said wrong. Is okay. People. Say wrong." A pause. "I. Sometimes. Say wrong too. When the. When the words. Get scrambled." Something like acceptance in the voice, which is different from forgiveness and also not the same as indifference.`,
+      onEnter: {
+        setFlag: { player_showed_hollow_mercy: true },
+      },
+      branches: [
+        {
+          label: '"Tell me about the fire."',
+          targetNode: 'echo_fire',
+        },
+      ],
+    },
+
+    echo_charon: {
+      id: 'echo_charon',
+      speaker: 'Echo',
+      text: `"Cha... ron." The word sounds like Echo has heard it and is repeating it from hearing, not from understanding. "Seven. Seven. CHARON-7." A long pause. "I knew. I knew what. Before I. Before it. Became." The finger movements stop. "I worked. With the. The things that make you sick. Make you better. Before." Something surfaces briefly. "Before I couldn\'t."`,
+      branches: [
+        {
+          label: '"You worked with CHARON-7? You were there?"',
+          targetNode: 'echo_witness',
+        },
+        {
+          label: '"Where did you work?"',
+          targetNode: 'echo_location',
+        },
+      ],
+    },
+
+    echo_witness: {
+      id: 'echo_witness',
+      speaker: 'Echo',
+      text: `"There. Was there. We... we built it. We thought. We thought we were." A stillness. "We thought." Echo looks down at its hands. "The building with the lights. The deep place. We thought the lights meant. Meant it was. Working." The head comes back up. "The lights were. The lights were something else. We didn\'t know. I didn\'t." A breath. "I didn\'t know."`,
+      onEnter: {
+        setFlag: { echo_meridian_witness: true },
+      },
+      branches: [
+        {
+          label: '"The Scar? The MERIDIAN facility?"',
+          targetNode: 'echo_scar',
+        },
+        {
+          label: 'Stay quiet. Let Echo find the words.',
+          targetNode: 'echo_presence',
+          requiresCycleMin: 3,
+        },
+      ],
+    },
+
+    echo_scar: {
+      id: 'echo_scar',
+      speaker: 'Echo',
+      text: `"Scar." The word is immediate. "Yes. Scar. We called it. Something else. Before. But Scar is right. Is accurate." A sound that might be a laugh with all the warmth removed. "I had. A badge. A badge with. My name. Not Echo. Different name. The badge is gone. The name... the name got. Scrambled." The finger movements start again. E. C. H. O. "This one. Stayed."`,
+      branches: [
+        {
+          label: 'Leave Echo with this.',
+          targetNode: 'echo_leave_gentle',
+        },
+      ],
+    },
+
+    echo_fire: {
+      id: 'echo_fire',
+      speaker: 'Echo',
+      text: `"The fire. The fire in the. In the place. The building where we." Echo stops. Starts again. "Not. Not fire-fire. The kind that. The kind that comes from inside. From the blood." A pause. "Everyone. Everyone started. Changing. Some fast. Some slow. I was. I was slow." The eyes are very clear suddenly, very present. "I watched. I remember watching. Before I couldn\'t. Watch anymore."`,
+      branches: [
+        {
+          label: '"You remember becoming a Hollow."',
+          targetNode: 'echo_becoming',
+        },
+        {
+          label: 'Say nothing. Just be here.',
+          targetNode: 'echo_presence',
+          requiresCycleMin: 3,
+        },
+      ],
+    },
+
+    echo_becoming: {
+      id: 'echo_becoming',
+      speaker: 'Echo',
+      text: `"Remember. Some of it." A pause between each sentence now, the sentences arriving one at a time. "The last thing I. I knew I was losing. I wrote my name. Somewhere. Kept writing." The head tilts. "Found this place. Kept writing. Thought if I. Kept writing maybe. Maybe it would. Stay." The eyes are completely present. This is Echo at its most lucid. "You. You came back. You keep. You are. Different kind."`,
+      branches: [
+        {
+          label: '"What kind do you think I am?"',
+          targetNode: 'echo_revenant_recognition',
+          requiresCycleMin: 2,
+        },
+        {
+          label: '"I\'ll come back again."',
+          targetNode: 'echo_promise',
+        },
+      ],
+    },
+
+    echo_revenant_recognition: {
+      id: 'echo_revenant_recognition',
+      speaker: 'Echo',
+      text: `"You. Come back. Come back after. Dying?" It isn\'t entirely a question. "I saw. People die. In the building. They stayed dead. You. You don\'t." The finger movements stop entirely. "What does it. What does it feel like. To come back?" The question is asked with the quality of someone asking about a place they can no longer visit.`,
+      branches: [
+        {
+          label: '"Like remembering something that happened to someone else."',
+          targetNode: 'echo_revenant_response_loss',
+        },
+        {
+          label: '"Like being remade. But not quite right."',
+          targetNode: 'echo_revenant_response_change',
+        },
+      ],
+    },
+
+    echo_revenant_response_loss: {
+      id: 'echo_revenant_response_loss',
+      speaker: 'Echo',
+      text: `"Yes." Said with sudden conviction. "Yes. Remembered. Like that. Now. For me." The head tilts. "Maybe. Maybe we are. Not. So different." Echo looks back at the scratched name on the wall. "I keep. Writing. Because it feels like. Remembering. Even when it. Doesn\'t."`,
+      onEnter: {
+        setFlag: { player_showed_hollow_mercy: true, echo_connection_made: true },
+        grantRep: { faction: 'covenant_of_dusk', delta: 1 },
+      },
+      branches: [
+        {
+          label: '"I\'ll come back. I want to hear more."',
+          targetNode: 'echo_promise',
+        },
+      ],
+    },
+
+    echo_revenant_response_change: {
+      id: 'echo_revenant_response_change',
+      speaker: 'Echo',
+      text: `"Not quite right." The voice is very quiet. "I understand. Not quite. Right." The fingers move again. "I was. Right once. Before. I think." A pause. "Maybe. Rightness. Takes. Practice."`,
+      onEnter: {
+        setFlag: { player_showed_hollow_mercy: true, echo_connection_made: true },
+        grantRep: { faction: 'covenant_of_dusk', delta: 1 },
+      },
+      branches: [
+        {
+          label: '"I\'ll come back."',
+          targetNode: 'echo_promise',
+        },
+      ],
+    },
+
+    echo_others: {
+      id: 'echo_others',
+      speaker: 'Echo',
+      text: `"The ones who. Don\'t stop. Don\'t write. Don\'t try." Echo\'s voice is matter-of-fact. "They go. The ones who stop. Trying to. Remember. They go somewhere else. Inside." A pause. "I don\'t want. To go. There." The finger movements are slower now, more deliberate. E. C. H. O. "You help. Talking helps. The talking. Makes the words stay longer."`,
+      branches: [
+        {
+          label: '"Then I\'ll keep talking to you."',
+          targetNode: 'echo_promise',
+        },
+      ],
+    },
+
+    echo_river: {
+      id: 'echo_river',
+      speaker: 'Echo',
+      text: `"The river. South of. South of the. Building. We used to. Lunch. We used to eat lunch." The word \'lunch\' is so specific, so ordinary, that it lands with disproportionate weight. "There was a. A place by the water. Rocks. Flat rocks. Good for. Sitting." The eyes are elsewhere. "I wonder if. The rocks. Are still there."`,
+      branches: [
+        {
+          label: '"I\'ll look for them."',
+          targetNode: 'echo_leave_gentle',
+        },
+        {
+          label: '"Tell me more about the building."',
+          targetNode: 'echo_charon',
+        },
+      ],
+    },
+
+    echo_happened_more: {
+      id: 'echo_happened_more',
+      speaker: 'Echo',
+      text: `"It came from. From the water. Or the air. We never. Knew which." The hands press flat against the concrete. "One day it was. One day it wasn\'t. In between there was. Something you could feel in your. Your blood. Your blood getting. Different." The eyes refocus. "You wouldn\'t know. Unless you. Were there. Unless it happened to. You."`,
+      branches: [
+        {
+          label: '"It happened to me too, in a way."',
+          targetNode: 'echo_revenant_recognition',
+          requiresCycleMin: 2,
+        },
+        {
+          label: '"What happened after?"',
+          targetNode: 'echo_fire',
+        },
+      ],
+    },
+
+    echo_location: {
+      id: 'echo_location',
+      speaker: 'Echo',
+      text: `"The place with. The big sign. The sign that said. Meridian something. Something Systems." The word \'systems\' comes out careful and complete, a word Echo has retained fully. "There were. Many rooms. Many levels. Down and down and. The deepest level had. Had the lights. The blue lights." The head tilts. "The lights didn\'t. Help."`,
+      onEnter: {
+        setFlag: { echo_meridian_witness: true },
+      },
+      branches: [
+        {
+          label: '"I\'ve been there. I\'ve seen the facility."',
+          targetNode: 'echo_scar',
+        },
+        {
+          label: '"The Scar. That\'s what people call it now."',
+          targetNode: 'echo_scar',
+        },
+      ],
+    },
+
+    echo_presence: {
+      id: 'echo_presence',
+      speaker: 'Echo',
+      text: `You stay. Echo notices. The finger movements slow, then still. The silence between you has a different quality from the usual silences in this place — not empty but occupied by two beings who are both, in their different ways, keeping company with what they\'ve lost. After a while, Echo says: "Good. Good that you. Stay." A pause. "Come back. Come back again."`,
+      onEnter: {
+        setFlag: { player_showed_hollow_mercy: true, echo_trust_built: true },
+        grantRep: { faction: 'covenant_of_dusk', delta: 1 },
+      },
+      branches: [
+        {
+          label: '"I will."',
+          targetNode: 'echo_promise',
+        },
+      ],
+    },
+
+    echo_promise: {
+      id: 'echo_promise',
+      speaker: 'Echo',
+      text: `Echo looks at you for a moment with an expression that is doing its best to mean something. "Come. Back." The phrase has the quality of a request that has been made before and is being made again because the previous times it worked, or at least seemed to. The finger movements resume as you leave. E. C. H. O. E. C. H. O.`,
+    },
+
+    echo_leave: {
+      id: 'echo_leave',
+      speaker: 'Echo',
+      text: `The head turns as you leave, tracking your movement until you\'re out of sight. The finger movements continue. The name. E. C. H. O. There is a quality to the repetition that might be stubbornness or might be something that used to be hope and has become habit.`,
+    },
+
+    echo_leave_gentle: {
+      id: 'echo_leave_gentle',
+      speaker: 'Echo',
+      text: `As you leave, Echo watches. Not with alarm or need — just the attention of something that has learned that people come and go, and that the coming matters more than the going. The finger movements have stopped. The wall bears the record of all the times Echo has remembered to try.`,
+      onEnter: {
+        setFlag: { echo_gentle_parting: true },
+      },
+    },
+  },
+}
+
+// ============================================================
+// Act 1 Climax Tree
+// CONTRACT §7: triggers when echo_encountered set + 3+ faction contacts
+// Sets act1_complete; player commits to one faction
+// ============================================================
+
+const act1ClimaxTree: DialogueTree = {
+  npcId: 'faction_representatives',
+  startNode: 'climax_start',
+  nodes: {
+    climax_start: {
+      id: 'climax_start',
+      speaker: 'Narrator',
+      text: `You arrive at the Crossroads to find it changed. Two figures are waiting with the specific quality of people who have agreed in advance not to leave until this conversation happens. ${rt.npc('Marshal Cross')} stands with her arms at her sides and the weight of eight hundred people behind her posture. Across from her, someone you\'ve come to know from one of the factions watches with an expression that contains both urgency and the careful control of urgency. The market has gone quiet. This is the moment you\'ve been moving toward since you first woke up in this world. All the conversations, all the choices — they\'ve been pointing here. The time for being neutral is over.`,
+      branches: [
+        {
+          label: 'Listen to what they have to say.',
+          targetNode: 'climax_demands',
+        },
+      ],
+    },
+
+    climax_demands: {
+      id: 'climax_demands',
+      speaker: 'Marshal Cross',
+      text: `${rt.npc('Marshal Cross')} speaks first. "The Four Corners is fracturing. Every week the lines get clearer. Every week it becomes harder to remain unaligned without being perceived as opposed to everyone." She doesn\'t raise her voice. She doesn\'t need to. "The Accord needs to know where you stand. Not tomorrow. Now." The second figure steps forward. "She\'s right about the timing, if nothing else. The world is asking the question. We need your answer."`,
+      branches: [
+        {
+          label: 'Commit to the Accord.',
+          targetNode: 'climax_accord',
+        },
+        {
+          label: 'Commit to the Salters.',
+          targetNode: 'climax_salters',
+          requiresFlag: 'salters_contact',
+        },
+        {
+          label: 'Commit to the Kindling.',
+          targetNode: 'climax_kindling',
+          requiresFlag: 'kindling_contact',
+        },
+        {
+          label: 'Commit to the Drifters.',
+          targetNode: 'climax_drifters',
+          requiresFlag: 'drifters_contact',
+        },
+        {
+          label: 'Commit to the Red Court.',
+          targetNode: 'climax_red_court',
+          requiresFlag: 'red_court_contact',
+        },
+        {
+          label: '"I don\'t commit to anyone."',
+          targetNode: 'climax_refuse',
+        },
+      ],
+    },
+
+    climax_accord: {
+      id: 'climax_accord',
+      speaker: 'Marshal Cross',
+      text: `Something shifts in ${rt.npc('Marshal Cross')}\'s expression — not surprise, but recognition. She extends her hand. "Then we build together." The handshake is brief and formal and somehow, in this moment, carries the full weight of everything that comes after. "Welcome to the Accord. Not the wall, not the rules — the people who decided the wall and the rules were worth maintaining. That\'s the thing you\'re joining." She holds your gaze. "Don\'t make me regret this." It\'s not a threat. It\'s a promise that she believes in the decision she\'s just made.`,
+      onEnter: {
+        setFlag: { act1_complete: true, faction_committed_accord: true, player_alignment_accord: true },
+        grantRep: { faction: 'accord', delta: 2 },
+      },
+      branches: [
+        {
+          label: '"I won\'t."',
+          targetNode: 'climax_end',
+        },
+      ],
+    },
+
+    climax_salters: {
+      id: 'climax_salters',
+      speaker: 'Narrator',
+      text: `You tell them where you stand. The Accord representative absorbs it with the professional composure of someone who has heard disappointing information before and knows how to continue being professional afterward. Somewhere, a Salter receives word that you\'ve committed — and the response is practical: a nod, a place on a roster, a welcome that is really a deployment. ${rt.npc('Warlord Briggs')} deals in utility. You\'ve just declared yourself useful. The transaction is complete.`,
+      onEnter: {
+        setFlag: { act1_complete: true, faction_committed_salters: true, player_alignment_salters: true },
+        grantRep: { faction: 'salters', delta: 2 },
+      },
+      branches: [
+        {
+          label: 'Accept the deployment.',
+          targetNode: 'climax_end',
+        },
+      ],
+    },
+
+    climax_kindling: {
+      id: 'climax_kindling',
+      speaker: 'Narrator',
+      text: `You say the word and something in the air changes. Not drama — something quieter. The Kindling representative closes their eyes for a moment with the quality of someone receiving confirmation of a prayer they had kept private. "The fire found you," they say. They mean it literally. Whether you believe them or not, the welcome is genuine and the community is real and there is warmth on the other side of the commitment. ${rt.npc('Deacon Harrow')} will hear about this. The Kindling will know you by name.`,
+      onEnter: {
+        setFlag: { act1_complete: true, faction_committed_kindling: true, player_alignment_kindling: true },
+        grantRep: { faction: 'kindling', delta: 2 },
+      },
+      branches: [
+        {
+          label: 'Accept the welcome.',
+          targetNode: 'climax_end',
+        },
+      ],
+    },
+
+    climax_drifters: {
+      id: 'climax_drifters',
+      speaker: 'Narrator',
+      text: `The Drifter response is characteristically minimal: a nod, a slight relaxation, a willingness to be slightly more candid than before. "Nobody owns the road," they say. "That\'s still the point. But the road needs tending. You\'re one of the people who tenders it now." It\'s not ceremony. Drifters don\'t do ceremony. It\'s an acknowledgment that you\'re part of the network — the informal, persistent, stubborn network of people who keep moving because staying still is how things die.`,
+      onEnter: {
+        setFlag: { act1_complete: true, faction_committed_drifters: true, player_alignment_drifters: true },
+        grantRep: { faction: 'drifters', delta: 2 },
+      },
+      branches: [
+        {
+          label: 'Accept the nod.',
+          targetNode: 'climax_end',
+        },
+      ],
+    },
+
+    climax_red_court: {
+      id: 'climax_red_court',
+      speaker: 'Narrator',
+      text: `You say it clearly. The Accord representative goes still in the way that people go still when they\'re deciding whether to pursue something or let it go. They let it go — for now. The Red Court response comes through channels you\'re already starting to understand: a message, a meeting time, an address. ${rt.npc('Castellan Rook')} will want to formalize the arrangement personally. A deal isn\'t trust. A deal is math. You\'ve just entered the equation.`,
+      onEnter: {
+        setFlag: { act1_complete: true, faction_committed_red_court: true, player_alignment_red_court: true },
+        grantRep: { faction: 'red_court', delta: 2 },
+      },
+      branches: [
+        {
+          label: 'Prepare for the meeting.',
+          targetNode: 'climax_end',
+        },
+      ],
+    },
+
+    climax_refuse: {
+      id: 'climax_refuse',
+      speaker: 'Marshal Cross',
+      text: `${rt.npc('Marshal Cross')} looks at you for a long moment. "Then you\'ve chosen neutrality." A pause. "Neutrality is a position. I want you to understand that. In a fracturing world, being neutral is being opposed to everyone who has committed. It protects you from nothing and obligates you to no one. The road you\'re choosing is lonelier than you think." She turns to leave. The second representative lingers. "The offer stands. When you\'re ready." They follow the marshal. The Crossroads exhales.`,
+      onEnter: {
+        setFlag: { act1_complete: true, faction_committed_none: true },
+      },
+      branches: [
+        {
+          label: 'Watch them leave.',
+          targetNode: 'climax_end',
+        },
+      ],
+    },
+
+    climax_end: {
+      id: 'climax_end',
+      speaker: 'Narrator',
+      text: `The Crossroads resumes its noise. The market restarts. People move. The moment that just happened will shape everything that comes after it — the doors that open, the ones that close, the people who now regard you as one of theirs and the people who register you as something other. Act One is complete. The map of the Four Corners has clarified. You know where you stand. What remains is to stand there.`,
+    },
+  },
+}
+
+// ============================================================
+
 export const DIALOGUE_TREES: Record<string, DialogueTree> = {
   // Lev has two spawn points referencing different tree IDs,
   // but both use the same tree content.
@@ -3685,4 +4292,9 @@ export const DIALOGUE_TREES: Record<string, DialogueTree> = {
 
   // Elder Sanguine (Lucid Elder) at The Deep sanctum
   dp_elder_sanguine_sanctum: elderSanguineTree,
+
+  // --- [RIDER A: remnant-story-0329] Echo + Act 1 Climax ---
+  echo_tree: echoTree,
+  act1_climax_encounter: act1ClimaxTree,
+  // --- [/RIDER A] ---
 }

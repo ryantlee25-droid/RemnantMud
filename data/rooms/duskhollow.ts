@@ -325,7 +325,6 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         keywords: ['anticoagulant', 'chemicals', 'supplies', 'storage'],
         description: 'The supplies are well-stocked and organized. A second inventory list is maintained separately: expiration dates, reorder points, current quantities. Someone keeps this room supplied. The supply chain for anticoagulants in a post-Collapse world is not trivial. The Covenant has relationships you don\'t fully see.',
       },
-    ],
       // --- [RIDER E] Post-tithe extras (gated on witnessed_tithe_system) ---
       {
         keywords: ['woman', 'wrist', 'marks', 'dory'],

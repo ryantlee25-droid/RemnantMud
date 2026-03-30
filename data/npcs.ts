@@ -2259,6 +2259,24 @@ export const NPCS: Record<string, RichNPC> = {
       { activity: 'is checking the filtration system, examining the output, maintaining the equipment', weight: 2, timeRestrict: ['dusk'] },
     ],
   },
+
+  // --- [RIDER A: remnant-story-0329] Echo — Named Hollow ---
+  echo_hollow: {
+    id: 'echo_hollow',
+    name: 'Echo',
+    description: "A figure crouched near the wall. At first glance — human. Then you notice the stillness, the way the head tracks movement without the body following. The fingers move against the concrete in patterns that are almost letters.",
+    dialogue: "H...home. Was... home. Before the...",
+    zone: 'crossroads',
+    isNamed: true,
+    spawnChance: 0.30,
+    dispositionRoll: { friendly: 0.10, neutral: 0.60, wary: 0.25, hostile: 0.05 },
+    activityPool: [
+      { activity: 'is crouched near the wall, fingers moving against the concrete in slow, deliberate patterns — almost writing, almost not', weight: 3 },
+      { activity: 'turns its head toward the light as it shifts, tracking the movement with the attention of something that remembers what light meant', weight: 2, timeRestrict: ['dawn', 'dusk'] },
+      { activity: 'sits completely still against the back wall, head tilted at an angle slightly past what is comfortable, eyes open', weight: 2, timeRestrict: ['night'] },
+    ],
+  },
+  // --- [/RIDER A] ---
 }
 
 export function getNPC(id: string): RichNPC | undefined {

@@ -21,10 +21,10 @@ function modStr(n: number): string {
   return n >= 0 ? `+${n}` : String(n)
 }
 
-/** Build a block-character HP bar: █ for filled, ░ for empty. */
+/** Build an ASCII HP bar: # for filled, . for empty. */
 function hpBar(current: number, max: number, width: number = 10): string {
   const filled = Math.round((current / max) * width)
-  return '█'.repeat(filled) + '░'.repeat(width - filled)
+  return '[' + '#'.repeat(filled) + '.'.repeat(width - filled) + ']'
 }
 
 /** Derive the equipped weapon from inventory. */

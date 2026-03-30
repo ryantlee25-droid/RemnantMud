@@ -173,23 +173,12 @@ function useTypewriter(text: string, active: boolean, speed: number = 35) {
   return { displayed, done, skip }
 }
 
-// ── Fade-In Wrapper ────────────────────────────────────────────
-// Self-contained animation so we don't need to touch globals.css
+// ── Instant Wrapper (no fade) ──────────────────────────────────
+// Terminal displays appear instantly — no smooth transitions.
 
 function FadeIn({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  const [visible, setVisible] = useState(false)
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => setVisible(true))
-    return () => cancelAnimationFrame(frame)
-  }, [])
   return (
-    <div
-      className={className}
-      style={{
-        opacity: visible ? 1 : 0,
-        transition: 'opacity 600ms ease-in',
-      }}
-    >
+    <div className={className}>
       {children}
     </div>
   )
@@ -372,16 +361,16 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
           {/* Opening line */}
           {ritualStep === 'opening' && (
             <div className="text-center">
-              <div className="text-amber-400/60 text-sm leading-relaxed min-h-[2rem]">
+              <div className="text-amber-400 text-sm leading-relaxed min-h-[2rem]">
                 {opening.displayed}
                 {!opening.done && (
-                  <span className="inline-block w-1.5 h-4 bg-amber-400/40 animate-pulse ml-0.5 align-middle" />
+                  <span className="inline-block w-1.5 h-4 bg-amber-400 animate-pulse ml-0.5 align-middle" />
                 )}
               </div>
               {!opening.done && (
                 <button
                   onClick={opening.skip}
-                  className="mt-8 text-amber-900 text-xs uppercase tracking-widest hover:text-amber-700 transition-colors"
+                  className="mt-8 text-amber-900 text-xs uppercase tracking-widest"
                 >
                   Skip
                 </button>
@@ -392,18 +381,18 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
           {/* Loss type selection */}
           {ritualStep === 'choosing' && (
             <FadeIn>
-              <div className="text-amber-400/40 text-xs uppercase tracking-widest mb-6 text-center">
+              <div className="text-amber-400 text-xs uppercase tracking-widest mb-6 text-center">
                 What did you lose?
               </div>
               <div className="space-y-3">
-                {PERSONAL_LOSS_OPTIONS.map((opt) => (
+                {PERSONAL_LOSS_OPTIONS.map((opt, i) => (
                   <button
                     key={opt.type}
                     onClick={() => selectRitualLoss(opt.type)}
-                    className="w-full text-left px-4 py-3 border border-amber-900/40 hover:border-amber-700/60 hover:bg-amber-950/30 transition-all duration-300 group"
+                    className="w-full text-left px-4 py-3 border border-amber-900"
                   >
-                    <div className="text-amber-400/80 text-sm group-hover:text-amber-300 transition-colors">
-                      {opt.label}
+                    <div className="text-amber-400 text-sm">
+                      {i + 1}. {opt.label}
                     </div>
                   </button>
                 ))}
@@ -414,20 +403,20 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
           {/* Vignette reveal */}
           {ritualStep === 'vignette' && ritualLossType && (
             <div>
-              <div className="text-amber-400/30 text-xs uppercase tracking-widest mb-6 text-center">
+              <div className="text-amber-400 text-xs uppercase tracking-widest mb-6 text-center">
                 {PERSONAL_LOSS_OPTIONS.find((o) => o.type === ritualLossType)?.label}
               </div>
-              <div className="text-amber-400/70 text-sm leading-loose min-h-[6rem]">
+              <div className="text-amber-400 text-sm leading-loose min-h-[6rem]">
                 {vignette.displayed}
                 {!vignette.done && (
-                  <span className="inline-block w-1.5 h-4 bg-amber-400/30 animate-pulse ml-0.5 align-middle" />
+                  <span className="inline-block w-1.5 h-4 bg-amber-400 animate-pulse ml-0.5 align-middle" />
                 )}
               </div>
               <div className="mt-8 flex gap-4 justify-center">
                 {!vignette.done && (
                   <button
                     onClick={vignette.skip}
-                    className="text-amber-900 text-xs uppercase tracking-widest hover:text-amber-700 transition-colors"
+                    className="text-amber-900 text-xs uppercase tracking-widest"
                   >
                     Skip
                   </button>
@@ -436,13 +425,13 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
                   <>
                     <button
                       onClick={goBackToChoosing}
-                      className="text-amber-900 text-xs uppercase tracking-widest hover:text-amber-700 transition-colors"
+                      className="text-amber-900 text-xs uppercase tracking-widest"
                     >
                       Choose differently
                     </button>
                     <button
                       onClick={confirmVignette}
-                      className="border border-amber-800/60 text-amber-400/70 px-5 py-1.5 text-sm hover:border-amber-600 hover:text-amber-300 transition-colors"
+                      className="border border-amber-800 text-amber-400 px-5 py-1.5 text-sm"
                     >
                       This is mine
                     </button>
@@ -455,10 +444,10 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
           {/* Detail input */}
           {ritualStep === 'detail' && ritualLossType && (
             <FadeIn>
-              <div className="text-amber-400/30 text-xs uppercase tracking-widest mb-2 text-center">
+              <div className="text-amber-400 text-xs uppercase tracking-widest mb-2 text-center">
                 {PERSONAL_LOSS_OPTIONS.find((o) => o.type === ritualLossType)?.label}
               </div>
-              <div className="text-amber-400/40 text-xs mb-6 text-center">
+              <div className="text-amber-600 text-xs mb-6 text-center">
                 {PERSONAL_LOSS_OPTIONS.find((o) => o.type === ritualLossType)?.hint}
               </div>
               <div className="max-w-sm mx-auto">
@@ -468,7 +457,7 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
                   onChange={(e) => setPersonalLossDetail(e.target.value)}
                   maxLength={64}
                   placeholder={PERSONAL_LOSS_OPTIONS.find((o) => o.type === ritualLossType)?.placeholder}
-                  className="w-full bg-transparent border-b border-amber-900/60 text-amber-300/80 px-1 py-2 outline-none focus:border-amber-700 text-sm placeholder-amber-900/60 text-center"
+                  className="w-full bg-transparent border-b border-amber-900 text-amber-300 px-1 py-2 outline-none focus:border-amber-700 text-sm placeholder-amber-900 text-center"
                   autoFocus
                   autoComplete="off"
                   spellCheck={false}
@@ -476,9 +465,9 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
                 <div className="mt-6 flex justify-center">
                   <button
                     onClick={confirmDetail}
-                    className="border border-amber-800/60 text-amber-400/70 px-5 py-1.5 text-sm hover:border-amber-600 hover:text-amber-300 transition-colors"
+                    className="border border-amber-800 text-amber-400 px-5 py-1.5 text-sm"
                   >
-                    {personalLossDetail.trim() ? 'Continue' : 'Leave it unnamed'}
+                    {personalLossDetail.trim() ? 'RESUME' : 'Leave it unnamed'}
                   </button>
                 </div>
               </div>
@@ -488,10 +477,10 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
           {/* Closing */}
           {ritualStep === 'closing' && (
             <div className="text-center">
-              <div className="text-amber-400/60 text-sm leading-relaxed min-h-[2rem]">
+              <div className="text-amber-400 text-sm leading-relaxed min-h-[2rem]">
                 {closing.displayed}
                 {!closing.done && (
-                  <span className="inline-block w-1.5 h-4 bg-amber-400/40 animate-pulse ml-0.5 align-middle" />
+                  <span className="inline-block w-1.5 h-4 bg-amber-400 animate-pulse ml-0.5 align-middle" />
                 )}
               </div>
               {closingVisible && (
@@ -499,16 +488,16 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
                   <button
                     onClick={handleSubmit}
                     disabled={submitting}
-                    className="border border-amber-700/50 text-amber-400/60 px-8 py-2 text-sm hover:border-amber-500 hover:text-amber-300 transition-colors disabled:opacity-40"
+                    className="border border-amber-700 text-amber-400 px-8 py-2 text-sm disabled:opacity-40"
                   >
                     {submitting
-                      ? (isRebirth ? 'Awakening...' : 'Generating world...')
-                      : (isRebirth ? 'Return' : 'Begin')}
+                      ? (isRebirth ? 'INITIALIZING...' : 'GENERATING WORLD...')
+                      : (isRebirth ? 'RESUME' : '[ INITIALIZE NEW SESSION ]')}
                   </button>
                 </FadeIn>
               )}
               {error && (
-                <div className="mt-4 text-red-400/70 text-sm">{error}</div>
+                <div className="mt-4 text-red-400 text-sm">{error}</div>
               )}
             </div>
           )}
@@ -529,8 +518,8 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
               ? `CYCLE ${(state.player?.cycle ?? 1) + 1} — REBIRTH`
               : 'THE REMNANT — Character Creation'}
           </div>
-          <div className="text-2xl text-amber-300">
-            {isRebirth ? 'Who will you be?' : 'Who are you?'}
+          <div className="text-amber-300 text-sm">
+            {isRebirth ? 'WHO WILL YOU BE?' : 'WHO ARE YOU?'}
           </div>
         </div>
 
@@ -553,22 +542,27 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
           />
         </div>
 
-        {/* Class */}
+        {/* Class — numbered text menu */}
         <div className="mb-6">
           <label className="block text-xs text-amber-600 uppercase tracking-widest mb-1">
             Class
           </label>
-          <select
-            value={characterClass}
-            onChange={(e) => handleClassChange(e.target.value as CharacterClass)}
-            className="w-full bg-black border border-amber-800 text-amber-300 px-3 py-2 outline-none focus:border-amber-500 text-sm"
-          >
-            {(Object.keys(CLASS_DEFINITIONS) as CharacterClass[]).map((cls) => (
-              <option key={cls} value={cls}>
-                {CLASS_DEFINITIONS[cls].name} — {CLASS_DEFINITIONS[cls].archetype}
-              </option>
+          <div className="border border-amber-800 p-2">
+            {(Object.keys(CLASS_DEFINITIONS) as CharacterClass[]).map((cls, i) => (
+              <button
+                key={cls}
+                type="button"
+                onClick={() => handleClassChange(cls)}
+                className={`block w-full text-left text-xs py-0.5 px-1 ${
+                  characterClass === cls
+                    ? 'text-amber-300 bg-amber-900'
+                    : 'text-amber-600'
+                }`}
+              >
+                {i + 1}. {CLASS_DEFINITIONS[cls].name} -- {CLASS_DEFINITIONS[cls].archetype}
+              </button>
             ))}
-          </select>
+          </div>
           <div className="text-amber-600 text-xs mt-1">
             {CLASS_DEFINITIONS[characterClass].description}
           </div>
@@ -607,9 +601,9 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
                 <button
                   onClick={() => decrement(stat)}
                   disabled={atFloor}
-                  className="w-7 h-7 border border-amber-800 text-amber-400 hover:bg-amber-900 disabled:opacity-30 disabled:cursor-not-allowed text-center leading-none"
+                  className="w-7 h-7 border border-amber-800 text-amber-400 disabled:opacity-30 disabled:cursor-not-allowed text-center leading-none"
                 >
-                  -
+                  [-]
                 </button>
 
                 <span className="w-6 text-center text-amber-200 text-lg">{stats[stat]}</span>
@@ -617,9 +611,9 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
                 <button
                   onClick={() => increment(stat)}
                   disabled={remaining <= 0 || stats[stat] >= MAX_STAT}
-                  className="w-7 h-7 border border-amber-800 text-amber-400 hover:bg-amber-900 disabled:opacity-30 disabled:cursor-not-allowed text-center leading-none"
+                  className="w-7 h-7 border border-amber-800 text-amber-400 disabled:opacity-30 disabled:cursor-not-allowed text-center leading-none"
                 >
-                  +
+                  [+]
                 </button>
 
                 <span className="text-xs text-amber-600 ml-1">({modStr(stats[stat])})</span>
@@ -642,9 +636,9 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
         <button
           onClick={enterLossRitual}
           disabled={submitting || !name.trim() || remaining !== 0}
-          className="w-full border border-amber-600 text-amber-400 py-2 text-sm hover:bg-amber-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="w-full border border-amber-600 text-amber-400 py-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          Continue
+          RESUME
         </button>
 
         {isDevMode() && !isRebirth && !submitting && (
@@ -663,7 +657,7 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
                 setSubmitting(false)
               }
             }}
-            className="w-full mt-2 border border-amber-900 text-amber-700 py-1 text-xs hover:bg-amber-950 transition-colors"
+            className="w-full mt-2 border border-amber-900 text-amber-700 py-1 text-xs"
           >
             Quick Start (Dev)
           </button>

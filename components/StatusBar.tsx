@@ -37,8 +37,6 @@ const TIME_COLORS: Record<TimeOfDay, string> = {
 // Segments: 10 total. Filled = ▰, Empty = ░.
 // ------------------------------------------------------------
 
-const FILLED_SEG = '\u25B0'
-const EMPTY_SEG = '\u2591'
 const PRESSURE_SEGMENTS = 10
 
 function pressureColor(level: number): string {
@@ -50,12 +48,10 @@ function pressureColor(level: number): string {
 
 function PressureMeter({ level }: { level: number }) {
   const filled = Math.max(0, Math.min(PRESSURE_SEGMENTS, level))
-  const segments = Array.from({ length: PRESSURE_SEGMENTS }, (_, i) =>
-    i < filled ? FILLED_SEG : EMPTY_SEG
-  ).join('')
+  const bar = '#'.repeat(filled) + '.'.repeat(PRESSURE_SEGMENTS - filled)
   return (
     <span className={pressureColor(level)}>
-      [PRESSURE: {segments}]
+      [PRESSURE: {bar}] {filled}/{PRESSURE_SEGMENTS}
     </span>
   )
 }

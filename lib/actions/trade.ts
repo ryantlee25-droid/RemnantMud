@@ -18,6 +18,68 @@ import { dispatchVendorGreeting, dispatchVendorBudget, dispatchVendorComment } f
 
 const CURRENCY_ITEM_ID = 'ammo_22lr'
 
+// ------------------------------------------------------------
+// Faction-based price modifiers
+// NOTE: section owned by Rider E per convoy remnant-final-0329
+// ------------------------------------------------------------
+
+/**
+ * Calculate a price modifier based on the player's faction reputation
+ * with the vendor's faction. Allies get discounts; hostiles pay more.
+ *
+ * Returns { multiplier, label } where multiplier is applied to price
+ * and label is a terse in-character string (or null if no modifier).
+ */
+function getFactionPriceModifier(
+  factionReputation: Partial<Record<string, number>> | undefined,
+  vendorFaction: string | undefined
+): { multiplier: number; label: string | null } {
+  if (!vendorFaction || !factionReputation) {
+    return { multiplier: 1, label: null }
+  }
+
+  const rep = factionReputation[vendorFaction] ?? 0
+
+  if (rep >= 2) {
+    return { multiplier: 0.9, label: 'Ally discount (-10%)' }
+  }
+  if (rep === 1) {
+    return { multiplier: 0.95, label: null } // minor, no display
+  }
+  if (rep === -1) {
+    return { multiplier: 1.15, label: 'Hostile surcharge (+15%)' }
+  }
+  if (rep <= -2) {
+    return { multiplier: 1.25, label: 'Hostile surcharge (+25%)' }
+  }
+
+  return { multiplier: 1, label: null }
+}
+
+/**
+ * Calculate sell price modifier. Positive rep with vendor's faction
+ * gives better sell prices (+5% per positive rep level).
+ */
+function getFactionSellModifier(
+  factionReputation: Partial<Record<string, number>> | undefined,
+  vendorFaction: string | undefined
+): { multiplier: number; label: string | null } {
+  if (!vendorFaction || !factionReputation) {
+    return { multiplier: 1, label: null }
+  }
+
+  const rep = factionReputation[vendorFaction] ?? 0
+
+  if (rep >= 2) {
+    return { multiplier: 1.10, label: 'Ally bonus (+10%)' }
+  }
+  if (rep === 1) {
+    return { multiplier: 1.05, label: null }
+  }
+
+  return { multiplier: 1, label: null }
+}
+
 /** Count how many .22 LR rounds the player has in inventory. */
 function getPlayerCurrency(engine: EngineCore): number {
   const { inventory } = engine.getState()
@@ -105,13 +167,20 @@ export async function handleTrade(engine: EngineCore, noun: string | undefined):
   // NOTE: adjacent section owned by Rider D per convoy contract (wares display formatting)
   const lines: string[] = [`${rt.npc(npcName)}'s wares:`]
 
+  // NOTE: Rider E — faction price modifier display
+  const priceModifier = getFactionPriceModifier(player.factionReputation, npc?.faction)
+  if (priceModifier.label) {
+    lines.push(`  [${priceModifier.label}]`)
+  }
+
   // NOTE: adjacent section above (greeting dispatch) owned by Rider C per convoy contract
   // Wares display section — Rider D (item-stacking), convoy remnant-ux-0329 CONTRACT C7
   const waresGrouped = groupAndFormatItems(trader.tradeInventory)
   for (const grouped of waresGrouped) {
     const item = getItem(grouped.itemId)
     if (!item) continue
-    lines.push(`  ${rt.item(grouped.displayName)} — ${rt.currency(`${item.value} rounds`)}`)
+    const adjustedPrice = Math.max(1, Math.round(item.value * priceModifier.multiplier))
+    lines.push(`  ${rt.item(grouped.displayName)} — ${rt.currency(`${adjustedPrice} rounds`)}`)
   }
   // NOTE: adjacent section below (budget display) owned by Rider C per convoy contract
 
@@ -175,7 +244,10 @@ export async function handleBuy(engine: EngineCore, noun: string | undefined): P
   }
 
   const item = getItem(matchedItemId)!
-  const price = item.value
+  // NOTE: Rider E — faction price modifier on buy
+  const npc = getNPC(trader.npcId)
+  const buyModifier = getFactionPriceModifier(player.factionReputation, npc?.faction)
+  const price = Math.max(1, Math.round(item.value * buyModifier.multiplier))
   const playerRounds = getPlayerCurrency(engine)
 
   if (playerRounds < price) {
@@ -190,7 +262,10 @@ export async function handleBuy(engine: EngineCore, noun: string | undefined): P
   const inventory = await getInventory(player.id)
   engine._setState({ inventory })
 
-  engine._appendMessages([msg(`You buy the ${rt.item(item.name)} for ${rt.currency(`${price} rounds`)}.`)])
+  const buyMsg = buyModifier.label
+    ? `You buy the ${rt.item(item.name)} for ${rt.currency(`${price} rounds`)}. [${buyModifier.label}]`
+    : `You buy the ${rt.item(item.name)} for ${rt.currency(`${price} rounds`)}.`
+  engine._appendMessages([msg(buyMsg)])
 }
 
 /**
@@ -233,9 +308,13 @@ export async function handleSell(engine: EngineCore, noun: string | undefined): 
     return
   }
 
-  const sellPrice = Math.floor(invItem.item.value / 2)
+  // NOTE: Rider E — faction sell modifier
+  const sellNpcData = getNPC(trader.npcId)
+  const sellModifier = getFactionSellModifier(player.factionReputation, sellNpcData?.faction)
+  const baseSellPrice = Math.floor(invItem.item.value / 2)
+  const sellPrice = Math.max(1, Math.round(baseSellPrice * sellModifier.multiplier))
 
-  if (sellPrice <= 0) {
+  if (baseSellPrice <= 0) {
     engine._appendMessages([errorMsg(`The ${rt.item(invItem.item.name)} isn't worth anything to them.`)])
     return
   }
@@ -249,7 +328,10 @@ export async function handleSell(engine: EngineCore, noun: string | undefined): 
   const updatedInventory = await getInventory(player.id)
   engine._setState({ inventory: updatedInventory })
 
-  engine._appendMessages([msg(`You sell the ${rt.item(invItem.item.name)} for ${rt.currency(`${sellPrice} rounds`)}.`)])
+  const sellMsg = sellModifier.label
+    ? `You sell the ${rt.item(invItem.item.name)} for ${rt.currency(`${sellPrice} rounds`)}. [${sellModifier.label}]`
+    : `You sell the ${rt.item(invItem.item.name)} for ${rt.currency(`${sellPrice} rounds`)}.`
+  engine._appendMessages([msg(sellMsg)])
 
   // Rider C: dispatch vendor comment on the sold item (optional, personality flavor)
   const sellNpc = getNPC(trader.npcId)

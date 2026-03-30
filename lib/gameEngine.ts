@@ -428,6 +428,8 @@ export class GameEngine implements EngineCore {
       .eq('id', player.id)
     if (error) {
       console.error('Failed to save player:', error.message)
+      // Refresh session before retry — expired credentials are the most common cause
+      await supabase.auth.refreshSession()
       // Retry once — transient auth/network failures are common
       const { error: retryError } = await supabase
         .from('players')
@@ -865,6 +867,11 @@ export class GameEngine implements EngineCore {
         ...enemiesLine(currentRoom) ? [combatMsg(enemiesLine(currentRoom))] : [],
       ],
     })
+
+    // Restore death state so the death screen triggers on reload
+    if (player.isDead) {
+      this._setState({ playerDead: true })
+    }
 
     // Restore ending state if player was mid-ending
     const endingFlag = player.questFlags?.ending_triggered

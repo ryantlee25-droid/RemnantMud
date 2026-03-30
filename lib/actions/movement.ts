@@ -14,6 +14,7 @@ import { getTimeOfDay } from '@/lib/gameEngine'
 import { fearCheck } from '@/lib/fear'
 import { rt } from '@/lib/richText'
 import { msg, combatMsg, errorMsg } from '@/lib/messages'
+import { getDeathRoomNarration } from '@/lib/echoes'
 
 const DIRECTIONS: Record<string, Direction> = {
   north: 'north',
@@ -26,6 +27,44 @@ const DIRECTIONS: Record<string, Direction> = {
   w: 'west',
   up: 'up',
   down: 'down',
+}
+
+// ------------------------------------------------------------
+// Zone recommended levels (Rider E — soft zone gating)
+// NOTE: section owned by Rider E per convoy remnant-final-0329
+// ------------------------------------------------------------
+
+const ZONE_RECOMMENDED_LEVEL: Record<string, number> = {
+  crossroads: 1,
+  river_road: 1,
+  the_breaks: 2,
+  covenant: 1,
+  the_ember: 2,
+  the_dust: 3,
+  salt_creek: 2,
+  the_stacks: 3,
+  the_pine_sea: 2,
+  duskhollow: 3,
+  the_pens: 3,
+  the_deep: 4,
+  the_scar: 4,
+}
+
+// ------------------------------------------------------------
+// Pressure room description overlays (Rider E)
+// ------------------------------------------------------------
+
+function getPressureOverlay(pressure: number): string | null {
+  if (pressure >= 10) {
+    return 'The room. There is a room. You are in it. Your hands are shaking. Breathe.'
+  }
+  if (pressure >= 9) {
+    return 'Everything looks wrong. The proportions of the room are off -- walls too close, ceiling too low. Your body knows something your mind has not caught up to.'
+  }
+  if (pressure >= 7) {
+    return 'The shadows feel closer than they should. Your peripheral vision keeps catching movement that is not there.'
+  }
+  return null
 }
 
 function reputationLabel(level: number): string {
@@ -345,6 +384,69 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
     }
     if (weatherFlavor[weather]) {
       messages.push(msg(weatherFlavor[weather]!))
+    }
+  }
+
+  // ----------------------------------------------------------------
+  // Rider E — Soft zone gating: narrative warning for high-difficulty zones
+  // Fires once per zone per cycle (tracked via quest flag).
+  // ----------------------------------------------------------------
+  const zoneRecommended = ZONE_RECOMMENDED_LEVEL[nextRoom.zone]
+  if (zoneRecommended && zoneRecommended >= 3 && updatedPlayer.level < zoneRecommended) {
+    const zoneWarnFlag = `zone_warned_${nextRoom.zone}`
+    const flags = updatedPlayer.questFlags ?? {}
+    if (!flags[zoneWarnFlag]) {
+      messages.push(msg(
+        'The air changes here. Heavier. Harder to breathe. ' +
+        'Everything about this place says "not yet." ' +
+        'The Hollow presence is thick enough to taste.'
+      ))
+      // Set the flag so the warning only fires once per zone per cycle
+      const updatedFlags = { ...flags, [zoneWarnFlag]: true }
+      const playerWithFlag = { ...updatedPlayer, questFlags: updatedFlags }
+      engine._setState({ player: playerWithFlag })
+    }
+  }
+
+  // ----------------------------------------------------------------
+  // Rider E — Pressure-based room description shifts
+  // At pressure 7+, the room itself feels wrong.
+  // Only fires once per room per visit (tracked via quest flag).
+  // ----------------------------------------------------------------
+  const pressure = updatedPlayer.hollowPressure ?? 0
+  if (pressure >= 7) {
+    const pressureFlag = `pressure_seen_${nextRoomId}`
+    const currentFlags = engine.getState().player?.questFlags ?? {}
+    if (!currentFlags[pressureFlag]) {
+      const overlay = getPressureOverlay(pressure)
+      if (overlay) {
+        messages.push(msg(overlay, 'narrative'))
+        // Mark this room as having shown its pressure overlay
+        const pFlags = { ...currentFlags, [pressureFlag]: true }
+        const pPlayer = { ...engine.getState().player!, questFlags: pFlags }
+        engine._setState({ player: pPlayer })
+      }
+    }
+  }
+
+  // ----------------------------------------------------------------
+  // Rider E — Death room echo
+  // If the player died here in a previous cycle, the world remembers.
+  // Fires once per room per cycle (tracked via quest flag).
+  // ----------------------------------------------------------------
+  const cycleHistory = engine.getState().cycleHistory
+  if (cycleHistory && cycleHistory.length > 0) {
+    const deathEchoFlag = `death_echo_seen_${nextRoomId}`
+    const echoFlags = engine.getState().player?.questFlags ?? {}
+    if (!echoFlags[deathEchoFlag]) {
+      const deathEcho = getDeathRoomNarration(nextRoomId, cycleHistory)
+      if (deathEcho) {
+        messages.push(deathEcho)
+        // Mark this room as having shown its death echo this cycle
+        const dFlags = { ...echoFlags, [deathEchoFlag]: true }
+        const dPlayer = { ...engine.getState().player!, questFlags: dFlags }
+        engine._setState({ player: dPlayer })
+      }
     }
   }
 

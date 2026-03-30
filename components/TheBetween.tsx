@@ -182,7 +182,7 @@ export default function TheBetween({ cycle, onContinue, inheritedFactions, disco
           <button
             onClick={onContinue}
             disabled={!buttonVisible}
-            className="border border-amber-600 text-amber-400 px-8 py-2 text-sm hover:bg-amber-900 transition-colors disabled:cursor-not-allowed"
+            className="border border-amber-600 text-amber-400 px-8 py-2 text-sm disabled:cursor-not-allowed"
             autoFocus={buttonVisible}
           >
             BEGIN AGAIN

@@ -103,34 +103,29 @@ function ExplorationSection({ progress }: { progress?: ExplorationProgress }) {
         Exploration
       </h2>
 
-      {/* Total progress */}
-      <div className="flex justify-between mb-1">
-        <span className="text-amber-400">Known world</span>
+      {/* Total progress — ASCII bar */}
+      <div className="mb-1 text-xs">
+        <span className="text-amber-400">Known world </span>
         <span className="text-amber-300">
-          {progress.roomsVisited}/{progress.totalRooms} ({pct}%)
+          [{(() => { const w = 8; const f = Math.round((pct / 100) * w); return '#'.repeat(f) + '.'.repeat(w - f) })()}] {progress.roomsVisited}/{progress.totalRooms} ({pct}%)
         </span>
       </div>
 
-      {/* Mini progress bar */}
-      <div className="h-1 bg-amber-900 rounded mb-2">
-        <div
-          className="h-1 bg-amber-500 rounded"
-          style={{ width: `${Math.min(pct, 100)}%` }}
-        />
-      </div>
-
-      {/* Zone breakdown */}
+      {/* Zone breakdown — ASCII bars */}
       <div className="space-y-0.5 mb-2">
         {zoneEntries.map(([zone, { visited, total }]) => {
           const zonePct = total > 0 ? Math.floor((visited / total) * 100) : 0
           const displayName = ZONE_DISPLAY_NAMES[zone] ?? zone
+          const w = 8
+          const f = Math.round((zonePct / 100) * w)
+          const bar = '[' + '#'.repeat(f) + '.'.repeat(w - f) + ']'
           return (
             <div key={zone} className="flex justify-between text-xs">
               <span className={visited > 0 ? 'text-amber-400' : 'text-amber-700'}>
                 {displayName}
               </span>
               <span className={visited > 0 ? 'text-amber-500' : 'text-amber-700'}>
-                {visited}/{total} ({zonePct}%)
+                {bar} {zonePct}%
               </span>
             </div>
           )

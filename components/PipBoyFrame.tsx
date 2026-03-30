@@ -33,9 +33,9 @@ export default function PipBoyFrame({
   return (
     <div className="max-w-6xl mx-auto h-screen flex items-center justify-center p-1 sm:p-2">
       {/* Bezel */}
-      <div className="pipboy-scratches bg-zinc-800 rounded-2xl p-1 shadow-2xl relative overflow-hidden h-full max-h-[95vh] w-full flex flex-col">
+      <div className="pipboy-scratches bg-zinc-800 rounded-none p-1 relative overflow-hidden h-full max-h-[95vh] w-full flex flex-col">
         {/* Inner screen */}
-        <div className="crt-scanlines bg-black rounded-xl overflow-hidden flex flex-col h-full relative">
+        <div className="crt-scanlines bg-black rounded-none overflow-hidden flex flex-col h-full relative">
           {/* Tab bar */}
           {showTabs && (
             <div className="bg-black border-b border-amber-900 flex items-center px-2 shrink-0" role="tablist" aria-label="Game tabs">
@@ -47,10 +47,10 @@ export default function PipBoyFrame({
                   aria-selected={activeTab === tab}
                   aria-controls={`tabpanel-${tab}`}
                   onClick={() => onTabChange?.(tab)}
-                  className={`px-2 py-1 text-xs uppercase tracking-widest font-mono transition-colors ${
+                  className={`px-2 py-1 text-xs uppercase tracking-widest font-mono ${
                     activeTab === tab
                       ? 'text-amber-400 border-b-2 border-amber-500'
-                      : 'text-amber-800 hover:text-amber-600'
+                      : 'text-amber-800'
                   }`}
                 >
                   {tab}

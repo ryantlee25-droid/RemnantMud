@@ -129,14 +129,14 @@ export default function Prologue({ onComplete }: PrologueProps) {
           {!done ? (
             <button
               onClick={skipToEnd}
-              className="text-amber-700 text-xs uppercase tracking-widest hover:text-amber-500 transition-colors"
+              className="text-amber-700 text-xs uppercase tracking-widest"
             >
               Skip →
             </button>
           ) : (
             <button
               onClick={onComplete}
-              className="border border-amber-600 text-amber-400 px-6 py-2 text-sm hover:bg-amber-900 transition-colors"
+              className="border border-amber-600 text-amber-400 px-6 py-2 text-sm"
               autoFocus
             >
               Continue →

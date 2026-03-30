@@ -33,7 +33,7 @@ export default function ThemePicker({ onSelect }: ThemePickerProps) {
           </div>
           <div className="text-2xl text-amber-300">Choose your signal.</div>
           <div className="text-amber-600 text-xs mt-1">
-            This can be changed later in the inventory panel.
+            This can be changed later in the EQUIPMENT MANIFEST.
           </div>
         </div>
 
@@ -53,10 +53,10 @@ export default function ThemePicker({ onSelect }: ThemePickerProps) {
               onClick={() => setSelected(theme.id)}
               onMouseEnter={() => setHovered(theme.id)}
               onMouseLeave={() => setHovered(null)}
-              className={`w-full text-left border px-4 py-3 transition-colors ${
+              className={`w-full text-left border px-4 py-3 ${
                 selected === theme.id
                   ? 'border-amber-500 bg-amber-950'
-                  : 'border-amber-900 hover:border-amber-700 hover:bg-amber-950'
+                  : 'border-amber-900'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -80,9 +80,9 @@ export default function ThemePicker({ onSelect }: ThemePickerProps) {
 
         <button
           onClick={handleConfirm}
-          className="w-full border border-amber-600 text-amber-400 py-2 text-sm hover:bg-amber-900 transition-colors"
+          className="w-full border border-amber-600 text-amber-400 py-2 text-sm"
         >
-          Continue
+          RESUME
         </button>
       </div>
     </div>

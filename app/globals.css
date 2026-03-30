@@ -11,6 +11,20 @@
   --font-mono-stack: 'Courier New', Courier, 'Lucida Console', monospace;
 }
 
+/* Kill all smooth transitions globally — terminals have no interpolation */
+*, *::before, *::after {
+  transition: none !important;
+  animation-duration: 0s !important;
+}
+
+/* Exception: keep cursor blink and typewriter pulse */
+.cursor-blink {
+  animation-duration: 1s !important;
+}
+.animate-pulse {
+  animation-duration: 2s !important;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

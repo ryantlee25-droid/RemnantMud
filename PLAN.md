@@ -1867,3 +1867,448 @@ Every task in this plan is complete when:
 19. Soulbound — damage increases with kills this fight (+1 per kill, max +5)
 20. Reforged — armor +1 on hit (scales off damage), capped
 
+---
+
+# Plan: The Final Push — From 7.5 to 9/10
+_Created: 2026-03-29 | Type: New Feature (multi-domain convoy)_
+
+## Goal
+
+Close every gameplay loop gap and pacing problem identified in the editorial review, transforming The Remnant from a well-written-but-passive experience into a game where every player has direction, progression feedback, and reasons to explore deeper.
+
+## Background
+
+Three convoys shipped today: narrative systems (world events, pressure, companions, consequences, narrator voice, player monologue), UX overhaul (vendor dialogue, item stacking, sensory verbs, rich text, tutorial hints), and story quality (combat traits, room enrichment, dialogue trees). The game now has 271 rooms, 14 zones, 109 NPCs, 195 items, 433 passing tests. What remains is the editorial diagnosis: the radio signal needs to be THE quest spine, crafting needs real items, exploration needs tracking, character creation needs emotional weight, economy needs faction awareness, weak rooms need surgery, combat needs location flavor, and the companion/event/death systems need polish.
+
+## Scope
+
+**In scope:**
+1. Radio signal as main quest spine (dialogue rewrites, NPC rumor injection)
+2. Crafting system activation (crafted item definitions in `items.ts`, narrative flavor)
+3. Exploration discovery journal (rooms visited, zone %, narrative keys)
+4. Character creation loss deepening (ritual scene after stat allocation)
+5. Faction-based vendor pricing (multiplier in trade handler)
+6. Soft zone gating via NPC warnings (movement handler)
+7. Filler room overhaul (15-20 weak rooms across zones)
+8. Environmental combat modifiers (room tags affecting combat rolls)
+9. World event frequency increase (triggerActionCount values)
+10. Companion introduction scenes (pre-join narrative beats)
+11. Pressure-based room description shifts (movement handler lens)
+12. Death room persistence (echoes system + movement handler)
+
+**Out of scope:**
+- New zones or major map restructuring
+- Supabase schema migrations (all changes use existing columns)
+- New enemy types or Hollow subtypes
+- Multiplayer or real-time features
+- Mobile/responsive layout changes
+
+## Technical Approach
+
+The work decomposes into 8 Riders with zero file overlap. Key architectural observations from codebase reading:
+
+1. **Crafting is 90% wired.** `lib/actions/craft.ts` has a complete handler, `lib/crafting.ts` has `canCraft`/`attemptCraft`, `data/recipes.ts` has 11 recipes with rich descriptions. The gap: `data/items.ts` has 29 `crafted_` item stubs that need full definitions (stats, descriptions, tiers). The craft handler already calls `getItem()` for result items -- it just needs those items to exist.
+
+2. **World events use modular `triggerActionCount` values** in `data/worldEvents/act1_events.ts`, `act2_events.ts`, `act3_events.ts`. Current values range 30-62. Reducing these to 15-25 range is a data-only change.
+
+3. **The trade system** in `lib/actions/trade.ts` already has `getPlayerCurrency()` and sell price calculation (`Math.floor(item.value / 2)`). Faction pricing is a multiplier inserted into `handleBuy` and `handleSell`.
+
+4. **Room descriptions** are dispatched in `lib/actions/movement.ts` via `getRoomDescription()` and the `handleMove` function. Pressure-based description shifts and zone warnings can be injected here without touching combat code.
+
+5. **The companion system** in `lib/companionSystem.ts` already has `JOIN_NARRATION` pools and `addCompanion` / `getCompanionJoinMessage`. Companion introduction scenes are pre-join dialogue tree nodes.
+
+6. **Death room marking** fits naturally into `lib/echoes.ts` (`createCycleSnapshot` already records `deathRoom`) and `lib/actions/movement.ts` (where visited rooms are displayed).
+
+7. **The DataTab component** (`components/tabs/DataTab.tsx`) already shows faction standing, quest flags, bestiary, and lore items. Exploration journal is a new section here.
+
+8. **CharacterCreation.tsx** has a clean separation between stat allocation and personal loss selection. The loss ritual is a new phase inserted between them.
+
+## Open Questions
+
+- [ ] Should crafted items that already have stubs in `items.ts` (29 entries) get stat values from the recipe descriptions, or should we design stats independently?
+- [ ] For death room persistence: should the "stain" text be permanent across cycles, or only within the current cycle?
+- [ ] Filler room overhaul: confirm the specific rooms to merge/remove (CR-15 into CR-09, remove CR-16/CR-17) -- this affects exit maps in adjacent rooms.
+
+---
+
+## Convoy Decomposition: 8 Riders
+
+### File Ownership Matrix
+
+| File / Directory | Rider |
+|---|---|
+| `data/dialogueTrees.ts` (radio signal trees, companion intro trees) | A |
+| `data/rooms/crossroads.ts` (NPC rumor injection, quest hook emphasis) | A |
+| `data/npcs.ts` (dialogue field updates for radio signal rumors) | A |
+| `data/items.ts` (crafted item definitions section only) | B |
+| `data/recipes.ts` (craft flavor text polish, no structural changes) | B |
+| `lib/crafting.ts` (craft success/fail message enrichment) | B |
+| `components/tabs/DataTab.tsx` (exploration journal section) | C |
+| `lib/actions/items.ts` (handleJournal output enrichment) | C |
+| `types/game.ts` (ExplorationProgress interface, RoomFlags extensions) | C |
+| `components/CharacterCreation.tsx` (loss ritual phase) | D |
+| `lib/actions/trade.ts` (faction pricing multiplier) | E |
+| `lib/actions/movement.ts` (zone warnings, pressure descriptions, death room echo) | E |
+| `data/rooms/the_breaks.ts` | F |
+| `data/rooms/the_dust.ts` | F |
+| `data/rooms/river_road.ts` | F |
+| `data/rooms/salt_creek.ts` | F |
+| `data/rooms/the_pine_sea.ts` | F |
+| `data/rooms/the_pens.ts` | F |
+| `data/rooms/the_ember.ts` (weak rooms only, not NPC changes) | F |
+| `lib/combat.ts` (environmental modifier application) | G |
+| `lib/actions/combat.ts` (room modifier dispatch in attack handler) | G |
+| `data/rooms/covenant.ts` (combat modifier tags) | G |
+| `data/rooms/the_scar.ts` (combat modifier tags) | G |
+| `data/rooms/the_deep.ts` (combat modifier tags) | G |
+| `data/rooms/the_stacks.ts` (combat modifier tags) | G |
+| `data/rooms/duskhollow.ts` (combat modifier tags) | G |
+| `lib/companionSystem.ts` (introduction scene dispatch) | H |
+| `data/companionNarration.ts` (introduction scene text) | H |
+| `lib/worldEvents.ts` (no changes -- data-only frequency change) | -- |
+| `data/worldEvents/act1_events.ts` | H |
+| `data/worldEvents/act2_events.ts` | H |
+| `data/worldEvents/act3_events.ts` | H |
+| `lib/echoes.ts` (death room flag in snapshot) | H |
+
+### Dependency Graph
+
+```
+Batch 1 (no dependencies — all independent):
+  Rider A — Quest Spine
+  Rider B — Crafting Items
+  Rider C — Exploration Journal
+  Rider D — Character Creation Loss
+  Rider F — Filler Room Overhaul
+  Rider G — Combat Environment Modifiers
+  Rider H — Companion Intros + Events + Death Persistence
+
+Batch 2 (depends on Batch 1):
+  Rider E — Economy + Zone Gating + Pressure Descriptions
+    depends on: Rider C#types (ExplorationProgress interface)
+    depends on: Rider H (death room flag in echoes.ts for death room echo in movement.ts)
+```
+
+Note: Rider E touches `movement.ts` which needs to read the death room data from echoes (Rider H) and the exploration tracking types from Rider C. All other Riders are fully independent and can run in parallel.
+
+---
+
+## Tasks
+
+### Rider A — Quest Spine: Radio Signal as Main Hook
+
+Reframe the radio signal from "one option among five" to THE driving mystery that every player encounters.
+
+- [ ] **Rewrite Patch's post-gate dialogue** to explicitly frame the radio signal as the primary objective
+  - Files: `data/dialogueTrees.ts` -- add/modify Patch dialogue tree nodes
+  - Patch should say something like: "Before anything else -- have you heard the signal? Everyone hears it eventually. Shortwave, repeating, something about coordinates near the Scar. Sparks at the north market is the only one who's made sense of it."
+  - The signal should be mentioned BEFORE faction introductions, not after
+  - Tests: unit test that Patch's dialogue tree references `quest_radio_signal` in its first branches
+
+- [ ] **Add radio signal rumors to every Crossroads NPC**
+  - Files: `data/rooms/crossroads.ts` (NPC activity pool text), `data/npcs.ts` (dialogue field updates)
+  - Gate guard: "Another one asking about the signal? Head north to the market. Ask for Sparks."
+  - Market vendors: overheard conversations about "that repeating broadcast"
+  - Job board: pin a prominent note about the signal (higher weight than current posting)
+  - Campground NPCs: travelers discussing the signal around fires
+  - Tests: verify at least 5 Crossroads rooms have radio signal references in their text content
+
+- [ ] **Enhance Sparks' introduction** as the signal expert
+  - Files: `data/dialogueTrees.ts` -- new dialogue tree `cr_sparks_signal_quest`
+  - Sparks should give the player a concrete first objective: "I need a signal booster built. Electronics salvage and wire coil. Build one and I can triangulate the source."
+  - This connects crafting (Rider B's signal_booster recipe already exists) to the quest spine
+  - Tests: dialogue tree node validation -- start node exists, all branches have valid targets
+
+- [ ] **Add signal-related extras to key rooms outside Crossroads**
+  - Files: `data/npcs.ts` (dialogue updates for NPCs who mention the signal in passing)
+  - River Road: travelers mention hearing strange broadcasts at night
+  - The Stacks: Lev references the signal in connection to MERIDIAN
+  - Salt Creek: Salters dismiss it as "Reclaimer noise"
+  - Tests: grep-based content test that signal/radio keywords appear in at least 3 non-crossroads zones
+
+---
+
+### Rider B — Crafting System Activation
+
+Complete the crafting loop by ensuring all recipe result items have full definitions with stats, descriptions, and gameplay value.
+
+- [ ] **Define all crafted item entries in `items.ts`**
+  - Files: `data/items.ts` (crafted items section, lines 2114+)
+  - 11 recipes exist in `data/recipes.ts`; each `result.itemId` needs a complete `Item` entry
+  - Already have stubs for: `crafted_purified_antiseptic`, `crafted_combat_medkit`, `crafted_trauma_kit`, `crafted_improvised_trap`, `crafted_reinforced_plate`, `crafted_pipe_weapon_improved`, `crafted_incendiary_charge`, `crafted_signal_booster`, `crafted_armor_patch`, `crafted_chemical_light`, `crafted_lockpick_set`, `crafted_antiviral_compound`, `crafted_emp_device`, `crafted_fortified_armor`
+  - Each needs: `damage`/`defense`/`healing` stats, `tier`, `weight`, `value`, `description` with post-apocalyptic flavor
+  - Signal booster ties to quest spine (Rider A); EMP device is late-game key item
+  - Notes: Extend existing item patterns in `data/items.ts` -- match the descriptive density of items like `combat_knife` and `kevlar_vest`
+  - Tests: unit test that every recipe result itemId resolves via `getItem()`
+
+- [ ] **Enrich craft success/fail messages with narrative flavor**
+  - Files: `lib/crafting.ts` (modify `attemptCraft` return messages)
+  - Success: recipe-specific flavor text (e.g., "The antiseptic hisses as it purifies. Clean. Stable. The difference between infection and recovery.")
+  - Failure: flavor text that varies by skill type (field_medicine failures vs mechanics failures)
+  - Notes: Use existing `recipe.description` field as source material -- the descriptions are already excellent
+  - Tests: unit test that `attemptCraft` returns messages longer than generic "You successfully craft X"
+
+- [ ] **Add crafting component drop rates to early-game rooms**
+  - Files: `data/recipes.ts` (no structural changes, but verify `discoveredBy` quest flags are achievable)
+  - Verify: `scrap_metal`, `wire_coil`, `gauze`, `bandages`, `chemicals_basic`, `electronics_salvage` all appear in room itemSpawn tables in Act 1 zones
+  - Notes: Do NOT modify room files (owned by Riders F and G) -- only verify and document gaps for follow-up
+  - Tests: integration test that lists all recipe component itemIds and checks each appears in at least 2 room spawn tables
+
+---
+
+### Rider C — Exploration Discovery Journal
+
+Give players a sense of progress and completionism through tracked exploration data.
+
+- [ ] **Add ExplorationProgress to game types**
+  - Files: `types/game.ts` (new interface, append-only)
+  - ```typescript
+    interface ExplorationProgress {
+      roomsVisited: number
+      totalRooms: number
+      zoneProgress: Partial<Record<ZoneType, { visited: number; total: number }>>
+      narrativeKeysFound: number
+      totalNarrativeKeys: number
+    }
+    ```
+  - Add `explorationProgress?: ExplorationProgress` to `GameState`
+  - Tests: type compilation check (tsc --noEmit)
+
+- [ ] **Compute exploration stats from existing data**
+  - Files: `lib/actions/items.ts` (modify `handleJournal` to include exploration output)
+  - Use `ALL_ROOMS` from `data/rooms/index.ts` to compute total rooms per zone
+  - Use `ledger.discoveredRoomIds` for visited count (already tracked in `PlayerLedger`)
+  - Use `player.narrativeKeys` for narrative key count (already tracked on Player)
+  - Format: "Explored 47/271 rooms (17%). Crossroads: 12/18. River Road: 8/22. ..."
+  - Notes: Reuse existing `PlayerLedger.discoveredRoomIds` -- do NOT create a new tracking mechanism
+  - Tests: unit test that `handleJournal` output includes exploration percentage when player has visited rooms
+
+- [ ] **Add Exploration section to DataTab**
+  - Files: `components/tabs/DataTab.tsx` (new section above Faction Standing)
+  - Show: total rooms explored / total, zone-by-zone breakdown, narrative keys found
+  - Progress bar per zone using Tailwind (amber color scale)
+  - "You have explored 17% of the known world" header text
+  - Tests: component render test that DataTab displays exploration section when player exists
+
+---
+
+### Rider D — Character Creation Loss Deepening
+
+Transform personal loss selection from a sidebar into a narrative ritual.
+
+- [ ] **Add loss ritual phase to CharacterCreation component**
+  - Files: `components/CharacterCreation.tsx`
+  - After stat allocation is complete and "remaining points = 0", before final submit:
+  - New phase: full-screen loss selection with narrative vignette
+  - Each loss type gets a brief scene (3-4 sentences):
+    - Child: "You see their face. Not as they were at the end -- as they were at breakfast, three weeks before. Cereal on the table. Morning light. They looked up and said something you can't remember."
+    - Partner: "The last time you touched their hand, you didn't know it was the last time. Nobody ever knows."
+    - Community: "The town sign is still standing. The town isn't."
+    - Identity: "There is a photograph in your pocket. The person in it has your face. You do not recognize them."
+    - Promise: "You said you would. You said it out loud, to someone who believed you. The words are still in the air."
+  - End with: "You will carry this. The world will remind you."
+  - The detail input (name/town/promise text) should appear AFTER the vignette, not before
+  - Notes: Keep all changes within `CharacterCreation.tsx` -- do not modify game engine or types
+  - Tests: component test that CharacterCreation renders vignette text for each PersonalLossType
+
+---
+
+### Rider E — Economy, Zone Gating, and Pressure Descriptions
+
+Three related movement/trade enhancements that make the world feel responsive to player state.
+
+- [ ] **Implement faction-based vendor pricing**
+  - Files: `lib/actions/trade.ts` (modify `handleBuy` and `handleSell`)
+  - When buying: if vendor NPC has a `faction` field and player has reputation with that faction:
+    - Positive rep with vendor's faction: -10% price per rep level (min 50% of base)
+    - Negative rep with vendor's faction: +10% price per rep level (max 200% of base)
+    - Neutral/no faction NPC: no modifier
+  - When selling: inverse -- friendly vendors pay more (+5% per rep level)
+  - Show the modifier in the trade listing: "Pipe Wrench -- 5 rounds (-10% Accord discount)"
+  - Notes: Use existing `NPC.faction` field and `player.factionReputation` -- no new types needed
+  - Tests: unit test that buy price changes with faction reputation; test ceiling/floor caps
+
+- [ ] **Add soft zone gating warnings in movement handler**
+  - Files: `lib/actions/movement.ts` (modify `handleMove`, after gate checks, before room entry)
+  - When entering a room with `difficulty >= 3` and player level < difficulty:
+    - First visit: "The air changes here. People don't come back from this direction without preparation."
+    - Subsequent visits: briefer warning, e.g., "[Warning: this area is above your current level]"
+  - NOT a hard block -- player can still proceed
+  - Check `room.difficulty` vs `player.level` to determine gap
+  - Notes: Insert after richExit gate checks at line ~236, before `getRoom()` call
+  - Tests: unit test that warning message appears when player.level < room.difficulty
+
+- [ ] **Implement pressure-based room description shifts**
+  - Files: `lib/actions/movement.ts` (modify room description display in `handleMove`)
+  - At pressure 7+: append subtle wrongness to room descriptions
+    - "The shadows in this room are closer than they should be."
+    - "The sound of your breathing is louder than it should be."
+  - At pressure 9+: replace room description with degraded version
+    - "The room. There is a room. Things in it. You are in it. That is all you can hold."
+    - Only on first visit; short descriptions stay as-is on revisit
+  - Use `player.hollowPressure` (already on Player type, default 0)
+  - Notes: Call `getPressureNarration()` from `lib/hollowPressure.ts` for consistent tone
+  - Tests: unit test that room description changes at pressure 7+ and 9+
+
+- [ ] **Add death room echo on revisit**
+  - Files: `lib/actions/movement.ts` (modify `handleMove`, after room entry messages)
+  - Check `cycleHistory` for any snapshot where `deathRoom === nextRoomId`
+  - If match: append message: "This is where you fell. The stain on the floor is yours."
+  - Only fire once per room per cycle (set a quest flag `death_echo_seen_<roomId>`)
+  - Notes: Depends on Rider H adding death room tracking to echoes.ts snapshot
+  - Tests: unit test that death room message appears when cycleHistory contains matching deathRoom
+
+---
+
+### Rider F — Filler Room Overhaul
+
+Surgery on 15-20 rooms scoring below 7/10 in the editorial review.
+
+- [ ] **Merge redundant camps: CR-15 into CR-09**
+  - Files: `data/rooms/crossroads.ts` -- but this file is owned by Rider A
+  - REASSIGNMENT: Rider F handles NON-crossroads zone rooms only
+  - Files: `data/rooms/the_breaks.ts`, `data/rooms/the_dust.ts`, `data/rooms/river_road.ts`, `data/rooms/salt_creek.ts`, `data/rooms/the_pine_sea.ts`, `data/rooms/the_pens.ts`, `data/rooms/the_ember.ts`
+  - Notes: Crossroads room merges (CR-15/CR-16/CR-17) are handled by Rider A as part of quest spine work, since those rooms' exits connect to quest-relevant NPCs
+
+- [ ] **Upgrade 15-20 weak rooms across non-crossroads zones**
+  - For each room below 7/10:
+    - Add 1-2 `extras` entries (examinable details) if missing
+    - Add `environmentalRolls.flavorLines` if absent
+    - Add `personalLossEchoes` for at least 2 loss types if missing
+    - Upgrade `description` text to match the quality bar of best rooms (Scar crater rim, Elk Meadow)
+    - Add `npcSpawns` with activity pools to empty traversal rooms
+  - Every room must answer: "Why would a player remember this?"
+  - Target rooms by zone (audit each file, identify rooms with bare descriptions):
+    - The Breaks: canyon traversal rooms
+    - The Dust: empty desert crossings
+    - River Road: bridge/ford rooms
+    - Salt Creek: camp perimeter rooms
+    - Pine Sea: trail rooms
+    - The Pens: holding area rooms
+  - Tests: content validation test that every room in target zones has at least 1 `extras` entry and `environmentalRolls`
+
+- [ ] **Remove or repurpose purposeless rooms**
+  - If a room exists only as a connector with no description, NPCs, items, or flavor:
+    - Option A: Merge into adjacent room (update exit maps)
+    - Option B: Add content that justifies the room's existence
+  - Document all exit map changes for integration review
+  - Tests: verify all room exit references resolve to valid room IDs (no dangling pointers)
+
+---
+
+### Rider G — Environmental Combat Modifiers
+
+Make combat location-aware with room-tagged modifiers that affect rolls.
+
+- [ ] **Define combat modifier types and add to Room flags**
+  - Files: `lib/combat.ts` (new exported function `getEnvironmentModifiers`)
+  - 4 modifier types:
+    - `combat_high_ground`: +1 player accuracy (defender on lower ground)
+    - `combat_narrow_passage`: both sides -1 defense (cramped quarters)
+    - `combat_collapsing`: random debris damage (1d4 to both, 20% chance per round)
+    - `combat_darkness`: -2 accuracy for both sides unless player has `crafted_chemical_light`
+  - Read modifiers from `room.flags` (e.g., `flags.combat_modifier: 'high_ground'`)
+  - Return a modifier object: `{ playerAccuracy: number, playerDefense: number, enemyAccuracy: number, enemyDefense: number, specialEffect?: () => GameMessage[] }`
+  - Notes: Use existing `RoomFlags` index signature `[key: string]: boolean | number | string | undefined` -- no type changes needed
+  - Tests: unit test for each modifier type returning correct values
+
+- [ ] **Integrate environment modifiers into combat resolution**
+  - Files: `lib/actions/combat.ts` (modify `handleAttack` and `doAttackRound`)
+  - At combat start: read room flags, compute modifiers
+  - Apply accuracy/defense bonuses to `playerAttack` and `enemyAttack` calls
+  - Display modifier on combat start: "[HIGH GROUND] +1 accuracy from elevated position"
+  - Collapsing rooms: roll debris check each round, apply damage to both combatants
+  - Darkness: check inventory for `crafted_chemical_light` to negate
+  - Tests: integration test that combat in a `combat_high_ground` room produces different hit rates
+
+- [ ] **Tag 20-30 rooms with combat modifiers**
+  - Files: `data/rooms/covenant.ts`, `data/rooms/the_scar.ts`, `data/rooms/the_deep.ts`, `data/rooms/the_stacks.ts`, `data/rooms/duskhollow.ts`
+  - Distribution:
+    - Covenant: narrow passages in temple corridors
+    - The Scar: high ground on crater rim, collapsing in unstable ruins
+    - The Deep: darkness everywhere, narrow in mine tunnels
+    - The Stacks: collapsing in unstable floors, darkness in sub-basements
+    - Duskhollow: narrow alleys, darkness at night
+  - Add `flags.combat_modifier: '<type>'` to each tagged room
+  - Tests: count test that at least 20 rooms across target zones have combat_modifier flag
+
+---
+
+### Rider H — Companion Intros, World Event Tuning, Death Persistence
+
+Three polish systems that share no files with other Riders.
+
+- [ ] **Add companion introduction scenes**
+  - Files: `data/companionNarration.ts` (new introduction scene text pools)
+  - Before `addCompanion` fires, display a multi-message introduction sequence:
+    - Howard: mentions the bridge, asks about your destination, offers to show you the way
+    - Lev: asks about your research background, mentions needing field data
+    - Avery: shares a concern about Kindling supply lines, asks if you've seen the route
+    - Patch: clinical assessment -- "You're wounded but functional. I'm heading the same direction."
+    - Vesper: quiet offer -- "I know the Duskhollow paths. You don't. Simple math."
+    - Cross: military precision -- "You're heading into contested territory. Two survive better than one."
+    - Sparks: "The signal is stronger northeast. I need someone watching my back while I tune."
+  - Each introduction is 3-5 messages of narrative text before the join mechanic fires
+  - Files: `lib/companionSystem.ts` (new `getCompanionIntroduction` function)
+  - Tests: unit test that each companion NPC has an introduction pool with at least 3 messages
+
+- [ ] **Reduce world event frequency: 30-50 actions to 15-25**
+  - Files: `data/worldEvents/act1_events.ts`, `data/worldEvents/act2_events.ts`, `data/worldEvents/act3_events.ts`
+  - Change all `triggerActionCount` values: divide current values by ~2 (floor to nearest integer)
+  - Act 1 events should fire most frequently (every 15-20 actions)
+  - Act 2/3 events: every 18-25 actions
+  - Add 3-5 faction-specific event variants per act (new entries in each file):
+    - Accord: patrol sightings, checkpoint updates
+    - Salters: trade convoy movements
+    - Kindling: fire ceremony announcements
+    - Use existing `factionCheck` field to gate these
+  - Tests: verify no event has `triggerActionCount < 15` or `> 25`; verify new faction events have valid `factionCheck`
+
+- [ ] **Implement death room persistence in echoes**
+  - Files: `lib/echoes.ts` (ensure `createCycleSnapshot` records `deathRoom` -- already does!)
+  - Verify: `CycleSnapshot.deathRoom` is correctly populated on player death (check `gameEngine._handlePlayerDeath`)
+  - No code change needed in echoes.ts -- the field is already recorded
+  - The consumption of this data happens in Rider E (movement.ts death room echo)
+  - Tests: unit test that `createCycleSnapshot` with a dead player produces `deathRoom` matching `player.currentRoomId`
+
+---
+
+## Pre-MR Pipeline (per Rider)
+
+Each Rider, before opening a PR, runs BOTH in parallel:
+
+1. **Inspector** -- zero blockers required
+2. **Outrider** -- zero failures required (coverage gaps noted in PR, not blocking)
+
+Then: **Courier** opens the PR with coverage gaps (if any) noted in the description.
+
+---
+
+## Definition of Done
+
+Every task in this plan is complete when:
+- [ ] Code written and self-reviewed
+- [ ] Tests written or updated for the changed logic
+- [ ] `npx tsc --noEmit` passes with zero errors
+- [ ] All 433+ existing tests still pass
+- [ ] New content matches the game's best writing quality (Scar crater rim, Elk Meadow, Echo)
+- [ ] Crafting feels post-apocalyptic, not fantasy
+- [ ] Quest spine feels organic, not forced
+- [ ] `code-reviewer` passes with no blockers
+- [ ] `test-runner` passes with no failures
+- [ ] MR opened via `git-agent` with coverage gaps (if any) noted in the description
+
+---
+
+## References
+
+- Editorial review diagnosis (provided in task context)
+- `data/recipes.ts` -- 11 existing recipes with full descriptions
+- `lib/actions/craft.ts` -- complete craft handler already wired
+- `lib/crafting.ts` -- `canCraft`/`attemptCraft` fully implemented
+- `lib/hollowPressure.ts` -- pressure narration for all 11 levels
+- `lib/companionSystem.ts` -- companion join/leave/commentary system
+- `lib/echoes.ts` -- cycle snapshot with `deathRoom` field
+- `types/convoy-contracts.d.ts` -- existing convoy type contracts
+- Previous convoy plans in this file (narrative, UX, story quality)
+

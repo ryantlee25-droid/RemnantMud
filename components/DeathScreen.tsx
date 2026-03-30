@@ -2,31 +2,75 @@
 
 // ============================================================
 // DeathScreen.tsx — Shown when the player's HP reaches 0
+// Terminal aesthetic: instant display, typewriter reveal, no fades
 // ============================================================
 
-import { useState, useEffect } from 'react'
-import RemnantLogo from '@/components/RemnantLogo'
+import { useState, useEffect, useRef, useCallback } from 'react'
 
 interface DeathScreenProps {
-  cycle: number           // current cycle number (1 = first death)
-  xpGained: number        // total XP earned this cycle
-  roomsExplored: number   // count of visited rooms this cycle
-  causeOfDeath: string    // e.g. "combat", "infection", "environmental"
-  onContinue: () => void  // called when player clicks RETURN
+  cycle: number
+  xpGained: number
+  roomsExplored: number
+  causeOfDeath: string
+  onContinue: () => void
   echoStats?: { vigor: number; grit: number; reflex: number; wits: number; presence: number; shadow: number }
   stashCount?: number
   questMilestones?: string[]
 }
 
 const CAUSE_LABELS: Record<string, string> = {
-  combat:        'Killed in combat',
-  infection:     'Consumed by infection',
-  environmental: 'Claimed by the environment',
+  combat:        'KILLED IN COMBAT',
+  infection:     'CONSUMED BY INFECTION',
+  environmental: 'CLAIMED BY THE ENVIRONMENT',
 }
 
 function causeLabel(cause: string): string {
-  return CAUSE_LABELS[cause] ?? cause
+  return CAUSE_LABELS[cause] ?? cause.toUpperCase()
 }
+
+function useTypewriter(text: string, active: boolean, speed: number = 30) {
+  const [displayed, setDisplayed] = useState('')
+  const [done, setDone] = useState(false)
+  const indexRef = useRef(0)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  useEffect(() => {
+    if (!active) {
+      setDisplayed('')
+      setDone(false)
+      indexRef.current = 0
+      return
+    }
+    indexRef.current = 0
+    setDisplayed('')
+    setDone(false)
+    intervalRef.current = setInterval(() => {
+      indexRef.current += 1
+      if (indexRef.current >= text.length) {
+        setDisplayed(text)
+        setDone(true)
+        if (intervalRef.current) clearInterval(intervalRef.current)
+      } else {
+        setDisplayed(text.slice(0, indexRef.current))
+      }
+    }, speed)
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [text, active, speed])
+
+  const skip = useCallback(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current)
+    setDisplayed(text)
+    setDone(true)
+  }, [text])
+
+  return { displayed, done, skip }
+}
+
+const DEATH_NARRATIVE = `The Revenant effect is not resurrection. That word implies something sacred. What happens to you is more like a document being restored from an older backup -- some edits lost, some corruptions introduced, the file a little smaller each time. CHARON-7 does not bring you back. It reconstructs something that can pass for you.
+
+Each cycle you are a little less certain which memories are yours. Each cycle the violence comes a little more naturally. The virus is not keeping you alive out of mercy. It is keeping you alive because you are useful to it, and it has not finished deciding what for.`
 
 export default function DeathScreen({
   cycle,
@@ -38,130 +82,108 @@ export default function DeathScreen({
   stashCount,
   questMilestones,
 }: DeathScreenProps) {
-  const [visible, setVisible] = useState(false)
-  const [buttonVisible, setButtonVisible] = useState(false)
+  const [showNarrative, setShowNarrative] = useState(false)
+  const narrative = useTypewriter(DEATH_NARRATIVE, showNarrative, 20)
 
-  // Fade in the content shortly after mount
   useEffect(() => {
-    const fadeIn = setTimeout(() => setVisible(true), 100)
-    const showButton = setTimeout(() => setButtonVisible(true), 2100)
-    return () => {
-      clearTimeout(fadeIn)
-      clearTimeout(showButton)
-    }
+    const timer = setTimeout(() => setShowNarrative(true), 500)
+    return () => clearTimeout(timer)
   }, [])
 
   return (
-    <div className="flex flex-col items-center flex-1 overflow-y-auto font-mono text-amber-400 p-6 pt-12" role="alert" aria-live="assertive">
-      <div
-        className="max-w-xl w-full space-y-8 text-center"
-        style={{
-          opacity: visible ? 1 : 0,
-          transition: 'opacity 1.4s ease-in',
-        }}
-      >
+    <div className="flex flex-col items-center flex-1 overflow-y-auto font-mono text-amber-400 p-4 pt-8" role="alert" aria-live="assertive">
+      <div className="max-w-xl w-full space-y-4">
+
         {/* Cycle label */}
         <div className="text-amber-600 text-xs uppercase tracking-widest">
-          Cycle {cycle}
+          CYCLE {cycle}
         </div>
 
         {/* Header */}
         <div>
-          <div className="mb-4 opacity-60">
-            <RemnantLogo size="compact" />
-          </div>
-          <h1 className="text-3xl tracking-[0.3em] uppercase text-amber-300 mb-3">
+          <div className="text-amber-300 text-sm uppercase tracking-widest mb-1">
             YOU ARE DEAD
-          </h1>
-          <p className="text-amber-600 text-sm italic">
+          </div>
+          <div className="text-amber-600 text-xs">
             It is still watching. It always finds you.
-          </p>
+          </div>
         </div>
 
         {/* Cause of death */}
-        <div className="text-amber-600 text-xs uppercase tracking-widest border-t border-amber-900 pt-6">
+        <div className="text-amber-600 text-xs uppercase tracking-widest border-t border-amber-900 pt-4">
           {causeLabel(causeOfDeath)}
         </div>
 
         {/* Stats */}
-        <div className="flex justify-center gap-10 text-sm border border-amber-900 py-4 px-6">
-          <div>
-            <div className="text-amber-600 text-xs uppercase tracking-widest mb-1">XP Earned</div>
-            <div className="text-amber-300 text-xl">{xpGained}</div>
-          </div>
-          <div>
-            <div className="text-amber-600 text-xs uppercase tracking-widest mb-1">Rooms Explored</div>
-            <div className="text-amber-300 text-xl">{roomsExplored}</div>
-          </div>
+        <div className="border border-amber-900 py-3 px-4 text-xs">
+          <div>XP EARNED: <span className="text-amber-300">{xpGained}</span></div>
+          <div>ROOMS EXPLORED: <span className="text-amber-300">{roomsExplored}</span></div>
         </div>
 
         {/* What persists across death */}
         {(echoStats || (stashCount && stashCount > 0) || (questMilestones && questMilestones.length > 0)) && (
-          <div className="border border-amber-900 py-4 px-6 text-left space-y-3">
-            <div className="text-amber-600 text-xs uppercase tracking-widest text-center mb-2">
-              What You Carry Forward
+          <div className="border border-amber-900 py-3 px-4 text-xs space-y-1">
+            <div className="text-amber-600 uppercase tracking-widest mb-1">
+              WHAT YOU CARRY FORWARD
             </div>
             {echoStats && (
-              <div className="grid grid-cols-3 gap-x-6 gap-y-1 text-sm">
-                <div><span className="text-amber-600">VIG:</span> <span className="text-amber-300">{echoStats.vigor}</span></div>
-                <div><span className="text-amber-600">GRT:</span> <span className="text-amber-300">{echoStats.grit}</span></div>
-                <div><span className="text-amber-600">REF:</span> <span className="text-amber-300">{echoStats.reflex}</span></div>
-                <div><span className="text-amber-600">WIT:</span> <span className="text-amber-300">{echoStats.wits}</span></div>
-                <div><span className="text-amber-600">PRS:</span> <span className="text-amber-300">{echoStats.presence}</span></div>
-                <div><span className="text-amber-600">SHD:</span> <span className="text-amber-300">{echoStats.shadow}</span></div>
+              <div className="grid grid-cols-3 gap-x-4 gap-y-0.5">
+                <div>VIG: <span className="text-amber-300">{echoStats.vigor}</span></div>
+                <div>GRT: <span className="text-amber-300">{echoStats.grit}</span></div>
+                <div>REF: <span className="text-amber-300">{echoStats.reflex}</span></div>
+                <div>WIT: <span className="text-amber-300">{echoStats.wits}</span></div>
+                <div>PRS: <span className="text-amber-300">{echoStats.presence}</span></div>
+                <div>SHD: <span className="text-amber-300">{echoStats.shadow}</span></div>
               </div>
             )}
             {stashCount != null && stashCount > 0 && (
-              <div className="text-sm text-amber-300">
+              <div className="text-amber-300">
                 Stash: {stashCount} item{stashCount !== 1 ? 's' : ''} preserved
               </div>
             )}
             {questMilestones && questMilestones.length > 0 && (
-              <div className="text-sm text-amber-300">
+              <div className="text-amber-300">
                 {questMilestones.length} milestone{questMilestones.length !== 1 ? 's' : ''} remembered
               </div>
             )}
           </div>
         )}
 
-        {/* Narrative */}
-        <div className="space-y-4 text-sm text-amber-400 leading-relaxed text-left">
-          <p>
-            The Revenant effect is not resurrection. That word implies something sacred.
-            What happens to you is more like a document being restored from an older backup —
-            some edits lost, some corruptions introduced, the file a little smaller each time.
-            CHARON-7 does not bring you back. It reconstructs something that can pass for you.
-          </p>
-          <p>
-            Each cycle you are a little less certain which memories are yours.
-            Each cycle the violence comes a little more naturally.
-            The virus is not keeping you alive out of mercy.
-            It is keeping you alive because you are useful to it,
-            and it has not finished deciding what for.
-          </p>
+        {/* Narrative — typewriter reveal */}
+        <div className="text-xs text-amber-400 leading-relaxed text-left whitespace-pre-wrap">
+          {narrative.displayed}
+          {!narrative.done && (
+            <span className="inline-block w-1.5 h-3 bg-amber-400 animate-pulse ml-0.5 align-middle" />
+          )}
         </div>
+        {!narrative.done && (
+          <button
+            onClick={narrative.skip}
+            className="text-amber-900 text-xs uppercase tracking-widest"
+          >
+            Skip
+          </button>
+        )}
 
         {/* Closing line */}
-        <div className="text-amber-500 text-sm italic">
-          The world is not finished with you.
-        </div>
+        {narrative.done && (
+          <div className="text-amber-500 text-xs">
+            The world is not finished with you.
+          </div>
+        )}
 
         {/* Button */}
-        <div
-          style={{
-            opacity: buttonVisible ? 1 : 0,
-            transition: 'opacity 0.8s ease-in',
-          }}
-        >
-          <button
-            onClick={onContinue}
-            disabled={!buttonVisible}
-            className="border border-amber-600 text-amber-400 px-8 py-2 text-sm hover:bg-amber-900 transition-colors disabled:cursor-not-allowed"
-            autoFocus={buttonVisible}
-          >
-            RETURN
-          </button>
-        </div>
+        {narrative.done && (
+          <div>
+            <button
+              onClick={onContinue}
+              className="border border-amber-600 text-amber-400 px-8 py-2 text-xs disabled:cursor-not-allowed"
+              autoFocus
+            >
+              RETURN
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

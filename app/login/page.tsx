@@ -2,6 +2,7 @@
 
 // ============================================================
 // /login — Magic-link auth via Supabase
+// Terminal boot-sequence aesthetic
 // ============================================================
 
 import { useState } from 'react'
@@ -17,7 +18,7 @@ export default function LoginPage() {
     e.preventDefault()
     const trimmed = email.trim()
     if (!trimmed) {
-      setError('Enter your email address.')
+      setError('INVALID INPUT. ENTER IDENT CODE.')
       return
     }
 
@@ -43,37 +44,35 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-black font-mono p-4">
-      <div className="w-full max-w-sm text-amber-400">
-        <div className="mb-8">
-          <div className="text-amber-600 text-xs uppercase tracking-widest mb-1">
-            THE REMNANT — Post-Apocalyptic Text Adventure
-          </div>
-          <div className="text-2xl text-amber-300">ACCESS TERMINAL</div>
-          <div className="text-amber-600 text-xs mt-1">
-            Enter your email to receive a sign-in link.
-          </div>
+    <div className="min-h-screen bg-black font-mono text-amber-400 p-4 flex flex-col justify-center">
+      <div className="w-full max-w-3xl mx-auto">
+        <div className="mb-4 text-amber-600 text-xs uppercase tracking-widest">
+          THE REMNANT -- POST-COLLAPSE SURVIVAL TERMINAL
+        </div>
+        <div className="text-amber-400 text-xs mb-1">ACCESS TERMINAL</div>
+        <div className="text-amber-600 text-xs mb-6">
+          ENTER IDENT CODE:
         </div>
 
         {sent ? (
           <div className="border border-amber-700 p-4">
-            <div className="text-amber-300 text-sm mb-2">Link sent.</div>
+            <div className="text-amber-300 text-xs mb-2">LINK TRANSMITTED.</div>
             <div className="text-amber-700 text-xs">
-              Check <span className="text-amber-500">{email}</span> for a magic link.
-              Click it to enter the wasteland.
+              CHECK <span className="text-amber-500">{email}</span> FOR ACCESS LINK.
+              ACTIVATE TO ENTER THE WASTELAND.
             </div>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-xs text-amber-600 uppercase tracking-widest mb-1">
-                Email
+                IDENT CODE
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-transparent border border-amber-800 text-amber-300 px-3 py-2 outline-none focus:border-amber-500 text-sm placeholder-amber-900"
+                className="w-full bg-transparent border border-amber-800 text-amber-300 px-3 py-2 outline-none focus:border-amber-500 text-xs placeholder-amber-900"
                 placeholder="survivor@example.com"
                 autoFocus
                 autoComplete="email"
@@ -88,16 +87,15 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full border border-amber-600 text-amber-400 py-2 text-sm hover:bg-amber-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="w-full border border-amber-600 text-amber-400 py-2 text-xs disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {loading ? 'Sending...' : 'Send Link'}
+              {loading ? 'TRANSMITTING...' : '[ ACCESS ]'}
             </button>
           </form>
         )}
 
         <div className="mt-6 text-amber-700 text-xs">
-          No password required. No account setup.
-          The wasteland doesn&apos;t have time for that.
+          NO CLEARANCE REQUIRED. ANONYMOUS ACCESS PERMITTED.
         </div>
       </div>
     </div>

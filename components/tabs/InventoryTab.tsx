@@ -110,10 +110,10 @@ export default function InventoryTab() {
             <button
               key={theme.id}
               onClick={() => handleThemeSelect(theme.id)}
-              className={`w-4 h-4 rounded-full border-2 transition-colors ${
+              className={`w-4 h-4 rounded-full border-2 ${
                 currentTheme === theme.id
                   ? 'border-amber-400 brightness-125'
-                  : 'border-amber-900 hover:border-amber-700'
+                  : 'border-amber-900'
               }`}
               style={{ backgroundColor: theme.sampleColor }}
               aria-label={`Switch to ${theme.name} theme`}
@@ -129,9 +129,9 @@ export default function InventoryTab() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="text-xs border border-amber-800 text-amber-500 px-2 py-1 hover:bg-amber-950 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="text-xs border border-amber-800 text-amber-500 px-2 py-1 disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            {saving ? 'Saving...' : 'Save'}
+            {saving ? 'COMMITTING...' : 'COMMIT TO MEMORY'}
           </button>
           {saved && (
             <span className="text-amber-500 text-xs animate-pulse">Saved.</span>

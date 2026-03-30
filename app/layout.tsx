@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { GameProvider } from '@/lib/gameContext'
-import ThemeLoader from '@/components/ThemeLoader'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
@@ -23,9 +22,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className="h-full bg-neutral-950 text-amber-400 font-mono">
+      <body className="h-full bg-black text-gray-300 font-mono">
         <GameProvider>
-          <ThemeLoader />
           {children}
         </GameProvider>
         <Analytics />

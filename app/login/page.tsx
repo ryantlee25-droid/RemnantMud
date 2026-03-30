@@ -2,7 +2,7 @@
 
 // ============================================================
 // /login — Magic-link auth via Supabase
-// Terminal boot-sequence aesthetic
+// Clean, minimal login form
 // ============================================================
 
 import { useState } from 'react'
@@ -18,7 +18,7 @@ export default function LoginPage() {
     e.preventDefault()
     const trimmed = email.trim()
     if (!trimmed) {
-      setError('INVALID INPUT. ENTER IDENT CODE.')
+      setError('Please enter your email address.')
       return
     }
 
@@ -44,59 +44,56 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black font-mono text-amber-400 p-4 flex flex-col justify-center">
-      <div className="w-full max-w-3xl mx-auto">
-        <div className="mb-4 text-amber-600 text-xs uppercase tracking-widest">
-          THE REMNANT -- POST-COLLAPSE SURVIVAL TERMINAL
-        </div>
-        <div className="text-amber-400 text-xs mb-1">ACCESS TERMINAL</div>
-        <div className="text-amber-600 text-xs mb-6">
-          ENTER IDENT CODE:
-        </div>
+    <div className="min-h-screen bg-gray-950 font-mono text-gray-200 flex flex-col justify-center px-4">
+      <div className="w-full max-w-sm mx-auto">
+
+        {/* Title */}
+        <h1 className="text-2xl font-bold text-white text-center mb-8">
+          THE REMNANT
+        </h1>
 
         {sent ? (
-          <div className="border border-amber-700 p-4">
-            <div className="text-amber-300 text-xs mb-2">LINK TRANSMITTED.</div>
-            <div className="text-amber-700 text-xs">
-              CHECK <span className="text-amber-500">{email}</span> FOR ACCESS LINK.
-              ACTIVATE TO ENTER THE WASTELAND.
-            </div>
+          <div className="border border-gray-700 rounded p-6 text-center">
+            <p className="text-gray-300 mb-2">Check your email.</p>
+            <p className="text-sm text-gray-500">
+              A sign-in link has been sent to{' '}
+              <span className="text-gray-300">{email}</span>.
+            </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block text-xs text-amber-600 uppercase tracking-widest mb-1">
-                IDENT CODE
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-transparent border border-amber-800 text-amber-300 px-3 py-2 outline-none focus:border-amber-500 text-xs placeholder-amber-900"
-                placeholder="survivor@example.com"
-                autoFocus
-                autoComplete="email"
-                disabled={loading}
-              />
-            </div>
+            <label className="block text-sm text-gray-400 mb-2">
+              Enter your email to sign in
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-black border border-gray-700 text-gray-200 rounded px-3 py-2 text-sm outline-none focus:border-gray-500 placeholder-gray-600 mb-4"
+              placeholder="you@example.com"
+              autoFocus
+              autoComplete="email"
+              disabled={loading}
+            />
 
             {error && (
-              <div className="mb-4 text-red-400 text-xs">{error}</div>
+              <div className="mb-4 text-red-400 text-sm">{error}</div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full border border-amber-600 text-amber-400 py-2 text-xs disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full bg-white text-gray-950 font-bold py-2 rounded text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors"
             >
-              {loading ? 'TRANSMITTING...' : '[ ACCESS ]'}
+              {loading ? 'Sending...' : 'SIGN IN'}
             </button>
           </form>
         )}
 
-        <div className="mt-6 text-amber-700 text-xs">
-          NO CLEARANCE REQUIRED. ANONYMOUS ACCESS PERMITTED.
-        </div>
+        <p className="mt-6 text-center text-xs text-gray-500">
+          No account needed. A magic link will be sent to your email.
+        </p>
+
       </div>
     </div>
   )

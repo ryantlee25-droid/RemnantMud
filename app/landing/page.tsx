@@ -1,5 +1,5 @@
 // ============================================================
-// /landing — BBS-style boot screen for The Remnant MUD
+// /landing — Clean landing page for The Remnant MUD
 // Server Component: zero client JS, fully static on Vercel
 // ============================================================
 
@@ -19,93 +19,104 @@ export const metadata: Metadata = {
 
 export const revalidate = false
 
+const FEATURES = [
+  { label: '271 hand-crafted rooms across 14 zones' },
+  { label: '7 character classes with unique abilities' },
+  { label: '4 morally complex endings' },
+  { label: 'Faction reputation that shapes the world' },
+  { label: 'Death is not the end -- the cycle continues' },
+  { label: 'Crafting, combat, companions, mysteries' },
+]
+
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-black font-mono text-amber-500">
+    <div className="min-h-screen bg-gray-950 font-mono text-gray-200">
+      <div className="max-w-5xl mx-auto px-6 py-16 sm:py-24">
 
-      {/* CRT scanlines */}
-      <div
-        className="fixed inset-0 pointer-events-none z-50"
-        style={{
-          background:
-            'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px)',
-        }}
-      />
-
-      <div className="max-w-3xl mx-auto px-4 py-8 relative z-10">
-
-        {/* Boot sequence */}
-        <pre className="text-amber-600 text-xs mb-4 leading-tight">{`BIOS v3.14 ... OK
-MEM CHECK 640K ... OK
-TERMINAL v2.38 ... OK
-NETWORK: FOUR CORNERS RELAY ... CONNECTED
-SIGNAL LOCK ... ACQUIRED`}</pre>
-
-        {/* Main terminal frame */}
-        <pre className="text-amber-400 text-xs leading-tight mb-6">{`
-+======================================+
-|       T H E   R E M N A N T         |
-|   POST-COLLAPSE SURVIVAL TERMINAL   |
-+======================================+
-|                                      |
-|  SYSTEM STATUS: OPERATIONAL          |
-|  SIGNAL DETECTED: ACTIVE             |
-|  THREAT LEVEL: ELEVATED              |
-|  YEAR: 2038  CHARON-7 YEAR SEVEN    |
-|                                      |
-+--------------------------------------+`}</pre>
-
-        {/* Broadcast */}
-        <div className="border border-amber-900 p-4 mb-6">
-          <div className="text-amber-600 text-xs mb-2">INCOMING BROADCAST -- SIGNAL ORIGIN: UNKNOWN</div>
-          <div className="text-amber-400 text-xs leading-relaxed">
-            &quot;...Scar site... containment breach... data survives...
-            if you can read, if you can think, if you are still you...
-            come to the Four Corners... the answer is here... repeating...&quot;
-          </div>
+        {/* Title */}
+        <div className="text-center mb-16">
+          <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight mb-4">
+            THE REMNANT
+          </h1>
+          <p className="text-lg text-gray-400">
+            A Post-Collapse Text Adventure
+          </p>
         </div>
 
-        {/* System info */}
-        <div className="text-amber-600 text-xs mb-6 space-y-1">
-          <div>ROOMS MAPPED: 250+</div>
-          <div>ENDINGS DOCUMENTED: 4</div>
-          <div>DEATH CYCLES: UNLIMITED</div>
-          <div>FACTIONS ACTIVE: 9</div>
-          <div>INTERFACE: TEXT COMMAND</div>
+        {/* Hero */}
+        <div className="max-w-2xl mx-auto text-center mb-16">
+          <p className="text-gray-300 leading-relaxed">
+            Seven years after CHARON-7 ended the world, someone is still
+            broadcasting from inside the facility everyone said was destroyed.
+            You are a Revenant — you die, you come back, you remember. Find the
+            source of the signal.
+          </p>
         </div>
 
-        {/* Terminal demo */}
-        <div className="border border-amber-900 p-4 mb-6">
-          <div className="text-amber-600 text-xs mb-2">TERMINAL SESSION EXCERPT</div>
-          <div className="text-xs space-y-1">
-            <div><span className="text-amber-600">&gt; </span><span className="text-amber-400">look</span></div>
-            <div className="text-amber-700 pl-4">The highway curves north through scrub oak and juniper. A hand-painted sign reads COVENANT -- 2 MI.</div>
-            <div><span className="text-amber-600">&gt; </span><span className="text-amber-400">go north</span></div>
-            <div className="text-amber-700 pl-4">You move toward the road. A dog trots out of the brush and falls in behind you.</div>
-            <div><span className="text-amber-600">&gt; </span><span className="text-amber-400">look dog</span></div>
-            <div className="text-amber-700 pl-4">Mutt. Medium size. One ear missing. It sits when you stop. It is not growling.</div>
-          </div>
-        </div>
-
-        {/* Navigation */}
-        <div className="mb-6 text-xs space-y-2">
-          <div className="text-amber-600 mb-2">SELECT OPTION:</div>
-          <div>
-            <Link
-              href="/login"
-              className="text-amber-400 border border-amber-600 px-6 py-2 inline-block text-xs"
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-16 max-w-3xl mx-auto">
+          {FEATURES.map((f) => (
+            <div
+              key={f.label}
+              className="border border-gray-800 rounded px-4 py-3 text-sm text-gray-300"
             >
-              &gt; ENTER TERMINAL
-            </Link>
+              {f.label}
+            </div>
+          ))}
+        </div>
+
+        {/* Terminal Preview */}
+        <div className="max-w-2xl mx-auto mb-16">
+          <div className="border border-gray-800 rounded overflow-hidden">
+            <div className="bg-gray-900 px-4 py-2 text-xs text-gray-500 border-b border-gray-800">
+              Terminal Preview
+            </div>
+            <div className="bg-black p-4 text-sm leading-relaxed space-y-2">
+              <div>
+                <span className="text-gray-500">&gt; </span>
+                <span className="text-gray-200">look</span>
+              </div>
+              <div className="text-gray-300 pl-4">
+                The market is a sprawl of tarps and salvaged tent poles. A
+                hand-lettered sign reads{' '}
+                <span className="text-yellow-400">TRADES WELCOME</span>. The
+                air smells like woodsmoke and boiled leather.
+              </div>
+              <div className="text-gray-300 pl-4">
+                Exits:{' '}
+                <span className="text-green-400">north</span>,{' '}
+                <span className="text-green-400">south</span>,{' '}
+                <span className="text-green-400">east</span>
+              </div>
+              <div className="text-gray-300 pl-4">
+                A <span className="text-cyan-400">weathered merchant</span>{' '}
+                stands behind a counter of scavenged goods.
+              </div>
+              <div className="mt-2">
+                <span className="text-gray-500">&gt; </span>
+                <span className="text-gray-200">talk merchant</span>
+              </div>
+              <div className="text-gray-300 pl-4">
+                &quot;What do you need? I&apos;ve got ammunition, bandages, and
+                information. The information costs more.&quot;
+              </div>
+            </div>
           </div>
+        </div>
+
+        {/* CTA */}
+        <div className="text-center mb-16">
+          <Link
+            href="/login"
+            className="inline-block bg-white text-gray-950 font-bold px-8 py-3 rounded text-sm tracking-wide hover:bg-gray-200 transition-colors"
+          >
+            PLAY NOW
+          </Link>
         </div>
 
         {/* Footer */}
-        <div className="text-amber-700 text-xs leading-relaxed border-t border-amber-900 pt-4">
-          <div>THE REMNANT -- POST-COLLAPSE SURVIVAL TERMINAL</div>
-          <div>Four Corners, Colorado -- 2038 -- CHARON-7 Year Seven</div>
-          <div>Browser-based. Free. Save persists across sessions.</div>
-          <div>NO CLEARANCE REQUIRED. ANONYMOUS ACCESS PERMITTED.</div>
+        <div className="text-center text-sm text-gray-500">
+          Free to play. Browser-based. No download required.
         </div>
 
       </div>

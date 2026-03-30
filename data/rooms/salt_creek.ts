@@ -457,6 +457,12 @@ export const SALT_CREEK_ROOMS: Room[] = [
         skillCheck: { skill: 'electronics', dc: 12, successAppend: 'The unlabeled unit\'s frequency display is just visible from this angle. The frequency is not standard. It\'s close to, but not identical to, the MERIDIAN signal frequency that\'s been scattered in radio fragments across the Four Corners.' },
         cycleGate: 2,
       },
+      // === CONVOY remnant-story-0329 Rider D ===
+      {
+        keywords: ['east', 'expansion', 'projection', 'resource', 'plan'],
+        description: 'A secondary map panel on the east wall tracks resource projections: water sources marked by reliability, soil quality grades, Hollow migration corridors. Red arrows indicate expansion vectors — not arbitrary aggression but calculated access to fresh water and arable land. Numbers beside each arrow: population fed, months of runway gained. Briggs has drawn out the math of his strategy in the margins. The math is correct. The conclusions it supports are not wrong, only the things they require.',
+      },
+      // === END CONVOY remnant-story-0329 Rider D ===
     ],
     npcSpawns: [
       {
@@ -853,6 +859,14 @@ export const SALT_CREEK_ROOMS: Room[] = [
         description: 'The shelf: a unit citation from the Marine Corps, framed, the glass cracked. A photograph of a squad, twelve people in desert cammies squinting into the sun, the location unidentifiable. A folded piece of paper with a single equation on it — you\'d need a chemistry background to know what it represents. A small piece of dried plant material in a glass vial, labeled: CHARON-7 BLOOM — MERIDIAN PERIMETER — 2031. He kept it.',
         cycleGate: 2,
       },
+      // === CONVOY remnant-story-0329 Rider D ===
+      {
+        keywords: ['cairn', 'stones', 'memorial', 'marker'],
+        description: 'A stone cairn in the corner of the room: one upright stone, forty-seven smaller stones arranged around its base in a careful ring. The stones are clean. No dust. Briggs maintains this. Nobody else comes to this room, so nobody else has seen it, and nobody has asked him what it means. The smaller stones are all approximately the same size. Forty-seven of them.',
+        cycleGate: 2,
+        skillCheck: { skill: 'perception', dc: 11, successAppend: 'The theater bombing, as you know it, killed forty-seven people. The number was in the Accord\'s incident documentation. Briggs knows the number. He has never said it aloud to anyone. He has built it instead, in stone, where it cannot be avoided.' },
+      },
+      // === END CONVOY remnant-story-0329 Rider D ===
     ],
     personalLossEchoes: {
       child: 'The photograph of a squad on the shelf. Twelve people squinting into the sun. Some of them had children. Briggs has a locked box labeled PERSONAL — DNO. Do Not Open. You understand the instruction. Some things you keep locked because opening them means the grief gets air.',

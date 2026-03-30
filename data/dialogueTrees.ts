@@ -895,6 +895,13 @@ const briggsTree: DialogueTree = {
           targetNode: 'briggs_military_support',
           requiresRep: { faction: 'salters', min: 2 },
         },
+        // === CONVOY remnant-story-0329 Rider D ===
+        {
+          label: '"Cross is demanding you answer for the bombing. There\'s a runner."',
+          targetNode: 'briggs_bombing_crisis',
+          requiresFlag: 'bombing_revealed',
+        },
+        // === END CONVOY remnant-story-0329 Rider D ===
         {
           label: '"Nothing. Leaving."',
           targetNode: 'briggs_leave',
@@ -1120,6 +1127,57 @@ const briggsTree: DialogueTree = {
       speaker: 'Warlord Briggs',
       text: `"Dismissed." He doesn't watch you go. The cloth resumes its slow circuit of the barrel.`,
     },
+
+    // === CONVOY remnant-story-0329 Rider D: Bombing Diplomatic Crisis ===
+    briggs_bombing_crisis: {
+      id: 'briggs_bombing_crisis',
+      speaker: 'Warlord Briggs',
+      text: `${rt.npc('Briggs')} sets the cloth down slowly. "A runner." He says it flat, the way soldiers say things when they are managing what the saying costs. "Cross moves fast." He looks at the map wall, not at you. "I offered a tribunal. After the eastern perimeter is secure. That\'s the correct order of operations." A pause. "She disagrees about the order."`,
+      onEnter: {
+        setFlag: 'bombing_diplomatic_crisis',
+      },
+      branches: [
+        {
+          label: '"Help delay the tribunal. The perimeter comes first."',
+          targetNode: 'briggs_delay_tribunal',
+        },
+        {
+          label: '"Support Cross\'s demand. The tribunal happens now."',
+          targetNode: 'briggs_support_tribunal',
+        },
+      ],
+    },
+
+    briggs_delay_tribunal: {
+      id: 'briggs_delay_tribunal',
+      speaker: 'Warlord Briggs',
+      text: `"Salters don't abandon post to answer questions from people who weren't there." He straightens — not gratitude, but something that recognizes an ally. "Tell Cross the timeline is the eastern perimeter. I'll come to the tribunal when my people are safe, not before. She wants answers? She can wait for the siege to end." He picks up the cleaning cloth again. The conversation is over, and you are on a side now.`,
+      onEnter: {
+        grantRep: { faction: 'salters', delta: 2 },
+      },
+      branches: [
+        {
+          label: '"Understood. I\'ll tell her."',
+          targetNode: 'briggs_leave',
+        },
+      ],
+    },
+
+    briggs_support_tribunal: {
+      id: 'briggs_support_tribunal',
+      speaker: 'Warlord Briggs',
+      text: `Something crosses his face — not anger. Something quieter. "You're right." He says it like it costs. "Cross is right. The siege is a reason, not an excuse." He folds the cloth once, precisely. "Tell her I'll come when she sends the formal summons. I won't make her chase me." He looks at you for a moment. "I still think the order is wrong. But I'm aware that what I think about the order is not the most important thing."`,
+      onEnter: {
+        grantRep: { faction: 'accord', delta: 2 },
+      },
+      branches: [
+        {
+          label: '"I\'ll tell Cross."',
+          targetNode: 'briggs_leave',
+        },
+      ],
+    },
+    // === END CONVOY remnant-story-0329 Rider D ===
   },
 }
 

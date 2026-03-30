@@ -158,6 +158,9 @@ const SYSTEM_VERBS: Record<string, string> = {
   standing: 'rep',
   quest: 'quests',
   quests: 'quests',
+  restart: 'restart',
+  newgame: 'restart',
+  reset: 'restart',
 }
 
 // ------------------------------------------------------------

@@ -209,6 +209,21 @@ export default function GamePage() {
       type: 'echo' as const,
     }])
 
+    // ── Confirm restart — full save wipe (works in any phase) ──
+    if (trimmed.toUpperCase() === 'CONFIRM RESTART') {
+      const supabase = (await import('@/lib/supabase')).createSupabaseBrowserClient()
+      const userId = state.player?.id
+      if (userId) {
+        await supabase.from('player_inventory').delete().eq('player_id', userId)
+        await supabase.from('player_ledger').delete().eq('player_id', userId)
+        await supabase.from('player_stash').delete().eq('player_id', userId)
+        await supabase.from('generated_rooms').delete().eq('player_id', userId)
+        await supabase.from('players').delete().eq('id', userId)
+      }
+      window.location.reload()
+      return
+    }
+
     // ── Prologue phase ─────────────────────────────────────
     if (gameFlow === 'prologue') {
       const upper = trimmed.toUpperCase()
@@ -278,10 +293,13 @@ export default function GamePage() {
           })
         )
         setGameFlow('between')
+      } else if (upper === 'RESTART' || upper === 'NEWGAME' || upper === 'RESET') {
+        const { handleRestart } = await import('@/lib/actions/system')
+        engine._appendMessages(handleRestart())
       } else {
         engine._appendMessages([{
           id: crypto.randomUUID(),
-          text: 'Type BEGIN to start a new cycle.',
+          text: 'Type BEGIN to start a new cycle, or RESTART to wipe your save entirely.',
           type: 'system' as const,
         }])
       }
@@ -298,10 +316,13 @@ export default function GamePage() {
         setCreationState(cs)
         engine._appendMessages(creationPrompt(cs))
         setAuthPhase('creating')
+      } else if (upper === 'RESTART' || upper === 'NEWGAME' || upper === 'RESET') {
+        const { handleRestart } = await import('@/lib/actions/system')
+        engine._appendMessages(handleRestart())
       } else {
         engine._appendMessages([{
           id: crypto.randomUUID(),
-          text: 'Type BEGIN to continue.',
+          text: 'Type BEGIN to continue, or RESTART to wipe your save entirely.',
           type: 'system' as const,
         }])
       }

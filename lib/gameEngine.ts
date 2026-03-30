@@ -37,7 +37,7 @@ import { handleAttack, handleFlee, handleDefend, handleWait, handleAnalyze, hand
 import { handleAbility } from '@/lib/abilities'
 import { handleTake, handleDrop, handleEquip, handleUnequip, handleUse, handleStash, handleUnstash, handleStashList, handleRead, handleJournal } from '@/lib/actions/items'
 import { handleTalk, handleSearch, handleRep, handleQuests, handleDialogueChoice, handleDialogueLeave, handleDialogueBlocked, handleGive } from '@/lib/actions/social'
-import { handleStats, handleInventory, handleHelp, handleHint, handleBoost, handleTutorialHint, handleEquipment } from '@/lib/actions/system'
+import { handleStats, handleInventory, handleHelp, handleHint, handleBoost, handleTutorialHint, handleEquipment, handleRestart } from '@/lib/actions/system'
 import { handleExamineExtra, handleSmell, handleListen, handleTouch, handleExamineSpatial } from '@/lib/actions/examine'
 import { handleRest, handleCamp, handleDrink } from '@/lib/actions/survival'
 import { echoRetentionFactor } from '@/lib/fear'
@@ -1748,6 +1748,8 @@ export class GameEngine implements EngineCore {
         break
       case 'save':     await this._savePlayer()
                        this._appendMessages([systemMsg('Progress saved.')])
+        break
+      case 'restart':  this._appendMessages(handleRestart())
         break
       case 'quit':     await this._savePlayer()
                        this._appendMessages([systemMsg('Progress saved. Refresh the page to return to the landing page.')])

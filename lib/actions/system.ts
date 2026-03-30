@@ -307,6 +307,7 @@ const HELP_CATEGORIES: Record<string, string[]> = {
     '  help [topic]       \u2014 show help (topics: combat, movement, items, social, system)',
     '  hint               \u2014 get a hint based on your current quests',
     '  save               \u2014 save the game',
+    '  restart / newgame  \u2014 wipe save and start fresh',
     '  quit               \u2014 quit the game',
   ],
 }
@@ -411,6 +412,23 @@ export async function handleTutorialHint(engine: EngineCore, context: string): P
 
   localStorage.setItem(storageKey, '1')
   engine._appendMessages([systemMsg(hint)])
+}
+
+// ------------------------------------------------------------
+// Restart — warn the player before wiping their save
+// ------------------------------------------------------------
+
+export function handleRestart(): GameMessage[] {
+  return [
+    systemMsg('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550'),
+    systemMsg('  WARNING: This will permanently delete your save.'),
+    systemMsg('  All progress, items, and reputation will be lost.'),
+    systemMsg('  Your cycle history will be erased.'),
+    systemMsg('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550'),
+    systemMsg('  Type CONFIRM RESTART to proceed.'),
+    systemMsg('  Type anything else to cancel.'),
+    systemMsg('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550'),
+  ]
 }
 
 export async function handleBoost(engine: EngineCore, noun: string | undefined): Promise<void> {

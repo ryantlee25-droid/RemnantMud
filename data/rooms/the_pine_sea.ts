@@ -282,10 +282,18 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       ],
       awarenessRoll: { unaware: 0.5, awarePassive: 0.3, awareAggressive: 0.2 },
     },
+    personalLossEchoes: {
+      child: 'The Scar valley below. A crater, a facility, the chemical haze of something that should not still be running. You look at it and think about the world they were born into — not this world, the one before, when the facility was a secret and the haze was contained and the valley was just a valley. You brought them into a world that was already broken. You didn\'t know it was broken. Nobody did.',
+      partner: 'The wind is cold enough to matter and the view is large enough to diminish you. You stand at the ridge and look at the thing that ended the world and you think about the person who stood beside you when it ended — the way their hand found yours, the way fear compressed two people into one decision. The ridge is wide enough for two. You are one.',
+      community: 'The dark structure in the crater — large, intact, waiting. MERIDIAN. The place that made the thing that unmade your community. From the ridge you can see the geography of responsibility: the facility, the crater, the haze, the valley that used to be normal. Your community is in this view somewhere — not visible, but implied, the way every community destroyed by CHARON-7 is implied by the structure that produced it.',
+      identity: 'The chemical haze above the crater is faintly greenish in certain lights. You look at it and feel something that is not memory but is adjacent to memory — a recognition that precedes knowledge, as if your body has been in proximity to this chemistry before and retained the information while your mind lost it. The wind brings the smell. Your body responds before you can stop it.',
+      promise: 'MERIDIAN is not rubble. MERIDIAN is a facility. The bombing narrative was a cover story. You stand at the ridge with the full weight of this knowledge and you feel your promise shift beneath you like the ground during a quake — not breaking, not fulfilled, just reorganizing itself around a truth that changes what the promise means.',
+    },
     environmentalRolls: {
       flavorLines: [
         { line: 'The wind shifts and for a moment you catch the faint chemical smell of the Scar valley below.', chance: 0.20, time: null },
         { line: 'A hawk rides the ridge updraft, level with your face, close enough to see its eye.', chance: 0.15, time: ['day'] },
+        { line: 'The exposed rock at the ridge crest is warm from the sun despite the wind. Your hand on it is the warmest thing about this elevation.', chance: 0.15, time: ['day'] },
       ],
     },
     narrativeNotes: 'The ridge is the first clear visual on MERIDIAN as an intact structure. The perception check revealing the rooftop and antenna is a major confirmation that the bombing narrative was false.',
@@ -399,6 +407,18 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
         { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
+    },
+    personalLossEchoes: {
+      child: 'The Sanguine don\'t come here. This air belongs only to ordinary things. You stand in the one place in the Four Corners where the specific threat that ended the world cannot reach, and you think about the places you tried to build for them — safe places, clean places, high enough and cold enough that the bad things couldn\'t follow. This is what that would have looked like. Snow and thin air and the absolute quiet of elevation. They would have hated the cold. They would have been safe.',
+      partner: 'Each breath less satisfying than the last. The altitude takes something from you — not much, just the margin between comfortable and aware. You think about the last days with them, when the margin between comfortable and aware was the thing that disappeared first, when every breath became conscious, when the easy thing that breathing used to be became the difficult thing it was always capable of becoming.',
+      identity: 'Everything becomes sharper at altitude. Colors, sounds, the edges of things. You stand at the snow line and the clarity is physical, literal, the thin air stripping away the atmospheric buffer that softens the world at lower elevations. You see yourself the same way — sharper, more defined, the edges of whoever you are visible in a way they aren\'t when the air is thick with distraction. The person at the snow line is the essential person. You\'re not sure you like what you see.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'Your breath hangs in the air for three full seconds before the wind takes it. A ghost of yourself, lingering, then gone.', chance: 0.25, time: null },
+        { line: 'The surface crust breaks under your boot with a sound like porcelain. Beneath it: compressed snow, cold enough to burn bare skin on contact.', chance: 0.20, time: null },
+        { line: 'For a moment the wind stops completely and the silence at this altitude is a physical thing, pressing against your eardrums, the absence of sound so total that you hear the blood moving in your own head.', chance: 0.15, time: ['dawn', 'night'] },
+      ],
     },
     narrativeNotes: 'Cold damage mechanic without gear. The Sanguine-free zone is unusual and therefore meaningful. The visible breath and altitude sensation ground the room in the body.',
   },

@@ -52,6 +52,18 @@ export const EMBER_ROOMS: Room[] = [
         description: 'The smoke has layers you\'d miss on first breath: the outer torches burning seasoned wood, and underneath, something herbal — a resin, perhaps, or dried flowers mixed with the fuel. The Kindling uses specific wood mixtures for different ceremonies. The approach torch blend is called the Welcome. You didn\'t ask what the other blends are called.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The torches burn in parallel columns, a corridor of fire leading somewhere that wants to be walked toward. You walked corridors like this for them — hospital corridors, bright and leading somewhere you didn\'t want to go, the air thick with the smell of something clinical instead of smoke. The approach was the same. The pull was the same. The destination was what changed everything.',
+      partner: 'Forty-two torches. Someone counted. Someone decided the interval at which fire becomes architecture. You think about the intervals that defined your life with them — the distance between your bodies in bed, the pause between sentences, the number of steps from the door to the place where you would say their name. Architecture, all of it. Fire that shaped the space between two people.',
+      promise: 'The Kindling has decided that fire means something different than it used to mean. They are persuading you of it with every step. Your promise was like this — a reframing, a decision that the thing you swore would mean something different from what the world thought it meant. Every step toward fulfilling it is a step on a torch-lit road that you built for yourself.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'A torch gutters in a crosswind and for a moment the shadow between two columns of fire is deeper and more specific, a gap in the processional that your body registers as wrong.', chance: 0.20, time: null },
+        { line: 'The herbal layer in the smoke — the Kindling\'s Welcome blend — catches in the back of your throat. Not unpleasant. Deliberate. You are being prepared for something.', chance: 0.20, time: null },
+        { line: 'The cathedral spire ahead gains definition as you approach. The iron flame at its peak catches the light and throws it back at you in a single concentrated point.', chance: 0.15, time: ['day', 'dawn'] },
+      ],
+    },
     npcSpawns: [
       {
         npcId: 'kindling_torch_tender',
@@ -291,6 +303,19 @@ export const EMBER_ROOMS: Room[] = [
         description: 'The torches are mounted at specific heights because specific heights produce specific heat at the table surface. This is not atmospheric. The Purification treatment involves controlled heat exposure at calibrated intensity. Harrow determined the calibration over time. The first several determinations were wrong, and the ledger reflects this, and Harrow calls this the cost of understanding.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The stone table. The white cloth, folded for afterward. The vials on the counter with their careful labels and their thirty percent mortality rate. You think about the decisions you made for them — the treatments, the interventions, the things you agreed to because someone in a room like this said the words and you signed the form. The table is polished smooth from use. Someone else\'s child was on it. Someone else signed.',
+      partner: 'The restraint points are set into the table\'s sides. Folded. Stored. Available. You think about the things that held you to each other — not restraints, but the bindings of habit and proximity and the daily agreement to stay. The Purification strips away what is unnecessary, Harrow says. What remains is what was always essential. You know what remained when they were gone. You are standing in it.',
+      community: 'The sixty-seven percent survival rate. The white cloth, folded for afterward. The specific silence of a room where outcomes are documented and filed. Your community had rooms like this — not this, but the architecture of care and the architecture of risk, the places where people went because someone told them it would help. Not all of them came out. The notation system had different symbols but the categories were the same.',
+      promise: 'The treatment vials on the counter: feverfew, silver compound, adrenal stimulant, pain suppressor. The chemistry of transformation. Your promise is a kind of purification too — the burning away of the life you could have had, the stripping down to the essential thing you swore to do. The survival rate of promises is not documented. The cloth is folded for afterward regardless.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The stone table holds heat from the torches mounted at specific heights. You place your palm flat on the surface and feel the warmth that the stone has absorbed from a hundred treatments. The warmth does not comfort.', chance: 0.20, time: null },
+        { line: 'A vial on the preparation counter catches the torchlight and the liquid inside glows amber. Silver compound suspension. The color is almost beautiful.', chance: 0.15, time: null },
+        { line: 'The smell in this room has layers: antiseptic, smoke, the mineral trace of dried sweat on stone. Beneath all of it, something sweet that might be the herbal compounds or might be something the body produces under certain kinds of duress.', chance: 0.20, time: null },
+      ],
+    },
     npcSpawns: [
       {
         npcId: 'kindling_treatment_aide',
@@ -352,6 +377,19 @@ export const EMBER_ROOMS: Room[] = [
         description: 'The dormitory has nineteen residents currently. Four are new — you can identify them by the quality of their attention, still absorbing the framework rather than inhabiting it. Fifteen have been here long enough to have the ease of people at home. Among the fifteen, you notice the burn scars. Not uniformly. Not universally. But many. Small ones: on the forearm, the wrist, the back of the hand. The Purification, but more than that — the Kindling has a practice of voluntary small burns as devotional acts. Not required. Very common.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The alcoves were designed for a single person kneeling. Now they hold two sleeping. You look at the bunks and think about the spaces you made for them — the crib in the corner, the bed you checked at night, the small room that was theirs and only theirs. These people have no private space. The Kindling asks them to examine their attachment to things. You examine your attachment to a room that doesn\'t exist anymore and find it load-bearing.',
+      partner: 'We are not our previous distinctions, a resident tells you. The sleeping arrangements mix genders and ages. The distinctions you carried — the specific person, the specific shared space, the specific warmth of a bed made for two — these are the things the Kindling would ask you to examine. You are not ready to examine them. You are not sure you ever will be.',
+      community: 'Nineteen residents. Four new, fifteen at home. The burn scars on forearms, the small devotional wounds that are not required and very common. Your community marked itself differently — not with fire but with the accumulated evidence of shared labor, shared meals, shared loss. The marks were on your hands, not your forearms. The marks said the same thing: I belong here. I chose this.',
+      identity: 'An empty vial kept for the vessel rather than the content. A photograph. A carved object. The identities people carry when everything else is stripped away. The Kindling doesn\'t ask you to give up your belongings, just to examine your attachment to them. You carry less than these people do. You carry less because you lost more, and the examination the Kindling proposes would find almost nothing left to burn.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The stone holds the cold of the cathedral regardless of the hour. The dormitory smells of coal smoke from the nave and the specific warmth of many bodies in close quarters — opposite temperatures sharing the same air.', chance: 0.25, time: null },
+        { line: 'Quiet voices from an alcove, too low to hear the words. The tone carries: earnest, searching, the sound of people working something out together in the dark.', chance: 0.20, time: ['night'] },
+        { line: 'A resident emerges from their alcove and walks toward the nave with the deliberate pace of someone who needs to see the fire. They do not look at you. The fire is what matters.', chance: 0.15, time: null },
+      ],
+    },
     npcSpawns: [
       {
         npcId: 'kindling_resident_faithful',
@@ -416,6 +454,12 @@ export const EMBER_ROOMS: Room[] = [
         { line: 'The bell is above you and the rope hangs through the floor. The rope moves slightly in the tower\'s updraft. It has been moving like this for seven years of twice-daily Assemblies.', chance: 0.25, time: null },
         { line: 'The coal pit smoke column rises past you, visible for a moment, dispersing twenty feet above the platform. It smells like the Assembly smells from inside: coal and cedar and something the Kindling adds that you don\'t have a name for.', chance: 0.20, time: ['day', 'dawn'] },
       ],
+    },
+    personalLossEchoes: {
+      child: 'Avery looks south, toward the open country, toward the places you can still go. "What\'s out there?" he asks. You could tell him. You could tell him what\'s out there is the same thing that\'s in here — people making decisions with incomplete information, trying to protect the things they love with tools that aren\'t adequate. You could tell him about the thing you lost and how the tower\'s height doesn\'t change the distance between you and it. You don\'t tell him. He doesn\'t need your answer. He needs his own.',
+      partner: 'The bell tower is the highest point at The Ember and the loneliest. Avery chose it for the same reason people choose high places when they are working something out — the altitude creates the illusion of perspective, the distance between you and the ground below feels like the distance between you and the thing you can\'t resolve. You climbed to high places too, after. The perspective didn\'t help. The height just made the absence bigger.',
+      community: 'From the tower, The Ember is a system — hub, spokes, ring, the coal pit smoke rising at the center. A settlement organized around a single vertical intention. You look at it from above and see the architecture of belonging, the design of a community that functions because everyone in it agreed to the same fire. Your community had a different center. The architecture was the same.',
+      promise: 'Avery says: "What if the certainty that\'s burning is the one I need?" He is talking about faith. You are thinking about your promise — the certainty you carry, the thing you swore, the fire that burns in you because you agreed to tend it. What if the promise is the thing that\'s burning you? What if the burning is the point?',
     },
     npcSpawns: [
       {

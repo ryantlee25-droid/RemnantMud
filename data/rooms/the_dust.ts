@@ -193,6 +193,16 @@ export const THE_DUST_ROOMS: Room[] = [
         ],
       },
       ambientCount: { min: 0, max: 1, distribution: 'flat' },
+      flavorLines: [
+        { line: 'The alkali crust cracks under your boot with a sound like breaking bone. The white powder rises and settles on your pants leg and does not brush off.', chance: 0.25, time: null },
+        { line: 'A dust devil spins up from the flat, three feet wide, white with alkali, spiraling for ten seconds before collapsing. The flat is full of small violences.', chance: 0.20, time: ['day'] },
+        { line: 'Your shadow is the only dark thing on the flat. It moves when you move. Nothing else does.', chance: 0.15, time: ['day', 'dawn'] },
+      ],
+    },
+    personalLossEchoes: {
+      child: 'Nothing, nothing, nothing in every direction. The flat is the physical form of the word gone — white and hard and extending to every horizon without a single feature that your eyes can hold. You have been looking for them in every landscape since you lost them. This is the first landscape that offers nothing to look at. The absence is complete and it is not a relief.',
+      partner: 'The Hollow trails cross the flat in parallel grooves, a dozen of them, heading the same direction with the same mindless consistency. You walked in parallel once — two people moving through the world at the same pace, in the same direction, close enough to touch. The trails here go on without each other. They don\'t know they\'re together.',
+      community: 'Two miles of visibility in every direction and there is nothing, nothing, nothing. The flat is what the world looks like when the community is gone — the infrastructure of belonging stripped away, the landmarks that told you where you were and who you were with reduced to white ground and pale sky and the shimmering gap between them where meaning used to be.',
     },
     narrativeNotes: 'Open dangerous crossing. High Hollow encounter due to migration trail. No cover = noise penalties for stealth. The sightlines cut both ways.',
   },
@@ -751,6 +761,18 @@ export const THE_DUST_ROOMS: Room[] = [
         { type: 'remnant', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.7, awarePassive: 0.2, awareAggressive: 0.1 },
+    },
+    personalLossEchoes: {
+      child: 'The footprints go west and do not come back. One set, going. You have been following absence since you lost them — reading the signs of someone who was here and isn\'t, tracking the direction they went, standing at the edge of the territory where the trail runs out. The western edge is where the trail always runs out. You stand here and you do not walk west. Not today.',
+      partner: 'The wind from the west has traveled a hundred miles without touching anything human. You breathe it and it is the cleanest air since the Collapse and it is the loneliest air since the Collapse and you cannot tell the difference anymore between clean and lonely because they lived in the same place, with you, and now both of them are gone.',
+      identity: 'This is just as far as anyone goes. The edge of the mapped world. Beyond this, the desert continues without feature or name, and names are the thing you\'ve been losing since you woke up without yours. The western nothing is honest in a way the mapped world isn\'t — it doesn\'t pretend to know you. It doesn\'t pretend anything.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The wind stops. For three seconds the Dust is perfectly still, the silence so total you hear your own blood. Then the wind resumes, as if it paused to listen to the same silence you did.', chance: 0.20, time: null },
+        { line: 'A distant mesa catches the light at an angle that makes it look inhabited — a window flash, a roofline. Then the angle changes and it is just rock, and has always been just rock.', chance: 0.15, time: ['day', 'dusk'] },
+        { line: 'The footprints going west are slightly more filled than they were the last time you looked. The desert is patient. It will erase this person completely, given time.', chance: 0.20, time: null },
+      ],
     },
     narrativeNotes: 'Map boundary room. Philosophical and quiet. The footprints going west are a mystery with no resolution — someone chose to walk into the nothing. This is the mood.',
   },

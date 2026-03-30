@@ -403,6 +403,17 @@ export const RIVER_ROAD_ROOMS: Room[] = [
         ],
       },
     },
+    personalLossEchoes: {
+      child: 'The dog watches from the ditch, body low, tail still. Deciding. You have seen that look before — the calculation of trust, the weighing of whether this person is safe. Children do it too, with different eyes and the same math. The dog decides. The child decided too, once, long ago, and chose you. That decision is the thing you carry heavier than anything in your pack.',
+      partner: 'STILL ALIVE, scratched into the dust on a tailgate in shaky handwriting. The message was for someone specific — not you, not the world, but one person who might come this way and see it. You left messages like that. In the early days. On walls, on paper, on anything that held a mark. The messages stopped when you accepted that the person they were for wasn\'t coming to read them.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The river catches the light and throws it against the truck\'s spiderweb windshield. For a moment the fractures glow, a constellation of damage made briefly beautiful.', chance: 0.20, time: ['day', 'dawn'] },
+        { line: 'The dog\'s ears swivel toward something upstream. It holds the posture for five seconds, then relaxes. Whatever it heard has passed or wasn\'t real.', chance: 0.15, time: null },
+        { line: 'Weeds push through a seam in the asphalt with enough force to split the road surface. Seven years is enough for the land to start reclaiming what was taken from it.', chance: 0.15, time: null },
+      ],
+    },
     narrativeNotes:
       'This is the showcase room from the Room Display Spec. First real Hollow encounter zone. The dog spawn is critical — this is where the player\'s relationship with the game\'s most emotionally significant NPC potentially begins.',
   },
@@ -962,6 +973,18 @@ export const RIVER_ROAD_ROOMS: Room[] = [
           'WATCH YOUR SIX in faded red spray paint. Below it, in different handwriting: RIP JACKSON. Below that: 4/17/35. Someone died here three years ago. The warning came after.',
       },
     ],
+    personalLossEchoes: {
+      child: 'WATCH YOUR SIX. RIP JACKSON. 4/17/35. Someone died here because they couldn\'t see what was coming. You think about the things you couldn\'t see coming — not around a blind corner in the road but around a blind corner in time, the future that was supposed to include them and didn\'t, the turn you couldn\'t have prepared for no matter how carefully you walked.',
+      partner: 'The river masks all sound. You can\'t hear what\'s behind you. There were conversations you had near water — the ocean, a lake, a kitchen sink running — where the sound covered the words and you had to stand close to hear each other. The closeness was the point. The water was the excuse. The bend offers no closeness. Just the inability to hear the thing that\'s coming.',
+      community: 'RIP JACKSON. 4/17/35. The warning came after. That\'s how community works sometimes — the lesson is paid for by someone who doesn\'t benefit from it. Jackson died and now everyone who passes this rock knows to watch their six. Your community paid for lessons too. Not everyone who paid was there to learn from them.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The river is loud here, loud enough that you stop and listen and cannot distinguish between water sound and something else. You move your hand to your weapon without deciding to.', chance: 0.25, time: null },
+        { line: 'A loose stone clatters down the rock face on the west side. Natural settling. Probably. The bushes on that shoulder are thick enough to hide anything up to human-sized.', chance: 0.20, time: null },
+        { line: 'Someone has scratched a tally of marks below the WATCH YOUR SIX graffiti. Eleven marks. Eleven people who read the warning and noted their passage. You are twelve.', chance: 0.15, time: ['day'] },
+      ],
+    },
     npcSpawns: [],
     itemSpawns: [],
     hollowEncounter: {
@@ -1186,6 +1209,17 @@ export const RIVER_ROAD_ROOMS: Room[] = [
           'A trail cairn, Drifter-style. The side trail west is steep and unmarked beyond the cairn. It leads toward the breaks — the canyon country.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The trail narrows and the boot prints thin out. Fewer people come this way. The terrain steepens and the water quickens and the easy part of the journey ends here without announcement. You carried them through terrain like this once — not literal terrain but the kind where the path narrows and the prints thin out and you had to be the one who knew the way even when you didn\'t.',
+      partner: 'The rapids are too fast to cross. The water tumbles over boulders in patterns that look chaotic but aren\'t — each current follows a path determined by the stone beneath it, the physics of flow around obstruction. Your grief moves the same way. Chaotic from outside. Determined by what\'s underneath.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'A fish leaps in the rapids — silver flash, a moment of weightless effort against the current, then gone. The river takes everything downstream eventually. Some things fight it longer than others.', chance: 0.20, time: ['day', 'dawn'] },
+        { line: 'The piñon pines here are stunted and twisted, their roots gripping exposed rock. They grow where nothing should grow, by deciding to grow there anyway.', chance: 0.15, time: null },
+        { line: 'The cairn at the junction has been recently maintained — someone added a stone to the top within the last week. The trail west is used. By whom is the question.', chance: 0.20, time: null },
+      ],
+    },
     npcSpawns: [],
     itemSpawns: [
       { entityId: 'smooth_river_stone', spawnChance: 0.6, quantity: { min: 1, max: 2, distribution: 'flat' } },

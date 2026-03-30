@@ -642,6 +642,18 @@ export const BREAKS_ROOMS: Room[] = [
         description: 'Multiple approach paths converge on this spring, worn to bare earth from repeated use. The paths have a quality of time — not made in a season but established over years of foot traffic converging on water. Animal paths and human paths, both, and the older human paths are from before the Collapse, which means this spring was known and used long before the current set of problems.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The spring is dry but the cottonwoods are alive, which means water is there, just out of reach. You understand this principle intimately. The thing you need most is present somewhere beneath the surface, and you know it exists because the evidence surrounds you, and you cannot get to it no matter how far you dig.',
+      partner: 'The worn paths converge on the spring from every direction — animal paths and human paths, all of them bent toward the same necessity. You walked a path like that once, every direction leading to the same person, every decision curved by the gravity of someone who was the water in every dry season you endured.',
+      promise: 'Seasonality is a pattern, not a disaster. The spring will run again. You hold this thought alongside your promise and try to believe both things simultaneously — that the dry season ends, that the thing you swore to do is still possible, that patience is not the same as failure.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'A cottonwood leaf falls into the dry spring mouth and rests there, green against the mineral stain, alive on top of the evidence of absence.', chance: 0.25, time: null },
+        { line: 'The canyon breeze carries the faint smell of wet stone from somewhere underground. The spring remembers what it is even when it isn\'t.', chance: 0.20, time: ['dawn', 'dusk'] },
+        { line: 'Something moves on one of the approach paths — a jackrabbit, pausing at the spring mouth, testing the air, then moving on. It knows the schedule better than you do.', chance: 0.15, time: ['dawn'] },
+      ],
+    },
     npcSpawns: [],
     itemSpawns: [
       {
@@ -759,6 +771,19 @@ export const BREAKS_ROOMS: Room[] = [
         description: 'A section of the west rim edge has been worn smooth at a specific point and shows rope friction marks on the rock face — a rappel point, used regularly enough to leave consistent wear. From this point, the descent to the canyon floor is forty feet. A skilled climber can free-climb it. A smart climber uses a rope. A rope isn\'t here right now.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The canyon system spreads below you for miles. You have a view of everything and a view of nothing that matters. Somewhere in this geography, or outside it, the absence you carry has a location you cannot see from any rim, any height, any vantage point the world provides.',
+      partner: 'The Duskhollow manor on its promontory, lit at dusk. Someone is in those windows, looking out. You know what it looks like to watch someone from a distance — the shape of a person in a lit frame, the silhouette that tells you everything and nothing. You watched them that way once, from across a room, before the word distance meant what it means now.',
+      community: 'From up here the canyon country is a system — ridgelines, corridors, the slot canyon a dark line, the crossroads a widening. A community of geography. You had a community of people once, and from the right distance, it would have looked like this: connected, navigable, a system that made sense. The distance you needed to see it clearly was the distance that meant you had already left.',
+      identity: 'The scale becomes visible from the rim. You\'ve been inside the canyons, reading them at ground level, the walls close and the sky narrow. From up here, the person you were inside those walls — cautious, directed, purposeful — is a version of you that the rim dissolves. Up here you are just a figure on a rock, and the canyon does not know your name.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'A thermal updraft from the canyon floor carries the dry smell of juniper and the faintest trace of something else — iron, old blood, the kill site somewhere below.', chance: 0.20, time: ['day'] },
+        { line: 'The Duskhollow manor catches a moment of light on its upper windows and flashes once, a heliograph signal that means nothing and registers anyway.', chance: 0.15, time: ['dusk'] },
+        { line: 'A raven rides the rim updraft at eye level, close enough that you can see the individual feathers adjusting to the current. It looks at you. It decides you are uninteresting. It leaves.', chance: 0.20, time: null },
+      ],
+    },
     npcSpawns: [],
     itemSpawns: [],
   },
@@ -810,6 +835,18 @@ export const BREAKS_ROOMS: Room[] = [
         skillCheck: { skill: 'perception', dc: 13, successAppend: 'Confirmation: upper story window, east face. A figure, still enough to be watching, movement minimal. And — you\'re almost certain — a second figure in the adjacent window, not watching you but watching the first figure. They\'re aware of you. They\'re discussing you. The Covenant of Dusk knows you\'re on their perimeter.' },
       },
     ],
+    personalLossEchoes: {
+      child: 'The manor is close enough to see and far enough to misread. A building on a rise, lit windows, the domestic shape of a place where people live. You look at it and think: someone\'s child is in there, maybe, growing up inside walls that keep the world at a distance. You wanted that for them. Walls and distance and the luxury of not knowing what\'s outside.',
+      partner: 'The quality of being watched. You feel it from the manor direction, the sense of eyes on you, the specific physics of attention across distance. You remember being looked at by someone who loved you — the weight of that gaze, the way it found you in any room, any crowd. This gaze is not that. But the sensation in your body is the same, and your body does not know the difference.',
+      promise: 'The in-between space between The Breaks and Duskhollow territory. You are past one boundary and not yet inside another. Your promise lives in this kind of space — between the thing you swore and the thing you\'ve done about it, between the intention and the completion. The manor watches from its ridge. Your promise watches from the same distance.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The manor\'s upper windows hold the last dusk light for a moment longer than the surrounding landscape, as if the building is reluctant to let go of the day.', chance: 0.20, time: ['dusk'] },
+        { line: 'Wind from the east carries something you can\'t identify — not smoke, not dust, something floral and old, like dried roses in a room that hasn\'t been opened in years.', chance: 0.15, time: ['night'] },
+        { line: 'A hawk circles between you and the manor, hunting the thermal boundary where canyon air meets open ground. It drops and rises without apparent effort, marking the invisible line.', chance: 0.20, time: ['day'] },
+      ],
+    },
     npcSpawns: [],
     itemSpawns: [],
   },

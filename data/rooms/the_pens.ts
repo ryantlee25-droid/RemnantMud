@@ -305,6 +305,13 @@ export const THE_PENS_ROOMS: Room[] = [
         { type: 'shuffler', weight: 100, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
     },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The fluorescent light hums at a frequency you feel in your teeth. The people under it have stopped hearing it. You have not stopped hearing it yet.', chance: 0.25, time: null },
+        { line: 'A door opens somewhere in the ward and closes again. The person sitting against the wall looks up. It is not the person they are waiting for.', chance: 0.20, time: null },
+        { line: 'The disinfectant smell is stronger near the extraction room door. Clean is a word that works harder in this corridor than anywhere else you have been.', chance: 0.15, time: null },
+      ],
+    },
     narrativeNotes: 'pens_06. Ward B is the same system, colder and more controlled. The missing birthday calendar, the shortened recovery window in the draw schedule, and the Wednesday office hours note do the work. The ethical horror here is procedural optimization, not cruelty.',
   },
 
@@ -347,6 +354,19 @@ export const THE_PENS_ROOMS: Room[] = [
       timeModifier: { day: 0.3, night: 0.5, dawn: 0.4, dusk: 0.4 },
       threatPool: [
         { type: 'shuffler', weight: 100, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+    },
+    personalLossEchoes: {
+      child: 'The laughter at the far table. Real laughter, from a person who has been here eight months and has made their peace with it. You think about the meals you made for them — not this quality, not this variety, but made with a different kind of investment. The Red Court feeds people to keep them productive. You fed them because the act of feeding was the act of love, and the two things used the same gestures and produced the same sounds and were not the same thing at all.',
+      partner: 'Someone laughing at the far end of a table. The sound of it reaches you across the cafeteria the way certain sounds used to reach you across rooms where they were — specific, locatable, drawing your attention before your mind caught up. The cafeteria is full of shared meals and you remember shared meals and the fork in your hand feels different when you remember who used to sit across from you.',
+      community: 'Sixty people at long tables, the noise level of any communal dining space. Conversation, clatter, someone laughing. The infrastructure of community, performed in a place that harvests the people performing it. Your community ate together too. The tables were different. The warmth was different. The laughter was not optimized for yield.',
+      promise: 'The food is better here than anywhere in the Breaks. The bed is softer than ground. The calculation makes sense if you don\'t look at the cost, and the cost is visible on every forearm. Your promise was supposed to be a calculation too — an exchange, a debt, a thing given for a thing owed. You watch the donors eat and you wonder if your promise has a yield classification somewhere in a ledger you haven\'t seen.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The smell of hot food is a physical event after days of trail rations. Your body responds before your ethics do.', chance: 0.25, time: null },
+        { line: 'A donor holds out a piece of bread to the person beside them. The person takes it. The gesture is ordinary and therefore extraordinary.', chance: 0.15, time: null },
+        { line: 'The server behind the counter has not made eye contact with anyone in the time you have been watching. The ladle moves. The portions are exact. The eyes are elsewhere.', chance: 0.20, time: null },
       ],
     },
     narrativeNotes: 'pens_07. The cafeteria is the most ambiguous room in the zone — genuine comfort, genuine community, at a genuine cost. The key insight: the food quality is optimized for yield, not charity.',

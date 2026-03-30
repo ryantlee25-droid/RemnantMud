@@ -128,6 +128,11 @@ export const SALT_CREEK_ROOMS: Room[] = [
         { line: 'Somewhere on the inner wall, a scope catches light. Not a threat. An assessment.', chance: 0.25, time: ['day', 'dawn', 'dusk'] },
       ],
     },
+    personalLossEchoes: {
+      child: 'A hundred meters of bare earth and the assumption of eyes. You cross it at a measured pace, the way Briggs designed it to be crossed, and you think about the spaces you walked to keep them safe — the distance between the door and their bed, the hallway you checked in the dark, the perimeter of a small life that you patrolled without calling it that. The kill zone is honest about what it is. Your patrols were too.',
+      partner: 'The range markers count down: eighty meters, sixty, forty, twenty. The distance decreasing. You crossed distances like this to reach them — the last stretch of a long day, the final block before the door, the closing gap between two people who wanted to be closer. Those distances got shorter. This one does too, but the feeling is inverted.',
+      identity: 'You walk the kill zone with deliberate pace, projecting composure you may or may not feel. The sentries assess you, file the assessment. You are performing the act of being someone who is not afraid, and you are aware that you are performing it, and you cannot remember if there was ever a time when you were the performance rather than the person watching yourself perform it.',
+    },
     npcSpawns: [
       {
         npcId: 'salter_perimeter_worker',
@@ -660,6 +665,19 @@ export const SALT_CREEK_ROOMS: Room[] = [
         description: 'The Animas cuts a silver line through the landscape to the east. From up here you can follow its path north toward Covenant territory and south toward the breaks. You can see, at the river\'s closest point to Salt Creek, a shallow ford — navigable in dry season. Briggs has the ford marked on his command maps with a red circle.',
       },
     ],
+    personalLossEchoes: {
+      child: 'From the tower you can see the Animas as a silver line, the Dust as a yellow haze, the road running south into distance that blurs geography into atmosphere. You have been looking from high places since you lost them, scanning every horizon for a shape you would recognize, a movement that could be small enough. The sniper scans the same way. He is looking for threats. You are looking for something else.',
+      partner: 'The sniper says, when you ask about the view: "I stopped looking at it. It makes the job harder." You understand this with the immediate comprehension of someone who has also stopped looking at something beautiful because the beauty made the other thing worse. The stars. A particular angle of light. The shape of a specific absence against a sky that doesn\'t care.',
+      community: 'The logbook entries: Day 1,847. Day 1,855. Two thousand days of someone watching the approaches, recording what they see, protecting the people inside the walls below. Your community had watchers too — people who checked on each other, who noticed when someone was missing, who kept the perimeter of belonging patrolled. The logbook format is different. The duty is the same.',
+      promise: 'Bearing 210. Unknown type. Observed compound for 22 minutes, withdrew. FLAGGED. The entry is Briggs\'s handwriting. Something watched Salt Creek for twenty-two minutes and then left. You have been watching your promise for longer than that. You have not withdrawn. You do not know if that makes you more like the sentry or more like the thing outside.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The wind at tower height carries the particular cold of altitude gained by structure rather than geography — an industrial cold, the cold of steel and open air.', chance: 0.20, time: null },
+        { line: 'The Animas catches the light for a moment and flashes silver across its full visible length, a signal that means nothing to anyone but reaches you anyway.', chance: 0.15, time: ['day', 'dawn'] },
+        { line: 'The sniper shifts position by inches, the scope tracking something on the southern approach that you cannot see. He relaxes. Whatever it was decided not to come closer.', chance: 0.20, time: ['day', 'dusk'] },
+      ],
+    },
     npcSpawns: [
       {
         npcId: 'watchtower_sniper',
@@ -713,6 +731,18 @@ export const SALT_CREEK_ROOMS: Room[] = [
         description: 'The fuel situation is posted on a board: CURRENT RESERVE — 47 GALLONS. OPERATIONAL MINIMUM — 100 GALLONS. REQUIRED ACTION: FUEL RUN SOUTHWEST CACHE. Underneath, in Briggs\'s hand: CUTTER — GET THIS DONE. The date on the note is nine days ago. The fuel run requires personnel Briggs hasn\'t assigned yet, which is the situation Briggs resolves by making the need visible until someone takes it on.',
       },
     ],
+    personalLossEchoes: {
+      child: 'Cutter talks to the vehicles in a different register than he talks to people. You recognize the impulse — the specific tenderness reserved for things that need you, that depend on your attention to keep running. You talked to them that way once. Not to machines. To a person small enough to need everything you had.',
+      partner: 'The diesel pickup has been running since before the Collapse because someone loved it enough to keep it alive. Cutter treats it like a patient. You think about the maintenance of love — the daily attention, the small repairs, the constant work of keeping something running that the world is trying to break. You did that work once. The thing you maintained ran anyway.',
+      promise: 'CURRENT RESERVE — 47 GALLONS. OPERATIONAL MINIMUM — 100 GALLONS. The deficit posted on the board in plain numbers, the gap between what is and what needs to be. Your promise has a deficit too — the distance between where you are and where you swore you would get to, posted on no board, visible to no one but you, and the fuel run has not been assigned.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'Cutter swears at something under the truck with the focused profanity of a person who has identified a specific problem and is addressing it in the only language the problem understands.', chance: 0.25, time: null },
+        { line: 'The diesel smell is strong today. Something is leaking, or Cutter is bleeding a line, or both. The motor pool always smells like the continuation of something that should have stopped working years ago.', chance: 0.20, time: null },
+        { line: 'A wrench hits concrete with the specific ring of dropped tools in enclosed spaces. A pause. Cutter\'s voice: "That was on purpose." It was not on purpose.', chance: 0.15, time: ['day'] },
+      ],
+    },
     npcSpawns: [
       {
         npcId: 'mechanic_cutter',

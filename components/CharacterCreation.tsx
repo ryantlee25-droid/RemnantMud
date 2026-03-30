@@ -2,13 +2,32 @@
 
 // ============================================================
 // CharacterCreation.tsx — Point-buy stat allocation screen
+// NOTE: Loss ritual phase owned by Rider D (loss-ritual)
 // ============================================================
 
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useGame } from '@/lib/gameContext'
 import { isDevMode } from '@/lib/supabaseMock'
 import type { StatBlock, CharacterClass, PersonalLossType } from '@/types/game'
 import { CLASS_DEFINITIONS } from '@/types/game'
+
+// ── Loss Ritual Vignettes ──────────────────────────────────────
+
+const LOSS_VIGNETTES: Record<PersonalLossType, string> = {
+  child:
+    "You see their face. Not as they were at the end -- as they were at breakfast, three weeks before. Cereal on the table. Morning light. They looked up and said something you can't remember. You would give everything you have left to remember what they said.",
+  partner:
+    "The last time you touched their hand, you didn't know it was the last time. Nobody ever knows. You have replayed that moment so many times that the memory has worn thin, like paper folded and unfolded until the creases tear. Their name is the first thing you think when you wake. It will be the last thing you think.",
+  community:
+    "The town sign is still standing. The town isn't. You drove past it once, after. The buildings were there but the windows were dark and the doors were open in the way that doors are open when nobody is coming back to close them. You knew every street. You knew every name. Now you know what absence sounds like when it's the size of a town.",
+  identity:
+    "There is a photograph in your pocket. The person in it has your face. You do not recognize them. Somewhere between then and now, the thread that connected you to who you were snapped, and you have been assembling a replacement from whatever was available. The replacement works. It isn't you.",
+  promise:
+    "You said you would. You said it out loud, to someone who believed you. The words are still in the air -- you can almost hear them when the wind drops and the world goes quiet. You don't know if they're still alive to remember what you promised. You know that you remember. That's the weight you carry.",
+}
+
+const LOSS_RITUAL_OPENING = 'One more thing. The thing that matters most.'
+const LOSS_RITUAL_CLOSING = 'You will carry this. The world will remind you.'
 
 const PERSONAL_LOSS_OPTIONS: { type: PersonalLossType; label: string; placeholder: string; hint: string }[] = [
   {
@@ -33,7 +52,7 @@ const PERSONAL_LOSS_OPTIONS: { type: PersonalLossType; label: string; placeholde
     type: 'identity',
     label: 'Your own identity',
     placeholder: 'A name you vaguely remember',
-    hint: 'You can\'t remember who you were. Fragments return. Some converge with MERIDIAN.',
+    hint: "You can't remember who you were. Fragments return. Some converge with MERIDIAN.",
   },
   {
     type: 'promise',
@@ -108,6 +127,88 @@ function computeFreeSpent(stats: StatBlock, cls: CharacterClass): number {
   return STATS.reduce((sum, stat) => sum + (stats[stat] - statFloor(stat, cls)), 0)
 }
 
+// ── Typewriter Hook ────────────────────────────────────────────
+// Character-by-character reveal, matching prologue pacing
+
+function useTypewriter(text: string, active: boolean, speed: number = 35) {
+  const [displayed, setDisplayed] = useState('')
+  const [done, setDone] = useState(false)
+  const indexRef = useRef(0)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  useEffect(() => {
+    if (!active) {
+      setDisplayed('')
+      setDone(false)
+      indexRef.current = 0
+      return
+    }
+
+    indexRef.current = 0
+    setDisplayed('')
+    setDone(false)
+
+    intervalRef.current = setInterval(() => {
+      indexRef.current += 1
+      if (indexRef.current >= text.length) {
+        setDisplayed(text)
+        setDone(true)
+        if (intervalRef.current) clearInterval(intervalRef.current)
+      } else {
+        setDisplayed(text.slice(0, indexRef.current))
+      }
+    }, speed)
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [text, active, speed])
+
+  const skip = useCallback(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current)
+    setDisplayed(text)
+    setDone(true)
+  }, [text])
+
+  return { displayed, done, skip }
+}
+
+// ── Fade-In Wrapper ────────────────────────────────────────────
+// Self-contained animation so we don't need to touch globals.css
+
+function FadeIn({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setVisible(true))
+    return () => cancelAnimationFrame(frame)
+  }, [])
+  return (
+    <div
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transition: 'opacity 600ms ease-in',
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
+// ── Phase Types ────────────────────────────────────────────────
+
+type CreationPhase = 'creation' | 'loss_ritual'
+
+type RitualStep =
+  | 'opening'        // "One more thing..."
+  | 'choosing'       // Loss type selection
+  | 'vignette'       // Typewriter vignette reveal
+  | 'detail'         // Name/detail input
+  | 'closing'        // "You will carry this."
+  | 'done'           // Brief pause, then submit available
+
+// ── Component ──────────────────────────────────────────────────
+
 interface CharacterCreationProps {
   isRebirth?: boolean
   echoStats?: StatBlock
@@ -127,10 +228,55 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
+  // Loss ritual state
+  const [phase, setPhase] = useState<CreationPhase>('creation')
+  const [ritualStep, setRitualStep] = useState<RitualStep>('opening')
+  const [ritualLossType, setRitualLossType] = useState<PersonalLossType | null>(null)
+  const [closingVisible, setClosingVisible] = useState(false)
+
   const classDef = CLASS_DEFINITIONS[characterClass]
   const freeSpent = computeFreeSpent(stats, characterClass)
   const remaining = classDef.freePoints - freeSpent
   const maxHpPreview = 8 + (stats.vigor - 2) * 2
+
+  // Typewriter for the opening line
+  const opening = useTypewriter(
+    LOSS_RITUAL_OPENING,
+    phase === 'loss_ritual' && ritualStep === 'opening',
+    55
+  )
+
+  // Typewriter for the vignette
+  const vignette = useTypewriter(
+    ritualLossType ? LOSS_VIGNETTES[ritualLossType] : '',
+    phase === 'loss_ritual' && ritualStep === 'vignette' && ritualLossType !== null,
+    30
+  )
+
+  // Typewriter for the closing line
+  const closing = useTypewriter(
+    LOSS_RITUAL_CLOSING,
+    phase === 'loss_ritual' && ritualStep === 'closing',
+    45
+  )
+
+  // Auto-advance from opening to choosing when opening text finishes
+  useEffect(() => {
+    if (phase === 'loss_ritual' && ritualStep === 'opening' && opening.done) {
+      const timeout = setTimeout(() => setRitualStep('choosing'), 800)
+      return () => clearTimeout(timeout)
+    }
+  }, [phase, ritualStep, opening.done])
+
+  // Auto-advance from closing to done after closing text finishes
+  useEffect(() => {
+    if (phase === 'loss_ritual' && ritualStep === 'closing' && closing.done) {
+      const timeout = setTimeout(() => {
+        setClosingVisible(true)
+      }, 1500)
+      return () => clearTimeout(timeout)
+    }
+  }, [phase, ritualStep, closing.done])
 
   function handleClassChange(cls: CharacterClass) {
     setCharacterClass(cls)
@@ -146,6 +292,41 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
   function decrement(stat: StatKey) {
     if (stats[stat] <= statFloor(stat, characterClass)) return
     setStats((prev) => ({ ...prev, [stat]: prev[stat] - 1 }))
+  }
+
+  function enterLossRitual() {
+    if (remaining !== 0) return
+    if (!name.trim()) {
+      setError('Enter a name.')
+      return
+    }
+    setError('')
+    setPhase('loss_ritual')
+    setRitualStep('opening')
+    setRitualLossType(null)
+    setClosingVisible(false)
+  }
+
+  function selectRitualLoss(lossType: PersonalLossType) {
+    setRitualLossType(lossType)
+    setPersonalLossType(lossType)
+    setPersonalLossDetail('')
+    setRitualStep('vignette')
+  }
+
+  function confirmVignette() {
+    setRitualStep('detail')
+  }
+
+  function confirmDetail() {
+    setRitualStep('closing')
+    setClosingVisible(false)
+  }
+
+  function goBackToChoosing() {
+    setRitualLossType(null)
+    setPersonalLossDetail('')
+    setRitualStep('choosing')
   }
 
   async function handleSubmit() {
@@ -180,6 +361,164 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
       setSubmitting(false)
     }
   }
+
+  // ── Loss Ritual Renderer ──────────────────────────────────────
+
+  if (phase === 'loss_ritual') {
+    return (
+      <div className="flex flex-col items-center justify-center flex-1 overflow-y-auto font-mono p-4 sm:p-6 md:p-12 bg-black min-h-screen">
+        <div className="w-full max-w-xl">
+
+          {/* Opening line */}
+          {ritualStep === 'opening' && (
+            <div className="text-center">
+              <div className="text-amber-400/60 text-sm leading-relaxed min-h-[2rem]">
+                {opening.displayed}
+                {!opening.done && (
+                  <span className="inline-block w-1.5 h-4 bg-amber-400/40 animate-pulse ml-0.5 align-middle" />
+                )}
+              </div>
+              {!opening.done && (
+                <button
+                  onClick={opening.skip}
+                  className="mt-8 text-amber-900 text-xs uppercase tracking-widest hover:text-amber-700 transition-colors"
+                >
+                  Skip
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Loss type selection */}
+          {ritualStep === 'choosing' && (
+            <FadeIn>
+              <div className="text-amber-400/40 text-xs uppercase tracking-widest mb-6 text-center">
+                What did you lose?
+              </div>
+              <div className="space-y-3">
+                {PERSONAL_LOSS_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.type}
+                    onClick={() => selectRitualLoss(opt.type)}
+                    className="w-full text-left px-4 py-3 border border-amber-900/40 hover:border-amber-700/60 hover:bg-amber-950/30 transition-all duration-300 group"
+                  >
+                    <div className="text-amber-400/80 text-sm group-hover:text-amber-300 transition-colors">
+                      {opt.label}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </FadeIn>
+          )}
+
+          {/* Vignette reveal */}
+          {ritualStep === 'vignette' && ritualLossType && (
+            <div>
+              <div className="text-amber-400/30 text-xs uppercase tracking-widest mb-6 text-center">
+                {PERSONAL_LOSS_OPTIONS.find((o) => o.type === ritualLossType)?.label}
+              </div>
+              <div className="text-amber-400/70 text-sm leading-loose min-h-[6rem]">
+                {vignette.displayed}
+                {!vignette.done && (
+                  <span className="inline-block w-1.5 h-4 bg-amber-400/30 animate-pulse ml-0.5 align-middle" />
+                )}
+              </div>
+              <div className="mt-8 flex gap-4 justify-center">
+                {!vignette.done && (
+                  <button
+                    onClick={vignette.skip}
+                    className="text-amber-900 text-xs uppercase tracking-widest hover:text-amber-700 transition-colors"
+                  >
+                    Skip
+                  </button>
+                )}
+                {vignette.done && (
+                  <>
+                    <button
+                      onClick={goBackToChoosing}
+                      className="text-amber-900 text-xs uppercase tracking-widest hover:text-amber-700 transition-colors"
+                    >
+                      Choose differently
+                    </button>
+                    <button
+                      onClick={confirmVignette}
+                      className="border border-amber-800/60 text-amber-400/70 px-5 py-1.5 text-sm hover:border-amber-600 hover:text-amber-300 transition-colors"
+                    >
+                      This is mine
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Detail input */}
+          {ritualStep === 'detail' && ritualLossType && (
+            <FadeIn>
+              <div className="text-amber-400/30 text-xs uppercase tracking-widest mb-2 text-center">
+                {PERSONAL_LOSS_OPTIONS.find((o) => o.type === ritualLossType)?.label}
+              </div>
+              <div className="text-amber-400/40 text-xs mb-6 text-center">
+                {PERSONAL_LOSS_OPTIONS.find((o) => o.type === ritualLossType)?.hint}
+              </div>
+              <div className="max-w-sm mx-auto">
+                <input
+                  type="text"
+                  value={personalLossDetail}
+                  onChange={(e) => setPersonalLossDetail(e.target.value)}
+                  maxLength={64}
+                  placeholder={PERSONAL_LOSS_OPTIONS.find((o) => o.type === ritualLossType)?.placeholder}
+                  className="w-full bg-transparent border-b border-amber-900/60 text-amber-300/80 px-1 py-2 outline-none focus:border-amber-700 text-sm placeholder-amber-900/60 text-center"
+                  autoFocus
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+                <div className="mt-6 flex justify-center">
+                  <button
+                    onClick={confirmDetail}
+                    className="border border-amber-800/60 text-amber-400/70 px-5 py-1.5 text-sm hover:border-amber-600 hover:text-amber-300 transition-colors"
+                  >
+                    {personalLossDetail.trim() ? 'Continue' : 'Leave it unnamed'}
+                  </button>
+                </div>
+              </div>
+            </FadeIn>
+          )}
+
+          {/* Closing */}
+          {ritualStep === 'closing' && (
+            <div className="text-center">
+              <div className="text-amber-400/60 text-sm leading-relaxed min-h-[2rem]">
+                {closing.displayed}
+                {!closing.done && (
+                  <span className="inline-block w-1.5 h-4 bg-amber-400/40 animate-pulse ml-0.5 align-middle" />
+                )}
+              </div>
+              {closingVisible && (
+                <FadeIn className="mt-8">
+                  <button
+                    onClick={handleSubmit}
+                    disabled={submitting}
+                    className="border border-amber-700/50 text-amber-400/60 px-8 py-2 text-sm hover:border-amber-500 hover:text-amber-300 transition-colors disabled:opacity-40"
+                  >
+                    {submitting
+                      ? (isRebirth ? 'Awakening...' : 'Generating world...')
+                      : (isRebirth ? 'Return' : 'Begin')}
+                  </button>
+                </FadeIn>
+              )}
+              {error && (
+                <div className="mt-4 text-red-400/70 text-sm">{error}</div>
+              )}
+            </div>
+          )}
+
+        </div>
+      </div>
+    )
+  }
+
+  // ── Standard Creation Phase ───────────────────────────────────
 
   return (
     <div className="flex flex-col items-start flex-1 overflow-y-auto font-mono p-4">
@@ -270,7 +609,7 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
                   disabled={atFloor}
                   className="w-7 h-7 border border-amber-800 text-amber-400 hover:bg-amber-900 disabled:opacity-30 disabled:cursor-not-allowed text-center leading-none"
                 >
-                  −
+                  -
                 </button>
 
                 <span className="w-6 text-center text-amber-200 text-lg">{stats[stat]}</span>
@@ -294,61 +633,18 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
           Starting HP: <span className="text-amber-300">{maxHpPreview}</span>
         </div>
 
-        {/* Personal loss */}
-        <div className="mb-6 border-t border-amber-900 pt-6">
-          <div className="text-xs text-amber-600 uppercase tracking-widest mb-1">What did you lose?</div>
-          <div className="text-amber-700 text-xs mb-3">
-            This shapes what surfaces in the world. Not a quest. A haunting.
-          </div>
-          <div className="space-y-2 mb-3">
-            {PERSONAL_LOSS_OPTIONS.map((opt) => (
-              <label key={opt.type} className="flex items-start gap-2 cursor-pointer group">
-                <input
-                  type="radio"
-                  name="personal_loss"
-                  value={opt.type}
-                  checked={personalLossType === opt.type}
-                  onChange={() => { setPersonalLossType(opt.type); setPersonalLossDetail('') }}
-                  className="mt-0.5 accent-amber-500"
-                />
-                <div>
-                  <div className="text-amber-300 text-sm">{opt.label}</div>
-                  <div className="text-amber-600 text-xs">{opt.hint}</div>
-                </div>
-              </label>
-            ))}
-          </div>
-          {(() => {
-            const opt = PERSONAL_LOSS_OPTIONS.find((o) => o.type === personalLossType)
-            return opt ? (
-              <input
-                type="text"
-                value={personalLossDetail}
-                onChange={(e) => setPersonalLossDetail(e.target.value)}
-                maxLength={64}
-                placeholder={opt.placeholder}
-                className="w-full bg-transparent border border-amber-900 text-amber-300 px-3 py-2 outline-none focus:border-amber-700 text-sm placeholder-amber-900"
-                autoComplete="off"
-                spellCheck={false}
-              />
-            ) : null
-          })()}
-        </div>
-
         {/* Error */}
         {error && (
           <div className="mb-4 text-red-400 text-sm">{error}</div>
         )}
 
-        {/* Submit */}
+        {/* Transition to loss ritual (replaces old personal loss + submit) */}
         <button
-          onClick={handleSubmit}
+          onClick={enterLossRitual}
           disabled={submitting || !name.trim() || remaining !== 0}
           className="w-full border border-amber-600 text-amber-400 py-2 text-sm hover:bg-amber-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          {submitting
-            ? (isRebirth ? 'Awakening...' : 'Generating world...')
-            : (isRebirth ? 'Return' : 'Begin')}
+          Continue
         </button>
 
         {isDevMode() && !isRebirth && !submitting && (

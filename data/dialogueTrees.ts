@@ -513,6 +513,122 @@ const sparksTree: DialogueTree = {
 }
 
 // ------------------------------------------------------------
+// SPARKS — Signal Quest (Crossroads)
+// dialogueTree ID: 'cr_sparks_signal_quest'
+// NOTE: section owned by Rider A (quest-spine)
+// Activated after player has sparks_shared_decode flag
+// ------------------------------------------------------------
+
+const sparksSignalQuestTree: DialogueTree = {
+  npcId: 'sparks_radio',
+  startNode: 'sparks_quest_start',
+  nodes: {
+    sparks_quest_start: {
+      id: 'sparks_quest_start',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} grabs your arm the moment you're close enough. "Listen. The signal changed again last night. The cadence — it's faster. Whoever's broadcasting knows someone is listening now." She pulls you to the workbench, where a frequency chart is covered in fresh annotations, red ink still wet. "I can triangulate the source. I know I can. But my equipment can't reach past the interference field around the ${rt.keyword('Scar')}." She meets your eyes. The desperation is controlled but visible. "I need a ${rt.item('Signal Booster')}. ${rt.item('Electronics Salvage')} and a ${rt.item('Wire Coil')} — build one and bring it to me. With a booster in the chain I can cut through the interference and pin the broadcast to a hundred-meter radius." Her voice drops. "Someone has been calling for help for seven years. Seven years, alone, underground. I am not going to let that signal die because I couldn't get the right parts."`,
+      branches: [
+        {
+          label: `"I'll build the ${rt.item('Signal Booster')}. What exactly do I need?"`,
+          targetNode: 'sparks_quest_details',
+        },
+        {
+          label: '"Why does this matter so much to you?"',
+          targetNode: 'sparks_quest_why',
+        },
+        {
+          label: '"Seven years? How is that possible?"',
+          targetNode: 'sparks_quest_seven_years',
+        },
+      ],
+    },
+
+    sparks_quest_details: {
+      id: 'sparks_quest_details',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} is already sketching a diagram on the back of a frequency chart. "${rt.item('Electronics Salvage')} — capacitors, resistors, anything with clean copper trace. And a ${rt.item('Wire Coil')} for the antenna amplification loop." She taps the diagram. "Any workbench with basic tools can assemble it. The ${rt.keyword('crafting')} isn't hard — it's finding clean components that's the challenge." She tears the diagram free and presses it into your hand. "Bring me the finished ${rt.item('Signal Booster')} and I'll have the triangulation running within the hour. We'll know exactly where in the Scar the signal originates. Exactly where they are."`,
+      onEnter: {
+        setFlag: { sparks_quest_accepted: true, quest_signal_booster_active: true },
+      },
+      branches: [
+        {
+          label: '"I\'ll get it done."',
+          targetNode: 'sparks_quest_closure',
+        },
+        {
+          label: '"Why does this matter so much to you?"',
+          targetNode: 'sparks_quest_why',
+        },
+      ],
+    },
+
+    sparks_quest_why: {
+      id: 'sparks_quest_why',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} is quiet for three seconds. For her, that's an eternity. "Because I heard it on the worst night of my life. Three weeks after the Collapse. I'd lost — everyone. I was sitting in the dark with a radio I'd pulled from a wrecked car, scanning frequencies for anything human. Anything." She adjusts a dial that doesn't need adjusting. "And there it was. Twelve words. Repeating. Someone else was alive and trying to reach someone. Anyone." She looks at the radio. "I never stopped listening. And they never stopped broadcasting. That means something. That has to mean something."`,
+      branches: [
+        {
+          label: `"Tell me what I need to build the ${rt.item('Signal Booster')}."`,
+          targetNode: 'sparks_quest_details',
+        },
+        {
+          label: '"It means something. I\'ll find out what."',
+          targetNode: 'sparks_quest_closure',
+        },
+      ],
+    },
+
+    sparks_quest_seven_years: {
+      id: 'sparks_quest_seven_years',
+      speaker: 'Sparks',
+      text: `"That's the question that keeps me up." ${rt.npc('Sparks')} pulls the frequency chart closer, finger tracing a line of decoded text. "The ${rt.keyword('MERIDIAN')} facility was sealed during the bombing. Underground. Self-contained. If the backup generators held — and the signal proves they did — someone could survive down there. Alone. For years." She swallows. "The modulation shifts prove it's manual adjustment. Not automated. A person is doing this. A person who has been trapped underground since the world ended, broadcasting the same twelve words, waiting for someone to answer." Her jaw tightens. "We're going to answer."`,
+      branches: [
+        {
+          label: `"What do I need to build the ${rt.item('Signal Booster')}?"`,
+          targetNode: 'sparks_quest_details',
+        },
+        {
+          label: '"We will. I promise."',
+          targetNode: 'sparks_quest_closure',
+        },
+      ],
+    },
+
+    // ---- Return with booster ----
+    sparks_quest_booster_return: {
+      id: 'sparks_quest_booster_return',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} sees the ${rt.item('Signal Booster')} in your hands and her whole body changes — shoulders drop, hands stop moving, the constant nervous energy goes still for the first time since you've known her. "You built it." She takes it with both hands, reverent. "Give me — don't talk. Don't talk." She's already wiring it into the antenna array, fingers fast and precise. The radio hums louder. Static shifts. And then — for a half-second — a voice. Clear. Human. Desperate. Gone. ${rt.npc('Sparks')} looks at you with tears running down her face and the most terrified smile you've ever seen. "South-southeast. Point four kilometers from the crater rim. That's where they are. That's where we go."`,
+      onEnter: {
+        setFlag: { sparks_booster_delivered: true, quest_signal_booster_complete: true, signal_triangulated: true },
+        removeItem: ['crafted_signal_booster'],
+      },
+      branches: [
+        {
+          label: '"We\'ll get them out."',
+          targetNode: 'sparks_quest_final',
+        },
+      ],
+    },
+
+    sparks_quest_final: {
+      id: 'sparks_quest_final',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} wipes her face with the back of her hand, already scribbling coordinates. "The ${rt.keyword('Scar')}. Southern approach. There should be a maintenance access — the old facility maps show service tunnels." She hands you the coordinates, hand steady now. "Find them. Find whoever has been down there for seven years, alone, broadcasting into the dark, hoping someone would hear." She grips your shoulder once, hard. "You heard."`,
+      onEnter: {
+        setFlag: 'sparks_gave_coordinates',
+      },
+    },
+
+    sparks_quest_closure: {
+      id: 'sparks_quest_closure',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} nods once — sharp, decisive. "Good. The signal won't wait forever. Whoever's down there, they've held on this long, but —" She doesn't finish. She doesn't need to. The soldering iron is already in her hand, the radio humming, the frequency chart open. She'll be here when you get back. She's always here.`,
+    },
+  },
+}
+
+// ------------------------------------------------------------
 // MARSHAL CROSS — Accord Leader (Covenant)
 // Military cadence. States facts, not feelings.
 // dialogueTree ID: 'cv_marshal_cross_intro'
@@ -1193,7 +1309,7 @@ const patchTree: DialogueTree = {
     patch_start: {
       id: 'patch_start',
       speaker: 'Patch',
-      text: `${rt.npc('Patch')} doesn't look up from the suture kit. "You're here. Good. I've got questions. You've got questions. One of us has something the other wants. Let's find out who goes first."`,
+      text: `${rt.npc('Patch')} doesn't look up from the suture kit. "Before anything else — have you heard the ${rt.keyword('signal')}? Everyone hears it eventually. Shortwave, repeating. ${rt.npc('Sparks')} at the north market is the only one who's made sense of it." The needle pushes through. "If you want to understand this world, start there."`,
       branches: [
         // ---- Echo branches (cycle 2+) ----
         {
@@ -1201,6 +1317,11 @@ const patchTree: DialogueTree = {
           targetNode: 'patch_echo_return',
           requiresCycleMin: 2,
           requiresPreviousQuest: 'patch_mentioned_scar',
+        },
+        // ---- Signal hook (first-visit priority) ----
+        {
+          label: `"What ${rt.keyword('signal')}? Tell me more."`,
+          targetNode: 'patch_signal_hook',
         },
         // ---- Standard branches ----
         {
@@ -1210,6 +1331,30 @@ const patchTree: DialogueTree = {
         {
           label: 'What do you know about the factions out here?',
           targetNode: 'patch_faction_talk',
+        },
+      ],
+    },
+
+    // ---- Signal Hook: directs player to Sparks ----
+    patch_signal_hook: {
+      id: 'patch_signal_hook',
+      speaker: 'Patch',
+      text: `${rt.npc('Patch')} sets the suture kit down. "Shortwave broadcast. Repeating loop — been running for years. Most people think it's automated. Dead tower, broken equipment, ghost in the wires." One finger taps the desk. "Sparks doesn't think that. Sparks thinks someone is alive in the ${rt.keyword('Scar')}, forty meters underground, adjusting the signal by hand. And Sparks is the smartest person in this market." The finger stops. "North end. Look for the radio bench. You'll hear her before you see her."`,
+      onEnter: {
+        setFlag: 'patch_mentioned_signal',
+      },
+      branches: [
+        {
+          label: 'I have something to trade for information.',
+          targetNode: 'patch_trade_intel',
+        },
+        {
+          label: 'What do you know about the factions out here?',
+          targetNode: 'patch_faction_talk',
+        },
+        {
+          label: '"I\'ll find Sparks."',
+          targetNode: 'patch_closure',
         },
       ],
     },
@@ -4301,6 +4446,7 @@ export const DIALOGUE_TREES: Record<string, DialogueTree> = {
 
   // Sparks at Crossroads
   cr_sparks_intro: sparksTree,
+  cr_sparks_signal_quest: sparksSignalQuestTree,
 
   // Marshal Cross at Covenant courthouse
   cv_marshal_cross_intro: crossTree,
@@ -4310,6 +4456,7 @@ export const DIALOGUE_TREES: Record<string, DialogueTree> = {
 
   // Patch at Crossroads
   cr_patch_intro: patchTree,
+  cr_patch_main: patchTree, // alias — crossroads.ts references this ID
 
   // Howard at River Road bridge
   rr_howard_bridge: howardTree,

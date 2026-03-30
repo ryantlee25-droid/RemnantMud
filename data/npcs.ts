@@ -226,7 +226,7 @@ export const NPCS: Record<string, RichNPC> = {
     description:
       'Young for the authority they carry, with the kind of driven-thin look that comes from thinking too much and sleeping too little. Their workspace is organized in a system only they understand, which is efficient, which is the point. They know about you. The way they looked up when you entered was not surprise — it was confirmation.',
     dialogue:
-      "I've been tracking the Revenant phenomenon since Cycle 2. The skill retention curves, the death-specific memory degradation, the way the scars accumulate. You're not the only one. You are, however, the most interesting one. I'm not saying that to flatter you. I'm saying it because you should know that whatever CHARON-7 is doing to you, it has a goal. I just haven't proven what it is yet. Sit down. I have questions.",
+      "I've been tracking the Revenant phenomenon since Cycle 2. The skill retention curves, the death-specific memory degradation, the way the scars accumulate. You're not the only one. You are, however, the most interesting one. I'm not saying that to flatter you. I'm saying it because you should know that whatever CHARON-7 is doing to you, it has a goal. I just haven't proven what it is yet. Sit down. I have questions. And if you've heard the signal — the shortwave broadcast from the Scar — I need to know that too. The frequency matches MERIDIAN's emergency protocol. Someone in that facility is still alive. That changes everything about what we thought we knew.",
     faction: 'reclaimers',
     isNamed: true,
     zone: 'the_stacks',
@@ -330,6 +330,11 @@ export const NPCS: Record<string, RichNPC> = {
       {
         activity: 'stands at the center of the bridge at night, looking north up the river, the mug cold in his hands',
         weight: 2,
+        timeRestrict: ['night'],
+      },
+      {
+        activity: 'is adjusting a small radio on the bridge rail, scanning frequencies. He stops on a burst of static that almost sounds like words. "There it is again. Every night. Sparks at Crossroads thinks someone is alive in the Scar. I think she might be right."',
+        weight: 1,
         timeRestrict: ['night'],
       },
     ],
@@ -818,7 +823,7 @@ export const NPCS: Record<string, RichNPC> = {
     id: 'traveling_merchant',
     name: 'Traveling Merchant',
     description: "A Drifter merchant with a laden pack and the cheerful wariness of someone who has survived the roads by being careful about who they trust and fast about getting out.",
-    dialogue: "Three-day trade window. I've got textiles, dried goods, and a case of pre-Collapse canned protein I'm not going to ask you to verify the contents of. What are you looking to trade?",
+    dialogue: "Three-day trade window. I've got textiles, dried goods, and a case of pre-Collapse canned protein I'm not going to ask you to verify the contents of. What are you looking to trade? Also — you heard the broadcast yet? Shortwave, at night, when the atmospheric skip is right. Everybody on the River Road has heard it at least once. Something repeating from up in the mountains. Sparks at Crossroads is the one to ask about it.",
     faction: 'drifters',
     zone: 'river_road',
     spawnChance: 0.45,
@@ -827,6 +832,7 @@ export const NPCS: Record<string, RichNPC> = {
       { activity: 'is reorganizing their pack with the compressed efficiency of someone who knows exactly how many minutes they can afford', weight: 2 },
       { activity: 'is making a transaction with a local, the exchange quick and mutually professional', weight: 2, timeRestrict: ['day'] },
       { activity: 'is eating quickly at the edge of the trading area, pack within arm\'s reach', weight: 1 },
+      { activity: 'is holding a battered transistor radio to their ear, frowning at the static between stations. "There it is again. You hear that? Every night, same time, same words."', weight: 2, timeRestrict: ['night', 'dusk'] },
     ],
   },
 
@@ -850,7 +856,7 @@ export const NPCS: Record<string, RichNPC> = {
     id: 'salters_soldier',
     name: 'Salter Soldier',
     description: "A Salter in field kit — plate carrier, sidearm, the hardened bearing of someone who has been in the field continuously. Professional and territorial.",
-    dialogue: "Salt Creek perimeter. You need a reason to be here and you need to state it clearly. Salter territory isn't open access.",
+    dialogue: "Salt Creek perimeter. You need a reason to be here and you need to state it clearly. Salter territory isn't open access. And if you're here about that radio signal the Reclaimers keep going on about — we don't chase ghost broadcasts. Briggs says the Scar is sealed and dead. That's good enough for me.",
     faction: 'salters',
     zone: 'salt_creek',
     spawnChance: 0.85,
@@ -959,13 +965,14 @@ export const NPCS: Record<string, RichNPC> = {
     id: 'campfire_stranger',
     name: 'Campfire Stranger',
     description: "Someone at the fire who wasn't here last time. Quiet. Watching. Could be nothing. Could be something.",
-    dialogue: "Long road. Good to sit still for a while.",
+    dialogue: "Long road. Good to sit still for a while. You ever hear anything on the shortwave at night out here? Repeating loop. Same words. I thought it was interference the first time. Second time I started counting the words. Twelve. Always twelve. Someone at Crossroads is tracking it — Sparks, they call her. I keep meaning to go ask.",
     zone: 'river_road',
     spawnChance: 0.35,
     dispositionRoll: { friendly: 0.15, neutral: 0.40, wary: 0.35, hostile: 0.10 },
     activityPool: [
       { activity: 'sits at the fire with the carefully neutral posture of someone not inviting conversation', weight: 3, timeRestrict: ['night', 'dusk'] },
       { activity: 'is eating something they brought themselves, sharing nothing, watching everything', weight: 2 },
+      { activity: 'is staring north toward the mountains with a portable radio balanced on their knee, the dial turned low. Static. Then something that might be words. Then static again', weight: 2, timeRestrict: ['night'] },
     ],
   },
 

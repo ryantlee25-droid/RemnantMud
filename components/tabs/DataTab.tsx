@@ -5,7 +5,7 @@
 // ============================================================
 
 import { useGame } from '@/lib/gameContext'
-import type { FactionType } from '@/types/game'
+import type { FactionType, ZoneType, ExplorationProgress } from '@/types/game'
 import { getEnemy, ENEMIES } from '@/data/enemies'
 
 // ------------------------------------------------------------
@@ -39,6 +39,22 @@ const REPUTATION_LABELS: Record<number, string> = {
   [3]: 'Blooded',
 }
 
+const ZONE_DISPLAY_NAMES: Record<ZoneType, string> = {
+  crossroads: 'Crossroads',
+  river_road: 'River Road',
+  covenant: 'Covenant',
+  salt_creek: 'Salt Creek',
+  the_ember: 'The Ember',
+  the_breaks: 'The Breaks',
+  the_dust: 'The Dust',
+  the_stacks: 'The Stacks',
+  duskhollow: 'Duskhollow',
+  the_deep: 'The Deep',
+  the_pine_sea: 'The Pine Sea',
+  the_scar: 'The Scar',
+  the_pens: 'The Pens',
+}
+
 // ------------------------------------------------------------
 // Helpers
 // ------------------------------------------------------------
@@ -47,6 +63,89 @@ function formatFlagName(key: string): string {
   return key
     .replace(/_/g, ' ')
     .replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
+// ------------------------------------------------------------
+// Exploration Section
+// ------------------------------------------------------------
+
+function ExplorationSection({ progress }: { progress?: ExplorationProgress }) {
+  if (!progress) {
+    return (
+      <section>
+        <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">
+          Exploration
+        </h2>
+        <div className="text-amber-600 text-xs italic">
+          Type &apos;journal&apos; to map your progress.
+        </div>
+      </section>
+    )
+  }
+
+  const pct = progress.totalRooms > 0
+    ? Math.floor((progress.roomsVisited / progress.totalRooms) * 100)
+    : 0
+
+  const zoneEntries = Object.entries(progress.zoneProgress) as Array<
+    [ZoneType, { visited: number; total: number }]
+  >
+  // Sort: most-explored zones first
+  zoneEntries.sort((a, b) => b[1].visited - a[1].visited)
+
+  const keyPct = progress.totalNarrativeKeys > 0
+    ? Math.floor((progress.narrativeKeysFound / progress.totalNarrativeKeys) * 100)
+    : 0
+
+  return (
+    <section>
+      <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">
+        Exploration
+      </h2>
+
+      {/* Total progress */}
+      <div className="flex justify-between mb-1">
+        <span className="text-amber-400">Known world</span>
+        <span className="text-amber-300">
+          {progress.roomsVisited}/{progress.totalRooms} ({pct}%)
+        </span>
+      </div>
+
+      {/* Mini progress bar */}
+      <div className="h-1 bg-amber-900 rounded mb-2">
+        <div
+          className="h-1 bg-amber-500 rounded"
+          style={{ width: `${Math.min(pct, 100)}%` }}
+        />
+      </div>
+
+      {/* Zone breakdown */}
+      <div className="space-y-0.5 mb-2">
+        {zoneEntries.map(([zone, { visited, total }]) => {
+          const zonePct = total > 0 ? Math.floor((visited / total) * 100) : 0
+          const displayName = ZONE_DISPLAY_NAMES[zone] ?? zone
+          return (
+            <div key={zone} className="flex justify-between text-xs">
+              <span className={visited > 0 ? 'text-amber-400' : 'text-amber-700'}>
+                {displayName}
+              </span>
+              <span className={visited > 0 ? 'text-amber-500' : 'text-amber-700'}>
+                {visited}/{total} ({zonePct}%)
+              </span>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Narrative keys */}
+      <div className="flex justify-between text-xs border-t border-amber-900 pt-1">
+        <span className="text-amber-400">Knowledge keys</span>
+        <span className="text-amber-500">
+          {progress.narrativeKeysFound}/{progress.totalNarrativeKeys} ({keyPct}%)
+        </span>
+      </div>
+    </section>
+  )
 }
 
 // ------------------------------------------------------------
@@ -70,6 +169,9 @@ export default function DataTab() {
 
   return (
     <div className="overflow-y-auto flex-1 font-mono text-sm text-amber-400 p-2 space-y-2">
+      {/* EXPLORATION */}
+      <ExplorationSection progress={state.explorationProgress} />
+
       {/* FACTION STANDING */}
       <section>
         <h2 className="text-amber-600 text-xs uppercase tracking-widest mb-1">

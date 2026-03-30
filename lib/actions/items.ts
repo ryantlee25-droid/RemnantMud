@@ -2,7 +2,7 @@
 // lib/actions/items.ts — handleTake, handleDrop, handleEquip, handleUse, handleStash
 // ============================================================
 
-import type { GameMessage, Room, Player, InventoryItem } from '@/types/game'
+import type { GameMessage, Room, Player, InventoryItem, ZoneType, ExplorationProgress } from '@/types/game'
 import type { EngineCore } from './types'
 import type { StashItem } from '@/types/game'
 import {
@@ -17,6 +17,8 @@ import { getItem } from '@/data/items'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 import { rt } from '@/lib/richText'
 import { msg, systemMsg, errorMsg } from '@/lib/messages'
+import { ALL_ROOMS } from '@/data/rooms/index'
+import { ALL_NARRATIVE_KEYS } from '@/data/narrativeKeys/keys_by_zone'
 
 // ------------------------------------------------------------
 // Stash loader — reads player_stash rows and maps to StashItem[]
@@ -515,31 +517,128 @@ export async function handleRead(engine: EngineCore, noun: string | undefined): 
 }
 
 // ------------------------------------------------------------
-// Journal — list all lore items in inventory
+// Zone display names (for journal / exploration output)
+// ------------------------------------------------------------
+
+const ZONE_DISPLAY_NAMES: Record<ZoneType, string> = {
+  crossroads: 'Crossroads',
+  river_road: 'River Road',
+  covenant: 'Covenant',
+  salt_creek: 'Salt Creek',
+  the_ember: 'The Ember',
+  the_breaks: 'The Breaks',
+  the_dust: 'The Dust',
+  the_stacks: 'The Stacks',
+  duskhollow: 'Duskhollow',
+  the_deep: 'The Deep',
+  the_pine_sea: 'The Pine Sea',
+  the_scar: 'The Scar',
+  the_pens: 'The Pens',
+}
+
+// ------------------------------------------------------------
+// Exploration progress computation
+// NOTE: section owned by Rider C — do not modify without contract
+// ------------------------------------------------------------
+
+export function computeExplorationProgress(
+  discoveredRoomIds: string[],
+  narrativeKeys: string[],
+): ExplorationProgress {
+  const visitedSet = new Set(discoveredRoomIds)
+
+  // Count rooms per zone from static registry
+  const zoneTotals = new Map<ZoneType, number>()
+  const zoneVisited = new Map<ZoneType, number>()
+
+  for (const room of ALL_ROOMS) {
+    zoneTotals.set(room.zone, (zoneTotals.get(room.zone) ?? 0) + 1)
+    if (visitedSet.has(room.id)) {
+      zoneVisited.set(room.zone, (zoneVisited.get(room.zone) ?? 0) + 1)
+    }
+  }
+
+  const zoneProgress: Partial<Record<ZoneType, { visited: number; total: number }>> = {}
+  for (const [zone, total] of zoneTotals) {
+    zoneProgress[zone] = {
+      visited: zoneVisited.get(zone) ?? 0,
+      total,
+    }
+  }
+
+  return {
+    roomsVisited: visitedSet.size,
+    totalRooms: ALL_ROOMS.length,
+    zoneProgress,
+    narrativeKeysFound: narrativeKeys.length,
+    totalNarrativeKeys: ALL_NARRATIVE_KEYS.length,
+  }
+}
+
+// ------------------------------------------------------------
+// Journal — exploration progress + lore items
 // ------------------------------------------------------------
 
 export async function handleJournal(engine: EngineCore): Promise<void> {
-  const { player, inventory } = engine.getState()
+  const { player, inventory, ledger } = engine.getState()
   if (!player) return
 
+  const lines: GameMessage[] = []
+
+  // --- Exploration summary ---
+  const discoveredRoomIds = ledger?.discoveredRoomIds ?? []
+  const narrativeKeys = player.narrativeKeys ?? []
+  const progress = computeExplorationProgress(discoveredRoomIds, narrativeKeys)
+
+  const pct = progress.totalRooms > 0
+    ? Math.floor((progress.roomsVisited / progress.totalRooms) * 100)
+    : 0
+
+  lines.push(systemMsg('EXPLORATION LOG'))
+  lines.push(systemMsg(`  You have explored ${progress.roomsVisited}/${progress.totalRooms} rooms (${pct}%) of the known world.`))
+  lines.push(systemMsg(''))
+
+  // Zone breakdown — only show zones that have rooms
+  const zoneEntries = Object.entries(progress.zoneProgress) as Array<[ZoneType, { visited: number; total: number }]>
+  // Sort: visited zones first (descending by visited count), then unvisited
+  zoneEntries.sort((a, b) => b[1].visited - a[1].visited)
+
+  for (const [zone, { visited, total }] of zoneEntries) {
+    const displayName = ZONE_DISPLAY_NAMES[zone] ?? zone
+    const zonePct = total > 0 ? Math.floor((visited / total) * 100) : 0
+    const marker = visited === 0 ? '  ' : visited === total ? '* ' : '  '
+    lines.push(systemMsg(`${marker}${rt.keyword(displayName)}: ${visited}/${total} (${zonePct}%)`))
+  }
+
+  lines.push(systemMsg(''))
+
+  // Narrative keys
+  const keyPct = progress.totalNarrativeKeys > 0
+    ? Math.floor((progress.narrativeKeysFound / progress.totalNarrativeKeys) * 100)
+    : 0
+  lines.push(systemMsg(`  ${progress.narrativeKeysFound}/${progress.totalNarrativeKeys} knowledge keys discovered (${keyPct}%).`))
+
+  lines.push(systemMsg(''))
+
+  // --- Lore items ---
   const loreItems = inventory.filter((ii) => ii.item.type === 'lore')
 
-  if (loreItems.length === 0) {
-    engine._appendMessages([msg('Your satchel holds no written records.')])
-    return
+  if (loreItems.length > 0) {
+    lines.push(systemMsg(`FIELD NOTES & DOCUMENTS (type 'read <name>' for full text):`))
+    for (const ii of loreItems) {
+      const preview = ii.item.loreText
+        ? ii.item.loreText.length > 60
+          ? ii.item.loreText.slice(0, 60) + '...'
+          : ii.item.loreText
+        : '(blank)'
+      lines.push(systemMsg(`  - ${rt.item(ii.item.name)}: ${preview}`))
+    }
+  } else {
+    lines.push(msg('Your satchel holds no written records.'))
   }
 
-  const lines: GameMessage[] = [
-    systemMsg(`FIELD NOTES & DOCUMENTS (type 'read <name>' for full text):`),
-  ]
-  for (const ii of loreItems) {
-    const preview = ii.item.loreText
-      ? ii.item.loreText.length > 60
-        ? ii.item.loreText.slice(0, 60) + '...'
-        : ii.item.loreText
-      : '(blank)'
-    lines.push(systemMsg(`  - ${rt.item(ii.item.name)}: ${preview}`))
-  }
+  // Store computed progress on game state for DataTab to read
+  engine._setState({ explorationProgress: progress })
 
   engine._appendMessages(lines)
 }

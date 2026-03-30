@@ -684,6 +684,22 @@ export interface GameMessage {
 // Game State (held in React context during a session)
 // ------------------------------------------------------------
 
+// ------------------------------------------------------------
+// Exploration Progress — journal / cartography tracking
+// ------------------------------------------------------------
+
+export interface ExplorationProgress {
+  roomsVisited: number
+  totalRooms: number
+  zoneProgress: Partial<Record<ZoneType, { visited: number; total: number }>>
+  narrativeKeysFound: number
+  totalNarrativeKeys: number
+}
+
+// ------------------------------------------------------------
+// Ending / Buffs / Game State
+// ------------------------------------------------------------
+
 export type EndingChoice = 'cure' | 'weapon' | 'seal' | 'throne'
 
 export interface ActiveBuff {
@@ -716,6 +732,7 @@ export interface GameState {
     treeId: string
     currentNodeId: string
   }
+  explorationProgress?: ExplorationProgress
 }
 
 // ------------------------------------------------------------

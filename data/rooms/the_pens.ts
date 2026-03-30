@@ -145,6 +145,18 @@ export const THE_PENS_ROOMS: Room[] = [
         { type: 'shuffler', weight: 100, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
     },
+    npcSpawns: [
+      {
+        npcId: 'lyris_red_court',
+        spawnChance: 0.60,
+        spawnType: 'patrol',
+        activityPool: [
+          { desc: 'Lyris moves through the corridor on a security pass — measured, deliberate, still practicing the form of someone who does this without thinking about it.', weight: 3 },
+          { desc: 'Lyris has stopped at the bulletin board and is reading the donor calendar with an expression that is hard to place. She notices you and straightens.', weight: 2, timeRestrict: ['day'] },
+        ],
+        dispositionRoll: { friendly: 0.20, neutral: 0.55, wary: 0.20, hostile: 0.05 },
+      },
+    ],
     narrativeNotes: 'pens_03. Ward A is the best-case version of The Pens. Show it honestly — clean, lit, functional. The horror is in the normalcy. The donors are not suffering in ways they would articulate as suffering.',
   },
 
@@ -406,6 +418,18 @@ export const THE_PENS_ROOMS: Room[] = [
         { type: 'remnant', weight: 40, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
     },
+    npcSpawns: [
+      {
+        npcId: 'kade_red_court',
+        spawnChance: 0.70,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'Kade is working at one of the administration desks, writing in a journal. He doesn\'t look up when you enter, but his pen slows.', weight: 3 },
+          { desc: 'Kade stands at the scheduling board, studying the grid with the patient attention of someone reading a text they\'ve read before.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.15, neutral: 0.55, wary: 0.25, hostile: 0.05 },
+      },
+    ],
     narrativeNotes: 'pens_08. The administrative hub. Six exits from here — this is the routing node for the back half of the zone. The yield ledger DEPARTED column is the key detail.',
   },
 
@@ -596,6 +620,18 @@ export const THE_PENS_ROOMS: Room[] = [
         { type: 'remnant', weight: 40, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
     },
+    npcSpawns: [
+      {
+        npcId: 'vex_red_court',
+        spawnChance: 0.75,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'Vex is working through the shipping manifest at the central table, cross-checking bag counts against a clipboard. The pen moves without pausing.', weight: 4 },
+          { desc: 'Vex is staging collection bags near the loading door, arranging them by blood type with the automatic precision of someone who has done this hundreds of times.', weight: 3 },
+        ],
+        dispositionRoll: { friendly: 0.05, neutral: 0.65, wary: 0.25, hostile: 0.05 },
+      },
+    ],
     narrativeNotes: 'pens_12. The Accord complicity detail lands here. Deep Waypoint 7 as a destination seeds the The Deep zone connection. The voluntary/involuntary ratio shift is the statistical version of what players have already seen qualitatively.',
   },
 

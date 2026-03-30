@@ -2260,6 +2260,70 @@ export const NPCS: Record<string, RichNPC> = {
     ],
   },
 
+  // === CONVOY remnant-story-0329 Rider C: Red Court ===
+
+  // kade_red_court — Red Court philosopher and historian. Articulates ideology, not violence.
+  kade_red_court: {
+    id: 'kade_red_court',
+    name: 'Kade',
+    description:
+      'An older Sanguine who carries the particular stillness of someone who has stopped trying to justify himself and started explaining. Gray at the temples, a face that has been expressive for a long time and still is. He watches you with the patience of a man who has had this conversation before and is genuinely curious how your version goes.',
+    dialogue:
+      'The first year was the loudest. Everyone was deciding what they were — Covenant, Red Court, Hollow, or something that hadn\'t been named yet. I made my decision early. I\'ve been thinking about it ever since. Not regretting. Thinking. There\'s a difference.',
+    faction: 'red_court',
+    isNamed: true,
+    zone: 'the_pens',
+    spawnChance: 0.70,
+    dispositionRoll: { friendly: 0.15, neutral: 0.55, wary: 0.25, hostile: 0.05 },
+    activityPool: [
+      { activity: 'is writing in a journal, the handwriting precise, unhurried — periodically he stops and looks at the wall as if it has said something worth considering', weight: 3 },
+      { activity: 'is seated at a table with a cup of something warm, reading a document with the focused attention of someone who has read it before and is checking their work', weight: 2, timeRestrict: ['day'] },
+      { activity: 'stands at the window and watches the facility grounds below with the expression of someone who has made peace with what they see', weight: 2, timeRestrict: ['dusk'] },
+    ],
+  },
+
+  // vex_red_court — Red Court logistics and supply. Makes the horror operational.
+  vex_red_court: {
+    id: 'vex_red_court',
+    name: 'Vex',
+    description:
+      'A precise, flat-voiced person behind a ledger of numbers that don\'t mean what numbers usually mean. No visible cruelty — visible efficiency, which is worse. Vex manages what the Red Court runs on, and what the Red Court runs on is people. The ledger is always open. The pen is always moving.',
+    dialogue:
+      'Supply chain. Territory management. Resource allocation. What I do isn\'t complicated — it just sounds worse once you know what the supply is. What do you need?',
+    faction: 'red_court',
+    isNamed: true,
+    zone: 'the_pens',
+    spawnChance: 0.75,
+    dispositionRoll: { friendly: 0.05, neutral: 0.65, wary: 0.25, hostile: 0.05 },
+    activityPool: [
+      { activity: 'is working through a ledger of figures, marking entries with a grease pencil, cross-referencing two columns without looking up', weight: 4 },
+      { activity: 'is speaking in low tones with a Red Court enforcer, the tone of someone issuing delivery instructions rather than orders', weight: 2, timeRestrict: ['dawn', 'day'] },
+      { activity: 'is counting collection bags against a clipboard manifest, ticking items with a businesslike speed', weight: 3, timeRestrict: ['dusk'] },
+    ],
+  },
+
+  // lyris_red_court — Red Court scout. Recently turned. The human perspective inside the Court.
+  lyris_red_court: {
+    id: 'lyris_red_court',
+    name: 'Lyris',
+    description:
+      'Young — the kind of young that is still visible in the face even when the face is no longer human in the old way. She moves through the facility with the self-conscious precision of someone who is still learning what her body can do and is not sure how to feel about the learning. Her eyes track more than they should. She notices when you notice.',
+    dialogue:
+      'Six months. I know it doesn\'t show on the outside but it does on the inside — there\'s a version of me that\'s still figuring out the rules. Not the Red Court rules. The other rules. The ones for being what I am now.',
+    faction: 'red_court',
+    isNamed: true,
+    zone: 'the_pens',
+    spawnChance: 0.60,
+    dispositionRoll: { friendly: 0.20, neutral: 0.55, wary: 0.20, hostile: 0.05 },
+    activityPool: [
+      { activity: 'is running a perimeter check along the facility corridor — measured, systematic, the way someone moves who was trained recently and is still thinking about the steps', weight: 3 },
+      { activity: 'is standing at a corner with arms crossed, watching the ward activity with the intensity of someone who is still surprised by things that are no longer supposed to surprise her', weight: 2, timeRestrict: ['day'] },
+      { activity: 'is sitting alone near the east gate, still, looking at her own hands with the focused expression of someone doing inventory', weight: 2, timeRestrict: ['dusk', 'night'] },
+    ],
+  },
+
+  // === END CONVOY remnant-story-0329 Rider C ===
+
   // --- [RIDER A: remnant-story-0329] Echo — Named Hollow ---
   echo_hollow: {
     id: 'echo_hollow',

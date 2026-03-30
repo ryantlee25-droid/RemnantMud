@@ -94,6 +94,13 @@ export const NPC_TOPICS: Record<string, NpcTopic[]> = {
   // MARSHAL CROSS — Accord leader
   // ----------------------------------------------------------
   marshal_cross: [
+    // === CONVOY remnant-story-0329 Rider G ===
+    {
+      keywords: ['charon', 'charon-7', 'virus', 'pathogen'],
+      response:
+        '"It\'s a threat." Cross\'s voice carries no room for elaboration. "I don\'t need to understand the biology to build a wall. I need to know the vector, the range, and whether containment holds." She meets your eyes. "It hasn\'t stopped expanding. That\'s the relevant data point."',
+    },
+    // === END CONVOY remnant-story-0329 Rider G ===
     {
       keywords: ['law', 'rules', 'accord', 'justice'],
       response:
@@ -126,6 +133,13 @@ export const NPC_TOPICS: Record<string, NpcTopic[]> = {
   // VESPER — Elder Sanguine, Covenant of Dusk leader
   // ----------------------------------------------------------
   vesper: [
+    // === CONVOY remnant-story-0329 Rider G ===
+    {
+      keywords: ['charon', 'charon-7', 'virus', 'pathogen'],
+      response:
+        '"It changed us." Vesper is quiet for a moment. "I can tell you what it feels like — the cold clarity, the expansion of senses, the hunger arriving in place of hunger\'s absence. I cannot tell you what it is." She folds her hands. "Ask Lev for the mechanism. I will tell you what the mechanism does to a person. They are different questions."',
+    },
+    // === END CONVOY remnant-story-0329 Rider G ===
     {
       keywords: ['blood', 'tithe', 'feeding'],
       response:
@@ -158,6 +172,13 @@ export const NPC_TOPICS: Record<string, NpcTopic[]> = {
   // DEACON HARROW — Kindling leader
   // ----------------------------------------------------------
   deacon_harrow: [
+    // === CONVOY remnant-story-0329 Rider G ===
+    {
+      keywords: ['charon', 'charon-7', 'virus', 'pathogen'],
+      response:
+        '"The fire is not a disease. It is an invitation." He says it with the calm of a thing proven. "CHARON-7 selects — it does not infect. The ones who shattered were not ready. The ones who survived were. Lev calls it mechanism. I call it intention." His certainty is quieter than it should be.',
+    },
+    // === END CONVOY remnant-story-0329 Rider G ===
     {
       keywords: ['faith', 'belief', 'kindling', 'religion'],
       response:
@@ -199,6 +220,26 @@ export const NPC_TOPICS: Record<string, NpcTopic[]> = {
     { keywords: ['expansion', 'territory', 'control', 'borders'], response: '"We push because standing still is dying slowly." He marks something on the map with a grease pencil. "The Hollow don\'t have a truce. The Red Court doesn\'t have a truce. Every settlement we don\'t control is a settlement that can be turned against us. That\'s not aggression. That\'s geometry."' },
     { keywords: ['bombing', 'theater', 'attack', 'civilian'], response: 'Briggs goes still for a full three seconds. "Regrettable. Necessary. Those two words don\'t cancel each other out — they coexist, which is harder." He sets down the pencil. "I don\'t apologize for decisions that kept eight hundred people alive. I also don\'t pretend they came without a cost. The cost has a name. I know it."', requiresFlag: 'bombing_revealed' },
     { keywords: ['strength', 'weakness', 'fear'], response: '"Fear is a tool. Strength is using it correctly — knowing when to be feared and when to be something else." He finally looks at you. "The problem with most commanders is they only have one setting. You need range."' },
+    // === CONVOY remnant-story-0329 Rider G ===
+    {
+      keywords: ['charon', 'charon-7', 'virus', 'pathogen'],
+      response:
+        '"Weapon someone else made. Now it\'s our problem." Briggs doesn\'t look up. "I treat it like any other hostile — assess, contain, neutralize if possible. I don\'t need the biology. I need to know what it does in the field and what stops it." A pause. "So far: nothing stops it."',
+    },
+    // === END CONVOY remnant-story-0329 Rider G ===
+    // === CONVOY remnant-story-0329 Rider D ===
+    {
+      keywords: ['philosophy', 'vision', 'future', 'why'],
+      response:
+        '"People think we expand because we\'re aggressive." He sets the pencil down. "We expand because resources move. The Hollow migrate, the water shifts, the soil gives out. Standing still means watching your supply lines shrink until there\'s nothing left to defend. We push forward because backward is a grave."',
+    },
+    {
+      keywords: ['bombing', 'consequence', 'justice', 'trial'],
+      requiresFlag: 'bombing_revealed',
+      response:
+        '"Cross wants accountability. I understand that. I\'ve offered to submit to a tribunal — once the eastern perimeter is secure. Not before." He is quiet for a moment. "You don\'t court-martial your general during a siege." Another pause, longer. "Whether I\'ll still be willing after the siege... that\'s a question I haven\'t answered for myself yet."',
+    },
+    // === END CONVOY remnant-story-0329 Rider D ===
   ],
   howard_bridge_keeper: [
     { keywords: ['bridge', 'cables', 'structure', 'span'], response: '"Thirty-seven cable stays. I check them every morning." Howard says it with the quiet pride of a person whose ritual is also their purpose. "Three are showing surface oxidation — cosmetic, not structural. The deck is sound. The footings are sound."' },
@@ -263,6 +304,54 @@ export const NPC_TOPICS: Record<string, NpcTopic[]> = {
   ],
 
   // === END CONVOY remnant-story-0329 Rider B ===
+
+  // === CONVOY remnant-story-0329 Rider C: Red Court ===
+
+  kade_red_court: [
+    {
+      keywords: ['red court', 'philosophy', 'belief'],
+      response:
+        '"Self-determination. That\'s the word people avoid." Kade sets down his pen. "The Covenant asks permission. We don\'t. Not because we\'re cruel — because asking permission for what you are is the definition of subjugation."',
+    },
+    {
+      keywords: ['vesper', 'covenant', 'split'],
+      response:
+        '"Vesper chose diplomacy. I chose honesty." He says it without contempt. "She feeds with consent. I feed with clarity. The human on Vesper\'s table knows they\'re being used. The human on mine knows too. The difference is who gets to pretend otherwise."',
+    },
+    {
+      keywords: ['hollow', 'sanguine', 'nature'],
+      response:
+        '"The Hollow lost themselves. We didn\'t. That\'s the distinction that matters." Kade turns a page without looking at it. "Consciousness survived in us. Whatever CHARON-7 intended, it made something that thinks, chooses, and remembers. You don\'t ask a thinking being to apologize for existing."',
+    },
+  ],
+
+  vex_red_court: [
+    {
+      keywords: ['supply', 'logistics', 'territory'],
+      response:
+        '"Territory is calories. I manage the math." Vex doesn\'t look up from the ledger. "How many humans per square mile, what\'s sustainable, what\'s extraction versus cultivation. The Covenant calls it tithe. We call it supply chain. Same thing, different branding."',
+    },
+    {
+      keywords: ['practical', 'operations', 'how'],
+      response:
+        '"People think the Red Court is about violence. It\'s about logistics." The pen keeps moving. "Violence is expensive — it damages the supply, it attracts attention, it creates refugees who warn others. We prefer efficiency. Efficiency is quiet."',
+    },
+  ],
+
+  lyris_red_court: [
+    {
+      keywords: ['turned', 'new', 'changed', 'becoming'],
+      response:
+        '"Six months." Lyris holds up a hand, examines it. "Six months since I stopped being what I was. People ask if it hurts. It doesn\'t. People ask if I miss being human. I miss the certainty. Everything else is... better. And I hate that it\'s better."',
+    },
+    {
+      keywords: ['doubt', 'regret', 'choice'],
+      response:
+        '"Rook says doubt is a luxury we can\'t afford. Kade says doubt is evidence of consciousness." She looks at you steadily. "I\'m not sure which one I believe yet." A pause. "That\'s the doubt, I guess."',
+    },
+  ],
+
+  // === END CONVOY remnant-story-0329 Rider C ===
 }
 
 // ------------------------------------------------------------

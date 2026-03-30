@@ -11,6 +11,9 @@ import {
   flee as fleeCombat,
   applyHollowRoundEffects,
   enemyHpIndicator,
+  getEnvironmentModifiers,
+  getEnvironmentNarration,
+  computeEnvironmentEffects,
 } from '@/lib/combat'
 import { getItem } from '@/data/items'
 import { getEnemy } from '@/data/enemies'
@@ -166,9 +169,19 @@ export async function handleAttack(engine: EngineCore, noun: string | undefined)
     : `Combat begins. You face the ${rt.enemy(enemy.name)}. It moves first.`
   engine._appendMessages([combatMsg(initMsg)])
 
+  // Environment modifier narration at combat start
+  const envModTypes = getEnvironmentModifiers(currentRoom)
+  const hasChemLight = inventory.some((ii) => ii.itemId === 'crafted_chemical_light')
+  if (envModTypes.length > 0) {
+    engine._appendMessages(getEnvironmentNarration(envModTypes, hasChemLight))
+  }
+
   if (!combatWithRoom.playerGoesFirst) {
-    // Enemy gets first attack
-    const { damage, messages, newState } = enemyAttack(player, combatWithRoom)
+    // Enemy gets first attack (with environment modifiers)
+    const envEffects = envModTypes.length > 0
+      ? computeEnvironmentEffects(envModTypes, hasChemLight)
+      : undefined
+    const { damage, messages, newState } = enemyAttack(player, combatWithRoom, undefined, envEffects?.combined)
     engine._appendMessages(messages)
 
     const newHp = Math.max(0, player.hp - damage)
@@ -265,6 +278,38 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
   }
   activeCombat = hollowMsgs.length > 0 ? afterHollow : activeCombat
 
+  // ── Compute environment modifiers for this round ──
+  const envModTypes = getEnvironmentModifiers(currentRoom)
+  let envEffects: ReturnType<typeof computeEnvironmentEffects> | undefined
+  if (envModTypes.length > 0) {
+    const hasChemLightRound = inventory.some((ii) => ii.itemId === 'crafted_chemical_light')
+    envEffects = computeEnvironmentEffects(envModTypes, hasChemLightRound)
+    // Collapsing debris: damage both player and enemy
+    if (envEffects.debrisMessages.length > 0 && envEffects.debrisDamage > 0) {
+      engine._appendMessages(envEffects.debrisMessages)
+      // Damage player
+      const debrisPlayer = engine.getState().player!
+      const debrisPlayerHp = Math.max(0, debrisPlayer.hp - envEffects.debrisDamage)
+      engine._setState({ player: { ...debrisPlayer, hp: debrisPlayerHp } })
+      // Damage enemy
+      const debrisEnemyHp = Math.max(0, activeCombat.enemyHp - envEffects.debrisDamage)
+      activeCombat = { ...activeCombat, enemyHp: debrisEnemyHp }
+      engine._setState({ combatState: activeCombat })
+      if (debrisPlayerHp <= 0) {
+        await engine._handlePlayerDeath()
+        return
+      }
+      if (debrisEnemyHp <= 0) {
+        engine._appendMessages([combatMsg(`${rt.enemy(combatState.enemy.name)} is crushed by falling debris.`)])
+        activeCombat = { ...activeCombat, active: false }
+        engine._setState({ combatState: activeCombat })
+        await handleEnemyDefeated(engine, engine.getState().player!, currentRoom, activeCombat, equippedWeapon, false)
+        return
+      }
+    }
+  }
+  const envMod = envEffects?.combined
+
   // ── Player attacks (unless stunned) ──
   if (!playerStunned) {
     const playerDamageRange: [number, number] = equippedWeapon?.item.damage
@@ -275,6 +320,7 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
       activeCombat,
       playerDamageRange,
       equippedWeapon?.item,
+      envMod,
     )
     engine._appendMessages(playerResult.messages)
     engine._setState({ combatState: afterPlayer })
@@ -304,6 +350,7 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
       latestPlayer,
       activeCombat,
       equippedArmor?.item,
+      envMod,
     )
     // Apply armor reduction (percentage-based: each defense point = 15%, capped at 60%, minimum 1 damage)
     const reductionPct = Math.min(armorDefense * 0.15, 0.60)
@@ -330,7 +377,7 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
           enemy: addEnemy,
           enemyHp: addEnemy.hp,
         }
-        const { damage: addRawDmg, messages: addMsgs } = enemyAttack(latestPlayer, addCombatState, equippedArmor?.item)
+        const { damage: addRawDmg, messages: addMsgs } = enemyAttack(latestPlayer, addCombatState, equippedArmor?.item, envMod)
         const addReductionPct = Math.min(armorDefense * 0.15, 0.60)
         const addActualDmg = addRawDmg > 0 ? Math.max(1, Math.ceil(addRawDmg * (1 - addReductionPct))) : 0
 
@@ -614,7 +661,7 @@ export async function handleAnalyze(engine: EngineCore): Promise<void> {
 // ------------------------------------------------------------
 
 async function doEnemyTurn(engine: EngineCore): Promise<void> {
-  const { player, combatState, inventory } = engine.getState()
+  const { player, currentRoom, combatState, inventory } = engine.getState()
   if (!player || !combatState) return
 
   const equippedArmor = inventory.find((ii) => ii.equipped && ii.item.type === 'armor')
@@ -628,6 +675,12 @@ async function doEnemyTurn(engine: EngineCore): Promise<void> {
   }
   const activeCombat = hollowMsgs.length > 0 ? afterHollow : combatState
 
+  // Compute environment modifiers for enemy turn
+  const envModTypesET = currentRoom ? getEnvironmentModifiers(currentRoom) : []
+  const envModET = envModTypesET.length > 0
+    ? computeEnvironmentEffects(envModTypesET, inventory.some((ii) => ii.itemId === 'crafted_chemical_light')).combined
+    : undefined
+
   // Check intimidated: enemy skips turn
   if (activeCombat.enemyIntimidated) {
     engine._appendMessages([combatMsg(`The ${rt.enemy(activeCombat.enemy.name)} hesitates, unable to act.`)])
@@ -638,8 +691,8 @@ async function doEnemyTurn(engine: EngineCore): Promise<void> {
     return
   }
 
-  // Enemy attacks (pass armor for trait resolution)
-  const { damage: rawDamage, messages: eMsgs, newState: afterEnemy } = enemyAttack(player, activeCombat, equippedArmor?.item)
+  // Enemy attacks (pass armor and environment modifiers for trait resolution)
+  const { damage: rawDamage, messages: eMsgs, newState: afterEnemy } = enemyAttack(player, activeCombat, equippedArmor?.item, envModET)
 
   // Apply armor reduction
   const reductionPct = Math.min(armorDefense * 0.15, 0.60)

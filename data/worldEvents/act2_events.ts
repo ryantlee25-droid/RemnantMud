@@ -18,7 +18,7 @@ export const ACT2_EVENTS: WorldEvent[] = [
     id: 'we_a2_01_salter_breach',
     act: 2,
     escalationLevel: 0,
-    triggerActionCount: 30,
+    triggerActionCount: 18,
     questGate: 'act1_complete',
     messagePool: [
       'The outer wall at <keyword>Salt Creek Station</keyword>' +
@@ -39,7 +39,7 @@ export const ACT2_EVENTS: WorldEvent[] = [
     id: 'we_a2_02_accord_crackdown',
     act: 2,
     escalationLevel: 0,
-    triggerActionCount: 34,
+    triggerActionCount: 19,
     questGate: 'act1_complete',
     factionCheck: {
       faction: 'accord',
@@ -63,7 +63,7 @@ export const ACT2_EVENTS: WorldEvent[] = [
     id: 'we_a2_03_hollow_gates',
     act: 2,
     escalationLevel: 1,
-    triggerActionCount: 38,
+    triggerActionCount: 20,
     questGate: 'act1_complete',
     messagePool: [
       'A <keyword>shuffler</keyword> made it to the' +
@@ -84,7 +84,7 @@ export const ACT2_EVENTS: WorldEvent[] = [
     id: 'we_a2_04_kindling_schism',
     act: 2,
     escalationLevel: 1,
-    triggerActionCount: 42,
+    triggerActionCount: 21,
     questGate: 'act1_complete',
     messagePool: [
       'The <npc>Kindling</npc> split publicly at the' +
@@ -106,7 +106,7 @@ export const ACT2_EVENTS: WorldEvent[] = [
     id: 'we_a2_05_reclaimer_find',
     act: 2,
     escalationLevel: 1,
-    triggerActionCount: 46,
+    triggerActionCount: 22,
     questGate: 'act1_complete',
     factionCheck: {
       faction: 'reclaimers',
@@ -132,7 +132,7 @@ export const ACT2_EVENTS: WorldEvent[] = [
     id: 'we_a2_06_red_court_expand',
     act: 2,
     escalationLevel: 1,
-    triggerActionCount: 50,
+    triggerActionCount: 23,
     questGate: 'act1_complete',
     factionCheck: {
       faction: 'red_court',
@@ -158,7 +158,7 @@ export const ACT2_EVENTS: WorldEvent[] = [
     id: 'we_a2_07_dust_decay',
     act: 2,
     escalationLevel: 1,
-    triggerActionCount: 36,
+    triggerActionCount: 19,
     questGate: 'act1_complete',
     messagePool: [
       'The dead zone in <keyword>the Dust</keyword> is' +
@@ -179,7 +179,7 @@ export const ACT2_EVENTS: WorldEvent[] = [
     id: 'we_a2_08_covenant_warning',
     act: 2,
     escalationLevel: 2,
-    triggerActionCount: 54,
+    triggerActionCount: 24,
     questGate: 'act1_complete',
     messagePool: [
       'A <npc>Covenant of Dusk</npc> pilgrim posted a' +
@@ -202,7 +202,7 @@ export const ACT2_EVENTS: WorldEvent[] = [
     id: 'we_a2_09_npc_urgent',
     act: 2,
     escalationLevel: 1,
-    triggerActionCount: 44,
+    triggerActionCount: 21,
     questGate: 'act1_complete',
     messagePool: [
       'Someone left a message at the <keyword>Crossroads' +
@@ -224,7 +224,7 @@ export const ACT2_EVENTS: WorldEvent[] = [
     id: 'we_a2_10_hollow_pack',
     act: 2,
     escalationLevel: 2,
-    triggerActionCount: 58,
+    triggerActionCount: 25,
     questGate: 'act1_complete',
     messagePool: [
       'The <npc>Salter</npc> hunters are reporting' +
@@ -247,7 +247,7 @@ export const ACT2_EVENTS: WorldEvent[] = [
     id: 'we_a2_11_lucid_emerge',
     act: 2,
     escalationLevel: 1,
-    triggerActionCount: 48,
+    triggerActionCount: 22,
     questGate: 'act1_complete',
     factionCheck: {
       faction: 'lucid',
@@ -274,7 +274,7 @@ export const ACT2_EVENTS: WorldEvent[] = [
     id: 'we_a2_12_ferals_approach',
     act: 2,
     escalationLevel: 2,
-    triggerActionCount: 60,
+    triggerActionCount: 25,
     questGate: 'act1_complete',
     messagePool: [
       'The <npc>Ferals</npc> have been seen within two' +
@@ -296,7 +296,7 @@ export const ACT2_EVENTS: WorldEvent[] = [
     id: 'we_a2_13_deep_rumble',
     act: 2,
     escalationLevel: 2,
-    triggerActionCount: 56,
+    triggerActionCount: 24,
     questGate: 'act1_complete',
     messagePool: [
       'The ground shook at midday. Not an earthquake —' +
@@ -320,7 +320,7 @@ export const ACT2_EVENTS: WorldEvent[] = [
     id: 'we_a2_14_drifter_sign',
     act: 2,
     escalationLevel: 1,
-    triggerActionCount: 40,
+    triggerActionCount: 20,
     questGate: 'act1_complete',
     factionCheck: {
       faction: 'drifters',
@@ -346,7 +346,7 @@ export const ACT2_EVENTS: WorldEvent[] = [
     id: 'we_a2_15_covenant_prophecy',
     act: 2,
     escalationLevel: 2,
-    triggerActionCount: 62,
+    triggerActionCount: 25,
     questGate: 'act1_complete',
     messagePool: [
       'The <npc>Covenant of Dusk</npc> elder spoke' +

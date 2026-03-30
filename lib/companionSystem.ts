@@ -44,6 +44,7 @@ import {
   CROSS_LEAVE_NARRATION,
   SPARKS_JOIN_NARRATION,
   SPARKS_LEAVE_NARRATION,
+  COMPANION_INTRODUCTIONS,
 } from '@/data/companionNarration'
 import type { CombatOutcome } from '@/data/companionNarration'
 
@@ -136,6 +137,24 @@ function resolveContextKey(ctx: CompanionContext): string {
 // ------------------------------------------------------------
 // Public API
 // ------------------------------------------------------------
+
+/**
+ * Get the introduction scene for a companion BEFORE they join.
+ * Returns an array of narrative messages establishing who they are,
+ * why they'd travel with you, and what they bring.
+ * Returns null if no introduction exists for this NPC.
+ *
+ * Call this BEFORE addCompanion — the introduction fires before the
+ * join message. The caller is responsible for dispatching these
+ * messages to the player.
+ */
+export function getCompanionIntroduction(npcId: string): GameMessage[] | null {
+  const pool = COMPANION_INTRODUCTIONS[npcId]
+  if (!pool || pool.length === 0) return null
+
+  // Return the full introduction scene — all lines in sequence
+  return pool.map((line) => msg(line))
+}
 
 /**
  * Add a companion to the player.

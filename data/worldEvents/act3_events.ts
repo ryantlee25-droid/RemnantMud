@@ -18,7 +18,7 @@ export const ACT3_EVENTS: WorldEvent[] = [
     id: 'we_a3_01_factions_mobilize',
     act: 3,
     escalationLevel: 0,
-    triggerActionCount: 30,
+    triggerActionCount: 18,
     questGate: 'act2_complete',
     messagePool: [
       'Every faction with the resources to move is' +
@@ -42,7 +42,7 @@ export const ACT3_EVENTS: WorldEvent[] = [
     id: 'we_a3_02_ground_fracture',
     act: 3,
     escalationLevel: 1,
-    triggerActionCount: 34,
+    triggerActionCount: 19,
     questGate: 'act2_complete',
     messagePool: [
       'Fissures opened in the highway east of <keyword>' +
@@ -64,7 +64,7 @@ export const ACT3_EVENTS: WorldEvent[] = [
     id: 'we_a3_03_faction_pleas',
     act: 3,
     escalationLevel: 1,
-    triggerActionCount: 38,
+    triggerActionCount: 20,
     questGate: 'act2_complete',
     messagePool: [
       'An <npc>Accord</npc> captain and a <npc>Salter' +
@@ -89,7 +89,7 @@ export const ACT3_EVENTS: WorldEvent[] = [
     id: 'we_a3_04_red_court_final',
     act: 3,
     escalationLevel: 2,
-    triggerActionCount: 42,
+    triggerActionCount: 21,
     questGate: 'act2_complete',
     factionCheck: {
       faction: 'red_court',
@@ -118,7 +118,7 @@ export const ACT3_EVENTS: WorldEvent[] = [
     id: 'we_a3_05_swarm_building',
     act: 3,
     escalationLevel: 2,
-    triggerActionCount: 46,
+    triggerActionCount: 22,
     questGate: 'act2_complete',
     messagePool: [
       'The hollow are moving in masses now. Not' +
@@ -142,7 +142,7 @@ export const ACT3_EVENTS: WorldEvent[] = [
     id: 'we_a3_06_meridian_signal',
     act: 3,
     escalationLevel: 2,
-    triggerActionCount: 50,
+    triggerActionCount: 23,
     questGate: 'act2_complete',
     messagePool: [
       'The signal is continuous now. Every radio,' +
@@ -165,7 +165,7 @@ export const ACT3_EVENTS: WorldEvent[] = [
     id: 'we_a3_07_npc_deaths',
     act: 3,
     escalationLevel: 2,
-    triggerActionCount: 36,
+    triggerActionCount: 19,
     questGate: 'act2_complete',
     messagePool: [
       'The runner who brought word of the <keyword>' +
@@ -189,7 +189,7 @@ export const ACT3_EVENTS: WorldEvent[] = [
     id: 'we_a3_08_lucid_warning',
     act: 3,
     escalationLevel: 2,
-    triggerActionCount: 40,
+    triggerActionCount: 20,
     questGate: 'act2_complete',
     factionCheck: {
       faction: 'lucid',
@@ -218,7 +218,7 @@ export const ACT3_EVENTS: WorldEvent[] = [
     id: 'we_a3_09_sky_changes',
     act: 3,
     escalationLevel: 3,
-    triggerActionCount: 54,
+    triggerActionCount: 24,
     questGate: 'act2_complete',
     messagePool: [
       'The sky east of the <keyword>Scar</keyword> is' +
@@ -240,7 +240,7 @@ export const ACT3_EVENTS: WorldEvent[] = [
     id: 'we_a3_10_last_radio',
     act: 3,
     escalationLevel: 3,
-    triggerActionCount: 58,
+    triggerActionCount: 25,
     questGate: 'act2_complete',
     messagePool: [
       'The <keyword>Crossroads</keyword> radio operator' +
@@ -263,7 +263,7 @@ export const ACT3_EVENTS: WorldEvent[] = [
     id: 'we_a3_11_hollow_stop',
     act: 3,
     escalationLevel: 3,
-    triggerActionCount: 62,
+    triggerActionCount: 25,
     questGate: 'act2_complete',
     messagePool: [
       'The hollow stopped moving. All of them.' +
@@ -282,12 +282,96 @@ export const ACT3_EVENTS: WorldEvent[] = [
     ],
   },
 
-  // ── WE-A3-12: Covenant final prayer ───────────────────────
+  // ── WE-A3-12: Salter last stand (faction-gated, allied) ────
+  {
+    id: 'we_a3_12_salter_last_stand',
+    act: 3,
+    escalationLevel: 2,
+    triggerActionCount: 22,
+    questGate: 'act2_complete',
+    factionCheck: {
+      faction: 'salters',
+      minRep: 1,
+    },
+    messagePool: [
+      'A <npc>Salter</npc> patrol leader found you. She' +
+        ' looks like she hasn\'t slept in three days.' +
+        ' "We\'re holding the water stations for as long' +
+        ' as we can. After that—" She stops. There is' +
+        ' no after that.',
+      'The <npc>Salters</npc> have pulled their perimeter' +
+        ' back to the main compound. Everything else' +
+        ' is abandoned. The flags are down. The wells' +
+        ' are sealed.',
+      'A <npc>Salter</npc> elder pressed a sealed' +
+        ' canteen into your hands. "The last clean' +
+        ' water from our deepest well. Whatever' +
+        ' you\'re doing — finish it."',
+    ],
+  },
+
+  // ── WE-A3-13: Accord martial law (faction-gated) ─────────
+  {
+    id: 'we_a3_13_accord_martial',
+    act: 3,
+    escalationLevel: 2,
+    triggerActionCount: 20,
+    questGate: 'act2_complete',
+    factionCheck: {
+      faction: 'accord',
+      minRep: 0,
+    },
+    messagePool: [
+      'The <npc>Accord</npc> declared martial law. Not at' +
+        ' <keyword>Crossroads</keyword> — there\'s nobody' +
+        ' left to govern. At themselves. Every soldier' +
+        ' accountable to the last standing officer.',
+      'An <npc>Accord</npc> captain stopped you on the road.' +
+        ' "We\'re done pretending this is manageable.' +
+        ' I\'m taking my unit east. You should come.' +
+        ' Or don\'t. It doesn\'t matter who goes first."',
+      'The <npc>Accord</npc> radio channel is broadcasting' +
+        ' coordinates on repeat. No explanation. Just' +
+        ' numbers. You recognize the bearing:' +
+        ' <keyword>MERIDIAN</keyword>.',
+    ],
+  },
+
+  // ── WE-A3-14: Kindling pilgrimage (faction-gated, allied)
+  {
+    id: 'we_a3_14_kindling_pilgrimage',
+    act: 3,
+    escalationLevel: 2,
+    triggerActionCount: 23,
+    questGate: 'act2_complete',
+    factionCheck: {
+      faction: 'kindling',
+      minRep: 1,
+    },
+    messagePool: [
+      'The <npc>Kindling</npc> are walking east in a' +
+        ' single file, singing. Not the hymns you know.' +
+        ' Something older. Something that sounds like' +
+        ' it was written for this specific walk.',
+      'A <npc>Kindling</npc> elder met your eyes across' +
+        ' the road and smiled. Not a frightened smile.' +
+        ' The smile of someone who has made peace with' +
+        ' what they cannot change and found a reason' +
+        ' to keep walking anyway.',
+      'The sacred fire at <keyword>the Ember</keyword>' +
+        ' was extinguished deliberately. The <npc>' +
+        'Kindling</npc> carried the coals east in' +
+        ' a covered box. "We bring the fire to where' +
+        ' it needs to burn."',
+    ],
+  },
+
+  // ── WE-A3-15: Covenant final prayer ───────────────────────
   {
     id: 'we_a3_12_covenant_prayer',
     act: 3,
     escalationLevel: 3,
-    triggerActionCount: 44,
+    triggerActionCount: 21,
     questGate: 'act2_complete',
     messagePool: [
       'The <npc>Covenant of Dusk</npc> began their' +

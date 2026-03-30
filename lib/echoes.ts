@@ -116,6 +116,76 @@ export function createCycleSnapshot(
 }
 
 // ============================================================
+// DEATH ROOM PERSISTENCE
+// Added by Rider H (remnant-final-0329) — append only.
+// The world remembers where you bled. Every cycle. Permanently.
+// NOTE: deathRoom is correctly populated above (line 112) via
+// player.currentRoomId on non-ending death. Verified by Rider H.
+// ============================================================
+
+/**
+ * Get haunting narration when the player enters a room where they
+ * previously died in any cycle. Cycle-aware: escalates with repeat deaths.
+ * Returns null if the player never died in this room.
+ */
+export function getDeathRoomNarration(
+  roomId: string,
+  cycleHistory: CycleSnapshot[]
+): GameMessage | null {
+  if (!cycleHistory || cycleHistory.length === 0) return null
+
+  // Count how many times the player died in this specific room
+  const deathCount = cycleHistory.filter(
+    (snap) => snap.deathRoom === roomId
+  ).length
+
+  if (deathCount === 0) return null
+
+  if (deathCount === 1) {
+    const pool = [
+      'This is where you fell. The stain on the floor is yours. ' +
+        'The wall still has the marks from when you tried to stand.',
+      'You have been here before. You died here. The room has not ' +
+        'forgotten even if you have. Something in the air is different ' +
+        'where blood was spilled.',
+      'Your body remembers this place before your mind does. ' +
+        'A flinch in the shoulders. A tightness in the throat. ' +
+        'You died here. The floor knows.',
+      'The light falls wrong in this room. It did last time too. ' +
+        'You were looking at it when you went down. That detail ' +
+        'has survived the cycle.',
+    ]
+    return msg(pool[Math.floor(Math.random() * pool.length)], 'echo')
+  }
+
+  if (deathCount === 2) {
+    const pool = [
+      'You have died here twice. The second time was worse. ' +
+        'The walls are stained in a pattern you almost recognize.',
+      'Twice you have bled out in this room. The floor has a ' +
+        'memory of its own. You can feel it pulling at your feet.',
+      'This is the second time. Your blood is layered here like ' +
+        'sediment. Old death and older death, pressed into the stone.',
+    ]
+    return msg(pool[Math.floor(Math.random() * pool.length)], 'echo')
+  }
+
+  // Three or more deaths in the same room
+  const pool = [
+    `You have died here ${deathCount} times. The room is becoming ` +
+      'a shrine to your failure. Something about the air has changed ' +
+      'permanently. It tastes like iron and endings.',
+    `${deathCount} deaths in this room. The walls know you better ` +
+      'than anyone alive. They have watched you fall from every angle. ' +
+      'They are patient.',
+    'This room has killed you so many times it has become personal. ' +
+      'The shadows know where you stand. The floor knows where you fall. ' +
+      'You are expected here.',
+  ]
+  return msg(pool[Math.floor(Math.random() * pool.length)], 'echo')
+}
+
+// ============================================================
 // Narrative Overhaul additions — convoy remnant-narrative-0329
 // Rider D (consequences) appends these exports.
 // Real implementations live on rider-consequences branch.

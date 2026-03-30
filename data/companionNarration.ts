@@ -1603,3 +1603,137 @@ export const COMPANION_NARRATION_POOLS: Record<string, CompanionCommentary[]> = 
   marshal_cross: CROSS_NARRATION,
   sparks_radio: SPARKS_NARRATION,
 }
+
+// ============================================================
+// COMPANION INTRODUCTION SCENES
+// Added by Rider H (remnant-final-0329).
+// Pre-join narration: who they are, why they'd travel with you,
+// what they bring. Fires BEFORE the join message.
+// ============================================================
+
+export const HOWARD_INTRODUCTION: string[] = [
+  'The man at the bridge stands when he sees you. Not a greeting — ' +
+    'an assessment. He looks at your pack, your boots, the way you carry ' +
+    'your weight. Then he looks at the road ahead.',
+  '"I\'ve watched this bridge for four years. Every cable, every bolt." ' +
+    'He squints east toward the horizon. "But the signal — someone on the ' +
+    'other end needs help. I can\'t get there alone."',
+  '"My name is Howard. I built things before the Collapse, and I build things ' +
+    'now. Mostly I keep them from falling down." He taps the railing beside him. ' +
+    '"My engineering might be useful where you\'re going."',
+  '"I\'m not a fighter. I\'m not fast. But I can tell you which walls are load-bearing ' +
+    'and which ones will kill you if you lean on them." He picks up his tools. ' +
+    '"That\'s kept people alive longer than guns have."',
+]
+
+export const LEV_INTRODUCTION: string[] = [
+  'The woman behind the desk looks up from a stack of notebooks — dozens of them, ' +
+    'cross-referenced, tabbed with colored tape. Her eyes are sharp and tired ' +
+    'in equal measure.',
+  '"My data is incomplete. Every trip to the field costs time I don\'t have. ' +
+    'But you — you go places I can\'t." She closes the notebook she was writing in. ' +
+    '"If I come with you, I observe. You protect. The data gets better for both of us."',
+  '"I\'m Lev. I\'m a field researcher. Or I was, before the Collapse made the field ' +
+    'into everything." She adjusts her glasses. "I document what\'s changing. ' +
+    'Something is changing faster than I can write it down."',
+  '"I don\'t carry a weapon. I carry information. The Hollow density maps, ' +
+    'the contamination patterns, the migration data — that\'s worth more ' +
+    'than ammunition if you know how to read it." She does.',
+]
+
+export const AVERY_INTRODUCTION: string[] = [
+  'She is standing apart from the other Kindling, watching you with an expression ' +
+    'that keeps changing its mind. When you get close enough to speak, she ' +
+    'straightens her shoulders like she\'s been rehearsing this.',
+  '"I\'m Avery. I came to the Kindling because I needed something to believe in." ' +
+    'A pause. "I still do. But the answers aren\'t here anymore. They\'re out there. ' +
+    'In the places nobody wants to go."',
+  '"The elders say the flame will show the way. I\'ve been watching the flame ' +
+    'for six months and all it shows me is that it\'s getting dimmer." ' +
+    'She looks at the road. "Maybe the way is the road."',
+  '"I can pray and I can walk and I can carry my share. I\'m stronger than I look. ' +
+    'The Kindling taught me that." She meets your eyes. ' +
+    '"Let me come with you. I need to see what\'s out there for myself."',
+]
+
+export const PATCH_INTRODUCTION: string[] = [
+  'The medic doesn\'t look up when you approach. She\'s counting supplies — ' +
+    'bandages, antiseptic, suture kits — with the calm precision of someone ' +
+    'who knows exactly how many people each item can save and how many it can\'t.',
+  '"I\'m Patch. I was a trauma surgeon before the Collapse. Now I\'m whatever ' +
+    'people need me to be." She closes the kit. "Mostly that\'s the same thing, ' +
+    'just with worse equipment."',
+  '"I\'ve treated four hundred people in this settlement. Saved most of them. ' +
+    'Lost enough to know the difference between a wound you can reach ' +
+    'and one you can\'t." She stands. "You\'re heading somewhere dangerous. ' +
+    'I can tell by how you\'re standing."',
+  '"Everyone out there is one bad cut from dead. That\'s not pessimism — ' +
+    'that\'s triage. I go where the injuries are going to be, ' +
+    'not where they\'ve already happened."',
+]
+
+export const VESPER_INTRODUCTION: string[] = [
+  'She is sitting in a room that smells like old paper and something older. ' +
+    'When she looks at you, there is a quality to her attention that you cannot name. ' +
+    'Patience that has outlived the things it was patient about.',
+  '"I have been here a long time." The way she says it makes you understand ' +
+    'she does not mean this room. "The world is moving toward something. ' +
+    'I have seen it move before. This time is different."',
+  '"My name is Vesper. I have had other names. They belonged to times ' +
+    'that are over." She closes a book that has no title on its spine. ' +
+    '"I can help you navigate what is coming. I have navigated worse."',
+  '"You are going toward MERIDIAN. I can tell because everyone who is ' +
+    'going there walks the same way — slightly faster than they need to, ' +
+    'like they\'re afraid they\'ll change their mind." ' +
+    'She stands. "I will not change mine."',
+]
+
+export const CROSS_INTRODUCTION: string[] = [
+  'The marshal is reviewing a duty roster when you find him. His posture ' +
+    'is the kind of straight that comes from years of being the person other ' +
+    'people look to when things go wrong. He finishes the line he\'s reading ' +
+    'before he looks up.',
+  '"Marshal Cross. Accord Security Division — what\'s left of it." ' +
+    'He folds the roster and tucks it inside his vest. ' +
+    '"I\'ve held this settlement together through three crises. ' +
+    'The next one is going to come from outside the walls."',
+  '"I can\'t protect this place from in here anymore. Whatever is happening ' +
+    'to the east is sending things our way that my perimeter wasn\'t built for." ' +
+    'He checks his weapon without looking at it. Muscle memory. ' +
+    '"I need to go to the source."',
+  '"I keep people alive. That\'s the job. Always has been. ' +
+    'Right now, keeping them alive means going where you\'re going ' +
+    'and making sure what\'s there doesn\'t reach them." ' +
+    'He looks at you directly. "Can you handle that?"',
+]
+
+export const SPARKS_INTRODUCTION: string[] = [
+  'The radio operator is surrounded by equipment — receivers, signal analyzers, ' +
+    'a wall of hand-drawn frequency maps. She startles when she sees you, ' +
+    'then immediately starts talking.',
+  '"Okay, okay — I\'m Sparks. I run the signals desk for the settlement. ' +
+    'I\'ve been tracking a broadcast for eight months. MERIDIAN.' +
+    ' It\'s not random. It\'s not automated. Someone is transmitting."',
+  '"The signal has a pattern. I\'ve mapped it. I know the frequency, ' +
+    'the interval, the modulation. What I don\'t know is who\'s sending it ' +
+    'and what they\'re trying to say." She gestures at the frequency maps. ' +
+    '"I can\'t figure that out from here."',
+  '"I\'m not a field person. I know that. But I know the signal better ' +
+    'than anyone alive. If you\'re going toward the source, you need someone ' +
+    'who can read what it\'s saying when you get there." ' +
+    'She\'s already reaching for her portable receiver. "That\'s me."',
+  '"Nobody else hears what I hear in that signal. It\'s not just a tone. ' +
+    'There\'s a voice underneath. I can almost make out words." ' +
+    'Her hands are shaking slightly. "I need to get closer."',
+]
+
+// Introduction pool indexed by NPC ID
+export const COMPANION_INTRODUCTIONS: Record<string, string[]> = {
+  howard_bridge_keeper: HOWARD_INTRODUCTION,
+  lev: LEV_INTRODUCTION,
+  avery_kindling: AVERY_INTRODUCTION,
+  patch: PATCH_INTRODUCTION,
+  vesper: VESPER_INTRODUCTION,
+  marshal_cross: CROSS_INTRODUCTION,
+  sparks_radio: SPARKS_INTRODUCTION,
+}

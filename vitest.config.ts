@@ -14,6 +14,12 @@ export default defineConfig({
       reporter: ['text', 'html'],
       include: ['lib/**', 'data/**', 'components/**'],
       exclude: ['lib/supabase.ts', 'lib/gameContext.tsx'],
+      thresholds: {
+        statements: 25,
+        branches: 18,
+        functions: 24,
+        lines: 26,
+      },
     },
   },
   resolve: {

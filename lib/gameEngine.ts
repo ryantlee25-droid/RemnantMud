@@ -597,18 +597,18 @@ export class GameEngine implements EngineCore {
       quest_flags: {},
     }
 
-    const { error } = await supabase.from('players').insert(playerRow)
+    const { error } = await supabase.from('players').upsert(playerRow, { onConflict: 'id' })
     if (error) throw new Error(`Failed to create character: ${error.message}`)
 
-    // Create initial ledger
-    await supabase.from('player_ledger').insert({
+    // Create initial ledger (upsert to handle restart race conditions)
+    await supabase.from('player_ledger').upsert({
       player_id: user.id,
       world_seed: seed,
       current_cycle: 1,
       total_deaths: 0,
       pressure_level: 1,
       discovered_enemies: [],
-    })
+    }, { onConflict: 'player_id' })
 
     await persistWorld(rooms, user.id, seed)
 

@@ -7,6 +7,7 @@
 import { msg, systemMsg, combatMsg } from '@/lib/messages'
 import type {
   Action,
+  ActiveBuff,
   CycleSnapshot,
   EndingChoice,
   GameState,
@@ -417,7 +418,7 @@ export class GameEngine implements EngineCore {
       shadow: player.shadow,
       faction_reputation: player.factionReputation ?? {},
       quest_flags: player.questFlags ?? {},
-      active_buffs: JSON.stringify(this.state.activeBuffs ?? []),
+      active_buffs: this.state.activeBuffs ?? [],
       pending_stat_increase: this.state.pendingStatIncrease ?? false,
       narrative_progress: narrativeProgress,
     }
@@ -427,7 +428,7 @@ export class GameEngine implements EngineCore {
       .update(payload)
       .eq('id', player.id)
     if (error) {
-      console.error('Failed to save player:', error.message)
+      console.error('Save failed:', error.message, error.code, error.details, error.hint)
       // Refresh session before retry — expired credentials are the most common cause
       await supabase.auth.refreshSession()
       // Retry once — transient auth/network failures are common
@@ -731,7 +732,7 @@ export class GameEngine implements EngineCore {
       is_dead: boolean | null
       faction_reputation: Partial<Record<FactionType, number>> | null
       quest_flags: Record<string, boolean | number> | null
-      active_buffs: string | null
+      active_buffs: unknown[] | null
       pending_stat_increase: boolean | null
     }
 
@@ -843,7 +844,7 @@ export class GameEngine implements EngineCore {
       .eq('visited', true)
 
     // Restore persisted buffs and pending stat increase
-    const restoredBuffs = row.active_buffs ? JSON.parse(row.active_buffs) : []
+    const restoredBuffs = (row.active_buffs ?? []) as ActiveBuff[]
     const restoredPending = row.pending_stat_increase ?? false
 
     this._setState({

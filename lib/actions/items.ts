@@ -374,14 +374,22 @@ export async function handleStash(engine: EngineCore, noun: string | undefined):
     .maybeSingle()
 
   if (existing) {
-    await supabase
+    const { error: stashError } = await supabase
       .from('player_stash')
       .update({ quantity: existing.quantity + 1 })
       .eq('id', existing.id)
+    if (stashError) {
+      engine._appendMessages([errorMsg(`Failed to stash item — please try again.`)])
+      return
+    }
   } else {
-    await supabase
+    const { error: stashError } = await supabase
       .from('player_stash')
       .insert({ player_id: player.id, item_id: invItem.itemId, quantity: 1 })
+    if (stashError) {
+      engine._appendMessages([errorMsg(`Failed to stash item — please try again.`)])
+      return
+    }
   }
 
   await removeItem(player.id, invItem.itemId)
@@ -426,15 +434,23 @@ export async function handleUnstash(engine: EngineCore, noun: string | undefined
   const item = getItem(matchingRow.item_id)!
 
   if (matchingRow.quantity > 1) {
-    await supabase
+    const { error: unstashError } = await supabase
       .from('player_stash')
       .update({ quantity: matchingRow.quantity - 1 })
       .eq('id', matchingRow.id)
+    if (unstashError) {
+      engine._appendMessages([errorMsg(`Failed to retrieve item from stash — please try again.`)])
+      return
+    }
   } else {
-    await supabase
+    const { error: unstashError } = await supabase
       .from('player_stash')
       .delete()
       .eq('id', matchingRow.id)
+    if (unstashError) {
+      engine._appendMessages([errorMsg(`Failed to retrieve item from stash — please try again.`)])
+      return
+    }
   }
 
   await addItem(player.id, matchingRow.item_id)

@@ -27,6 +27,7 @@ import type {
 import type { Companion, SecondaryEffect } from '@/types/convoy-contracts'
 import { CLASS_DEFINITIONS } from '@/types/game'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
+import { isDevMode } from '@/lib/supabaseMock'
 import { getRoom, markVisited, persistWorld } from '@/lib/world'
 import { getInventory } from '@/lib/inventory'
 import { getItem } from '@/data/items'
@@ -565,7 +566,7 @@ export class GameEngine implements EngineCore {
     const maxHp = 8 + (stats.vigor - 2) * 2
     const seed = Math.floor(Math.random() * 2_147_483_647)
     const rooms = ALL_ROOMS
-    const devOverrideRoom = process.env.NEXT_PUBLIC_DEV_START_ROOM
+    const devOverrideRoom = isDevMode() ? process.env.NEXT_PUBLIC_DEV_START_ROOM : undefined
     const startRoomId = (devOverrideRoom && rooms.some(r => r.id === devOverrideRoom))
       ? devOverrideRoom
       : rooms[0]!.id
@@ -786,6 +787,9 @@ export class GameEngine implements EngineCore {
     }
 
     const currentRoom = this._applyPopulation(rawCurrentRoom)
+
+    // Note: prologue state tracked via localStorage (remnant_saw_prologue), not DB
+    // Note: faction reputation inheritance uses cycle_history snapshots, not ledger columns
 
     // Load ledger if it exists
     const { data: ledgerRow } = await supabase
@@ -1222,7 +1226,15 @@ export class GameEngine implements EngineCore {
           discovered_enemies: this.state.ledger?.discoveredEnemies ?? [],
         })
         .eq('player_id', player.id)
-      if (snapshotError) console.error('Failed to persist ending snapshot:', snapshotError.message)
+      if (snapshotError) {
+        console.error('Failed to persist ending snapshot:', snapshotError.message)
+        this._appendMessages([{
+          id: crypto.randomUUID(),
+          text: 'Failed to save your journey — try again. Your progress has not been lost.',
+          type: 'error' as const,
+        }])
+        return
+      }
 
       if (choice === 'seal') {
         // SEAL: facility self-destruct — show countdown, then auto-navigate to exit

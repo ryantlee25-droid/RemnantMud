@@ -15,7 +15,6 @@ function freshTables(): Record<string, any[]> {
     player_inventory: [],
     player_ledger: [],
     player_stash: [],
-    game_log: [],
     generated_rooms: [],
     room_state: [],
   }

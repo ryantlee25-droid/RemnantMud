@@ -421,11 +421,16 @@ export async function handleTutorialHint(engine: EngineCore, context: string): P
 export function handleRestart(): GameMessage[] {
   return [
     systemMsg('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550'),
-    systemMsg('  WARNING: This will permanently delete your save.'),
-    systemMsg('  All progress, items, and reputation will be lost.'),
-    systemMsg('  Your cycle history will be erased.'),
+    systemMsg('  !! PERMANENT ACTION — CANNOT BE UNDONE !!'),
     systemMsg('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550'),
-    systemMsg('  Type CONFIRM RESTART to proceed.'),
+    systemMsg('  This will immediately delete your entire save:'),
+    systemMsg('  - All inventory and stashed items'),
+    systemMsg('  - All progress, levels, and stats'),
+    systemMsg('  - All faction reputation'),
+    systemMsg('  - Your full cycle history'),
+    systemMsg('  There is no recovery. Your data will be gone.'),
+    systemMsg('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550'),
+    systemMsg('  Type CONFIRM RESTART to permanently wipe your save.'),
     systemMsg('  Type anything else to cancel.'),
     systemMsg('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550'),
   ]

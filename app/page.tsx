@@ -32,7 +32,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary'
 
 // ── Auth phases ──────────────────────────────────────────────
 
-type AuthPhase = 'checking' | 'unauthenticated' | 'loading-player' | 'creating' | 'ready'
+type AuthPhase = 'checking' | 'unauthenticated' | 'loading-player' | 'load-error' | 'creating' | 'ready'
 
 // ── Game flow phases (all rendered in the terminal) ──────────
 
@@ -49,10 +49,65 @@ export default function GamePage() {
   // Character creation state machine (terminal-based)
   const [creationState, setCreationState] = useState<CreationState | null>(null)
 
+  // Retry callback for load-error phase — populated inside the init useEffect
+  const retryLoadRef = useRef<(() => void) | null>(null)
+
   // ── Auth init ──────────────────────────────────────────────
 
   useEffect(() => {
     let cancelled = false
+
+    async function attemptLoad(userId: string) {
+      if (!cancelled) setAuthPhase('loading-player')
+
+      try {
+        const found = await engine.loadPlayer(userId)
+        if (!cancelled) {
+          if (found) {
+            // Player exists — check if prologue should be shown
+            const sawPrologue =
+              isDevMode() ||
+              (typeof window !== 'undefined' && localStorage.getItem(PROLOGUE_KEY))
+            if (!sawPrologue) {
+              setGameFlow('prologue')
+              engine._appendMessages(prologueMessages())
+            }
+            setAuthPhase('ready')
+          } else {
+            // No player row — this is a legitimate new player, start creation
+            const sawPrologue =
+              isDevMode() ||
+              (typeof window !== 'undefined' && localStorage.getItem(PROLOGUE_KEY))
+            if (!sawPrologue) {
+              setGameFlow('prologue')
+              engine._appendMessages(prologueMessages())
+              setAuthPhase('ready')
+            } else {
+              // Start creation directly
+              const cs = initialCreationState()
+              setCreationState(cs)
+              engine._appendMessages(creationPrompt(cs))
+              setAuthPhase('creating')
+            }
+          }
+        }
+      } catch (err) {
+        // DB or network error — do NOT start character creation; save data may exist.
+        // Show an error and let the player retry rather than silently overwriting their save.
+        if (!cancelled) {
+          engine._appendMessages([{
+            id: crypto.randomUUID(),
+            text: `Connection error — could not load your save. (${err instanceof Error ? err.message : 'Unknown error'})`,
+            type: 'error' as const,
+          }, {
+            id: crypto.randomUUID(),
+            text: 'Type RETRY to try again, or reload the page.',
+            type: 'system' as const,
+          }])
+          setAuthPhase('load-error')
+        }
+      }
+    }
 
     async function init() {
       let user: { id: string } | null = null
@@ -75,46 +130,10 @@ export default function GamePage() {
         return
       }
 
-      if (!cancelled) setAuthPhase('loading-player')
+      // Expose a retry function that re-attempts load for the same authenticated user
+      retryLoadRef.current = () => { void attemptLoad(user!.id) }
 
-      try {
-        const found = await engine.loadPlayer(user.id)
-        if (!cancelled) {
-          if (found) {
-            // Player exists — check if prologue should be shown
-            const sawPrologue =
-              isDevMode() ||
-              (typeof window !== 'undefined' && localStorage.getItem(PROLOGUE_KEY))
-            if (!sawPrologue) {
-              setGameFlow('prologue')
-              engine._appendMessages(prologueMessages())
-            }
-            setAuthPhase('ready')
-          } else {
-            // No player — check prologue first
-            const sawPrologue =
-              isDevMode() ||
-              (typeof window !== 'undefined' && localStorage.getItem(PROLOGUE_KEY))
-            if (!sawPrologue) {
-              setGameFlow('prologue')
-              engine._appendMessages(prologueMessages())
-              setAuthPhase('ready')
-            } else {
-              // Start creation directly
-              const cs = initialCreationState()
-              setCreationState(cs)
-              engine._appendMessages(creationPrompt(cs))
-              setAuthPhase('creating')
-            }
-          }
-        }
-      } catch {
-        // Failed to load player — start creation
-        const cs = initialCreationState()
-        setCreationState(cs)
-        engine._appendMessages(creationPrompt(cs))
-        if (!cancelled) setAuthPhase('creating')
-      }
+      await attemptLoad(user.id)
     }
 
     void init()
@@ -214,13 +233,42 @@ export default function GamePage() {
       const supabase = (await import('@/lib/supabase')).createSupabaseBrowserClient()
       const userId = state.player?.id
       if (userId) {
-        await supabase.from('player_inventory').delete().eq('player_id', userId)
-        await supabase.from('player_ledger').delete().eq('player_id', userId)
-        await supabase.from('player_stash').delete().eq('player_id', userId)
-        await supabase.from('generated_rooms').delete().eq('player_id', userId)
-        await supabase.from('players').delete().eq('id', userId)
+        try {
+          const r1 = await supabase.from('player_inventory').delete().eq('player_id', userId)
+          if (r1.error) throw r1.error
+          const r2 = await supabase.from('player_ledger').delete().eq('player_id', userId)
+          if (r2.error) throw r2.error
+          const r3 = await supabase.from('player_stash').delete().eq('player_id', userId)
+          if (r3.error) throw r3.error
+          const r4 = await supabase.from('generated_rooms').delete().eq('player_id', userId)
+          if (r4.error) throw r4.error
+          const r5 = await supabase.from('players').delete().eq('id', userId)
+          if (r5.error) throw r5.error
+        } catch {
+          engine._appendMessages([{
+            id: crypto.randomUUID(),
+            text: 'Reset failed — please try again.',
+            type: 'error' as const,
+          }])
+          return
+        }
       }
       window.location.reload()
+      return
+    }
+
+    // ── Load-error phase — waiting for RETRY ───────────────
+    if (authPhase === 'load-error') {
+      const upper = trimmed.toUpperCase()
+      if (upper === 'RETRY') {
+        retryLoadRef.current?.()
+      } else {
+        engine._appendMessages([{
+          id: crypto.randomUUID(),
+          text: 'Type RETRY to attempt reconnection, or reload the page.',
+          type: 'system' as const,
+        }])
+      }
       return
     }
 
@@ -256,12 +304,21 @@ export default function GamePage() {
 
       if (result.done && result.result) {
         try {
-          await engine.createCharacter(
-            result.result.name,
-            result.result.stats,
-            result.result.characterClass,
-            result.result.personalLoss,
-          )
+          if (gameFlow === 'rebirth') {
+            await engine.rebirthWithStats(
+              result.result.name,
+              result.result.stats,
+              result.result.characterClass,
+              result.result.personalLoss,
+            )
+          } else {
+            await engine.createCharacter(
+              result.result.name,
+              result.result.stats,
+              result.result.characterClass,
+              result.result.personalLoss,
+            )
+          }
         } catch (err) {
           engine._appendMessages([{
             id: crypto.randomUUID(),
@@ -340,11 +397,25 @@ export default function GamePage() {
         const supabase = (await import('@/lib/supabase')).createSupabaseBrowserClient()
         const userId = state.player?.id
         if (userId) {
-          await supabase.from('player_inventory').delete().eq('player_id', userId)
-          await supabase.from('player_ledger').delete().eq('player_id', userId)
-          await supabase.from('player_stash').delete().eq('player_id', userId)
-          await supabase.from('generated_rooms').delete().eq('player_id', userId)
-          await supabase.from('players').delete().eq('id', userId)
+          try {
+            const r1 = await supabase.from('player_inventory').delete().eq('player_id', userId)
+            if (r1.error) throw r1.error
+            const r2 = await supabase.from('player_ledger').delete().eq('player_id', userId)
+            if (r2.error) throw r2.error
+            const r3 = await supabase.from('player_stash').delete().eq('player_id', userId)
+            if (r3.error) throw r3.error
+            const r4 = await supabase.from('generated_rooms').delete().eq('player_id', userId)
+            if (r4.error) throw r4.error
+            const r5 = await supabase.from('players').delete().eq('id', userId)
+            if (r5.error) throw r5.error
+          } catch {
+            engine._appendMessages([{
+              id: crypto.randomUUID(),
+              text: 'Reset failed — please try again.',
+              type: 'error' as const,
+            }])
+            return
+          }
         }
         window.location.reload()
       } else {
@@ -489,6 +560,7 @@ function CommandInputWrapper({
         autoCorrect="off"
         autoCapitalize="off"
         spellCheck={false}
+        maxLength={200}
       />
     </div>
   )

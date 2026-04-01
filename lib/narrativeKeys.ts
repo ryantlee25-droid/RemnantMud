@@ -423,7 +423,7 @@ export const ROOM_EXIT_GATES: Record<string, NarrativeGate> = {
     type: 'narrative_key',
     keyId: 'meridian_decon_code',
   },
-  'scar_03_decon_chamber:down': {
+  'scar_03_decontamination:down': {
     type: 'narrative_key',
     keyId: 'meridian_sub_level_access',
   },
@@ -432,63 +432,63 @@ export const ROOM_EXIT_GATES: Record<string, NarrativeGate> = {
     keyId: 'scar_command_level',
   },
   // The Ember
-  'em_03_chapel_interior:south': {
+  'em_03_the_nave:south': {
     type: 'narrative_key',
     keyId: 'ember_tunnel_entrance',
   },
   // Crossroads
-  'cr_05_market_stalls:down': {
+  'cr_05_market_north:down': {
     type: 'narrative_key',
     keyId: 'crossroads_hidden_cellar',
   },
   // The Deep
-  'dp_07_pool_chamber:west': {
+  'dp_14_deep_pool:west': {
     type: 'narrative_key',
     keyId: 'deep_pool_passage',
   },
   // The Pens
-  'pens_04_ward_b_rooms:north': {
+  'pens_06_ward_b_corridor:north': {
     type: 'narrative_key',
     keyId: 'pens_ward_c',
   },
   // Covenant
-  'cov_08_administration:east': {
+  'cv_08_riverside_district:east': {
     type: 'narrative_key',
     keyId: 'covenant_archive_room',
   },
   // The Dust
-  'du_06_dead_camp:down': {
+  'du_06_hardware:down': {
     type: 'narrative_key',
     keyId: 'dust_caravan_cache',
   },
   // The Breaks
-  'br_07_canyon_upper:west': {
+  'br_07_canyon_crossroads:west': {
     type: 'narrative_key',
     keyId: 'breaks_elder_passage',
   },
   // Pine Sea
-  'ps_04_deep_wood:north': {
+  'ps_04_waterfall:north': {
     type: 'narrative_key',
     keyId: 'pine_sea_shepherd_trail',
   },
   // Duskhollow
-  'dh_05_covenant_inner:east': {
+  'dh_05_tithe_room:east': {
     type: 'narrative_key',
     keyId: 'duskhollow_tithe_records',
   },
   // Salt Creek
-  'sc_08_stronghold_exterior:down': {
+  'sc_08_armory:down': {
     type: 'narrative_key',
     keyId: 'salt_creek_command_bunker',
   },
   // River Road
-  'rr_06_riverside_camp:west': {
+  'rr_06_the_narrows:west': {
     type: 'narrative_key',
     keyId: 'river_road_submerged_cache',
   },
   // Multi-key gate example: MERIDIAN guard post requires
   // both Sparks frequency AND Lev's data
-  'scar_04_guard_post:north': {
+  'scar_04_level1_corridor:north': {
     type: 'narrative_key',
     keyId: 'meridian_decon_code',
     allOf: ['meridian_decon_code', 'stacks_terminal_password'],
@@ -534,42 +534,42 @@ interface DiscoveryChain {
 
 const SEQUENTIAL_DISCOVERY_CHAINS: Record<string, DiscoveryChain> = {
   wall_map: {
-    sequence: ['cr_03_inner_market', 'rr_04_junction_post', 'sc_05_creek_overlook'],
+    sequence: ['cr_03_market_south', 'rr_04_south_bend', 'sc_05_barracks'],
     hint:
       'The marks on this wall match the ones in two places you have' +
       ' already been. Together they form a map. Someone carved this' +
       ' route before the roads closed.',
   },
   project_shepherd: {
-    sequence: ['ps_03_logger_cabin', 'st_06_data_archive'],
+    sequence: ['ps_03_loggers_cabin', 'st_06_library'],
     hint:
       'This terminal references Project SHEPHERD.' +
       ' You have seen that name before — in the Pine Sea logger\'s cabin.' +
       ' It is not a coincidence.',
   },
   charon7_spread: {
-    sequence: ['dp_05_bioluminescent_pool', 'scar_01_crater_rim'],
+    sequence: ['dp_15_bioluminescent_garden', 'scar_01_crater_rim'],
     hint:
       'The blue-green light seeping through these cracks is the same' +
       ' bioluminescence as the Deep Pool algae. The virus did not' +
       ' stay where they said it stayed.',
   },
   meridian_personnel: {
-    sequence: ['sc_10_stronghold_briefing_room', 'scar_05_command_level'],
+    sequence: ['sc_10_watchtower', 'scar_05_lab_wing'],
     hint:
       'The personnel file in the command level lists a name you read' +
       ' on the stronghold briefing room wall. The same person.' +
       ' Different roles. The gap between them is the question.',
   },
   kindling_history: {
-    sequence: ['em_01_ember_approach', 'em_07_incinerator_room', 'em_03_chapel_interior'],
+    sequence: ['em_01_the_approach', 'em_20_the_incinerator', 'em_03_the_nave'],
     hint:
       'The chapel iconography uses the same flame glyph as the' +
       ' incinerator room markings. The Kindling did not repurpose' +
       ' those symbols. They built around them.',
   },
   pens_intake_truth: {
-    sequence: ['pens_02_intake_hall', 'pens_06_ward_b_corridor', 'pens_09_records_room'],
+    sequence: ['pens_02_intake_hall', 'pens_06_ward_b_corridor', 'pens_08_administration'],
     hint:
       'The intake form says voluntary. The ward assignment chart says' +
       ' capacity-managed. The records room says the two numbers' +

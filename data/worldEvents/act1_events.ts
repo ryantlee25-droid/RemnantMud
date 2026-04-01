@@ -309,7 +309,7 @@ export const ACT1_EVENTS: WorldEvent[] = [
 
   // ── WE-A1-15: MERIDIAN signal (late Act I) ────────────────
   {
-    id: 'we_a1_12_meridian_signal',
+    id: 'we_a1_15_meridian_signal',
     act: 1,
     escalationLevel: 2,
     triggerActionCount: 20,

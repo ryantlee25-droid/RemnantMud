@@ -108,6 +108,10 @@ export const COVENANT_ROOMS: Room[] = [
         keywords: ['marriage', 'announcement', 'congratulations'],
         description: 'The announcement reads: Dara Kellish and Tevan Morales are to be married at the Chapel on the 14th. All Covenant residents welcome. Bring nothing. Come anyway. Underneath, a dozen different hands have added their names.',
       },
+      {
+        keywords: ['denied', 'petition', 'intake', 'refugee', 'policy', 'limits'],
+        description: 'Pinned to the lower right corner of the notice board, half-covered by the marriage announcement: a printed form titled ACCORD REFUGEE INTAKE — PETITION FOR PROVISIONAL RESIDENCY. The boxes are filled in with careful handwriting — a family of four, arrived from the south corridor, two children under ten. Across the bottom, in red stamp ink: DENIED — INTAKE CAP REACHED — REVIEWED BY CIVIL COMMITTEE 14/3. Below the stamp, in smaller handwriting: Directed to temporary shelter outside eastern wall. Review period: 90 days. The form is dated eleven weeks ago. There is no follow-up form. The marriage announcement covers most of it, which may or may not be deliberate.',
+      },
     ],
     npcSpawns: [
       {
@@ -337,6 +341,10 @@ export const COVENANT_ROOMS: Room[] = [
       {
         keywords: ['table', 'view', 'window', 'rooftops', 'mountain'],
         description: 'From the north window, Covenant\'s rooftops spread below — the patchwork of old buildings and new additions, chimneys sending up thin smoke, the tiny figures of people going about the enormous work of staying alive. Beyond the walls, the broken highway. Beyond that, the mountains. The view is the closest thing to perspective this building offers.',
+      },
+      {
+        keywords: ['faction relations', 'salter', 'kindling', 'intelligence', 'report'],
+        description: 'The FACTION RELATIONS binder is open to the most recent page. A patrol summary dated this week reads: "Salter expansion vectors confirmed — three new observation posts along the south ridge, each within line-of-sight of our eastern supply route. Recommend diplomatic contact before they interpret our traffic as provocation. Briggs does not respond to diplomatic contact. Recommend contingency planning." Below it, clipped with a paper clip: a handwritten council note in Cross\'s pencil. "The Kindling have begun what they call \'purification experiments\' on volunteers at the cathedral settlement. Dr. Marsh believes the treatment involves controlled exposure to biological agents recovered from industrial sites. Mortality rate unknown but the Kindling are not reporting deaths. Request: intelligence-gathering mission to The Ember, voluntary basis only. Council vote: 4-3, approved with conditions."',
       },
     ],
     npcSpawns: [
@@ -823,7 +831,7 @@ export const COVENANT_ROOMS: Room[] = [
     npcSpawns: [
       {
         npcId: 'prisoner_dell',
-        spawnChance: 1.0,
+        spawnChance: 0.95,
         spawnType: 'anchored',
         activityPool: [
           { desc: 'Dell sits on his cot, elbows on his knees, watching the door with the measured patience of someone who has decided that waiting is the correct strategy.', weight: 4 },
@@ -1112,7 +1120,7 @@ export const COVENANT_ROOMS: Room[] = [
     ],
     npcSpawns: [],
     itemSpawns: [
-      { entityId: 'cross_personal_journal_page', spawnChance: 1.0, quantity: { min: 1, max: 1, distribution: 'flat' } },
+      { entityId: 'cross_personal_journal_page', spawnChance: 0.95, quantity: { min: 1, max: 1, distribution: 'flat' } },
       { entityId: 'ammo_22lr', spawnChance: 0.7, quantity: { min: 5, max: 15, distribution: 'flat' } },
       { entityId: 'field_surgery_kit', spawnChance: 0.5, quantity: { min: 1, max: 1, distribution: 'flat' } },
     ],
@@ -1177,8 +1185,10 @@ export const COVENANT_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.95,
+      // Quest-gated encounter: activate via quest flag
+      baseChance: 0.0,
       timeModifier: { night: 1.0, dawn: 1.0, dusk: 1.0, day: 1.0 },
+      questGate: 'cv_basement_hive_mother_active',
       threatPool: [
         { type: 'hive_mother', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
         { type: 'shuffler', weight: 2, quantity: { min: 2, max: 4, distribution: 'flat' } },
@@ -1214,7 +1224,7 @@ export const COVENANT_ROOMS: Room[] = [
     descriptionDawn: 'Dawn on the rooftop arrives before it arrives anywhere else. The eastern sky goes amber and the herbs catch the first light and the view of the mountains in that transitional color is something that people climb up here specifically to see. The rosebush is deepest red at dawn.',
     shortDescription: 'The rooftop garden — flowers because someone decided to plant them, and the whole world visible below.',
     exits: {
-      down: 'cv_18_rooftop_garden',
+      down: 'cv_03_main_street',
     },
     richExits: {
       down: {

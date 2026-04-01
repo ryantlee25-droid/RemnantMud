@@ -368,7 +368,7 @@ export const ACT3_EVENTS: WorldEvent[] = [
 
   // ── WE-A3-15: Covenant final prayer ───────────────────────
   {
-    id: 'we_a3_12_covenant_prayer',
+    id: 'we_a3_15_covenant_prayer',
     act: 3,
     escalationLevel: 3,
     triggerActionCount: 21,

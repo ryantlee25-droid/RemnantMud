@@ -54,7 +54,7 @@ const ENDING_NARRATIVES: Record<string, string[]> = {
   weapon: [
     'The pathogen is elegant in its cruelty. It finds CHARON-7 wherever it hides -- in the neural tissue of the Hollow, in the enhanced blood of the Sanguine, in the subclinical traces carried by sixty percent of the surviving human population. Thirty days. The timeline is precise. The dying is not.',
     'The Hollow go first, and no one mourns them because no one knew they were still in there. The Sanguine go next, and the Covenant of Dusk burns its own archives rather than let the Accord find them. The carriers -- the farmers, the traders, the children who played too close to the wrong water source -- they go last, and by then the world has stopped counting.',
-    'The Accord inherits a continent emptied of its most dangerous elements and most of its people. Marshal Eckert calls it "the hard peace." The Salters close their gates and do not open them for a year. The Kindling stop lighting their signal fires. The Drifters, who were everywhere and nowhere, are mostly nowhere now.',
+    'The Accord inherits a continent emptied of its most dangerous elements and most of its people. Marshal Cross calls it "the hard peace." The Salters close their gates and do not open them for a year. The Kindling stop lighting their signal fires. The Drifters, who were everywhere and nowhere, are mostly nowhere now.',
     'You did the math. The math was correct. The weapon worked exactly as described, and the silence it left behind is the specific quiet of absence, not peace. Historians will call you a monster or a savior depending on which side of the population curve they stand on. You will call yourself nothing, because you do not owe the dead an explanation. The world survives. It is quieter than it should be. The quiet that follows is not the quiet of a wound healing. It is the quiet of a room where someone was, and then was not.',
   ],
   seal: [
@@ -336,7 +336,7 @@ export function endingMessages(opts: {
   // Closing
   messages.push(msg('THE END', 'ending'))
   messages.push(msg('Thank you for playing The Remnant.', 'ending'))
-  messages.push(msg('What is left is what matters.', 'ending'))
+  messages.push(msg('What\'s left is what matters.', 'ending'))
 
   messages.push(msg(
     `Type BEGIN to initialize a new session.\n${RULE}\nEach ending tells a different story. There are four.`,

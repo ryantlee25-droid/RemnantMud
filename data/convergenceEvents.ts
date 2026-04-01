@@ -108,7 +108,7 @@ export const CONVERGENCE_EVENTS: ConvergenceEvent[] = [
   {
     id: 'convergence_lev_vesper',
     factionA: 'reclaimers',
-    factionB: 'lucid',
+    factionB: 'covenant_of_dusk',
     questFlag: 'act3_meridian_data_conflict',
     simultaneousRequests: [
       {
@@ -119,7 +119,7 @@ export const CONVERGENCE_EVENTS: ConvergenceEvent[] = [
           'He needs you to confront her with it. He says he cannot do it himself.',
       },
       {
-        faction: 'lucid',
+        faction: 'covenant_of_dusk',
         request:
           'Vesper has brought documentation. Pre-Collapse records. ' +
           'She wants to present them to you privately, before Lev sees them, ' +
@@ -284,12 +284,12 @@ export const CONVERGENCE_EVENTS: ConvergenceEvent[] = [
   // ----------------------------------------------------------
   {
     id: 'convergence_signal_change',
-    factionA: 'lucid',
+    factionA: 'covenant_of_dusk',
     factionB: 'reclaimers',
     questFlag: 'act3_meridian_signal_change',
     simultaneousRequests: [
       {
-        faction: 'lucid',
+        faction: 'covenant_of_dusk',
         request:
           'Vesper needs you at the listening post. She will not say why over the radio. ' +
           'She says only: something else is transmitting, and it is using Vane\u2019s voice.',
@@ -359,7 +359,7 @@ export const CONVERGENCE_EVENTS: ConvergenceEvent[] = [
   {
     id: 'convergence_meridian_speaks',
     factionA: 'reclaimers',
-    factionB: 'lucid',
+    factionB: 'covenant_of_dusk',
     questFlag: 'act3_complete',
     simultaneousRequests: [
       {
@@ -370,7 +370,7 @@ export const CONVERGENCE_EVENTS: ConvergenceEvent[] = [
           'He says he promises, and he has never broken a promise to you.',
       },
       {
-        faction: 'lucid',
+        faction: 'covenant_of_dusk',
         request:
           'Vesper is on the other side of the room. She is shaking her head. ' +
           'She says if you pull that line you will lose everything that was recorded here, ' +

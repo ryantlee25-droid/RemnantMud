@@ -104,13 +104,17 @@ export const CROSSROADS_ROOMS: Room[] = [
       baseChance: 0.05,
       timeModifier: { day: 0.3, night: 2.5, dawn: 0.5, dusk: 1.5 },
       threatPool: [
-        { type: 'shuffler', weight: 100, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 95, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.7, awarePassive: 0.2, awareAggressive: 0.1 },
       activityPool: {
         shuffler: [
           { desc: 'shambles along the highway shoulder, feet dragging, head down, moving with the mechanical persistence of something that has forgotten how to stop', weight: 3 },
           { desc: 'stands motionless in the center of the junction, face turned skyward, mouth open, as if waiting for rain that isn\'t coming', weight: 2 },
+        ],
+        remnant: [
+          { desc: 'walks the shoulder with its arms at its sides, head turning at intersections as if checking traffic that hasn\'t existed in seven years', weight: 2 },
         ],
       },
     },
@@ -220,6 +224,10 @@ export const CROSSROADS_ROOMS: Room[] = [
       'The market is a sprawl of tarps, salvaged tent poles, and repurposed vehicle hoods serving as countertops. The south end is where the food vendors cluster — cook smoke from three different fires mingles overhead, carrying the smell of roasted meat, boiled grain, and something spiced that makes your stomach twist with want. People move between the stalls with the focused efficiency of survivors who know exactly what they need and how many rounds it costs.',
     descriptionNight:
       'The market thins at night but doesn\'t close. The food stalls have banked their fires to embers, but a few vendors remain — the ones who deal in things people need after dark. Medicine. Ammunition. Information. The lantern light makes everything look warmer than it is.',
+    descriptionDawn:
+      'The south market is quiet at dawn, the tarps sagging with overnight dew. Marta\'s fire is barely a thread of smoke. A vendor sets out her wares in the gray light — jars of dried herbs, lined up with a precision that suggests ritual. The air smells of wet canvas and cold ash. Two early risers stand at the food stalls, waiting. Nobody speaks. The day hasn\'t earned conversation yet.',
+    descriptionDusk:
+      'The south market accelerates at dusk. Vendors call prices with new urgency, hands moving fast over their inventories. A man wraps unsold jerky in cloth. Marta banks her fire hard, shoveling ash over embers with the efficiency of someone who has lost food to the dark before. The crowd thickens — travelers pushing through to buy what they need before the stalls close. The tarps snap in the evening wind.',
     shortDescription:
       'The market is a sprawl of tarps, salvaged tent poles, and repurposed vehicle hoods serving as countertops.',
     exits: {
@@ -393,6 +401,13 @@ export const CROSSROADS_ROOMS: Room[] = [
       west: 'cr_09_campground',
       east: 'cr_14_leather_shop',
     },
+    richExits: {
+      north: {
+        destination: 'rr_07_north_fork',
+        descriptionVerbose: 'a trail leads north out of the market, cutting through scrubland directly to the North Fork — a shortcut that skips the lower river road',
+        cycleGate: 2,
+      },
+    },
     items: [],
     enemies: [],
     npcs: [],
@@ -462,6 +477,13 @@ export const CROSSROADS_ROOMS: Room[] = [
       'The curtain is drawn tight. A thin line of lantern light leaks from underneath. Patch keeps late hours. The question is whether you want to know what that costs.',
     shortDescription:
       'Behind a heavy canvas curtain, a quieter kind of commerce happens.',
+    personalLossEchoes: {
+      child: 'The antiseptic smell hits you and your body remembers a room like this — smaller, brighter, with machines that beeped and a bed that was too big for them. Patch\'s medical kit is military grade. The one that mattered to you was pediatric. The smell is the same. The helplessness is the same.',
+      partner: 'Patch stitches a wound with steady hands and you remember hands like that on your skin — not medical, not clinical, but careful. The same care. The same attention to what hurts. The curtain muffles the world outside and you remember a door that did the same thing, and the quiet inside it, and the person who made the quiet bearable.',
+      community: 'An information broker in a curtained room. Every community had one — the person who knew things, who connected people, who sat at the center of the web and pulled threads. Your community had someone like Patch. You don\'t know what happened to them.',
+      identity: 'The shorthand on Patch\'s papers. You can almost read it. Your eyes track the symbols and something in your brain tries to fire — a decryption routine, a pattern recognition, a skill you had in a life you can\'t remember. The moment passes. The symbols stay unreadable.',
+      promise: 'Patch trades in information. You had information once — the kind that matters, the kind someone was waiting for. You promised to bring it back. The curtain falls closed behind you and the promise sits in the room like a third person.',
+    },
     exits: {
       west: 'cr_03_market_south',
     },
@@ -593,6 +615,11 @@ export const CROSSROADS_ROOMS: Room[] = [
         description:
           'The bench is a church pew. Someone carried it from a chapel and didn\'t sand off the hymnal rack. People sit and read the board and rest their hands where prayer books used to go.',
       },
+      {
+        keywords: ['echo', 'hollow', 'why', 'allowed', 'arbiter', 'safe'],
+        description:
+          'Patch asked the arbiters to leave it alone. Says the patterns matter. The board manager doesn\'t like it — he\'s said so, loudly, to anyone who\'ll listen. But Patch\'s word carries weight here, and the arbiters enforce Patch\'s word. So Echo stays. The no-combat zone holds. The Hollow crouches and traces its letters and nobody touches it.',
+      },
       // --- [RIDER A] Echo examination extras ---
       {
         keywords: ['figure', 'echo', 'person', 'crouching', 'shadow'],
@@ -657,6 +684,10 @@ export const CROSSROADS_ROOMS: Room[] = [
       'West of the market, a flat clearing of packed red earth serves as camp for travelers who can\'t afford indoor stays or don\'t trust walls. Fire rings made from stacked sandstone dot the ground in clusters — most cold, a few still smoldering, one putting out a thin column of juniper smoke that smells like the old world\'s idea of a candle. Bedrolls and lean-tos scatter without pattern, personal kingdoms of three square feet defended by proximity and custom. To the south, the long-timers have set up more permanent shelters — scavenged plywood walls, layered tarp roofs, the architecture of people who stopped pretending they were leaving. The view west is open desert and sky, the mesa line going purple in the distance, and above it the kind of sunset that makes you understand why people painted cave walls.',
     descriptionNight:
       'Three fires burn in the campground. Around the largest, a group shares a bottle and stories in low voices. Around the second, a solitary figure sharpens a blade. The third fire is untended but recent — whoever lit it is nearby, in the dark, watching. In the south camp, the long-timers sleep light behind plywood walls. A dog barks once and is hushed.',
+    descriptionDawn:
+      'The campground at dawn is cold embers and slow risers. Gray ash in the fire rings. A man sits cross-legged by the nearest one, blowing on a coal, coaxing it back. His breath makes small clouds in the cold air. The packed earth is dark with overnight dew. In the south camp, someone coughs behind plywood walls. A tarp flap opens. A face checks the sky, checks the ground, retreats.',
+    descriptionDusk:
+      'Dusk brings the campground alive. Fires are lit in quick succession — three, five, seven points of orange across the packed earth. People circle in from the market, from the trails, from wherever the day took them. Bedrolls are claimed. Lean-tos are checked. A woman in the south camp whistles two notes and a teenager jogs back from the market with an armload of firewood. The desert sky goes copper and lavender and the fires answer it with their own color.',
     shortDescription:
       'West of the market, a flat clearing serves as camp for travelers who can\'t afford indoor stays.',
     exits: {
@@ -710,7 +741,7 @@ export const CROSSROADS_ROOMS: Room[] = [
       },
       {
         npcId: 'mysterious_stranger_sanguine',
-        spawnChance: 0.10,
+        spawnChance: 0.25,
         activityPool: [
           { desc: 'A figure in a hooded coat sits outside the firelight, face in shadow. They haven\'t moved in the time you\'ve been watching. But they are awake.', weight: 1 },
         ],
@@ -762,6 +793,10 @@ export const CROSSROADS_ROOMS: Room[] = [
       'A rocky rise twenty feet above the campground, flat on top, with a view that justifies the climb. From here you can see the full layout of Crossroads — the tire wall, the market canopy, the campfire dots — and beyond it, the skeleton of the old world stretching in every direction. To the north, the blue-gray wall of the San Juan Mountains where Covenant and harder places wait. The wind is stronger up here. It smells like sage and distance.',
     descriptionNight:
       'The overlook at night is a planetarium. The Milky Way arcs overhead in cold light. Below, the campfires are orange dots. In the distance, a faint glow on the northern horizon — Covenant, probably. And further, darker, the mountains. Somewhere up there is the Scar.',
+    descriptionDawn:
+      'Dawn from the Overlook comes from the east in a long, slow pour. The San Juans catch it first — the snow on the highest peaks turning pink, then gold, then white. The light moves down the slopes and across the valley floor like water filling a basin. Crossroads is still in shadow below you, the campfires cold, the market canopy a dark shape. The sage smells stronger in the cold morning air. You can see for fifty miles and all of it is waking up.',
+    descriptionDusk:
+      'Dusk from the Overlook is the Scar\'s hour. The sun drops behind the western mesas and the mountains go to silhouette, and in the gap between the peaks — there. A faint glow that isn\'t sunset. A light that persists after the sky has gone from orange to violet to dark blue. The Scar. You can see it from here, or see its reflection, or see the idea of it. The campfires below begin to flicker on, small and orange and human, and the glow on the mountains is none of those things.',
     shortDescription:
       'A rocky rise twenty feet above the campground, flat on top, with a view that justifies the climb.',
     exits: {
@@ -772,6 +807,8 @@ export const CROSSROADS_ROOMS: Room[] = [
       north: {
         destination: 'st_01_approach',
         descriptionVerbose: 'a rocky trail descends the rise and continues north toward the ruined building complex known as The Stacks — harder country',
+        cycleGate: 2,
+        reputationGate: { faction: 'reclaimers', minLevel: 1 },
       },
     },
     items: [],
@@ -899,8 +936,17 @@ export const CROSSROADS_ROOMS: Room[] = [
       baseChance: 0.15,
       timeModifier: { day: 0.5, night: 2.0, dawn: 0.8, dusk: 1.3 },
       threatPool: [
-        { type: 'shuffler', weight: 100, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'shuffler', weight: 95, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
+      activityPool: {
+        shuffler: [
+          { desc: 'stands behind the counter, hands flat on the surface, as if waiting to ring up a customer who will never come', weight: 3 },
+        ],
+        remnant: [
+          { desc: 'turns a pump handle with slow, deliberate pressure. Squeeze. Release. Squeeze. Release. The pump is dry. It doesn\'t know that.', weight: 2 },
+        ],
+      },
     },
   },
 

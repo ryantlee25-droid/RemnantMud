@@ -189,6 +189,7 @@ export const THE_SCAR_ROOMS: Room[] = [
         { type: 'remnant', weight: 2, quantity: { min: 1, max: 2, distribution: 'flat' } },
         { type: 'shuffler', weight: 3, quantity: { min: 1, max: 3, distribution: 'flat' } },
       ],
+      awarenessRoll: { unaware: 0.4, awarePassive: 0.35, awareAggressive: 0.25 },
     },
     extras: [
       {
@@ -347,7 +348,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       north: { destination: 'scar_04_level1_corridor', descriptionVerbose: 'north back to the corridor' },
     },
     items: ['letter_meridian_cell_7', 'letter_meridian_cell_11'],
-    enemies: [],
+    enemies: ['elder_sanguine_deep', 'sanguine_feral'],
     npcs: [],
     extras: [
       {
@@ -369,11 +370,12 @@ export const THE_SCAR_ROOMS: Room[] = [
       baseChance: 0.85,
       timeModifier: { night: 1.2, dawn: 0.9, dusk: 1.1, day: 0.8 },
       threatPool: [
-        { type: 'elder_sanguine', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
-        { type: 'sanguine_feral', weight: 2, quantity: { min: 1, max: 2, distribution: 'flat' } },
+        { type: 'shuffler', weight: 3, quantity: { min: 1, max: 3, distribution: 'flat' } },
+        { type: 'remnant', weight: 2, quantity: { min: 1, max: 2, distribution: 'flat' } },
       ],
+      awarenessRoll: { unaware: 0.4, awarePassive: 0.35, awareAggressive: 0.25 },
     },
-    narrativeNotes: 'Letters collectible in this room. Cell 7 subject\'s writing is the most developed — the final entry is ambiguous about whether they became Sanguine or Hollow. The door-unlocking detail (Vane giving them codes) is crucial to the Director\'s character. Elder Sanguine boss encounter — Act III climax.',
+    narrativeNotes: 'Letters collectible in this room. Cell 7 subject\'s writing is the most developed — the final entry is ambiguous about whether they became Sanguine or Hollow. The door-unlocking detail (Vane giving them codes) is crucial to the Director\'s character. Elder Sanguine + Sanguine Feral in enemies array (not hollowEncounter — Sanguine types use a different encounter system).',
   },
 
   {
@@ -705,7 +707,8 @@ export const THE_SCAR_ROOMS: Room[] = [
         dispositionRoll: { friendly: 0.5, neutral: 0.4, wary: 0.1 },
         dialogueTree: 'vane_broadcast_room_main',
         questGiver: ['the_choice', 'meridian_full_truth'],
-        narrativeNotes: 'The broadcaster\'s identity varies based on player evidence path — Dr. Vane (most common), the Vivarium Sanguine (if contact was made), or an AI system (if the player completed the electronics path without finding the journal). Each version of the broadcaster has the same functional information but delivers it differently.',
+        questFlagOnSpawn: { flag: 'met_broadcaster', value: true },
+        narrativeNotes: 'The broadcaster\'s identity varies based on player evidence path — Dr. Vane (most common), the Vivarium Sanguine (if contact was made), or an AI system (if the player completed the electronics path without finding the journal). Each version of the broadcaster has the same functional information but delivers it differently. Sets met_broadcaster flag on spawn for scar_26 conditional.',
       },
     ],
     extras: [
@@ -769,7 +772,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
       {
         keywords: ['seal', 'terminal c', 'destroy', 'close'],
-        description: 'THE SEAL: Trigger MERIDIAN\'s built-in self-destruct. The data, the samples, the facility, and everything in it becomes rubble. No cure. No weapon. No future research. The world stays exactly as broken as it is, and must find its own way from here. The broadcaster called this option "the wisest and the quietest." They didn\'t say which one they recommend.',
+        description: 'THE SEAL: Trigger MERIDIAN\'s built-in self-destruct. The data, the samples, the facility, and everything in it becomes rubble. No cure. No weapon. No future research. The world stays exactly as broken as it is, and must find its own way from here. The broadcaster called this option "the quietest." They didn\'t say which one they recommend.',
         skillCheck: {
           skill: 'lore',
           dc: 4,
@@ -820,6 +823,21 @@ export const THE_SCAR_ROOMS: Room[] = [
     items: [],
     enemies: [],
     npcs: [],
+    npcSpawns: [
+      {
+        npcId: 'the_dog',
+        spawnChance: 0.90,
+        spawnType: 'unique',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        questGate: 'dog_kindness',
+        activityPool: [
+          { desc: 'The dog is here. It was here before you. It is sitting at the top of the exit staircase with its ears forward and its eyes on the door, waiting for you to come through it the way it has waited for everything else you\'ve done: patiently, without understanding, without needing to understand. You are the person it chose. That is the whole story.', weight: 4 },
+          { desc: 'The dog stands when it sees you. Its tail moves. It does not run to you. It waits for you to come to it, because that is how this has always worked between the two of you — it waits, you come, and the distance closes because you both decided it should. It is the last living thing you see before the sky.', weight: 3 },
+        ],
+        dispositionRoll: { friendly: 1.0 },
+        narrativeNotes: 'The Dog at the exit is the game\'s final emotional beat before the ending text. It was here before you. The payoff for every small kindness across three cycles.',
+      },
+    ],
     extras: [
       {
         keywords: ['choice', 'made', 'did', 'done'],
@@ -1280,6 +1298,16 @@ export const THE_SCAR_ROOMS: Room[] = [
         keywords: ['healing', 'faster', 'Sanguine', 'physiology'],
         description: 'The logs on the medical terminal cover every health event for one patient over seven years. The healing rate data matches the Alpha Series projections from Wing B — faster every year, the regeneration curve still climbing. The patient\'s notes at intervals: \'Healing rate: 14x baseline and increasing.\' \'Healing rate: 19x baseline.\' \'Healing rate: estimate only, too fast to track accurately.\' The most recent note: \'I stopped measuring. It doesn\'t matter anymore. What matters is that I\'m still here.\'',
       },
+      {
+        keywords: ['injection', 'log', 'self-administered', 'R-1', 'vane', 'dosage', 'journal'],
+        description: 'Behind the pharmaceutical cabinet, wedged between the unit and the wall: a leather-bound injection log. The handwriting is precise, clinical, a researcher\'s hand. The first page is dated six months after the Collapse. The entries are a dosage schedule.',
+        skillCheck: {
+          skill: 'field_medicine',
+          dc: 13,
+          successAppend: 'The log reads like a clinical trial with a sample size of one. Day 1: Administered R-1 compound. 0.3cc subcutaneous. The alternative was starvation within the month — immune system failing, no viable food source without surface access, facility sealed. Day 14: Integration proceeding. Healing rate increasing. Appetite stabilizing. I am becoming what I made. Day 47: Dosage adjusted to 0.15cc. Integration plateau. Side effects: altered circadian rhythm, heightened auditory sensitivity, persistent low-grade fever (38.2C, stable). Day 180: Reduced to 0.05cc maintenance dose. The compound is no longer supplemental — my physiology produces it endogenously. The transition is complete. I am the last human to take R-1 voluntarily and the first to do it with full knowledge of what it does. Day 365: One year. The maintenance dose is a formality. I continue it because the act of injection is the last clinical behavior I perform, and without it I am not a researcher managing a condition. I am just the condition. Year 3: Dosage discontinued. Unnecessary. Cellular regeneration self-sustaining. I eat what the facility grows. I heal what breaks. I maintain what I built. I wait for someone to follow the signal. Year 7: The log ends here because there is nothing left to record. I am what R-1 makes. I have been what R-1 makes for longer than any subject in the trial data. The trial data is me now. I am my own longest-running experiment, and the results are: I am still here. That is the only result that matters.',
+        },
+        questFlagOnSuccess: { flag: 'discovered_vane_self_administered_r1', value: true },
+      },
     ],
     hollowEncounter: {
       baseChance: 0.08,
@@ -1431,6 +1459,10 @@ export const THE_SCAR_ROOMS: Room[] = [
       {
         keywords: ['absent', 'stepped away', 'not here', 'gone'],
         description: 'They\'re not here. The equipment is running. The broadcast is transmitting. But the chair is empty and the door to the east is ajar. They knew from the security cameras the moment you arrived. They have been watching your progress through the facility. And at some point before you reached this room, they got up and left. They didn\'t wait. They prepared this for you and then got out of the way. The space they left behind is shaped exactly like a person who has done everything they could do and left the rest to someone else.',
+        conditionalDescription: {
+          flag: 'met_broadcaster',
+          description: 'You\'ve been here before, in a sense — the broadcaster you met in the broadcast room built this signal, sat in this chair, revised these scripts. Standing in the origin after meeting the person makes the room smaller and larger at the same time. Smaller because the mystery is a person now. Larger because a person did all of this alone.',
+        },
       },
       {
         keywords: ['signal', 'broadcast', 'script', 'message'],

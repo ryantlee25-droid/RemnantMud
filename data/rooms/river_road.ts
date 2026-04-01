@@ -24,7 +24,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       west: 'cr_01_approach',
       east: 'rr_02_bridge_ruins',
     },
-    items: ['scrap_vest'],
+    items: [],
     enemies: [],
     npcs: [],
     extras: [
@@ -57,6 +57,13 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       },
     ],
     itemSpawns: [
+      {
+        entityId: 'scrap_vest',
+        spawnChance: 0.60,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.3, max: 0.7 },
+        groundDescription: 'A scrap vest lies crumpled in the ditch, dropped or abandoned. The plates are dented but intact.',
+      },
       {
         entityId: 'empty_water_bottle',
         spawnChance: 0.30,
@@ -631,6 +638,11 @@ export const RIVER_ROAD_ROOMS: Room[] = [
         skillCheck: { skill: 'survival', dc: 12, successAppend: 'Game trail, overlaid on something older — a human path, abandoned. It leads west and up, toward the high ridges. If you had to guess, it connects to the mountain forest the locals call The Pine Sea.' },
         cycleGate: 2,
       },
+      {
+        keywords: ['broadcast', 'radio', 'signal', 'frequency'],
+        description:
+          'One of the scouts mentions it unprompted: "Signal\'s stronger here at night. Twelve words, repeating. Sparks at Crossroads has been logging it for weeks." He taps the side of his radio and shrugs. "Command says ignore it. Hard to ignore something that won\'t stop talking."',
+      },
     ],
     npcSpawns: [
       {
@@ -693,6 +705,11 @@ export const RIVER_ROAD_ROOMS: Room[] = [
         keywords: ['grass', 'yard', 'overgrown'],
         description:
           'Wild grass, waist-high. Could be hiding anything. You push through carefully. Your hand brushes something hard in the grass — a bicycle wheel, spokes bent, tire rotted. A child\'s bike.',
+      },
+      {
+        keywords: ['radio', 'static', 'rubble', 'receiver'],
+        description:
+          'Half-buried in the kitchen rubble, a shortwave receiver. The case is melted on one side, the dial fused at 7.245 MHz. You turn it over and the battery compartment is empty, but when you hold it to your ear out of habit, you hear — nothing. Or almost nothing. A hum in the casing, like the metal remembers the last signal it carried. 7.245 is the frequency Sparks has been tracking.',
       },
     ],
     personalLossEchoes: {
@@ -762,6 +779,13 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     difficulty: 1,
     visited: false,
     flags: { safeRest: true, campfireAllowed: true, waterSource: true },
+    personalLossEchoes: {
+      child: 'The birdsong. They would have stopped to listen. They would have asked you what kind and you would have made something up and they would have believed you because children believe their parents about birds. The cottonwoods don\'t care about your answer. The woodpecker keeps drumming.',
+      partner: 'Beautiful places were yours together. You collected them — a viewpoint, a quiet beach, a trail through trees exactly like this one. The collection belongs to no one now. The beauty is still here. The sharing of it is not.',
+      community: 'The cottonwoods have been here a hundred years, growing together, their root systems intertwined underground where you can\'t see it. A community of trees. You had a community of people. The trees are still standing.',
+      identity: 'You know cottonwood by the sound of its leaves. You know the smell of the river. You know these things and you don\'t know how, and in a place this beautiful the not-knowing feels less like a wound and more like a door you haven\'t found the key to.',
+      promise: 'For fifty yards you could forget what the world has become. You promised someone you would find a place like this — safe, quiet, beautiful. You found it. They\'re not here to see it. The promise echoes in the birdsong and doesn\'t resolve.',
+    },
     description:
       'The trail follows the river through a corridor of towering cottonwood trees, their canopy so dense the light filters down in green-gold shafts. The river runs beside you, wide and slow in this section, with deep pools where the current eddies against fallen logs. The air is cooler here, ten degrees below the open road. Birdsong. Actual birdsong. A woodpecker hammers somewhere upstream. For fifty yards, you could forget what the world has become.',
     descriptionNight:
@@ -1047,6 +1071,17 @@ export const RIVER_ROAD_ROOMS: Room[] = [
           { desc: 'A sentry on the wall raises a megaphone. \'Halt there. State your business and approach slowly.\'', weight: 3 },
           { desc: 'Two sentries watch from the towers. One tracks you with a scope. The other speaks into a radio.', weight: 2 },
         ],
+      },
+      {
+        npcId: 'covenant_wall_child',
+        spawnChance: 0.20,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'A child sits on the wall between the watchtowers, legs dangling, counting something on her fingers. She watches you approach with the flat assessment of someone who has learned to evaluate strangers by the way they walk. She holds up four fingers toward the sentry. Some kind of signal.', weight: 3 },
+          { desc: 'A boy of maybe nine leans over the wall, watching the buffer zone. He\'s sorting pebbles into piles on the parapet — by color, by size, by some system only he understands. He sees you and adds a pebble to one of the piles. You\'ve been categorized.', weight: 2 },
+          { desc: 'A child on the wall is drawing in a notebook, looking up at the road, looking down at the page. Recording. When you get closer, she turns the notebook away. "Sentry business," she says, with the gravity of someone who has been given a job and intends to keep it.', weight: 2 },
+        ],
+        narrativeNotes: 'Covenant raises its children pragmatic. This child is a lookout — unofficial, tolerated, effective. The counting/categorizing behavior shows adaptation: this is a kid who has found a way to be useful in a world that doesn\'t have room for uselessness.',
       },
     ],
     narrativeNotes:

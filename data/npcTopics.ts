@@ -182,7 +182,7 @@ export const NPC_TOPICS: Record<string, NpcTopic[]> = {
     {
       keywords: ['faith', 'belief', 'kindling', 'religion'],
       response:
-        "\"CHARON-7 is not a disease. It is an invitation.\" He says this calmly, the way someone states the weather. \"They assumed humanity was the final form. We know better. We do not worship the pathogen — we prepare for what it offers. When the fire comes, we will be ready. They will not.\"",
+        "\"Fire does not ask permission. It selects.\" He speaks to the flame, not to you. \"The Kindling are not a religion. We are a furnace. What enters us burns away or burns bright — there is no middle ground. They assumed humanity was the final form. We know better. We do not worship the pathogen — we prepare for what it offers. When the fire comes, we will be ready. They will not.\"",
     },
     {
       keywords: ['purification', 'purify', 'transform', 'turning'],
@@ -253,7 +253,7 @@ export const NPC_TOPICS: Record<string, NpcTopic[]> = {
   ],
   the_wren: [
     { keywords: ['hunting', 'tracking', 'prey', 'kill'], response: '"I don\'t enjoy it. I\'m good at it. Those aren\'t the same thing." The Wren checks the fletching on an arrow without looking at you. "People assume competence means enthusiasm. It doesn\'t."' },
-    { keywords: ['detective', 'investigation', 'before', 'past', 'police'], response: '"Long time ago." She doesn\'t elaborate immediately. "Different kind of tracking. Same patience. Same process of elimination." A pause. "The difference is, before, I wanted to understand why. Now I just need to know where."' },
+    { keywords: ['detective', 'investigation', 'before', 'past', 'police'], response: '"Long time ago." He doesn\'t elaborate immediately. "Different kind of tracking. Same patience. Same process of elimination." A pause. "The difference is, before, I wanted to understand why. Now I just need to know where."' },
     { keywords: ['morality', 'right', 'wrong', 'ethics', 'choice'], response: '"I stopped applying abstract frameworks to field decisions. Not because they\'re wrong — because they\'re slow." The Wren finally looks at you. "You want to know if I can live with what I\'ve done. Yes."' },
   ],
   elder_kai_nez: [

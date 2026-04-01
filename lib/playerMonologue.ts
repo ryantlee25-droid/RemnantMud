@@ -284,6 +284,8 @@ export function getPersonalLossEcho(
           `*"The name on the document. Not yours. Or maybe it was, once."*`,
           `*"You find a photograph. You study it for too long, looking for evidence of yourself."*`,
           `*"Someone lived a life here. You piece it together like you used to piece together yours."*`,
+          `*"The name surfaces again. ${lossName}. You don't know if it's yours or someone else's."*`,
+          `*"${lossName}. The syllables feel familiar in your mouth. You don't say them out loud."*`,
         ]
         line = lines[Math.floor(Math.random() * lines.length)]
       }
@@ -291,10 +293,13 @@ export function getPersonalLossEcho(
 
     case 'promise':
       if (trigger === 'safe_rest' || trigger === 'examining_loss_item') {
+        // lossName for promise type is the TEXT of the promise, not a person's name.
+        // Lines must not treat lossName as a person.
         const lines = [
           `*"You made a promise. You're keeping it. That's all this is."*`,
-          `*"${lossName} would say you've gone too far. You think about that. You keep going."*`,
+          `*"The promise pulls at you. ${lossName}. You said those words and meant them."*`,
           `*"Some promises shouldn't be kept. That's never stopped you."*`,
+          `*"${lossName}. The words sit in your chest like a stone. You keep walking."*`,
         ]
         line = lines[Math.floor(Math.random() * lines.length)]
       }

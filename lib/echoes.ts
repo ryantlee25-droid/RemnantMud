@@ -22,6 +22,7 @@ const FLAG_TO_RELATIONSHIP: Record<string, { npc: string; relationship: 'trusted
   player_betrayed_vesper:      { npc: 'vesper',  relationship: 'betrayed' },
   rook_indebted:               { npc: 'rook',    relationship: 'allied' },
   avery_betrayed:              { npc: 'avery',   relationship: 'betrayed' },
+  avery_departed:              { npc: 'avery',   relationship: 'trusted' },
   avery_will_leave:            { npc: 'avery',   relationship: 'trusted' },
   harrow_recognized_truth:     { npc: 'harrow',  relationship: 'trusted' },
   player_alignment_kindling:   { npc: 'harrow',  relationship: 'allied' },
@@ -48,6 +49,7 @@ const MILESTONE_FLAGS: string[] = [
   'cross_committed_truth_mission',
   'rook_indebted',
   'avery_betrayed',
+  'avery_departed',
   'avery_will_leave',
   'vane_gave_blessing',
   'wren_respects_player',
@@ -386,7 +388,7 @@ export function getGraffitiChange(
   // Betrayed Accord — graffiti near checkpoints changes
   if (previous.factionsAntagonized?.includes('accord')) {
     changes.push({
-      roomId: 'accord_checkpoint_north',
+      roomId: 'cv_01_main_gate',
       newGraffiti: 'THE REVENANT LIES',
     })
   }
@@ -394,7 +396,7 @@ export function getGraffitiChange(
   // Betrayed Kindling — Ember graffiti changes
   if (previous.factionsAntagonized?.includes('kindling')) {
     changes.push({
-      roomId: 'the_ember_gate',
+      roomId: 'em_02_gate_of_flame',
       newGraffiti: 'THEY TRUSTED THE LAST ONE',
     })
   }
@@ -402,7 +404,7 @@ export function getGraffitiChange(
   // Aligned with Kindling — Ember graffiti honors past self
   if (previous.factionsAligned?.includes('kindling')) {
     changes.push({
-      roomId: 'the_ember_interior',
+      roomId: 'em_03_the_nave',
       newGraffiti: 'THE ONE BEFORE YOU STOOD HERE AND CHOSE RIGHT',
     })
   }
@@ -410,7 +412,7 @@ export function getGraffitiChange(
   // Betrayed Vesper/Lucid — Duskhollow graffiti warns
   if (previous.npcRelationships?.['vesper'] === 'betrayed') {
     changes.push({
-      roomId: 'duskhollow_market',
+      roomId: 'dh_18_night_market',
       newGraffiti: 'ASK THEM WHAT THEY DID WITH THE LAST CONTACT',
     })
   }
@@ -418,7 +420,7 @@ export function getGraffitiChange(
   // Weapon ending — hollow territories changed
   if (previous.endingChoice === 'weapon') {
     changes.push({
-      roomId: 'the_scar_approach',
+      roomId: 'scar_01_crater_rim',
       newGraffiti: 'QUIETER SINCE THEY CAME THROUGH',
     })
   }
@@ -426,7 +428,7 @@ export function getGraffitiChange(
   // Completed act 3 — MERIDIAN entrance graffiti
   if (previous.questsCompleted?.includes('act3_complete')) {
     changes.push({
-      roomId: 'meridian_entrance',
+      roomId: 'scar_02_main_entrance',
       newGraffiti: 'SOMEONE MADE IT THROUGH. MAYBE YOU CAN TOO.',
     })
   }
@@ -536,6 +538,40 @@ export function getCycleAwareDialogue(
         return (
           'You look like someone who did me a favor once. ' +
           'I\u2019m not saying it was you. I\u2019m saying I don\u2019t forget favors.'
+        )
+      }
+      return null
+
+    case 'briggs':
+      if (cycleHistory.length >= 4) {
+        return (
+          'How many times now? The files say more than you\u2019d like.'
+        )
+      }
+      if (cycleHistory.length >= 2) {
+        return (
+          'You again. My people have files. The files have your face.'
+        )
+      }
+      return null
+
+    case 'sparks':
+      if (cycleHistory.length >= 2) {
+        return (
+          'The signal hasn\u2019t changed. But you have.'
+        )
+      }
+      return null
+
+    case 'dr_osei':
+      if (cycleHistory.length >= 4) {
+        return (
+          'You\u2019re iterating. The virus is iterating you.'
+        )
+      }
+      if (cycleHistory.length >= 2) {
+        return (
+          'Your cellular markers are\u2026 consistent. Across instances.'
         )
       }
       return null

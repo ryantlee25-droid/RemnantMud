@@ -254,7 +254,7 @@ export const THE_DUST_ROOMS: Room[] = [
       threatPool: [
         { type: 'shuffler', weight: 50, quantity: { min: 1, max: 4, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 25, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
-        { type: 'stalker', weight: 15, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'whisperer', weight: 15, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'brute', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.4, awarePassive: 0.35, awareAggressive: 0.25 },
@@ -278,6 +278,8 @@ export const THE_DUST_ROOMS: Room[] = [
     flags: { safeRest: false, scavengingZone: true },
     description: 'The diner is the Platonic ideal of American abandonment. Counter stools on chrome pedestals, vinyl still cracked but still there. A specials board still showing Tuesday\'s lunch — chicken fried steak $7.99, the number slightly smudged where the chalk shifted. Condiment bottles still on every table. Menu laminated behind the counter. The coffee machine is an artifact of a civilization that cared very much about getting its mornings right. The smell of old grease is faint but permanent.',
     descriptionNight: 'The diner at night is full of chrome reflections and silence. Moonlight comes through the plate glass window and lays rectangles on the linoleum. The counter stools cast long shadows. This is the most haunted room in the Dust — not by ghosts, but by the specific ordinary weight of Tuesday lunch, still up on the board, waiting.',
+    descriptionDawn: 'Early light through the plate glass window hits the specials board first. TUESDAY SPECIALS in chalk, lit amber, the letters casting small shadows on the wall behind them. The chrome stools catch the light one by one as the sun climbs. The coffee machine gleams. For three minutes the diner looks open — the light does what the light always did, filling the room from east to west, warming the linoleum, making the chrome bright. The smell of old grease is warmer in the morning. The ghosts of breakfast are the strongest ghosts.',
+    descriptionDusk: 'For five minutes the diner looks like it did before. The western light comes through the plate glass window at the angle that fills the whole room gold, the chrome catches it, the specials board glows, and the counter stools throw shadows that point toward the kitchen the way customers would have faced, waiting. The condiment bottles on the back table are silhouetted like a small congregation. Then the light drops below the window frame and the gold drains from the room in seconds and the diner is dark and it is seven years after Tuesday.',
     shortDescription: 'The First Mesa Diner. Tuesday special, seven years overdue.',
     exits: { south: 'du_04_ghost_main' },
     richExits: {
@@ -340,6 +342,13 @@ export const THE_DUST_ROOMS: Room[] = [
           { desc: 'sits at the counter, both hands wrapped around an empty mug, staring at the specials board with something that isn\'t reading but isn\'t nothing', weight: 3 },
         ],
       },
+    },
+    personalLossEchoes: {
+      child: 'The high chair is still at the corner table, pulled up close, the way you do when they\'re small enough that you want them near you but old enough to sit on their own. You shared meals like this. Not here — somewhere else, somewhere with the same vinyl and the same specials board and the same particular ordinariness that was never ordinary. The high chair is empty the way all the chairs here are empty, but this one is the one you can\'t stop looking at.',
+      partner: 'You shared meals like this. Not this meal, not this diner, but the architecture of it — sitting across from someone, reading the specials, the specific intimate mundanity of choosing food together. Tuesday special. Chicken fried steak. The two of you would have had opinions about the chicken fried steak. You would have argued about the pie. The argument would have been the best part of the meal.',
+      community: 'A diner is a community\'s living room. The specials board, the condiment bottles, the counter stools — everything here was organized around the assumption that people would keep coming in and sitting down and ordering and talking. Your community had places like this. Gathering points. The places where you ran into everyone. Those places are empty now too, and the specials boards are still showing the last Tuesday.',
+      identity: 'You sit at the counter and try to remember if you liked chicken fried steak. The answer should be in there somewhere — a preference, a habit, the kind of small fact that makes a person specific rather than general. The Remnant at the counter has its hands around an empty mug, remembering something or performing the memory of remembering. You understand the gesture.',
+      promise: 'WHEN THE LIGHTS COME BACK ON, someone wrote on the espresso machine. A promise in the form of a conditional. You made a promise too, and the conditional has been running for seven years, and the lights haven\'t come back on, and you\'re sitting in a diner where Tuesday lasted forever. The promise doesn\'t expire. That\'s the problem with promises.',
     },
     narrativeNotes: 'Nostalgia room. Letters collectible. The Remnant at the counter is an intentional gut-punch. This is where the game\'s emotional register gets quiet and specific.',
   },
@@ -422,6 +431,8 @@ export const THE_DUST_ROOMS: Room[] = [
     flags: { waterSource: true, scavengingZone: false },
     description: 'The tower stands sixty feet on four rust-streaked legs, painted white once, the paint now peeling in curls that catch the wind. The tank is still half-full and the water smells clean — mineral-chalky, cold even in summer heat, better than anything the Dust otherwise offers. Someone has spray-painted the base legs in three different hands over three different years: WE WERE HERE (black, old), KEEP GOING NORTH (red, faded), and most recently, in yellow: WHAT NORTH? The chain lock at the base is cut and re-hung to look closed. From the top, the ghost town is a circuit board below, the alkali flat a bleached mirror to the east, the ranch compound a dark cluster to the west. A lookout position and a water source in a zone where both are scarce.',
     descriptionNight: 'The water tower at night is a tower of stars. Climb it and the world falls away below — the ghost town becomes a geometry of dark shapes, the alkali flat becomes a mirror for the sky. The water in the tank moves slightly, almost imperceptibly, rocking with the wind that finds the tower\'s altitude.',
+    descriptionDawn: 'The tower is a black silhouette against the brightening east, the four legs and the tank a geometry that looks deliberate against the horizontal light. From the ground: a lookout position, the ladder rungs catching the first warmth. From the top, if you climb: the ghost town below is a diagram of shadows, every building throwing its dark twin westward, the streets laid out in the specific grid logic of towns that expected to grow. The alkali flat beyond is pink in the dawn light. Something metal glints on the northern horizon — the same glint visible from ground level, but from sixty feet up, it resolves into a shape. A structure. Something built, out there, where the maps say nothing is.',
+    descriptionDusk: 'At dusk the tower catches the last light higher than anything else in the ghost town — the tank glows rust-orange for ten minutes after the ground has gone to shadow. From the top you can see the Scar on the northeastern horizon, the faint amber glow that most people mistake for wildfire or sunset bleed. It isn\'t either. At this hour, from this height, the glow pulses with a regularity that fire doesn\'t have. The wind drops with the light and the tower\'s steel legs stop humming and the silence at sixty feet is the silence of being the last tall thing in a flat world.',
     shortDescription: 'A water tower. Half-full. Sixty-foot view. Someone was here before you.',
     exits: { east: 'du_04_ghost_main', west: 'du_10_ranch', up: 'du_07_water_tower' },
     richExits: {
@@ -513,7 +524,7 @@ export const THE_DUST_ROOMS: Room[] = [
       {
         keywords: ['corridors', 'maze', 'paths', 'rows'],
         description: 'The vehicle rows create a maze with no fixed center. Someone has scratched directional arrows into several door panels in chalk, but the arrows were drawn from different starting points and contradict each other. You get the sense that everyone who\'s navigated this place successfully did it by luck.',
-        skillCheck: { skill: 'perception', dc: 9, successAppend: 'Wait — you trace the arrow logic from the outside in rather than from inside out. There\'s a center to this maze and someone built it intentionally. The arrows guide you to a 1987 Chevy Blazer with its roof cut off and a campsite installed inside — fire ring, bedroll, supply cache. Someone lived here.' },
+        skillCheck: { skill: 'tracking', dc: 9, successAppend: 'Wait — you trace the arrow logic from the outside in rather than from inside out. There\'s a center to this maze and someone built it intentionally. The arrows guide you to a 1987 Chevy Blazer with its roof cut off and a campsite installed inside — fire ring, bedroll, supply cache. Someone lived here.' },
       },
       {
         keywords: ['car', 'vehicles', 'stripped', 'salvage'],
@@ -526,7 +537,7 @@ export const THE_DUST_ROOMS: Room[] = [
       threatPool: [
         { type: 'shuffler', weight: 40, quantity: { min: 2, max: 5, distribution: 'bell' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
-        { type: 'stalker', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'whisperer', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'brute', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.3, awarePassive: 0.4, awareAggressive: 0.3 },
@@ -667,6 +678,8 @@ export const THE_DUST_ROOMS: Room[] = [
     flags: { questHub: true, scavengingZone: true },
     description: 'A hundred-and-twenty-foot broadcast tower rises from a concrete pad, its red warning light dead for seven years. The equipment shed at its base is locked — actually locked, not the decorative lock at the water tower. Inside you can hear the hum of something electronic, which means someone has it on a power source that still works. The Reclaimers put this on their list. That they haven\'t retrieved it yet says something about what\'s between here and there.',
     descriptionNight: 'At night the tower\'s dead warning light is a presence through its absence — you know exactly where it should be blinking red. Nothing. But from the equipment shed, a thin line of light shows under the door. Something is running. And beneath the wind and the desert silence, a signal: repeating, three seconds on, three seconds off, a pattern that resolves into something when you listen long enough.',
+    descriptionDawn: 'The antenna catches the first light before anything else — a hundred and twenty feet of lattice steel lit from the east, the crossbraces throwing small shadows down the tower face. The concrete pad is cold under your feet. The equipment shed hum is there if you listen, steady beneath the dawn wind, unchanged by the hour. The signal doesn\'t sleep. Whatever is broadcasting doesn\'t care what time it is.',
+    descriptionDusk: 'At dusk the tower becomes a line drawn against the darkening west, the lattice structure simplified by the failing light into something that looks like a single black stroke from antenna to pad. The hum from the equipment shed is louder at night — or the desert is quieter, which amounts to the same thing. The signal is stronger after dark. You\'ve heard others say this. The signal is stronger after dark and nobody knows why and nobody has asked the right question, which is: stronger for whom.',
     shortDescription: 'A broadcast radio tower. The shed hums. Someone is broadcasting.',
     exits: { east: 'du_09_mirage', south: 'du_12_west_edge' },
     richExits: {
@@ -1245,7 +1258,7 @@ export const THE_DUST_ROOMS: Room[] = [
       {
         keywords: ['heat', 'warmth', 'temperature', 'air'],
         description: 'The air in the bowl is noticeably warmer. It smells different — the specific smell of Hollow density, which is biological and not pleasant, but underneath that, something else: old wood, old fabric, old paper. Something buried down here is made of materials that predate the Collapse. The bowl has preserved it.',
-        skillCheck: { skill: 'perception', dc: 13, successAppend: 'The smell of old paper resolves into something specific when the wind shifts: ink, and the particular mustiness of bound pages stored for years in dry heat. Somewhere under the sand in this bowl is a cache of documents. Someone buried something here and the dunes covered it. The Hollows circling it don\'t know what it is. Maybe.' },
+        skillCheck: { skill: 'tracking', dc: 13, successAppend: 'The smell of old paper resolves into something specific when the wind shifts: ink, and the particular mustiness of bound pages stored for years in dry heat. Somewhere under the sand in this bowl is a cache of documents. Someone buried something here and the dunes covered it. The Hollows circling it don\'t know what it is. Maybe.' },
       },
     ],
     hollowEncounter: {

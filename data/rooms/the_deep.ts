@@ -214,12 +214,12 @@ export const THE_DEEP_ROOMS: Room[] = [
       {
         keywords: ['ore cars', 'barricade', 'moved', 'shunted'],
         description: 'The ore cars weigh several hundred pounds each. Someone moved three of them to block the south passage — not fully, but significantly. The cars were moved recently: the sediment around the wheels is disturbed in a fresh pattern. Someone was trying to block the south passage. They ran out of time or strength or both.',
-        skillCheck: { skill: 'perception', dc: 11, successAppend: 'The barricade was built from south to north — they were on the south side when they built it, pushing the cars toward themselves. They were inside whatever\'s down there and trying to seal it from within. That means they survived the initial encounter. The barricade suggests they didn\'t survive the follow-up.' },
+        skillCheck: { skill: 'tracking', dc: 11, successAppend: 'The barricade was built from south to north — they were on the south side when they built it, pushing the cars toward themselves. They were inside whatever\'s down there and trying to seal it from within. That means they survived the initial encounter. The barricade suggests they didn\'t survive the follow-up.' },
       },
       {
         keywords: ['orientation', 'direction', 'map', 'navigate'],
         description: 'Without the placards, the passages are indistinguishable. You can identify the west passage by backtracking your footprints. The east passage has a sound of water. The north passage has a different air pressure — a slight draft, which means it connects to a larger space or eventually to surface. The south passage has no draft. No light. And more of those adapted bare-foot prints than the others combined.',
-        skillCheck: { skill: 'perception', dc: 10, successAppend: 'You trace the ventilation flow. Air in from north, out to east (lower pressure toward the river). South passage is dead air — sealed space, high density. The Nest is south. The junction is a crossroads between survival (east, north) and the center of the Deep (south).' },
+        skillCheck: { skill: 'tracking', dc: 10, successAppend: 'You trace the ventilation flow. Air in from north, out to east (lower pressure toward the river). South passage is dead air — sealed space, high density. The Nest is south. The junction is a crossroads between survival (east, north) and the center of the Deep (south).' },
       },
     ],
     hollowEncounter: {
@@ -362,6 +362,22 @@ export const THE_DEEP_ROOMS: Room[] = [
     items: [],
     enemies: ['hive_mother_the_deep', 'hollow_brute_deep', 'hollow_remnant_deep'],
     npcs: [],
+    npcSpawns: [
+      {
+        npcId: 'echo_hollow',
+        spawnChance: 0.45,
+        spawnType: 'patrol',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        cycleGate: 2,
+        activityPool: [
+          { desc: 'At the Nest\'s edge, separate from the others, a Hollow is performing an action that stops your breath. It is folding something. Nothing is in its hands. The fingers move with the precision of someone who folded laundry ten thousand times — crease, smooth, fold, stack. The muscle memory outlived the mind. The stack it is building is invisible and neat.', weight: 3 },
+          { desc: 'A Hollow near the wall is writing. Its finger moves across the stone in careful strokes, tracing letters that leave no mark. The hand moves with a teacher\'s practiced rhythm — slow, deliberate, looping back to dot and cross. It is writing a word it can no longer read, to a class that graduated into the end of the world.', weight: 3 },
+          { desc: 'One Hollow, smaller than the rest, stands at the Nest perimeter and rocks a bundle of organic material against its chest. The rocking is rhythmic, gentle, the specific sway that every parent learns. The bundle is not a child. The motion is.', weight: 2 },
+        ],
+        dispositionRoll: { neutral: 0.7, wary: 0.3 },
+        narrativeNotes: 'Echo Hollow — a Hollow performing motor memory from its previous life. Cycle 2+ gate ensures the player has context for what Hollow are before encountering one that makes them grieve for it. The activity pool draws from universal human actions: folding laundry, teaching, holding a child. The horror is in the precision of the memory and the absence of the mind that made it.',
+      },
+    ],
     extras: [
       {
         keywords: ['hive mother', 'center', 'large', 'different'],
@@ -490,6 +506,21 @@ export const THE_DEEP_ROOMS: Room[] = [
         description: 'The halite formations contain visible impurities — the pink and orange tinting in some clusters. Natural mineral deposit. You could take some of this. Salt in the post-Collapse world is a serious trade good. The crystals are beautiful. You make a decision about whether beauty or practicality wins this one.',
       },
     ],
+    npcSpawns: [
+      {
+        npcId: 'the_dog',
+        spawnChance: 0.80,
+        spawnType: 'unique',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        questGate: 'dog_kindness',
+        activityPool: [
+          { desc: 'The dog is here. It followed you into the dark. It is lying on a flat crystal shelf with its chin on its paws, watching you with eyes that have no doubt about whether this was a good idea. It followed you because you were kind to it, and that was enough. The crystal light makes its fur look blue.', weight: 4 },
+          { desc: 'The dog lifts its head when you enter and its tail moves once against the crystal. Not wagging. Acknowledging. It has been here longer than you expected anything to wait for you in the deep. It does not explain how it got here. Dogs do not explain.', weight: 3 },
+        ],
+        dispositionRoll: { friendly: 0.9, neutral: 0.1 },
+        narrativeNotes: 'The Dog appearing in the Crystal Chamber is the emotional payoff for every kind interaction. The one creature that followed you into the dark. Gated behind dog_kindness flag — only appears if the player has been kind to the Dog previously.',
+      },
+    ],
     hollowEncounter: {
       baseChance: 0.02,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
@@ -498,7 +529,7 @@ export const THE_DEEP_ROOMS: Room[] = [
       ],
       awarenessRoll: { unaware: 0.9, awarePassive: 0.1, awareAggressive: 0.0 },
     },
-    narrativeNotes: 'Safe rest room in the middle of the horror zone. This is deliberate — the contrast makes the beauty hit harder, and the rest makes the player more willing to keep going deeper. The very low Hollow encounter rate is intentional.',
+    narrativeNotes: 'Safe rest room in the middle of the horror zone. This is deliberate — the contrast makes the beauty hit harder, and the rest makes the player more willing to keep going deeper. The very low Hollow encounter rate is intentional. The Dog spawns here if the player has been kind — the emotional anchor of the game\'s most important relationship thread.',
   },
 
   {
@@ -762,6 +793,7 @@ export const THE_DEEP_ROOMS: Room[] = [
     difficulty: 2,
     visited: false,
     flags: { dark: false, safeRest: false, scavengingZone: true },
+    cycleGate: 3,
     description: 'The cavern opens and your light becomes unnecessary. Every surface is alive with soft blue-green radiance — shelf fungi the size of dinner plates, filamentous growths trailing from stalactites like hair, clusters of something that looks like coral but moves, fractionally, in rhythms too slow to catch directly. The Lucid Sanguine have been tending this garden for years. Cultivation marks are visible if you look: pruning cuts on older growth, careful spacing that lets each cluster breathe, a water-distribution channel carved into the floor that keeps specific areas damp and others dry. This is not nature. This is agriculture performed by people who have all the time in the world and a different relationship to beauty than you do.',
     descriptionNight: 'The garden glows the same at any hour. Underground time operates on pulse and tide, not day and night. The fungi breathe in a slow collective rhythm. You breathe with them, eventually. It is involuntary.',
     shortDescription: 'Bioluminescent fungi garden. Lucid Sanguine cultivation. Alien and beautiful.',
@@ -842,6 +874,7 @@ export const THE_DEEP_ROOMS: Room[] = [
     difficulty: 2,
     visited: false,
     flags: { dark: false, noCombat: false, questHub: true },
+    cycleGate: 3,
     description: 'You hear it before you see it: the acoustic quality changes in the passage, the rock beginning to shape sound rather than scatter it. The chamber itself is a natural formation that has been modified — curved walls smoothed by hand, a shallow floor depression that forms a central speaking position, stone benches carved along the perimeter. The Lucid Sanguine have been meeting here for decades. You know this because the records of their decisions are inscribed on every available surface in a script that is not quite any known language — the letterforms are familiar, Roman and Cyrillic and something older, hybrid, evolved. The most recent inscriptions are near the entrance. The oldest are at the far wall. The oldest ones are in plain English. Something happened to their writing over time.',
     descriptionNight: 'The chamber echoes differently when empty. Your footstep from the entrance bounces to you a quarter-second later, clean and precise. You can hear yourself think in here. That is not always welcome.',
     shortDescription: 'Formal Sanguine council chamber. Extraordinary acoustics. Historical records on every surface.',
@@ -921,6 +954,7 @@ export const THE_DEEP_ROOMS: Room[] = [
     difficulty: 2,
     visited: false,
     flags: { dark: false, questHub: true, scavengingZone: false },
+    cycleGate: 3,
     description: 'Access requires that the Sanguine trust you enough to show you this room exists. What you find: floor-to-ceiling shelving in a natural alcove, every shelf loaded with physical media — hard drives in protective cases, printed documents in archival sleeves, bound volumes of handwritten notes. Cables run from a power distribution point along the ceiling to charging stations for the drives — the same MERIDIAN power line that keeps the sealed door\'s reader alive also keeps this room\'s data live. The archives hold two categories of material: what the Sanguine have collected about the pre-Collapse world, and what they have created about themselves. The second category is larger.',
     descriptionNight: 'The archive breathes recycled air. The drives hum at a frequency you feel more than hear. This room has never been fully dark.',
     shortDescription: 'Sanguine archive. Pre-Collapse data and Sanguine history. MERIDIAN records present.',
@@ -980,6 +1014,7 @@ export const THE_DEEP_ROOMS: Room[] = [
     difficulty: 5,
     visited: false,
     flags: { dark: false, combat_collapsing: true },
+    cycleGate: 3,
     description: 'The rock here is warm. Not from geothermal abstraction — warm the way a body is warm, radiating retained heat from something deep and continuous. The fault is a crack in the cave floor that runs east-west for sixty feet, two inches wide at most, opening into a dark below-dark from which heat rises in slow pulses. The Hollow cluster near it in numbers you haven\'t seen since the Nest — not aggressively, but the way creatures cluster at a heat source in winter. They are indifferent to you in a way that suggests the fault supersedes you in their hierarchy of attention. And at the fault\'s eastern terminus, in a depression that has been cleared and kept clear by repeated tending: offerings. Food, mostly, but also objects. Old photographs. A child\'s shoe. A watch. The Lucid Sanguine leave gifts for what lives below.',
     descriptionNight: 'The heat from the fault is most perceptible at night when your body has cooled. The Hollow near the crack are more still at night. Attending, almost. The word that keeps coming to mind is worship, and you keep rejecting it.',
     shortDescription: 'Geologically active fault. Heat from below. Hollow clustering. Ancient offerings.',
@@ -1040,6 +1075,7 @@ export const THE_DEEP_ROOMS: Room[] = [
     difficulty: 3,
     visited: false,
     flags: { dark: false, noCombat: false, questHub: true },
+    cycleGate: 3,
     description: 'You feel the age before you see the room. Something about the air — not smell, not temperature, but pressure, a density of accumulated time that registers in the back of the skull. The sanctum is large and carved by hand: not mined, not natural, shaped from the rock by people with a very long time and a clear vision of what they wanted. The Elder Sanguine dwell here. Not one elder — there are alcoves along the walls, each fitted with the minimum furniture of a life: a place to sleep, a place to work, a place to keep the few things that matter to something that no longer needs much. Several of the alcoves are occupied. The Elder you are looking for is in the center of the room, where the carved ceiling reaches its highest point and the bioluminescence is brightest. They have been aware of your approach for longer than you\'ve known this room existed.',
     descriptionNight: 'The sanctum is most itself at night. The elders are most themselves at night. If you have to come here, night is when the information flows most freely, and the danger is most real.',
     shortDescription: 'Innermost sanctum. Elder Sanguine. Overwhelming age and strangeness. Diplomatic endgame.',
@@ -1121,13 +1157,14 @@ export const THE_DEEP_ROOMS: Room[] = [
     difficulty: 3,
     visited: false,
     flags: { dark: true, scavengingZone: true, combat_darkness: true, combat_narrow_passage: true },
+    cycleGate: 3,
     description: 'The upper tunnels are the Deep\'s border zone — where the worked mine passages grade into natural cave, where the Sanguine\'s maintained spaces give way to rougher stone, where both surface and depth have a claim and neither fully asserts it. The air here moves in both directions at different times of day, carrying the smell of each world in rotation: mineral cold from below, surface vegetation from above. Crates and supply bags are stacked against one wall under canvas — trader goods, clearly, a temporary depot. Rough camp furniture has been arranged nearby: folding chairs, a camp table with a lantern, a portable stove. This is a meeting place for people who need to trade without going further in either direction than they have to.',
     descriptionNight: 'At night, the upper tunnels smell more strongly of surface — the air cools and the downward draft reverses. Whoever camps here at night knows this. The arrangement of the furniture accounts for it.',
     shortDescription: 'Transition zone. Surface traders meet Sanguine. Neutral ground. Supply depot.',
-    exits: { south: 'dp_15_bioluminescent_garden', north: 'dp_01_mine_entrance', east: 'dp_19_sanguine_sanctum' },
+    exits: { south: 'dp_15_bioluminescent_garden', north: 'dp_06_collapse', east: 'dp_19_sanguine_sanctum' },
     richExits: {
       south: { destination: 'dp_15_bioluminescent_garden', descriptionVerbose: 'south, deeper into the bioluminescent caves' },
-      north: { destination: 'dp_01_mine_entrance', descriptionVerbose: 'north, up toward the mine entrance and surface' },
+      north: { destination: 'dp_06_collapse', descriptionVerbose: 'north, up through the collapse toward the upper shafts' },
       east: {
         destination: 'dp_19_sanguine_sanctum',
         descriptionVerbose: 'east, into the Sanguine deep territory',

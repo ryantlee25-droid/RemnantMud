@@ -204,12 +204,15 @@ export function getMundaneHorrorNarration(roomContext: string): GameMessage | nu
       ' The reflection does not look away when you do.',
   ]
 
-  // Use roomContext to seed selection for consistency within a room
-  let index = 0
+  // Mix room identity with temporal variation so the same room
+  // doesn't always surface the same horror line. The room hash
+  // provides a base offset; Date.now() in ~10-minute buckets and
+  // a random nudge ensure variety across visits.
+  let roomHash = 0
   for (let i = 0; i < roomContext.length; i++) {
-    index = (index + roomContext.charCodeAt(i)) % horrorPool.length
+    roomHash = (roomHash + roomContext.charCodeAt(i)) % horrorPool.length
   }
-  // Add some variation with random offset
-  const finalIndex = (index + Math.floor(Math.random() * 3)) % horrorPool.length
+  const timeBucket = Math.floor(Date.now() / 600_000) // ~10-minute windows
+  const finalIndex = (roomHash + timeBucket + Math.floor(Math.random() * horrorPool.length)) % horrorPool.length
   return msg(horrorPool[finalIndex])
 }

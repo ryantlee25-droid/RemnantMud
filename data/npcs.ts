@@ -20,11 +20,17 @@ interface DispositionRoll {
   hostile: number
 }
 
+interface DeathCondition {
+  trigger: string                // quest flag that causes this NPC's death
+  description: string            // narrative description of the death
+}
+
 interface RichNPC extends NPC {
   activityPool: ActivityEntry[]
   dispositionRoll: DispositionRoll
   spawnChance: number
   zone: ZoneType
+  deathCondition?: DeathCondition
 }
 
 export const NPCS: Record<string, RichNPC> = {
@@ -186,11 +192,15 @@ export const NPCS: Record<string, RichNPC> = {
       'She sits with the stillness of someone who no longer needs to fidget. The photosensitivity is apparent — she has positioned herself precisely in the deepest shadow of the room, equidistant from every light source. She was a philosophy professor once. You can hear it in the precision of her sentences. She believes in what she has built here. That may be the most dangerous thing about her.',
     dialogue:
       "The blood tithe is not exploitation. The blood tithe is acknowledgment. We are predators and you are prey and the Covenant is the formal agreement that both parties have chosen something else. You find that transactional? Good. Transactions are civilized. The alternative is the Red Court. I have been clear about which I prefer.",
-    faction: 'lucid',
+    faction: 'covenant_of_dusk',
     isNamed: true,
     zone: 'duskhollow',
     spawnChance: 0.80,
     dispositionRoll: { friendly: 0.20, neutral: 0.50, wary: 0.25, hostile: 0.05 },
+    deathCondition: {
+      trigger: 'player_betrayal_red_court_alliance',
+      description: 'Vesper is found in her reading alcove, unmoving. The Red Court did not send a message. They sent a lesson. Her fountain pen is still in her hand. The notebook is open to a page about the categorical imperative.',
+    },
     activityPool: [
       {
         activity: 'is reading in the deep shadow of an alcove, turning pages with a deliberateness that suggests she has read this before and is finding something new in it',
@@ -484,6 +494,10 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'the_breaks',
     spawnChance: 0.55,
     dispositionRoll: { friendly: 0.30, neutral: 0.50, wary: 0.15, hostile: 0.05 },
+    deathCondition: {
+      trigger: 'red_court_expansion_player_inaction',
+      description: 'Dr. Osei\'s lab is empty. The equipment is intact. The research journal is open to the last entry: a single line of data followed by a note in her handwriting — "The hunger won. I was two samples short." The vials on the counter are arranged in perfect order. She did not leave in a hurry.',
+    },
     activityPool: [
       {
         activity: 'is working at a salvaged lab bench with focused intensity, pipetting something between vials with steady, careful hands',
@@ -524,6 +538,10 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'the_breaks',
     spawnChance: 0.45,
     dispositionRoll: { friendly: 0.05, neutral: 0.30, wary: 0.45, hostile: 0.20 },
+    deathCondition: {
+      trigger: 'lucid_intelligence_leak',
+      description: 'The Wren is gone. His knife is embedded in the passage wall at head height — left there, not dropped. The Red Court found out what he was feeding to the Lucid. They did not send a hunter. They sent three. He got one of them first.',
+    },
     activityPool: [
       {
         activity: 'is standing in the shadow beside the passage entrance, perfectly still, so well-placed that you registered him as part of the wall',
@@ -594,7 +612,7 @@ export const NPCS: Record<string, RichNPC> = {
       "You are here because the Red Court finds you useful, currently. That is the full extent of the situation. I am not your enemy in the way enemies are usually understood — I don't have the investment in you required for enmity. I have a function and you have a value, and for now those two things align. When they don't, the conversation will be different. Is that clear enough?",
     faction: 'red_court',
     isNamed: true,
-    zone: 'duskhollow',
+    zone: 'the_pens',
     spawnChance: 0.55,
     dispositionRoll: { friendly: 0.00, neutral: 0.40, wary: 0.40, hostile: 0.20 },
     activityPool: [
@@ -2416,15 +2434,15 @@ export const REVENANT_DIALOGUE: Record<string, Array<{ minCycle: number; text: s
   wren_shelter: [
     {
       minCycle: 2,
-      text: 'The Wren acknowledges your presence with a subtle tilt of her head. "Cycle two. You\'re beginning to understand what you are." Her fingers move across the loom with practiced precision.',
+      text: 'The Wren acknowledges your presence with a subtle tilt of his head. "Cycle two. You\'re beginning to understand what you are." His fingers move across the loom with practiced precision.',
     },
     {
       minCycle: 4,
-      text: 'The Wren looks at you for a long moment. "Cycle four. The patterns are becoming clearer. You\'re weaving something with every step, every choice." She continues her work without breaking rhythm.',
+      text: 'The Wren looks at you for a long moment. "Cycle four. The patterns are becoming clearer. You\'re weaving something with every step, every choice." He continues his work without breaking rhythm.',
     },
     {
       minCycle: 8,
-      text: 'The Wren sets down her shuttle. "Cycle eight. You are no longer simply revenant — you are becoming the pattern itself. Few reach this understanding." She returns to her weaving, as if the conversation never occurred.',
+      text: 'The Wren sets down his shuttle. "Cycle eight. You are no longer simply revenant — you are becoming the pattern itself. Few reach this understanding." He returns to his weaving, as if the conversation never occurred.',
     },
   ],
   wren_ruins: [
@@ -2434,7 +2452,7 @@ export const REVENANT_DIALOGUE: Record<string, Array<{ minCycle: number; text: s
     },
     {
       minCycle: 6,
-      text: 'The Wren studies the crumbling stones around her, then looks at you. "Cycle six. The ruins are rebuilding you as much as you rebuild them. You are the ghost in this machine now — both haunting and haunted."',
+      text: 'The Wren studies the crumbling stones around him, then looks at you. "Cycle six. The ruins are rebuilding you as much as you rebuild them. You are the ghost in this machine now — both haunting and haunted."',
     },
   ],
   old_mae: [

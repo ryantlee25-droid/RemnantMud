@@ -145,6 +145,30 @@ export const HOWARD_NARRATION: CompanionCommentary[] = [
     weight: 2,
   },
 
+  // Deep / underground
+  {
+    contextKey: CTX_DEEP,
+    narrative:
+      '"Built to last a hundred years," Howard says, running a hand along ' +
+      'the rock face. "The mountain doesn\'t care about your timeline."',
+    weight: 3,
+  },
+  {
+    contextKey: CTX_DEEP,
+    narrative:
+      '"Support beams every twelve feet." Howard checks the nearest one ' +
+      'with a knuckle tap. "Whoever dug this knew what they were doing. ' +
+      'That\'s not comforting."',
+    weight: 2,
+  },
+  {
+    contextKey: CTX_DEEP,
+    narrative:
+      'Howard stops walking and holds up a hand. "Listen to the timber," ' +
+      'he says. "When it stops creaking, that\'s when you worry."',
+    weight: 3,
+  },
+
   // Generic fallbacks
   {
     contextKey: CTX_GENERIC,

@@ -210,9 +210,9 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         spawnType: 'unique',
         quantity: { min: 1, max: 1, distribution: 'single' },
         activityPool: [
-          { desc: 'Vesper stands at the chalkboard, writing something in the lower margin of a notation that covers the board from edge to edge. They turn when you enter. "Sit down. I\'ve been thinking about you."', weight: 3 },
-          { desc: 'Vesper reads from a bioethics text with a pencil in hand, the margins being covered in careful commentary. They look up over the book. Something behind their eyes measures the distance.', weight: 2 },
-          { desc: 'Vesper is at the window, looking south toward the drive. Not watching anything specific. Thinking. "The blood tithe works," they say, not turning around. "The question I can\'t resolve is whether it should."', weight: 2 },
+          { desc: 'Vesper stands at the chalkboard, writing something in the lower margin of a notation that covers the board from edge to edge. She turns when you enter. "Sit down. I\'ve been thinking about you."', weight: 3 },
+          { desc: 'Vesper reads from a bioethics text with a pencil in hand, the margins being covered in careful commentary. She looks up over the book. Something behind her eyes measures the distance.', weight: 2 },
+          { desc: 'Vesper is at the window, looking south toward the drive. Not watching anything specific. Thinking. "The blood tithe works," she says, not turning around. "The question I can\'t resolve is whether it should."', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.4, neutral: 0.5, wary: 0.1 },
         dialogueTree: 'vesper_philosophy_main',
@@ -234,15 +234,19 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         questGate: 'vesper_trust_level_2',
       },
       {
+        keywords: ['rook', 'pens', 'red court', 'facility', 'castellan'],
+        description: 'You mention The Pens. Vesper sets down her pencil — the same deliberate gesture she uses when something requires her full philosophical attention. "I know what Rook has built," she says. "The efficiency of it. The clinical precision. The argument that it works." She is quiet for a moment. "The Red Court\'s approach treats the symptom and becomes the disease. They have taken the fact of what we need and built a machine around it, and the machine requires more fuel than the need ever did. Rook understands this. I have read what Rook writes when Rook is not performing the role of castellan." She looks at the bookshelf, at a specific gap between volumes. "The difference between the Covenant and The Pens is not the blood. It is whether the arrangement serves the people inside it or whether the people inside it serve the arrangement. Rook has allowed the question to answer itself, and the answer is institutional."',
+      },
+      {
         keywords: ['biometric', 'vesper', 'sanguine', 'access', 'scanner', 'meridian', 'physiology'],
-        description: 'You ask Vesper about MERIDIAN\'s biometric locks — the ones keyed to Sanguine physiology. Vesper sets down the pencil. The room gets quieter, which should not be possible in a room that was already quiet. "You know what you\'re asking," they say. Not a question. "The facility was built to accept us. The locks were designed for our biology. That means someone at MERIDIAN wanted us to be able to enter. Or wanted to make sure we couldn\'t leave." Vesper extends their hand, palm up. The veins beneath the pale skin pulse with something that is not quite the rhythm of a human heart. "I will give you what you need. My biometric signature, recorded on the equipment in the sub-basement, will open the scanner. But I want you to understand what it means that the door was built for us. We were always part of this. The question is whether we were the experiment or the experimenters." They press their thumb to a glass slide on the desk — the impression glows faintly blue-green for a moment before stabilizing. "Take it. The scanner will accept it. And when you\'re inside, remember that the people who built those locks knew exactly what we are."',
+        description: 'You ask Vesper about MERIDIAN\'s biometric locks — the ones keyed to Sanguine physiology. Vesper sets down the pencil. The room gets quieter, which should not be possible in a room that was already quiet. "You know what you\'re asking," she says. Not a question. "The facility was built to accept us. The locks were designed for our biology. That means someone at MERIDIAN wanted us to be able to enter. Or wanted to make sure we couldn\'t leave." Vesper extends her hand, palm up. The veins beneath the pale skin pulse with something that is not quite the rhythm of a human heart. "I will give you what you need. My biometric signature, recorded on the equipment in the sub-basement, will open the scanner. But I want you to understand what it means that the door was built for us. We were always part of this. The question is whether we were the experiment or the experimenters." She presses her thumb to a glass slide on the desk — the impression glows faintly blue-green for a moment before stabilizing. "Take it. The scanner will accept it. And when you\'re inside, remember that the people who built those locks knew exactly what we are."',
         questGate: 'duskhollow_cistern_contamination_identified',
-        skillCheck: { skill: 'negotiation', dc: 11, successAppend: 'Vesper watches you take the biometric slide and something shifts behind their eyes — not relief, not fear. Recognition. "You\'re the first person who\'s asked for this who I believe will come back to tell me what they found. Most people who go to MERIDIAN are looking for answers. You\'re looking for the right questions. That is the only reason I\'m helping you." The slide is warm in your hand. It should not be warm. It is.' },
+        skillCheck: { skill: 'negotiation', dc: 11, successAppend: 'Vesper watches you take the biometric slide and something shifts behind her eyes — not relief, not fear. Recognition. "You\'re the first person who\'s asked for this who I believe will come back to tell me what you found. Most people who go to MERIDIAN are looking for answers. You\'re looking for the right questions. That is the only reason I\'m helping you." The slide is warm in your hand. It should not be warm. It is.' },
         questFlagOnSuccess: { flag: 'sanguine_biometric_obtained', value: true },
         reputationGrant: { faction: 'covenant_of_dusk', delta: 1 },
       },
     ],
-    narrativeNotes: 'Vesper is the most intellectually complex NPC in the game. The blood tithe ethics debate is the heart of the Covenant quest chain. The hidden sub-basement access is either Perception 16 or Vesper\'s trust. The biometric quest requires covenant_of_dusk reputation >= 1.',
+    narrativeNotes: 'Vesper is the most intellectually complex NPC in the game. The blood tithe ethics debate is the heart of the Covenant quest chain. The hidden sub-basement access is either Perception 16 or Vesper\'s trust. The biometric quest requires covenant_of_dusk reputation >= 1. Vesper uses she/her pronouns.',
   },
 
   {
@@ -387,7 +391,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
       },
       {
         keywords: ['staff', 'workers', 'people', 'human'],
-        description: 'The staff make eye contact but don\'t volunteer information until you ask. When asked directly about their arrangement with the Covenant, the cook considers the question carefully: "Safer here than anywhere else I know. Vesper keeps his word. The ones who want to leave can leave." Then, after a pause: "Nobody\'s left."',
+        description: 'The staff make eye contact but don\'t volunteer information until you ask. When asked directly about their arrangement with the Covenant, the cook considers the question carefully: "Safer here than anywhere else I know. Vesper keeps her word. The ones who want to leave can leave." Then, after a pause: "Nobody\'s left."',
       },
       {
         keywords: ['table', 'kitchen table', 'meals', 'eating'],
@@ -421,7 +425,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
       { entityId: 'scrap_metal', spawnChance: 0.5, quantity: { min: 1, max: 2, distribution: 'flat' } },
     ],
     hollowEncounter: {
-      baseChance: 0.35,
+      baseChance: 0.05, // Sanguine maintain their territory — high Hollow rates inside the manor are implausible
       timeModifier: { night: 1.5, dawn: 0.8, dusk: 1.2, day: 0.5 },
       threatPool: [
         { type: 'remnant', weight: 2, quantity: { min: 1, max: 1, distribution: 'flat' } },
@@ -461,11 +465,11 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     itemSpawns: [
-      { entityId: 'gallery_portrait_placard', spawnChance: 1.0, quantity: { min: 1, max: 1, distribution: 'flat' } },
+      { entityId: 'gallery_portrait_placard', spawnChance: 0.95, quantity: { min: 1, max: 1, distribution: 'flat' } }, // Bible hard cap: no spawn at 1.0
       { entityId: 'scrap_metal', spawnChance: 0.3, quantity: { min: 1, max: 1, distribution: 'flat' } },
     ],
     hollowEncounter: {
-      baseChance: 0.20,
+      baseChance: 0.03, // Lore room, not combat — Sanguine keep their gallery undisturbed
       timeModifier: { night: 1.6, dawn: 0.7, dusk: 1.3, day: 0.4 },
       threatPool: [
         { type: 'remnant', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
@@ -480,6 +484,16 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         keywords: ['dates', 'plates', 'brass', 'years'],
         description: 'The open-ended date ranges. You stand and count: fourteen subjects portrayed across the gallery\'s walls, and none of the end dates are filled in. They\'re all still alive. They\'ve been here for anywhere from sixty to two hundred years. This was an estate before the Collapse. This was an estate before industrialization.',
         skillCheck: { skill: 'lore', dc: 10, successAppend: 'If CHARON-7 only occurred in 2031, how are some of these portraits dated from the 1800s? The answer is either that the virus existed before MERIDIAN — or that MERIDIAN wasn\'t where it started.' },
+      },
+      {
+        keywords: ['canvas', 'paint', 'forgery', 'fabrication', 'materials', 'technique'],
+        description: 'The portraits are convincing. But convincing is a word that contains its own doubt.',
+        skillCheck: { skill: 'lore', dc: 14, successAppend: 'You examine the earliest portrait more carefully. The canvas aging is good — but canvas aging can be induced. The craquelure pattern is consistent with age, or with someone who understood how to accelerate it. The pigment chemistry would require laboratory analysis you can\'t perform here. What you can observe: the Covenant has every motivation to establish provenance that predates MERIDIAN. A history that stretches back centuries makes them original, not manufactured. It makes the Sanguine something ancient and enduring rather than a laboratory accident. You cannot determine from this gallery alone whether that history is real. You can determine that fabricating it would be well within the capabilities of beings who have had decades to practice the craft of being believed.' },
+      },
+      {
+        keywords: ['mou', 'sub-basement', 'document', 'memorandum', 'agreement', 'institutional'],
+        description: 'The portraits raise the question. The sub-basement may hold part of the answer.',
+        skillCheck: { skill: 'lore', dc: 14, successAppend: 'The Memorandum of Understanding in the sub-basement is harder to dismiss than painted canvas. Institutional formatting — the specific grammar of government documents, the cross-references to known MERIDIAN protocols, the procedural language that no forger would bother to get right because no one outside the bureaucracy would notice if it were wrong. Canvas can be aged. Oil can be cracked. But the MOU reads like a document written by people who expected it to be filed, not displayed. Whether that proves the Covenant\'s history or merely demonstrates the quality of a very thorough fabrication depends on what you are prepared to believe about beings who have had centuries to prepare their argument.' },
       },
     ],
     personalLossEchoes: {
@@ -615,7 +629,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
       },
       {
         keywords: ['history', 'records', 'old', 'years'],
-        description: 'The oldest records date from the late 1990s. The Covenant of Dusk was here before MERIDIAN. They were watching. Providing samples. One entry from 2025 is a research agreement: MERIDIAN FACILITY — DUSKHOLLOW COVENANT MEMORANDUM OF UNDERSTANDING. The Covenant participated in MERIDIAN\'s development willingly. They were partners.',
+        description: 'The oldest records date from the late 1990s. The Covenant of Dusk was here before MERIDIAN. They were watching. Providing samples. One entry from 2025 is a research agreement: MERIDIAN FACILITY — DUSKHOLLOW COVENANT MEMORANDUM OF UNDERSTANDING. The document\'s formatting matches known MERIDIAN protocols. Whether that proves authenticity or demonstrates the quality of the forgery depends on what you\'re prepared to believe. If genuine, the Covenant participated in MERIDIAN\'s development willingly. They were partners. If fabricated, someone understood MERIDIAN\'s institutional grammar well enough to reproduce it — and had reason to want this partnership on the record.',
         cycleGate: 2,
       },
       {
@@ -635,7 +649,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
       ],
     },
     hollowEncounter: {
-      baseChance: 0.90,
+      baseChance: 0.63, // Reduced from 0.90: at night modifier 1.5, effective rate is 0.63 * 1.5 = 0.945, staying under the engine's 0.95 clamp ceiling
       timeModifier: { night: 1.5, dawn: 1.0, dusk: 1.2, day: 0.8 },
       threatPool: [
         { type: 'whisperer', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
@@ -1115,6 +1129,18 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         ],
         dispositionRoll: { neutral: 0.6, wary: 0.3, friendly: 0.1 },
         dialogueTree: 'chapel_visitor_market',
+      },
+      {
+        npcId: 'duskhollow_child',
+        spawnChance: 0.45,
+        spawnType: 'wanderer',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'A child moves through the market with the unhurried confidence of someone who has grown up among these blankets and these faces. They carry a small bundle — an errand, not play — and navigate the dim light without hesitation. The hollow\'s rhythms are the only rhythms they know: the late hours, the low voices, the particular quality of a life lived in candlelight and shadow. They are not afraid of the dark. The dark is where their world happens.', weight: 3, timeRestrict: ['night', 'dusk'] },
+          { desc: 'A child sits cross-legged beside a market blanket, sorting dried goods into neat piles with the focused seriousness of someone who has been given a real task and intends to do it well. They look up at you without the wariness adults here carry. Not trusting, exactly. Just not yet trained to distrust.', weight: 2, timeRestrict: ['night'] },
+        ],
+        dispositionRoll: { friendly: 0.4, neutral: 0.5, wary: 0.1 },
+        narrativeNotes: 'A child adapted to Duskhollow\'s unusual rhythms. They are awake when most children sleep, comfortable in near-darkness, integrated into the settlement\'s nocturnal economy. Their presence deepens the moral complexity — children are growing up inside this arrangement.',
       },
     ],
     itemSpawns: [

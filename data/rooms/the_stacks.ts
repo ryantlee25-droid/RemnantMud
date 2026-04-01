@@ -201,7 +201,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     flags: { noCombat: true, scavengingZone: false },
     description: 'The best crafting station in the Four Corners, full stop. The Reclaimers converted the warehouse\'s loading dock into a working shop with real tools — a lathe, a drill press, a MIG welder, soldering stations, an electronics bench with a working oscilloscope. The smell is solder flux and machine oil and competence. Things get fixed here. Things get made. There is a waiting list on a corkboard for workshop time, and the list is long.',
     descriptionNight: 'The workshop runs late — the welding mask hanging empty on the hook, the lathe powered down but still smelling of metal. A night-shift technician does electronics work at the bench, working by lamplight because the oscilloscope needs clean power and they\'ve learned to be patient with the generator.',
-    shortDescription: 'The best crafting station in the game. Electronics specialty.',
+    shortDescription: 'The best crafting station in the Four Corners. Electronics specialty.',
     exits: { north: 'st_02_entry_hall' },
     richExits: {
       north: { destination: 'st_02_entry_hall', descriptionVerbose: 'back to the entry hall' },
@@ -978,6 +978,10 @@ export const THE_STACKS_ROOMS: Room[] = [
       {
         keywords: ['thermos', 'chicory', 'drink', 'coffee'],
         description: 'Chicory root, roasted and ground, brewed strong. The smell is close enough to coffee that your body responds before your brain corrects it. The Reclaimers grow chicory in their small greenhouse — one of the few luxuries they maintain. Lev\'s thermos is refilled daily. It is, by some measures, the most human artifact in the entire Stacks.',
+      },
+      {
+        keywords: ['child', 'kid', 'young', 'reading', 'corner'],
+        description: 'In the far corner, curled into the chair nearest the lamp, a child reads with the complete absorption that only children and researchers achieve. The book is too advanced for their age — a field guide to regional botany, illustrated, the kind of text that assumes adult literacy. They are reading it anyway, one finger tracing the illustrations, mouthing the Latin names with the careful concentration of someone learning a language they have decided to learn. A blanket has been folded under them to raise the seat height. Someone adjusted this chair for them. Someone in the Stacks decided that a child reading botany in the warm light of a repurposed lamp is worth accommodating.',
       },
       {
         keywords: ['lamp', 'light', 'central', 'glow'],

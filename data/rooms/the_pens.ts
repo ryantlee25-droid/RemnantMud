@@ -449,6 +449,19 @@ export const THE_PENS_ROOMS: Room[] = [
         ],
         dispositionRoll: { friendly: 0.15, neutral: 0.55, wary: 0.25, hostile: 0.05 },
       },
+      {
+        npcId: 'the_wren',
+        spawnChance: 0.15,
+        spawnType: 'wanderer',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'A lean man in clothes chosen for silence stands at the filing cabinets, pulling a folder with the methodical attention of someone who has done this search before and expects to do it again. He reads standing up. He reads fast. He does not sit down because sitting down implies staying, and staying implies this is where he wants to be.', weight: 3 },
+          { desc: 'The Wren checks intake records at the nearest desk, cross-referencing something against a list he carries folded in his jacket pocket. The list is handwritten. The handwriting is precise in the way that precision becomes a form of self-control. He finds what he is looking for. His expression does not change. He folds the list and puts it back.', weight: 2 },
+          { desc: 'The Wren stands at the scheduling board, not reading it — memorizing it. The grid of names and dates reflected in his pale eyes. He is building a map of this facility in his head, the way he once built maps of missing persons cases, and the efficiency of the skill applied to this purpose is something he has stopped thinking about because thinking about it is a luxury the job does not allow.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.00, neutral: 0.35, wary: 0.50, hostile: 0.15 },
+        narrativeNotes: 'The Wren in administration is The Wren at work — the hunter checking files, the detective running cases, the professional whose competence is the thing he hates most about himself. Low spawn chance reflects that he does not linger here. He gets what he needs and leaves.',
+      },
     ],
     narrativeNotes: 'pens_08. The administrative hub. Six exits from here — this is the routing node for the back half of the zone. The yield ledger DEPARTED column is the key detail.',
   },
@@ -673,6 +686,21 @@ export const THE_PENS_ROOMS: Room[] = [
     items: ['scavenged_rations', 'water_bottle_sealed'],
     enemies: [],
     npcs: ['salter_off_duty', 'brig_guard'],
+    npcSpawns: [
+      {
+        npcId: 'the_wren',
+        spawnChance: 0.20,
+        spawnType: 'wanderer',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'The Wren sits in a chair near the window with a stillness that is not rest. He is off duty in the way that a weapon is off duty when it is cleaned and set aside — technically inactive, functionally the same object. His eyes move to the window and stay there. Whatever he sees in the dark outside is not the same thing other people see in the dark outside.', weight: 3, timeRestrict: ['night', 'dusk'] },
+          { desc: 'The Wren stands at the common-room table where the card game happens, not playing, not watching, just present in the space where people do normal things. He picks up a card from the discard pile, turns it over, sets it back. The gesture has the quality of someone remembering a language they used to speak.', weight: 2 },
+          { desc: 'The Wren is cleaning his knife at the table with a cloth and a can of oil, each stroke the same length, the same pressure, the same direction. The efficiency of someone who wants to be done. Not done with the knife. Done with the day. Done with the series of decisions that led to this chair in this room in this facility, cleaning this knife that has been used for things the coffee schedule on the corkboard does not account for.', weight: 2, timeRestrict: ['night'] },
+        ],
+        dispositionRoll: { friendly: 0.05, neutral: 0.40, wary: 0.45, hostile: 0.10 },
+        narrativeNotes: 'The Wren off duty. His internal struggle is visible here in a way it is not in the administration wing. The card he picks up and puts down. The window he watches. The knife cleaned with the mechanical attention of someone who has automated the parts of his life he cannot bear to think about. He is a former detective who tracks people for a blood extraction operation, and in this room, at this hour, that fact sits on him like weather.',
+      },
+    ],
     extras: [
       {
         keywords: ['corkboard', 'coffee', 'schedule', 'sign'],
@@ -766,6 +794,10 @@ export const THE_PENS_ROOMS: Room[] = [
           { flag: 'pens_rook_met_in_office', value: true },
         ],
       },
+      {
+        keywords: ['vesper', 'duskhollow', 'covenant', 'arrangement', 'tithe'],
+        description: 'You mention Duskhollow. Rook\'s pen stops moving. The silence that follows is not hesitation — it is the silence of someone selecting words from a very short list. "Vesper\'s arrangement," Rook says. The word \'arrangement\' does precise, unsentimental work. "A philosophy professor who built a blood tithe and called it coexistence. The residents give blood on a schedule. The Sanguine provide protection. Vesper writes papers about the moral standing of symbiotic relationships." Rook uncaps the pen and recaps it. A mechanical gesture, repeated. "It is a more elaborate way of arriving at the same conclusion. The blood moves from the people who have it to the people who need it, and the people who have it are told it was their choice. Vesper believes this. That is the difference between us. I do not require myself to believe it." Rook sets the pen down with the finality of a period. "The Covenant is The Pens with better lighting and a reading list. Vesper would disagree. Vesper is wrong in ways that require a university education to achieve."',
+      },
     ],
     hollowEncounter: {
       baseChance: 0.03,
@@ -783,7 +815,7 @@ export const THE_PENS_ROOMS: Room[] = [
     name: 'The Pens — Surgical Theater',
     zone: 'the_pens',
     act: 2,
-    difficulty: 4,
+    difficulty: 5, // Endgame content
     visited: false,
     flags: { hiddenRoom: true, dark: true },
     description: 'The surgical theater is a pre-Collapse operating room that has been expanded rather than repurposed — the original surgical table remains at the center, flanked by two additional tables that were never designed for this space, brought in from somewhere else, bolted to the floor at angles that accommodate the overhead surgical lighting array. The lights are adjustable and someone has adjusted them with precision: three cones of white illumination on three tables, the rest of the room in functional dark. Instrument trays line the east wall — not the extraction room\'s phlebotomy kit but a full surgical complement: retractors, bone saws, rib spreaders, oscillating drills, and things you do not have names for that are clean and oiled and arranged in the sequence of a procedure you hope never to understand. A drain channel runs the length of the floor beneath the tables, terminating at a grate in the north wall. The drain is stained in a way that mopping has not fully addressed. The room smells like iodine and iron and the particular absence of smell that comes from aggressive chemical sanitization of a space that keeps needing to be sanitized.',
@@ -898,7 +930,7 @@ export const THE_PENS_ROOMS: Room[] = [
     name: 'The Pens — Quarantine Wing',
     zone: 'the_pens',
     act: 2,
-    difficulty: 4,
+    difficulty: 5, // Endgame content
     visited: false,
     flags: { hiddenRoom: true },
     description: 'The quarantine wing is a sealed negative-pressure corridor lined with six isolation rooms, each visible through double-paned observation windows reinforced with wire mesh. The air pressure differential is tangible — you feel it in your ears when you pass through the plastic barrier, a faint pull toward the ventilation intake at the far end. Five of the six rooms are occupied. The occupants wear white wristbands that have been supplemented with a red stripe drawn in marker — a designation that does not appear on any intake form or scheduling board. They sit or stand or move in patterns that you recognize from the research wing subjects, but further along: tracking things that are not there, responding to stimuli that do not exist in any spectrum you can perceive, their attention fixed on something interior and absolute. One subject in the nearest room is writing on the wall with their fingertip, tracing letters in a script you almost recognize. The writing is not visible on the wall. Their finger moves with the confidence of someone who can see what they are writing.',

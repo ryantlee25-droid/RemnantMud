@@ -55,6 +55,7 @@ export const QUEST_DESCRIPTIONS: QuestEntry[] = [
     description: 'The lowest level of the Deep archive isn\'t empty. Something remains in the flooded lower chambers — something that the MERIDIAN files referred to, obliquely, as "the Fault-Adjacent Specimen." The research notes don\'t describe it clearly. The later entries are written by someone who had stopped trying to be precise.',
     category: 'main',
     hint: 'The Elder may understand what the Fault-Adjacent Specimen refers to. The files mention a connection to the Scar.',
+    completionFlag: 'fault_entity_observed',
   },
 
   {
@@ -63,6 +64,7 @@ export const QUEST_DESCRIPTIONS: QuestEntry[] = [
     description: 'The geological anomaly known as the Scar isn\'t natural. MERIDIAN induced it — a subsidence event designed to expose and access a pre-existing subterranean structure they referred to as "the Fault." Whatever they found in the Fault informed the CHARON-7 project in ways the surviving documentation won\'t commit to clearly. The researchers were frightened and trying not to write down why.',
     category: 'main',
     hint: 'The Scar itself may hold answers the archive only hints at.',
+    completionFlag: 'fault_scar_connection_confirmed',
   },
 
   {
@@ -123,6 +125,7 @@ export const QUEST_DESCRIPTIONS: QuestEntry[] = [
     description: 'The signal was a person. Somewhere in the Scar, someone has been transmitting to the waste for cycles — not directions, not news, not anything useful. Just language. Just the sound of a human voice insisting the world is still worth talking to. You know their name now. Whether they are still alive is something you\'ll only know by finding out.',
     category: 'main',
     hint: 'The transmissions came from inside the Scar perimeter. They may still be active.',
+    completionFlag: 'broadcaster_found',
   },
 
   {
@@ -131,6 +134,7 @@ export const QUEST_DESCRIPTIONS: QuestEntry[] = [
     description: 'The Sanguine weren\'t always what they are. The MERIDIAN records describe the original transformation protocol — the subjects who survived CHARON-7 and metabolized it into something else. Something that feeds differently, thinks differently, endures. Vesper is not the aberration. Vesper is the intended result, and someone considered that result acceptable.',
     category: 'main',
     hint: 'Vesper may be ready to hear what the records say. Or may already know.',
+    completionFlag: 'sanguine_origin_understood',
   },
 
   {
@@ -138,6 +142,7 @@ export const QUEST_DESCRIPTIONS: QuestEntry[] = [
     title: 'Origin of the Hollows',
     description: 'The Hollows are what CHARON-7 does to people who aren\'t strong enough to become Sanguine and aren\'t lucky enough to die. The research documentation is precise and clinical about this. The researchers who wrote it down knew exactly what they were producing. They wrote it in the passive voice, as people do when they cannot bear to use subject pronouns.',
     category: 'main',
+    completionFlag: 'hollow_origin_understood',
   },
 
   // ----------------------------------------------------------
@@ -267,7 +272,9 @@ export const QUEST_DESCRIPTIONS: QuestEntry[] = [
     title: 'Avery\'s Decision',
     description: 'Avery decided to leave the Kindling. You were part of that decision — whether by evidence you provided, arguments you made, or simply by being someone who received their doubts without judging them. They won\'t leave immediately. They\'re afraid. They will leave.',
     category: 'faction',
-    completionFlag: 'avery_betrayed',
+    // avery_betrayed is a separate tragic outcome (Avery dies).
+    // avery_departed means Avery successfully leaves the Kindling alive.
+    completionFlag: 'avery_departed',
   },
 
   {

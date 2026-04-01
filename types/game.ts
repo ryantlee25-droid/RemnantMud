@@ -156,6 +156,7 @@ export interface RoomExtra {
   cycleGate?: number
   questGate?: string
   reputationGrant?: { faction: FactionType; delta: number }
+  conditionalDescription?: { flag: string; description: string }
 }
 
 // ------------------------------------------------------------
@@ -180,6 +181,7 @@ export interface HollowEncounter {
   awarenessRoll?: { unaware: number; awarePassive: number; awareAggressive: number }
   activityPool?: Partial<Record<HollowType, HollowActivityEntry[]>>
   noiseModifier?: number
+  questGate?: string
 }
 
 // ------------------------------------------------------------
@@ -252,7 +254,7 @@ export interface NpcActivityEntry {
 export interface NpcSpawnEntry {
   npcId: string
   spawnChance: number
-  spawnType?: 'anchored' | 'patrol' | 'wanderer' | 'event' | 'unique'
+  spawnType?: 'anchored' | 'patrol' | 'wanderer' | 'event' | 'unique' | 'ambient'
   quantity?: QuantityConfig
   activityPool?: NpcActivityEntry[]
   dispositionRoll?: { friendly?: number; neutral?: number; wary?: number; hostile?: number }
@@ -260,6 +262,9 @@ export interface NpcSpawnEntry {
   questGiver?: string[]
   tradeInventory?: string[]
   narrativeNotes?: string
+  cycleGate?: number
+  questGate?: string
+  questFlagOnSpawn?: { flag: string; value: string | boolean | number }
 }
 
 // ------------------------------------------------------------

@@ -1,7 +1,7 @@
 import type { Room } from '@/types/game'
 
 // ============================================================
-// SALT CREEK STRONGHOLD — 14 Rooms
+// SALT CREEK STRONGHOLD — 20 Rooms
 // The Salters' fortress. Militaristic, disciplined, aggressive. Act I–II.
 // ============================================================
 
@@ -195,7 +195,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     npcSpawns: [
       {
         npcId: 'salter_inner_gate_sentry',
-        spawnChance: 1.0,
+        spawnChance: 0.95,
         spawnType: 'anchored',
         quantity: { min: 2, max: 2, distribution: 'single' },
         activityPool: [
@@ -390,6 +390,10 @@ export const SALT_CREEK_ROOMS: Room[] = [
         keywords: ['tables', 'benches', 'seating', 'long tables'],
         description: 'Six long tables, permanent-fixed to the concrete floor. The bench seats are worn smooth at the high-contact points. Every table has visible initials, drawings, and notched tallies — the cumulative graffiti of people with knives and time. One bench end has been signed by thirty-seven different hands, with ranks and dates. The oldest signature is Briggs\'s: Day 1.',
       },
+      {
+        keywords: ['rumor', 'fire cult', 'covenant', 'talk', 'gossip'],
+        description: 'At the far table, two Salters talk between bites with the low-voiced casualness of people discussing operational intelligence over lunch. "The fire cult\'s getting bigger. Three more families went east last month." "Covenant won\'t do anything about it. Covenant won\'t do anything about anything until it\'s on their doorstep." "Covenant has a six-month refugee backlog. They can\'t process the people they\'ve got." "That\'s what I\'m saying." The conversation moves on to patrol schedules. The intelligence has been exchanged. Neither of them wrote it down.',
+      },
     ],
     npcSpawns: [
       {
@@ -402,6 +406,18 @@ export const SALT_CREEK_ROOMS: Room[] = [
         ],
         dispositionRoll: { friendly: 0.2, neutral: 0.6, wary: 0.2, hostile: 0.0 },
         dialogueTree: 'sc_mess_cook',
+      },
+      {
+        npcId: 'mess_hall_children',
+        spawnChance: 0.20,
+        spawnType: 'ambient',
+        quantity: { min: 2, max: 3, distribution: 'weighted_low' },
+        activityPool: [
+          { desc: 'Two children eat at the end of the nearest table with the focused efficiency of adults. They don\'t play with their food. They don\'t talk while they eat. They finish, stack their bowls, and leave. Someone taught them this. They learned.', weight: 3 },
+          { desc: 'A girl of maybe nine carries a tray of empty bowls to the wash station with the practiced balance of someone who has done this enough times to stop thinking about it. She is part of the operation, not a visitor to it.', weight: 2 },
+          { desc: 'Three children sit together, eating in silence. The oldest — twelve, maybe — watches the door between bites with the same attentive scan the sentries use on the perimeter. Nobody told her to do this. She picked it up the way children pick things up: by being present while adults do them.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.2, neutral: 0.6, wary: 0.2, hostile: 0.0 },
       },
     ],
     itemSpawns: [
@@ -807,11 +823,16 @@ export const SALT_CREEK_ROOMS: Room[] = [
         keywords: ['guard', 'brig guard', 'posting'],
         description: '"This isn\'t my job," the guard says. "I\'m a patrol specialist. I don\'t do containment. I don\'t do philosophical questions about what to do with people who might be Accord or might be worse. I do patrols." He says this with the particular energy of someone who has been saying it and will continue saying it.',
       },
+      {
+        keywords: ['confiscated', 'raid', 'evidence', 'vials', 'blood', 'sanguine', 'crate'],
+        description: 'A wooden crate marked CONFISCATED — PATROL 7 — SOUTH SECTOR sits against the back wall of the brig. Inside: three glass vials of animal blood, stoppered with wax, each labeled in a hand that took care with the labeling. A leather satchel containing dried herbs and a field journal with entries about "feeding cycles" and "satiation thresholds" written in the clinical tone of someone conducting research, not hunting. A patrol report clipped to the crate lid reads: "Suspected Sanguine enclave, grid ref S-14. Four occupants. No hostile action observed. No human blood products found. Occupants detained per Standing Order 9." Below, in a different hand: "Occupants released to the Dust after 48h. Enclave cleared and burned per S.O. 9 paragraph 3." The vials are still here. Nobody has come back for them. Nobody is going to.',
+        skillCheck: { skill: 'field_medicine', dc: 10, successAppend: 'The blood in the vials is animal — goat or sheep, preserved with a salt-and-herb mixture that would keep it viable for weeks. This is a Lucid Sanguine\'s supply kit: someone managing their condition with animal blood, methodically, without harming anyone. The patrol burned their home anyway.' },
+      },
     ],
     npcSpawns: [
       {
         npcId: 'brig_prisoner_accord',
-        spawnChance: 1.0,
+        spawnChance: 0.95,
         spawnType: 'anchored',
         activityPool: [
           { desc: 'The Accord scout sits against the cell wall with his knees up, watching the door with the transparent hope of someone who hasn\'t given up on being rescued.', weight: 4 },
@@ -982,6 +1003,18 @@ export const SALT_CREEK_ROOMS: Room[] = [
         dispositionRoll: { friendly: 0.1, neutral: 0.4, wary: 0.4, hostile: 0.1 },
         dialogueTree: 'sc_south_wall_defense',
         questGiver: ['sc_hollow_clearance'],
+      },
+      {
+        npcId: 'south_wall_children',
+        spawnChance: 0.25,
+        spawnType: 'ambient',
+        quantity: { min: 2, max: 4, distribution: 'weighted_low' },
+        activityPool: [
+          { desc: 'Three boys crouch at the base of the wall, passing a notched stick between them. Each time a sentry calls a sighting from the firing step, the boy holding the stick cuts a new mark. "Fourteen today," one says. "Yesterday was nineteen." They are keeping score of the Hollow the way other children once kept score of baseball games.', weight: 3 },
+          { desc: 'A pair of boys watch the patrol change from behind a supply crate, whispering counts to each other. One has a stick with so many notch marks the wood is more gap than grain. He holds it like a trophy.', weight: 2 },
+          { desc: 'A boy sits alone at the base of the wall, carving tallies into a length of broomstick with a pocket knife. He doesn\'t look up. The counting is its own kind of duty.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.3, neutral: 0.5, wary: 0.2, hostile: 0.0 },
       },
     ],
     itemSpawns: [

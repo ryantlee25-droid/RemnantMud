@@ -153,6 +153,8 @@ export const EMBER_ROOMS: Room[] = [
     flags: { noCombat: true, questHub: true },
     description: 'The cathedral nave has been adapted with the same devoted thoroughness as everything else in The Ember. The original pews have been rearranged to face a central flame pit rather than an altar — a permanent low basin of burning coals in the crossing, ringed with stone, the smoke drawn up through a steel flue that exits at the tower. The stained glass is original and intact, throwing the interior into the same imperfect color as Covenant\'s chapel, except here the glass is older and the colors are deeper and the fire from the coal pit adds a layer of orange to everything. Kindling faithful are seated in the pews in attitudes of contemplation. At the front, where the priest\'s chair once stood, Deacon Harrow addresses a small group — you hear his voice before you see his face, and his voice is extraordinary: the particular warmth-over-authority combination of someone who has learned that persuasion works better than command and who has spent years perfecting both.',
     descriptionNight: 'The Nave at night is full. Evening devotionals — the Kindling refers to them as Assemblies — run ninety minutes. The coal pit is banked higher. The stained glass catches nothing, but the fire from the pit throws everything. Harrow\'s voice in this space at this hour carries a quality that you recognize and cannot fully account for.',
+    descriptionDawn: 'Morning light enters the nave through the eastern glass — saints in amber, martyrs in rose, the figure surrounded by flame now backlit in a way that makes the fire in the panel and the fire in the coal pit appear continuous. The coal pit burns low at this hour, the overnight tending crew having banked it to embers, and the combination of glass-filtered dawn and coal-glow fills the nave with a light that is neither natural nor artificial but something the Kindling has made by occupying this building long enough to learn its rhythms. Two faithful sit in the front pews in silent devotion. The stone floor is warm from the pit\'s overnight radiance. The air smells of ash and morning.',
+    descriptionDusk: 'Dusk in the nave is the hour of gathering. The stained glass dims from the outside as the coal pit is stoked for the evening Assembly, and the transition — daylight retreating, firelight advancing — happens slowly enough that you can watch the room change its source of illumination. The shadows deepen in the side aisles and climb the stone columns. Faithful file in from the dormitory and the compound, taking their places in the pews with the quiet choreography of people who do this every evening. Harrow\'s voice begins before you see him move to the front — low, conversational, building — and the acoustics of the nave carry it to every seat and every shadow. The fire in the pit and the fire in his voice are not metaphorically connected. They are the same fire, expressed in two media.',
     shortDescription: 'The cathedral nave — pews facing a central coal pit, old glass throwing color, Harrow\'s voice arriving before his face.',
     exits: {
       south: 'em_02_gate_of_flame',
@@ -182,6 +184,10 @@ export const EMBER_ROOMS: Room[] = [
       {
         keywords: ['pews', 'faithful', 'congregation', 'sitting'],
         description: 'Fourteen people in contemplation across the pews. Ages: perhaps twelve to sixty-five. A teenager with a fresh burn scar on her forearm that has been dressed, recently, with the careful wrapping that suggests medical treatment followed by something else. An older man kneeling, lips moving. Two children who are not making noise, which in a building with a coal fire and stone acoustics takes a specific kind of learned self-control.',
+      },
+      {
+        keywords: ['faithful', 'newcomer', 'covenant', 'law', 'question'],
+        description: 'A woman near the back pew — new to the congregation by the way she holds her body, still learning when to be still — leans toward you as you pass. "You\'ve been outside," she says. Not a question. "Have you been to Covenant? The law-makers?" She says it with the particular inflection of someone who has heard the word repeated by others and hasn\'t formed her own opinion yet. "They turned my family away. Intake cap, they said. The Deacon took us in the same day." She touches the burn scar on her wrist — the mark of the Purification — with the absent familiarity of someone who has already decided it was worth it. "The law-makers count heads. The Deacon counts souls." She turns back to the coal pit. The conversation is over.',
       },
     ],
     npcSpawns: [
@@ -644,6 +650,8 @@ export const EMBER_ROOMS: Room[] = [
         keywords: ['photograph', 'crew', 'janitorial', 'corridor', 'meridian'],
         description: 'Seven people in janitorial coveralls, squinting into the camera in a corridor. Behind them: painted cinder block, drop ceiling, institutional lighting. One person — second from left, slight, with the expression of someone who doesn\'t entirely like photographs — has circled their own face in pen. Below the circle: T.H. On the back: MERIDIAN MAINTENANCE CREW 4 — JULY 2030. YOU KNOW WHERE. IF YOU FIND THIS YOU ALREADY KNOW.',
         cycleGate: 2,
+        skillCheck: { skill: 'lore', dc: 12, successAppend: 'You look at the circled face again. T.H. The slight build. The way the person holds their shoulders — angled slightly away from the camera, the posture of someone who occupies space carefully. You have seen that posture before. You have seen it at the front of the nave, beside a coal pit, in a man twenty years older than this photograph. T.H. T. Harlow. Deacon Harrow. The handwriting in the journal — the careful, precise pencil strokes — is the same hand that writes the Kindling\'s devotional texts. The founder of the Kindling was a MERIDIAN janitor who saw what they built and couldn\'t stop it and decided the only honest thing was fire. Harlow became Harrow. The name changed. The fire didn\'t.' },
+        questFlagOnSuccess: { flag: 'harlow_harrow_connection', value: true },
       },
       {
         keywords: ['maps', 'tunnel', 'route', 'access', 'scar'],
@@ -824,7 +832,7 @@ export const EMBER_ROOMS: Room[] = [
       threatPool: [
         { type: 'shuffler', weight: 40, quantity: { min: 1, max: 3, distribution: 'bell' } },
         { type: 'remnant', weight: 25, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
-        { type: 'stalker', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'brute', weight: 15, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.4, awarePassive: 0.35, awareAggressive: 0.25 },
@@ -1207,7 +1215,7 @@ export const EMBER_ROOMS: Room[] = [
       timeModifier: { day: 0.8, dusk: 1.2, night: 1.6, dawn: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 3, distribution: 'bell' } },
-        { type: 'stalker', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'brute', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'shuffler', weight: 20, quantity: { min: 1, max: 3, distribution: 'bell' } },
         { type: 'screamer', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1430,11 +1438,10 @@ export const EMBER_ROOMS: Room[] = [
     shortDescription: 'Two concrete cooling towers — one colonized by Hollow in its collapsed fill media, one welded shut by someone with a reason.',
     exits: {
       south: 'em_13_chemical_tank_farm',
-      north: 'em_18_cooling_towers',
     },
     richExits: {
       north: {
-        destination: 'em_18_cooling_towers',
+        destination: 'em_19_rail_yard',
         hidden: true,
         locked: true,
         lockedBy: 'hand_tools_basic',
@@ -1452,7 +1459,7 @@ export const EMBER_ROOMS: Room[] = [
       timeModifier: { day: 0.7, dusk: 1.4, night: 2.2, dawn: 0.9 },
       threatPool: [
         { type: 'shuffler', weight: 35, quantity: { min: 2, max: 4, distribution: 'bell' } },
-        { type: 'stalker', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'brute', weight: 15, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'remnant', weight: 20, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'screamer', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },

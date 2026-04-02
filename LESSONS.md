@@ -306,3 +306,95 @@ Protocol instructions but no knowledge of the room system, save mechanics, dev m
 repeated "code without migration" failure pattern.
 
 Gold must create ARCHITECTURE.md at the start of the next muster if it does not exist.
+
+---
+
+## Spectrum: narrative-quality-0401
+
+### What Worked
+
+- **5 parallel auditors** (room, NPC, ambient, items/enemies/events, monologue) found 40+ craft issues humans missed on casual play
+- **File ownership split** (rooms/NPCs/items/monologues/ambient) eliminated merge conflicts entirely
+- **Named NPCs were already strong** — Patch, Lev, Cross, Vesper, Sparks, Harrow, Briggs, Vane, Rook, Howard all pass voice tests
+- **Enemies file is flawless** — every entry meets or exceeds standard, zero rewrites needed
+- **The Breaks and The Dust** — consistently excellent writing across all 20+ rooms each, no blockers found
+- **Identified the real problems** — localized to: generic NPC layer (31 NPCs identified by role, not name), scavenged item descriptions (17 items at UI tooltip quality), specific verbal tics ("specific" used 165+ times as precision substitute)
+
+### Blockers Fixed (8 Items)
+
+1. **Room NPC ID mismatches** — `sc_05_barracks` pointed to `sc_20_mess_hall` (actual ID `sc_06_mess_hall`); `pens_01/02/08` had cross-zone NPCs (Crossroads guards in Red Court, Covenant clerks in Pens)
+2. **Hard-coded NPC names** — `st_02_entry_hall` description says "Lev stands at the inner door" but Lev spawns with 85% chance; breaks 15% of visits
+3. **Developer placeholders visible to players** — `scar_07_cold_storage` description contained "the MacGuffin room" (narrative device note, not flavor text)
+4. **Missing NPC definitions** — 5 NPCs spawned in rooms but undefined in npcs.ts: `wren_shelter`, `wren_ruins`, `old_mae`, `salter_perimeter_worker`, `duskhollow_child`
+5. **Wrong-zone exits** — `cv_01_main_gate` exit to `cv_26_refugee_processing` (room not found in file)
+6. **Duplicate NPC entries** — `marta_food_vendor` + `food_vendor_marta` (same character, two entries); `dr_ama_osei` + `lucid_sanguine_osei` (same character, both zone the_breaks)
+7. **Duplicate item data** — `canned_food` and `canned_food_random` identical; needs differentiation or consolidation
+8. **Item descriptions at UI tooltip quality** — `empty_water_bottle` ("worth something to someone who's thirsty"), `lighter_disposable` (two factual sentences, zero flavor), `gun_oil` (Wikipedia-level definition)
+
+### Narrative Patterns to Avoid (Confirmed Across 5 Audits)
+
+**Verbal tics** (high-frequency, low-precision):
+- `"specific [adjective/noun]"` appears 165+ times as a claim of precision without delivering it. Test: "The specific quality of emptiness" — replace "specific" with "particular" and does the sentence change? If no, cut it. Rule: every use of "specific" must be tested; estimate 60% can be cut, 40% should be replaced with actual specificity.
+- `"someone who [verb methodically]"` — 12+ uses in Salt Creek alone. Individually fine; collectively becomes wallpaper. Max 4 per zone.
+- `"at night [location] is at night"` — tautological openers that restate nighttime without saying what night means *specifically* in that place. Rule: a `descriptionNight` that opens by stating it is nighttime without adding what dark specifically does to the location = failed opener.
+
+**Tell-not-show failures** (identified in 6+ rooms):
+- `"atmosphere made physical"` — writing about atmosphere rather than creating it through detail
+- `"the feeling of being summoned"` — shortDescription that describes an emotion instead of orienting spatially
+- `"the silence is heavy"` — generic atmospheric cliche from 1940s fiction, no specificity to context
+- `"something changed their schedule"` — editorial gloss that tells the player what to think instead of letting observation stand
+
+**NPC construction failures**:
+- Generic role references ("the vendor", "the technician") without character names — every NPC referenced in a room spawn MUST exist in npcs.ts with a name and description
+- `npcSpawns` activity pools using purely generic descriptions with no names, no dialogue trees
+- `npcs` static arrays mixing cross-zone characters into single rooms (Red Court wards staffed with Crossroads drifters)
+- Hard-coding NPC names in room descriptions when spawn is probabilistic — breaks immersion when the NPC doesn't appear
+
+**Item description patterns**:
+- Item descriptions that read as UI tooltips instead of flavor text (2 sentences, both factual, zero voice)
+- Restating the item name in the description ("Old binoculars" → "Old binoculars. One lens cracked...")
+- Tautological phrasing ("A bar of soap. Still works." / "Empty water bottle. Worth something to someone who's thirsty")
+- Abandoning interesting details (the mineral sample's label; the motel Bible's margin notes)
+
+**Class monologue issues** (Reclaimer/Scout crisis):
+- Scout and Reclaimer voices are nearly identical — both use data/pattern/analysis lexicon without differentiation by terrain vs. systems
+- Pressure spike and act transition triggers are thin (2 lines per personalLoss) — players see repeats immediately at act breaks
+- Promise loss variants collapse into generic debt/obligation framing across multiple classes
+
+### Rules for Future Text
+
+1. **Every NPC referenced in room spawn MUST exist in npcs.ts with:**
+   - A name (isNamed: true or unique ID that reads as a name, not a role)
+   - A 2-3 sentence description with sensory or personality detail
+   - At minimum a one-line dialogue piece; named NPCs need dialogue trees
+
+2. **Room descriptions must not hard-code NPC names unless spawnChance is 1.0**
+   - If an NPC has probability < 100%, use npcSpawns activity pools instead of base description
+   - If you must reference an NPC by name in static prose, verify spawn is guaranteed
+
+3. **Item descriptions: 2-3 sentences, grounded in post-collapse meaning**
+   - Sentence 1: What is it, what state is it in, what does it smell/feel like
+   - Sentence 2: Why this item matters in a post-collapse world (the stakes)
+   - Sentence 3 (optional): A detail that earns player attachment or curiosity
+   - Test: read the description without the item name visible — does it still evoke the object?
+
+4. **Monologue voice must pass the blind test: can you identify the class without seeing the name?**
+   - Scout: reads *terrain, bodies, exits, tracking* — not data structures or systems
+   - Reclaimer: reads *systems, logs, information infrastructure* — not physical navigation
+   - Expand thin triggers (act_transition, pressure_spike) to 3+ lines to prevent repeat detection
+   - Differentiate loss types so each personalLoss variant has distinct vocabulary, not just tags
+
+5. **"Specific" is banned as a descriptor — replace with actual specific detail**
+   - Search and replace audit required — 60% of instances can be cut entirely
+   - For the 40% that stay, the surrounding text must actually specify what "specific" promises
+   - Test replacement: "The specific dark" → "The dark where you can't see past your own hand" (actual specificity)
+
+6. **NPC activity pools and shortDescriptions must carry faction/tone consistency**
+   - No methodical ledger-reviewing in every Accord room — show Accord through contrast or conflict
+   - No "professional disinterest" for NPCs where this register isn't surprising
+   - No cross-zone NPCs in static arrays (Crossroads guards don't appear in Red Court)
+
+7. **Room exits and IDs must round-trip**
+   - Every `exits: { north: 'room_id' }` must have a matching room definition with that exact ID
+   - Verify bidirectional navigation — if A exits to B, B must have exit back to A (or justified one-way)
+   - Check zone consistency — adjacent rooms should have matching zone prefix or justified boundaries

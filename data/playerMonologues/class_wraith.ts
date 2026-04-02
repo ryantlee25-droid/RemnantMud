@@ -60,7 +60,7 @@ export const WRAITH_POOLS: MonologuePool[] = [
     trigger: 'low_hp',
     lines: [
       `*"Shadows don't bleed. You bleed. The promise doesn't care about the difference."*`,
-      `*"Not yet. The debt isn't cleared."*`,
+      `*"Not yet. The cold voice knows what it said and to whom. Not yet."*`,
       `*"You've made it this far on less. Keep going on less."*`,
     ],
   },
@@ -181,7 +181,7 @@ export const WRAITH_POOLS: MonologuePool[] = [
     personalLoss: 'child',
     trigger: 'examining_loss_item',
     lines: [
-      `*"Secrets recognize their own."*`,
+      `*"You hold it and something in you cracks open. Not much. Enough to see light."*`,
       `*"You hold it for a long time. The feeling that comes is unfamiliar. You are cautious with it."*`,
       `*"Something in you is not cold. You wish you could guarantee it stays hidden."*`,
     ],
@@ -202,7 +202,7 @@ export const WRAITH_POOLS: MonologuePool[] = [
     trigger: 'examining_loss_item',
     lines: [
       `*"You hold it and something surfaces. You don't have a name for it. You're afraid to look directly at it."*`,
-      `*"Secrets recognize their own. This is yours. You've been carrying it."*`,
+      `*"The warmth you learned in them left a shape. This thing fits that shape. You wish it didn't."*`,
       `*"The cold is not infinite. You've known that for a while. You try not to think about it."*`,
     ],
   },
@@ -221,7 +221,7 @@ export const WRAITH_POOLS: MonologuePool[] = [
     personalLoss: 'promise',
     trigger: 'examining_loss_item',
     lines: [
-      `*"Secrets recognize their own. This one you know."*`,
+      `*"You made the promise in the dark. You hold this in the dark. The symmetry is not comforting."*`,
       `*"You hold it and remember exactly what you promised and to whom. The memory is sharp."*`,
       `*"The promise made you something. Standing here, holding this, you're not sure that's better."*`,
     ],
@@ -291,6 +291,7 @@ export const WRAITH_POOLS: MonologuePool[] = [
     lines: [
       `*"The world changed. You were already in the shadow when it did."*`,
       `*"Everything escalated. You operate the same in any temperature."*`,
+      `*"The stakes grew. You are already operating beneath the stakes. That doesn't change."*`,
     ],
   },
   {
@@ -300,6 +301,7 @@ export const WRAITH_POOLS: MonologuePool[] = [
     lines: [
       `*"The world shifted. You were already still when it happened."*`,
       `*"Escalation. You adjust your definition of necessary."*`,
+      `*"Everything changed. The cold in you didn't. Work from the cold."*`,
     ],
   },
   {
@@ -309,6 +311,7 @@ export const WRAITH_POOLS: MonologuePool[] = [
     lines: [
       `*"Everything changed. You were in the dark. The dark doesn't change."*`,
       `*"New rules. You never followed the old ones anyway."*`,
+      `*"The world escalated. You dissolve deeper. Escalation is just more dark to work in."*`,
     ],
   },
   {
@@ -318,6 +321,7 @@ export const WRAITH_POOLS: MonologuePool[] = [
     lines: [
       `*"The ground moved. You were barely on it to begin with."*`,
       `*"Everything's different now. You've always operated in everything's-different."*`,
+      `*"New landscape. You've never needed to know where you were to know how to disappear into it."*`,
     ],
   },
   {
@@ -327,6 +331,7 @@ export const WRAITH_POOLS: MonologuePool[] = [
     lines: [
       `*"The world changed. The promise didn't. That narrows things."*`,
       `*"Escalation. You were already operating at the edge. Move the edge."*`,
+      `*"Everything complicated. The promise remains simple. That's the one thread you follow."*`,
     ],
   },
 
@@ -340,6 +345,7 @@ export const WRAITH_POOLS: MonologuePool[] = [
     lines: [
       `*"Something in the dark recognizes you. You're not sure you want to know what."*`,
       `*"The wrongness has weight. You've felt this weight before."*`,
+      `*"Something in the dark has patience. You have more."*`,
     ],
   },
   {
@@ -349,6 +355,7 @@ export const WRAITH_POOLS: MonologuePool[] = [
     lines: [
       `*"Something shifted in the dark. You shifted with it."*`,
       `*"The air has texture now. You read it. Bad texture."*`,
+      `*"There's something watching. You know the feeling of being watched. You've been the thing watching."*`,
     ],
   },
   {
@@ -358,6 +365,7 @@ export const WRAITH_POOLS: MonologuePool[] = [
     lines: [
       `*"Something is here that wasn't. You feel it the way you feel a room that's wrong."*`,
       `*"The dark knows you're in it. You're used to that. This feels different."*`,
+      `*"The wrongness isn't outside. It's woven in. You've operated in woven-in wrongness before."*`,
     ],
   },
   {
@@ -366,7 +374,8 @@ export const WRAITH_POOLS: MonologuePool[] = [
     trigger: 'pressure_spike',
     lines: [
       `*"Something in the wrongness is familiar. You are not comforted by that."*`,
-      `*"The dark is different here. You're very good in the dark. You'll need to be."*`,
+      `*"The dark is different here. Something in it is looking back at you. That's yours to work with."*`,
+      `*"The threat has weight. You become weightless. That's the move."*`,
     ],
   },
   {
@@ -376,6 +385,7 @@ export const WRAITH_POOLS: MonologuePool[] = [
     lines: [
       `*"Something is coming. You've always been good at staying ahead of something coming."*`,
       `*"The air changed. You move. The promise waits in the dark with you."*`,
+      `*"Something hunting in here. You were here first. That matters."*`,
     ],
   },
 ]

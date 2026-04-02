@@ -99,7 +99,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
           { sound: null, weight: 2 },
         ],
         night: [
-          { sound: 'The river sounds louder at night. Everything else has gone quiet.', weight: 3 },
+          { sound: 'The river sounds louder at night — the bank sounds, the insects, the distant road noise all gone. Just moving water, and whatever is moving with it.', weight: 3 },
           { sound: 'Something moves in the juniper to the south. Heavy. Slow. Probably an elk. Probably.', weight: 2 },
           { sound: 'Distant gunfire. Two shots, east. Then nothing.', weight: 1 },
           { sound: null, weight: 2 },
@@ -914,7 +914,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     description:
       'The bus is on its side, so the floor is the windows and the ceiling is the opposite row of seats. You crawl in through the emergency exit. The air is thick — decay, mold, and something sour. The seats are torn. Papers, backpacks, and lunch boxes form a layer of mulch on the \'floor.\' Shufflers turn toward you. They\'re small. They were children when this happened. They\'re not children now. They\'re not anything now. But they\'re the size of children, and your brain won\'t stop telling you that.',
     descriptionNight:
-      'Total darkness. The smell is worse. The sounds are closer. You can feel them moving before you see them.',
+      'The bus at night: the floor-windows are unreadable black, the row of seats above you a ceiling, the dark absolute past your light\'s reach. The smell is wet cloth and something sweet you\'d rather not identify. You hear them before you see them — not footsteps but weight shifting, a body adjusting against metal. They\'re already aware of you.',
     shortDescription:
       'The bus is on its side, so the floor is the windows and the ceiling is the opposite row of seats.',
     exits: {

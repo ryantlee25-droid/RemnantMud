@@ -198,8 +198,9 @@ export const ACT1_EVENTS: WorldEvent[] = [
         ' bound man and kept moving.',
       'The <keyword>stalkers</keyword> near <keyword>' +
         'Duskhollow</keyword> have stopped hunting in the' +
-        ' afternoon. They\'re nocturnal now. Something' +
-        ' changed their schedule.',
+        ' afternoon. They\'re nocturnal now. A <npc>Reclaimer' +
+        '</npc> tracker has been watching for a week and has' +
+        ' not seen them move in daylight once.',
       'A <npc>Reclaimer</npc> biologist has a theory:' +
         ' the Hollow aren\'t eating less. They\'re' +
         ' conserving. Like they\'re waiting for something.',

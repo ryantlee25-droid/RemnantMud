@@ -387,9 +387,9 @@ export const THE_SCAR_ROOMS: Room[] = [
     visited: false,
     flags: { questHub: true },
     cycleGate: 3,
-    description: 'The facility\'s cold storage vault is the MacGuffin room. Viable CHARON-7 samples, both strains, maintained at four degrees Celsius by a dedicated power circuit that has been running without interruption since installation. R-1 in blue-capped vials. R-8 in red-capped vials. The quantities are significant: enough for mass distribution, enough for a targeted release, enough for analysis and development. The choice you will make in the Core lab will determine what happens to this material. Right now it\'s just cold, and fluorescent, and patient.',
+    description: 'The cold storage vault hums at four degrees Celsius, maintained by a dedicated power circuit that has been running without interruption since installation. Rack after rack of sealed vials, two colors: blue-capped and red-capped, labeled in the same precise stencil as everything else in this facility. R-1 in blue. R-8 in red. The quantities are significant — enough for mass distribution, enough for a targeted release, enough for analysis and development. The vault is clean, cold, and fluorescent. The samples do not care what you decide to do with them. They are patient in the way that biology is patient: they will wait.',
     descriptionNight: 'The cold storage hum is constant. The blue-green glow from the vials lights the vault from within.',
-    shortDescription: 'Cold storage vault. Both strains. The MacGuffin.',
+    shortDescription: 'Cold storage vault. CHARON-7 samples — both strains — in temperature-controlled racks.',
     exits: { north: 'scar_05_lab_wing' },
     richExits: {
       north: { destination: 'scar_05_lab_wing', descriptionVerbose: 'north to the lab wing' },
@@ -649,7 +649,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     extras: [
       {
         keywords: ['journal', 'logs', 'diary', 'handwritten'],
-        description: 'The journal covers two distinct periods. Before: the program\'s design, the funding pressure, the decision points where Vane made choices he knew were wrong, the incremental compromises that led to the live trials. The writing is precise and self-aware and full of the specific anguish of someone who understood exactly what they were doing and did it anyway. After: seven years of living with what happened. The after entries are calmer. The before entries are not.',
+        description: 'The journal covers two distinct periods. Before: the program\'s design, the funding pressure, the decision points where Vane made choices he knew were wrong, the incremental compromises that led to the live trials. The writing is precise and self-aware and full of the anguish of someone who understood exactly what they were doing and did it anyway — each compromise named, each wrong turn documented, a record built not to excuse but to not forget. After: seven years of living with what happened. The after entries are calmer. The before entries are not.',
         skillCheck: { skill: 'lore', dc: 9, successAppend: 'The final journal entry was written recently — the ink is relatively fresh. It reads: "Someone is in decon. The count is 2 for the first time. I left the door open. I built the dead man\'s switch. I gave them the codes. I called for seven years. Someone came. I don\'t know what they\'ll choose and I\'ve stopped trying to know. I just needed someone else to know the truth. The rest is theirs."' },
       },
       {
@@ -1115,7 +1115,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     visited: false,
     flags: {},
     description: 'The augmentation chambers are arranged in a semicircle — eight stations, each a reclining chair with an integrated medical array. The chairs have the specific design language of something that was never meant to be uncomfortable: padded, articulated, with a headrest designed for long-term occupation. This is where the R-1 integration happened. The medical equipment adjacent to each chair has no civilian analogue — precision infusion arrays, continuous neural monitoring, cellular regeneration tracking systems. The personnel files on the adjacent desk show eleven subjects. Nine successful outcomes. First names only. You have met at least two of them.',
-    descriptionNight: 'The augmentation chambers at night. Empty chairs, the IV stands still positioned beside them. The medical monitoring equipment reads zero on all panels. Something is missing from this room and its absence has the specific shape of the people who sat in these chairs.',
+    descriptionNight: 'The augmentation chambers at night. Empty chairs, the IV stands still positioned beside them. The medical monitoring equipment reads zero on all panels. The chairs are still oriented the way the subjects left them — slightly reclined, facing the monitoring desk. Something is missing from this room and the empty chairs are its exact shape.',
     shortDescription: 'The augmentation chambers. This is where Sanguine were made. First-names-only files. You know two of them.',
     exits: { west: 'scar_19_lab_wing_b_entrance' },
     richExits: {
@@ -1269,7 +1269,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     visited: false,
     flags: {},
     description: 'The medical ward is not a place for sick people — it\'s a place for someone managing their own maintenance over years. The examination table has been adjusted to self-examination configuration. The surgical suite has been modified for single-operator procedures. The pharmaceutical storage is systematically depleted, the remaining inventory specifically curated: things that a Sanguine physiology needs for long-term self-maintenance, nothing that a human-normal physiology would require. The evidence is unambiguous. Whoever has been living here has Sanguine physiology. They\'ve been healing faster than human-normal. And they\'ve been managing that for seven years with the clinical precision of someone who knows exactly what they are.',
-    descriptionNight: 'The medical bay at night, the equipment clean and idle. The empty pharmaceutical slots are a specific shape — the shape of everything that\'s already been used.',
+    descriptionNight: 'The medical bay at night, the equipment clean and idle. The empty pharmaceutical slots form a pattern — the curated gaps of someone who used exactly what they needed and nothing more, seven years of deliberate self-maintenance accounted for in the absences.',
     shortDescription: 'Facility medical bay. Single-operator setup. Sanguine physiology confirmed. Self-maintenance for seven years.',
     exits: { west: 'scar_22_cafeteria', north: 'scar_24_security_wing' },
     richExits: {
@@ -1384,7 +1384,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     visited: false,
     flags: { scavengingZone: true },
     description: 'The emergency power system is three units — two primary generators and one tertiary backup — all maintained in operational condition. The maintenance logs cover seven years: oil changes, filter replacements, fuel management, load balancing across the facility\'s systems. The entries are dated and signed with the same initials throughout: E.V. Every two weeks, without exception, for 2,555 days. E.V. kept the lights on. E.V. kept the broadcast transmitting. E.V. kept the cold storage running. The work required to maintain three industrial generators across seven years, alone, is not small work. They did it anyway.',
-    descriptionNight: 'The generators run. They always run. The sound in here at night is constant and low and the specific quality of something that refuses to stop.',
+    descriptionNight: 'The generators run. They always run. The sound in here at night is constant and low — a frequency that settles into your chest after a few minutes, the sound of something that has been running for seven years and has no intention of stopping.',
     shortDescription: 'Emergency generators. Seven years of maintenance logs, signed E.V. Someone kept the lights on.',
     exits: { east: 'scar_24_security_wing', north: 'scar_26_signal_origin' },
     richExits: {
@@ -1509,7 +1509,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
       {
         keywords: ['second chair', 'empty', 'facing', 'two chairs'],
-        description: 'Two chairs: one where you would sit to use the recording device, one facing it. The broadcaster placed the second chair facing the first and then chose not to sit in it. The choice is visible in the arrangement — this wasn\'t always one chair. They brought the second chair in, positioned it, and then left. They wanted to be here. They decided not to be. The empty chair is the decision. It faces you like an absence that has the specific shape of restraint.',
+        description: 'Two chairs: one where you would sit to use the recording device, one facing it. The broadcaster placed the second chair facing the first and then chose not to sit in it. The choice is visible in the arrangement — this wasn\'t always one chair. They brought the second chair in, positioned it, and then left. They wanted to be here. They decided not to be. The empty chair is the decision. It faces you: the shape of someone who came this far and chose not to stay.',
       },
       {
         keywords: ['clean', 'prepared', 'deliberate', 'ready'],

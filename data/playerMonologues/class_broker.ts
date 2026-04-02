@@ -159,7 +159,7 @@ export const BROKER_POOLS: MonologuePool[] = [
     trigger: 'in_danger',
     lines: [
       `*"You read the room. The instinct is native. You were born reading rooms."*`,
-      `*"Something's wrong. Your body catalogued it. Your mind is catching up."*`,
+      `*"Something's wrong. You'd need to know whose tell this is. Find out fast."*`,
       `*"The situation shifted. You find the leverage. Whoever you are, that's your language."*`,
     ],
   },
@@ -182,7 +182,7 @@ export const BROKER_POOLS: MonologuePool[] = [
     personalLoss: 'child',
     trigger: 'examining_loss_item',
     lines: [
-      `*"Leverage. Everything is leverage if you know how to hold it."*`,
+      `*"You read it the way you read a contract you can't back out of. Every clause. Every cost."*`,
       `*"You hold it and remember exactly what it cost. The ledger has this entry, but not a balance."*`,
       `*"You've traded in everything. You didn't know you were trading until you'd already traded."*`,
     ],
@@ -203,7 +203,7 @@ export const BROKER_POOLS: MonologuePool[] = [
     trigger: 'examining_loss_item',
     lines: [
       `*"You know the cost of everything. You've spent years knowing the cost of everything."*`,
-      `*"Leverage. Everything is leverage. You've spent a long time trying to believe that applies here too."*`,
+      `*"You hold it and you read the room it came from. That room is gone. You're still calculating what it was worth."*`,
       `*"You hold it and you do the math. The math never comes out even. Not on this one."*`,
     ],
   },
@@ -212,7 +212,7 @@ export const BROKER_POOLS: MonologuePool[] = [
     personalLoss: 'identity',
     trigger: 'examining_loss_item',
     lines: [
-      `*"Leverage. Everything is leverage if you know how to hold it. This one holds something back."*`,
+      `*"You hold it and negotiate with it. What are you, object? What do you owe me? It doesn't answer."*`,
       `*"You read it the way you read contracts. Looking for the clause that explains everything."*`,
       `*"Something in here has your signature. You recognize the signature even if you don't know the name."*`,
     ],
@@ -292,6 +292,7 @@ export const BROKER_POOLS: MonologuePool[] = [
     lines: [
       `*"The deal changed. You renegotiate. That's what you do."*`,
       `*"New terms. You read the new terms. You find the leverage in the new terms."*`,
+      `*"The room shifted. You read the new power map. The edge is in a different place now. Find it."*`,
     ],
   },
   {
@@ -301,6 +302,7 @@ export const BROKER_POOLS: MonologuePool[] = [
     lines: [
       `*"The terms changed. You adapt. The ledger updates."*`,
       `*"New negotiating environment. Same broker. You've adapted before."*`,
+      `*"The deal structure changed. You read the new power map. There's one entry you still can't close. You close everything else."*`,
     ],
   },
   {
@@ -310,6 +312,7 @@ export const BROKER_POOLS: MonologuePool[] = [
     lines: [
       `*"The market changed. You adjust the portfolio. The deal continues."*`,
       `*"New parameters. New leverage points. You find them. You use them."*`,
+      `*"The power map rewrote itself. You read it. The longest column in the ledger didn't rewrite. That's your anchor."*`,
     ],
   },
   {
@@ -319,6 +322,7 @@ export const BROKER_POOLS: MonologuePool[] = [
     lines: [
       `*"Everything changed. You read the new room. Whoever you are, this is what you do."*`,
       `*"New deal on the table. The terms are harder. You're harder too. Negotiate."*`,
+      `*"New negotiating environment. You read it before anyone else does. That's the only identity you need right now."*`,
     ],
   },
   {
@@ -328,6 +332,7 @@ export const BROKER_POOLS: MonologuePool[] = [
     lines: [
       `*"The terms changed. The promise didn't. The promise is the floor of every negotiation now."*`,
       `*"New environment, new leverage, same deal. Get it done."*`,
+      `*"The counterparty changed. The contract didn't. You've held contracts through worse counterparties."*`,
     ],
   },
 
@@ -341,6 +346,7 @@ export const BROKER_POOLS: MonologuePool[] = [
     lines: [
       `*"The power balance shifted. You read it before it announced itself."*`,
       `*"Something changed in the dynamic. Find the new leverage point."*`,
+      `*"The tells changed. Someone is about to make a move they've been planning for a while. Read them first."*`,
     ],
   },
   {
@@ -350,6 +356,7 @@ export const BROKER_POOLS: MonologuePool[] = [
     lines: [
       `*"Something's moving in the background. You've always been good at background movements."*`,
       `*"The deal is becoming dangerous. You've closed dangerous deals. Read it carefully."*`,
+      `*"The room's temperature dropped. Someone just gained power in here. Find out who before they use it."*`,
     ],
   },
   {
@@ -358,7 +365,8 @@ export const BROKER_POOLS: MonologuePool[] = [
     trigger: 'pressure_spike',
     lines: [
       `*"The room changed. You read the room. Something here is about to make a move."*`,
-      `*"The intelligence is bad here. You read bad intelligence. Adjust accordingly."*`,
+      `*"Every room has a pressure point. This room just found its own. Read where the weight is now."*`,
+      `*"Someone in here shifted the balance. You read balance shifts. Name who moved."*`,
     ],
   },
   {
@@ -368,6 +376,7 @@ export const BROKER_POOLS: MonologuePool[] = [
     lines: [
       `*"Something shifted. You read the tell before you understood what it was."*`,
       `*"The room got dangerous. You've been in dangerous rooms. Read it. Navigate."*`,
+      `*"Someone in here is negotiating. You don't know who. Find the counterparty."*`,
     ],
   },
   {
@@ -375,8 +384,9 @@ export const BROKER_POOLS: MonologuePool[] = [
     personalLoss: 'promise',
     trigger: 'pressure_spike',
     lines: [
-      `*"Elevated threat. New variables in the deal. The promise is still the floor."*`,
-      `*"The environment got hostile. You read hostile environments. Move carefully."*`,
+      `*"The price just went up. New variable in the deal. The promise is still the floor — but the ceiling raised."*`,
+      `*"The environment got hostile. You've negotiated hostile environments. Find the exit clause."*`,
+      `*"The counterparty moved. You didn't see the tell. You see it now. Adjust."*`,
     ],
   },
 ]

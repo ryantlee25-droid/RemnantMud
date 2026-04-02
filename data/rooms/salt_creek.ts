@@ -19,7 +19,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     visited: false,
     flags: { noCombat: false, fastTravelWaypoint: true },
     description: 'The outer perimeter of Salt Creek Stronghold announces itself a hundred yards before you reach it: earthwork berms three meters high, topped with coils of razor wire that catch the sun like something alive and hostile. No artistry here, no attempt at welcome — the fortifications are functional, expensive in labor, and designed by someone who has thought carefully about what an attacking force would need to do and then made every one of those things worse. A guard post is visible at the crest of the berm, a silhouette with a long gun. They saw you before you saw them. The challenge when it comes is flat and procedural: "Halt. State your business. Hands where I can see them." There is no curiosity in the voice.',
-    descriptionNight: 'The perimeter at night is perimeter at night. No lights — light is a target. The sentries work by night-adapted vision and sound discipline. You know they\'re there because the challenge comes before you expect it, from a direction you weren\'t watching.',
+    descriptionNight: 'Dark berms in darker dark, the razor wire invisible until a cloud breaks. No lanterns — Briggs outlawed them in the third month after a sentry became a target. The sentries work by night-adapted vision and sound discipline. The challenge comes before you expect it, from a direction you weren\'t watching.',
     shortDescription: 'Earth berms topped with razor wire and sentries who saw you long before you saw them.',
     exits: {
       east: 'rr_12_covenant_outskirts',
@@ -43,7 +43,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     extras: [
       {
         keywords: ['berm', 'earthwork', 'dirt', 'fortification'],
-        description: 'The earthwork berms are hand-dug — the labor of hundreds of person-hours. The earth is packed and shaped by someone who knows soil engineering: the angle of repose correct, the drainage channels cut on the back face to prevent saturation. This wasn\'t improvised. Briggs had a plan and made people execute it, which is the Salter way, which is why Salt Creek is still standing.',
+        description: 'The earthwork berms are hand-dug — the labor of hundreds of person-hours. The angle of repose is correct, the drainage channels cut on the back face to prevent saturation. This wasn\'t improvised — it\'s a textbook earthwork defensive position, executed in soil instead of concrete. Briggs had a plan and made people execute it, which is the Salter way, which is why Salt Creek is still standing.',
       },
       {
         keywords: ['razor wire', 'wire', 'coils', 'glint'],
@@ -301,7 +301,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     exits: {
       south: 'sc_04_the_yard',
       east: 'sc_07_warlords_command',
-      west: 'sc_20_mess_hall',
+      west: 'sc_06_mess_hall',
     },
     richExits: {},
     items: [],
@@ -401,8 +401,8 @@ export const SALT_CREEK_ROOMS: Room[] = [
         spawnChance: 0.85,
         spawnType: 'anchored',
         activityPool: [
-          { desc: 'The cook works the serving line with the efficiency of someone who has timed each portion to three seconds and sees no reason to elaborate.', weight: 4 },
-          { desc: 'The cook is prepping the next meal in a large steel pot, working with the domestic focus of someone who finds large-scale feeding genuinely satisfying.', weight: 2 },
+          { desc: 'The cook works the serving line with three-second precision per portion — ladle, slide, next. No eye contact. Nothing elaborate.', weight: 4 },
+          { desc: 'The cook is prepping the next meal in a large steel pot, humming something low and tuneless, entirely absorbed in the work.', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.2, neutral: 0.6, wary: 0.2, hostile: 0.0 },
         dialogueTree: 'sc_mess_cook',
@@ -414,7 +414,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
         quantity: { min: 2, max: 3, distribution: 'weighted_low' },
         activityPool: [
           { desc: 'Two children eat at the end of the nearest table with the focused efficiency of adults. They don\'t play with their food. They don\'t talk while they eat. They finish, stack their bowls, and leave. Someone taught them this. They learned.', weight: 3 },
-          { desc: 'A girl of maybe nine carries a tray of empty bowls to the wash station with the practiced balance of someone who has done this enough times to stop thinking about it. She is part of the operation, not a visitor to it.', weight: 2 },
+          { desc: 'A girl of maybe nine carries a tray of empty bowls to the wash station — arms level, no hesitation at the step. She stacks them by size without being told. She is part of the operation, not a visitor to it.', weight: 2 },
           { desc: 'Three children sit together, eating in silence. The oldest — twelve, maybe — watches the door between bites with the same attentive scan the sentries use on the perimeter. Nobody told her to do this. She picked it up the way children pick things up: by being present while adults do them.', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.2, neutral: 0.6, wary: 0.2, hostile: 0.0 },
@@ -835,7 +835,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
         spawnChance: 0.95,
         spawnType: 'anchored',
         activityPool: [
-          { desc: 'The Accord scout sits against the cell wall with his knees up, watching the door with the transparent hope of someone who hasn\'t given up on being rescued.', weight: 4 },
+          { desc: 'The Accord scout sits against the cell wall with his knees up, watching the door. Every time something moves in the corridor he straightens slightly. He hasn\'t given up on being rescued.', weight: 4 },
           { desc: 'The scout is pacing — three steps, turn, three steps — the only exercise his cell allows. He stops when you approach.', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.4, neutral: 0.4, wary: 0.2, hostile: 0.0 },

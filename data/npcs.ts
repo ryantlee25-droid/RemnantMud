@@ -643,8 +643,8 @@ export const NPCS: Record<string, RichNPC> = {
 
   crossroads_gate_guard: {
     id: 'crossroads_gate_guard',
-    name: 'Gate Guard',
-    description: 'A settlement guard at the Crossroads entrance, leaning on a rifle that has seen serious use. Their eyes do a threat-assessment sweep before anything else.',
+    name: 'Doyle',
+    description: "A former county sheriff's deputy who applied his old procedures to the new world because they still mostly work. He leans on a rifle that has seen serious use and his eyes complete a threat-assessment sweep before he registers your face. He's not unfriendly. He just finished friendly a long time ago and arrived somewhere more durable.",
     dialogue: "Eyes up. Arms out. Everyone gets checked. Nothing personal, and if you've got nothing to hide, it'll take thirty seconds.",
     zone: 'crossroads',
     spawnChance: 0.95,
@@ -658,8 +658,8 @@ export const NPCS: Record<string, RichNPC> = {
 
   checkpoint_arbiter: {
     id: 'checkpoint_arbiter',
-    name: 'Checkpoint Arbiter',
-    description: 'An Accord official managing traffic at a settlement checkpoint, clipboard in hand, expression neutral and professional.',
+    name: 'Sable',
+    description: "An ex-paralegal who treats the checkpoint like a deposition. Clipboard in hand, expression neutral and permanent — not cold, not warm, just precise. She has heard every reason why someone's situation is an exception and has processed each one the same way. Exhausted by people who think the rules are optional for them specifically. Still here. Still asking.",
     dialogue: "Purpose of entry? How long are you staying? Any biological exposure in the last seventy-two hours? Standard questions. Answer them straight and we'll have you through in five minutes.",
     faction: 'accord',
     zone: 'covenant',
@@ -674,8 +674,8 @@ export const NPCS: Record<string, RichNPC> = {
 
   food_vendor_generic: {
     id: 'food_vendor_generic',
-    name: 'Food Vendor',
-    description: 'A vendor operating a food stall, their setup simple but well-maintained. Hot food is a luxury that buys more goodwill than most weapons.',
+    name: 'Solis',
+    description: "A former line cook who operates a stall adjacent to Marta's — quieter, more particular. He has strong opinions about what he will and won't prepare given available ingredients, and treats this precision as a form of integrity. He will not combine things that shouldn't be combined. He explains this, briefly, to anyone who asks for something he won't make.",
     dialogue: "Hot rations, two pennies. Clean water, two pennies. If you've got jerky or clean protein to trade, I'll make you a better deal.",
     zone: 'crossroads',
     spawnChance: 0.80,
@@ -723,8 +723,8 @@ export const NPCS: Record<string, RichNPC> = {
 
   components_vendor: {
     id: 'components_vendor',
-    name: 'Components Vendor',
-    description: "A Reclaimer-affiliated trader dealing in electronics, tools, and mechanical parts. Their stall smells like solder and machine oil.",
+    name: 'Fuse',
+    description: "A Reclaimer technician who traded down to the market level because she found she could do more good getting tools into people's hands than keeping them in the Stacks. Her stall smells like solder and machine oil. She has strong opinions about salvage quality and will share them whether you ask or not.",
     dialogue: "Electronics, tools, components. If the Reclaimers want it, I probably have it or can find it. What are you building?",
     faction: 'reclaimers',
     zone: 'crossroads',
@@ -750,8 +750,8 @@ export const NPCS: Record<string, RichNPC> = {
 
   board_manager: {
     id: 'board_manager',
-    name: 'Board Manager',
-    description: "The person who manages the job board — postings, payments, verification of completed work. They know more about settlement needs than almost anyone.",
+    name: 'Nance',
+    description: "Has run this board through three settlement administrations and has the patience of someone who has heard every possible excuse for why a job was technically complete. Knows everyone's work history. Treats every new posting like it deserves the same fair shot, and every dispute like the answer was already in the paperwork if you'd just looked.",
     dialogue: "Board jobs pay on verified completion. No advance. No partial. If the person who posted it disputes your work, there's an arbitration process, and yes, it's annoying, and yes, you should still go through it.",
     zone: 'crossroads',
     spawnChance: 0.85,
@@ -765,8 +765,8 @@ export const NPCS: Record<string, RichNPC> = {
 
   campfire_storyteller: {
     id: 'campfire_storyteller',
-    name: 'Campfire Storyteller',
-    description: "An older Drifter who has traded stories for food and shelter since before the Crossroads was the Crossroads. They know the difference between what happened and what people needed to hear.",
+    name: 'Gavel',
+    description: "An older Drifter who has traded stories for food and shelter since before the Crossroads was the Crossroads. Has a reputation across three settlements — people travel here specifically to hear Gavel's account of the first month after the Collapse, which changes slightly each telling in ways nobody can prove are inaccurate. They know the difference between what happened and what people needed to hear.",
     dialogue: "You want news or stories? News costs a meal. Stories are free but you have to stay for the whole thing. What I know about the north pass is news. What I know about the MERIDIAN signal is something in between.",
     faction: 'drifters',
     zone: 'crossroads',
@@ -2024,53 +2024,8 @@ export const NPCS: Record<string, RichNPC> = {
   // CROSS-ZONE / GENERIC NPCs
   // ----------------------------------------------------------
 
-  food_vendor_marta: {
-    id: 'food_vendor_marta',
-    name: 'Marta',
-    description: "A broad-shouldered woman in a working apron who has been feeding people at this crossroads since before most of her customers arrived. She uses the food stall as an information exchange. She uses the information to take care of more people. This is her entire plan.",
-    dialogue: "Eat. Whatever else is happening, eat first. You think better. Everything else — the decisions, the routes, what you do next — wait until you've eaten. I've been watching people make bad decisions on empty stomachs since 2031 and I have opinions about it.",
-    faction: 'drifters',
-    zone: 'crossroads',
-    spawnChance: 0.85,
-    dispositionRoll: { friendly: 0.55, neutral: 0.35, wary: 0.08, hostile: 0.02 },
-    vendorGreeting: "You look thin. Sit down. Tell me what you need and I'll tell you what I have.",
-    vendorFarewell: "Come back when you're hungry. You will be.",
-    vendorBudget: 30,
-    vendorComments: {
-      elk_jerky: [
-        "That's good protein. Dried it myself. Don't argue with me about the salt content.",
-        "Elk jerky keeps three weeks in your pack. Less if you're near moisture.",
-      ],
-      boiled_rations: [
-        "Hot or cold, it doesn't matter. What matters is that you eat it.",
-        "I know it doesn't look like much. It has everything you need. Eat it.",
-      ],
-      purification_tabs: [
-        "You need those. Whatever water source you're using, you need those.",
-        "One tab per liter. Two if the source looks wrong. Don't guess with water.",
-      ],
-    },
-    activityPool: [
-      { activity: 'is serving hot food from the stall with the practiced efficiency of someone who has done this ten thousand times', weight: 4, timeRestrict: ['dawn', 'day', 'dusk'] },
-      { activity: 'is listening to someone tell their story while working, her attention genuine', weight: 2 },
-    ],
-  },
-
-  lucid_sanguine_osei: {
-    id: 'lucid_sanguine_osei',
-    name: 'Dr. Osei',
-    description: "Dr. Ama Osei in a research context — focused, working, surrounded by the tools of a virologist who is racing something they can feel in their own biology. The urgency is controlled. The science is meticulous. The awareness that they are both researcher and subject is present in everything they do.",
-    dialogue: "The Lucid faction is not an organization in the formal sense. It's a choice, made individually, by Sanguine who have decided not to let the biology decide their ethics for them. I am here because I have the skills and because the alternative — the Red Court's approach — is not something I'm willing to become. Ask your questions. I will answer them accurately.",
-    faction: 'lucid',
-    zone: 'the_breaks',
-    spawnChance: 0.50,
-    dispositionRoll: { friendly: 0.30, neutral: 0.50, wary: 0.15, hostile: 0.05 },
-    activityPool: [
-      { activity: 'is conducting a research protocol at the lab bench, the steps methodical and documented', weight: 3 },
-      { activity: 'is reviewing data against a reference set, making annotations', weight: 2 },
-      { activity: 'sits still with her hands folded, managing something the stillness doesn\'t hide', weight: 2, timeRestrict: ['night'] },
-    ],
-  },
+  // food_vendor_marta removed — duplicate of marta_food_vendor (kept the more complete marta_food_vendor entry)
+  // lucid_sanguine_osei removed — duplicate of dr_ama_osei in same zone; use dr_ama_osei for all Osei interactions
 
   map_seller_reno: {
     id: 'map_seller_reno',
@@ -2348,6 +2303,131 @@ export const NPCS: Record<string, RichNPC> = {
   },
 
   // === END CONVOY remnant-story-0329 Rider C ===
+
+  // ----------------------------------------------------------
+  // STUB NPCs — Defined here to prevent spawn crashes.
+  // These IDs are referenced in room spawn tables but had no
+  // NPCS entry. Minimal definitions; expand when content is ready.
+  // ----------------------------------------------------------
+
+  salter_perimeter_worker: {
+    id: 'salter_perimeter_worker',
+    name: 'Perimeter Worker',
+    description: "A Salter camp worker on the outer perimeter — not a guard, not a soldier, just someone doing the maintenance work that keeps the fence standing and the drainage clear. They move with the unhurried competence of someone whose job is never technically done.",
+    dialogue: "Not my post. I'm maintenance, not security. You need a guard, they're up the line.",
+    faction: 'salters',
+    zone: 'salt_creek',
+    spawnChance: 0.60,
+    dispositionRoll: { friendly: 0.20, neutral: 0.65, wary: 0.10, hostile: 0.05 },
+    activityPool: [
+      { activity: 'is repairing a section of perimeter fencing, the work slow and methodical', weight: 3 },
+      { activity: 'is clearing drainage with a long-handled tool, working in the ditch without ceremony', weight: 2 },
+    ],
+  },
+
+  duskhollow_child: {
+    id: 'duskhollow_child',
+    name: 'Child',
+    description: "A child of the Duskhollow settlement — maybe eight or nine years old, born inside the blood tithe arrangement, which means they have never known a world where the terms were different. They watch you with the wary calculation of someone who learned early that strangers arrive with complicated purposes.",
+    dialogue: "You're not from here. The new ones always look at things too long.",
+    zone: 'duskhollow',
+    spawnChance: 0.50,
+    dispositionRoll: { friendly: 0.15, neutral: 0.55, wary: 0.25, hostile: 0.05 },
+    activityPool: [
+      { activity: 'is sitting on a step watching the settlement entrance with quiet, assessing attention', weight: 3 },
+      { activity: 'is playing alone near the building wall, close enough to the door to get inside quickly', weight: 2 },
+    ],
+  },
+
+  mess_hall_children: {
+    id: 'mess_hall_children',
+    name: 'Children',
+    description: "A cluster of Salter camp children in the mess hall — eating, arguing about something inconsequential, operating in the specific parallel world that children maintain inside adult systems they didn't design.",
+    dialogue: "We're not in your way.",
+    faction: 'salters',
+    zone: 'salt_creek',
+    spawnChance: 0.65,
+    dispositionRoll: { friendly: 0.35, neutral: 0.50, wary: 0.12, hostile: 0.03 },
+    activityPool: [
+      { activity: 'is eating from a tin tray at the end of the mess table, taking up minimal space and keeping the noise below the adults\' threshold', weight: 3, timeRestrict: ['dawn', 'day', 'dusk'] },
+      { activity: 'is engaged in a low-stakes argument that is clearly the continuation of something older', weight: 2 },
+    ],
+  },
+
+  south_wall_children: {
+    id: 'south_wall_children',
+    name: 'Children',
+    description: "A few Salter camp children near the south wall — the specific freedom of a location adults don't patrol closely enough to notice. They are doing something that is probably fine.",
+    dialogue: "We're allowed here.",
+    faction: 'salters',
+    zone: 'salt_creek',
+    spawnChance: 0.50,
+    dispositionRoll: { friendly: 0.30, neutral: 0.50, wary: 0.15, hostile: 0.05 },
+    activityPool: [
+      { activity: 'is clustered near the south wall doing something that pauses when you approach', weight: 3 },
+      { activity: 'is watching the perimeter activity with the interested attention of children who have decided soldiers are entertaining', weight: 2, timeRestrict: ['day'] },
+    ],
+  },
+
+  pens_gate_sentry: {
+    id: 'pens_gate_sentry',
+    name: 'Gate Sentry',
+    description: "A Red Court sentry at the Pens facility gate — not a soldier by any prior training, recruited into this role after the Court took the facility. They have learned the checkpoint procedure and apply it with the diligence of someone who knows what happens to people who don't.",
+    dialogue: "Access is by authorization only. State your business and wait.",
+    faction: 'red_court',
+    zone: 'the_pens',
+    spawnChance: 0.90,
+    dispositionRoll: { friendly: 0.05, neutral: 0.45, wary: 0.35, hostile: 0.15 },
+    activityPool: [
+      { activity: 'stands at the gate post with the tense stillness of someone who is always listening for the wrong sound', weight: 4 },
+      { activity: 'is checking a list against the face of someone waiting to enter, back and forth, not satisfied', weight: 2, timeRestrict: ['day'] },
+    ],
+  },
+
+  pens_intake_officer: {
+    id: 'pens_intake_officer',
+    name: 'Intake Officer',
+    description: "The Red Court administrator who processes arrivals at the Pens. They do not meet your eyes immediately. They look at the form first, then at you, then back at the form — as if confirming which version of you they've received.",
+    dialogue: "Name. Point of origin. Duration of stay, if voluntary. If not voluntary, someone else will fill that part in.",
+    faction: 'red_court',
+    zone: 'the_pens',
+    spawnChance: 0.80,
+    dispositionRoll: { friendly: 0.05, neutral: 0.55, wary: 0.25, hostile: 0.15 },
+    activityPool: [
+      { activity: 'is processing intake paperwork at a desk, the stack of forms never visibly smaller', weight: 3, timeRestrict: ['day'] },
+      { activity: 'is consulting a register against a new arrival, moving through the questions in order', weight: 2 },
+    ],
+  },
+
+  pens_cafeteria_cook: {
+    id: 'pens_cafeteria_cook',
+    name: 'Cafeteria Cook',
+    description: "The person feeding the Pens — a logistics problem, not a cooking one. They work with the specific efficiency of someone who has learned not to think too carefully about who is eating what they make or why those people are here.",
+    dialogue: "Meal service is at posted times. No exceptions. Take what's on the line.",
+    faction: 'red_court',
+    zone: 'the_pens',
+    spawnChance: 0.70,
+    dispositionRoll: { friendly: 0.10, neutral: 0.65, wary: 0.15, hostile: 0.10 },
+    activityPool: [
+      { activity: 'is working the cafeteria line, portioning food into trays without looking at the recipient', weight: 4, timeRestrict: ['dawn', 'day', 'dusk'] },
+      { activity: 'is cleaning the service area after a meal, moving through the task without expression', weight: 2, timeRestrict: ['night'] },
+    ],
+  },
+
+  pens_admin_clerk: {
+    id: 'pens_admin_clerk',
+    name: 'Administrative Clerk',
+    description: "A Red Court administrator keeping the Pens' records. The filing system is meticulous in the way that systems become meticulous when the people maintaining them are afraid of making mistakes. Every form is in order. Every record is complete. They would rather not discuss what the records are for.",
+    dialogue: "I handle records. If you need something authorized, the duty officer is down the corridor.",
+    faction: 'red_court',
+    zone: 'the_pens',
+    spawnChance: 0.75,
+    dispositionRoll: { friendly: 0.05, neutral: 0.60, wary: 0.25, hostile: 0.10 },
+    activityPool: [
+      { activity: 'is filing documents with careful, deliberate movements — every page in its designated place', weight: 3 },
+      { activity: 'is cross-referencing two ledgers, moving between them with the focused attention of someone who cannot afford discrepancies', weight: 2, timeRestrict: ['day'] },
+    ],
+  },
 
   // --- [RIDER A: remnant-story-0329] Echo — Named Hollow ---
   echo_hollow: {

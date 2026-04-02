@@ -237,8 +237,8 @@ export const ACT2_EVENTS: WorldEvent[] = [
         ' humans can\'t hear.',
       'The <keyword>brute</keyword> carcasses they\'ve' +
         ' been finding: not territorial kills.' +
-        ' Execution. One precise wound. Something' +
-        ' is culling its own weak.',
+        ' One precise wound, in the same location each time.' +
+        ' Nothing feeds on them afterward.',
     ],
   },
 

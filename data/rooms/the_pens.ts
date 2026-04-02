@@ -19,7 +19,7 @@ export const THE_PENS_ROOMS: Room[] = [
     },
     items: [],
     enemies: ['red_court_enforcer'],
-    npcs: ['crossroads_gate_guard'],
+    npcs: ['pens_gate_sentry'],
     extras: [
       {
         keywords: ['sign', 'mercy', 'general', 'extended', 'care'],
@@ -66,7 +66,7 @@ export const THE_PENS_ROOMS: Room[] = [
     },
     items: ['patient_intake_form'],
     enemies: [],
-    npcs: ['courthouse_clerk', 'drifter_newcomer'],
+    npcs: ['pens_intake_officer', 'pens_intake_orderly'],
     extras: [
       {
         keywords: ['clipboard', 'form', 'paperwork', 'intake'],
@@ -292,7 +292,7 @@ export const THE_PENS_ROOMS: Room[] = [
       },
     ],
     personalLossEchoes: {
-      child: 'The empty birthday board. Someone put it up expecting names and dates, the small celebrations that make a place feel like somewhere people live. No one wrote anything. You think about birthdays you kept track of — a specific date, a specific cake, a specific small face — and the calendar that stopped mattering when they were gone.',
+      child: 'The empty birthday board. Someone put it up expecting names and dates, the small celebrations that make a place feel like somewhere people live. No one wrote anything. You think about birthdays you kept track of — the date, the cake, the small face — and the calendar that stopped mattering when they were gone.',
       partner: 'Two degrees colder than the other corridor, which is already cold. The ventilation hums a slightly higher pitch. You notice these things the way you notice the absence of a person in a room — not a dramatic absence, just the wrong temperature, the wrong frequency, the space where warmth used to be.',
       community: 'Ward B donors don\'t talk to each other the way Ward A donors do. They sit alone or in pairs. The community here is thinner — lower incentives, lower demand, less reason to invest in the place. Your community had every reason to invest and still lost the thread. You\'re not sure which is worse.',
       identity: 'Blue wristband: A-positive. You look at the wristbands. You don\'t know your blood type with certainty, which means you don\'t know which corridor you\'d be in, which schedule you\'d be on, which version of this calculus would be yours. The form at intake asks for blood type self-reported. You would have to guess.',
@@ -324,7 +324,7 @@ export const THE_PENS_ROOMS: Room[] = [
     visited: false,
     flags: { noCombat: true, campfireAllowed: false },
     description: 'The cafeteria is the argument The Pens makes most convincingly. Real food — hot, varied, portioned to actual nutritional standards, not the caloric minimum of desperation. Canned goods, preserved protein, occasionally fresh vegetables from somewhere. The room holds sixty people at long tables, and the noise level is what it would be in any communal dining space: conversation, the clatter of trays, someone laughing at the far end of a table. Most wristbands are yellow and blue, visible at table level. The cost of the meal is visible too: forearms, some more marked than others, the accumulation of a schedule that repeats until the person decides to leave or the person stops being able to. A Red Court food server ladles out portions with the impartial efficiency of a person who has made their separate peace with this work.',
-    descriptionNight: 'Night meal is quieter, fewer people. The kitchen runs reduced service but the food quality holds. Some donors eat alone. Most eat together. The cafeteria at night has the specific warmth of a place that is, in a narrow and complicated sense, working.',
+    descriptionNight: 'Night meal is quieter, fewer people. The kitchen runs reduced service but the food quality holds. Some donors eat alone. Most eat together. The noise level is the noise level of a shared meal — spoons, conversation, the sounds of people who have adapted to this. You watch for what\'s missing. Nothing is.',
     shortDescription: 'Donor cafeteria. Better food than most settlements. The cost is on their arms.',
     exits: { south: 'pens_06_ward_b_corridor', west: 'pens_03_ward_a_corridor' },
     richExits: {
@@ -333,7 +333,7 @@ export const THE_PENS_ROOMS: Room[] = [
     },
     items: ['preserved_rations', 'water_bottle_sealed'],
     enemies: [],
-    npcs: ['food_vendor_generic', 'breaks_wanderer_at_rest', 'riverside_resident'],
+    npcs: ['pens_cafeteria_cook', 'pens_donor_long_term', 'pens_donor_ward_b'],
     extras: [
       {
         keywords: ['food', 'meal', 'tray', 'eating'],
@@ -414,7 +414,7 @@ export const THE_PENS_ROOMS: Room[] = [
     },
     items: [],
     enemies: ['red_court_enforcer'],
-    npcs: ['courthouse_clerk', 'checkpoint_arbiter'],
+    npcs: ['pens_admin_clerk', 'pens_scheduling_officer'],
     extras: [
       {
         keywords: ['ledger', 'ledgers', 'records', 'files'],
@@ -498,7 +498,7 @@ export const THE_PENS_ROOMS: Room[] = [
       },
       {
         keywords: ['guard', 'guards', 'enforcer', 'patrol'],
-        description: 'The enforcers at the corridor entrance have the specific stillness of people who have decided not to think about what they are guarding. One of them meets your eyes briefly and looks away. There is something in the look — not shame, not apology, not agreement. Just acknowledgment that you saw each other, and that both of you know what this place is.',
+        description: 'The enforcers at the corridor entrance are very still — the stillness of people who have decided not to think about what they are guarding. One of them meets your eyes briefly and looks away. There is something in the look — not shame, not apology, not agreement. Just acknowledgment that you saw each other, and that both of you know what this place is.',
       },
     ],
     hollowEncounter: {
@@ -544,7 +544,7 @@ export const THE_PENS_ROOMS: Room[] = [
       },
       {
         keywords: ['technician', 'staff', 'scrubs', 'procedure'],
-        description: 'The technician moves through the room with the same efficiency as the technician in Room A. The procedure is identical. They check lines, note readings, adjust the collection bag position. They do not speak to the people in the occupied chairs. The people in the occupied chairs do not speak either. The silence has a specific texture.',
+        description: 'The technician moves through the room with the same efficiency as the technician in Room A. The procedure is identical. They check lines, note readings, adjust the collection bag position. They do not speak to the people in the occupied chairs. The people in the occupied chairs do not speak either. The silence is absolute — no conversation, no sound between the chair occupants and the staff, just the equipment noise and the ambient hum.',
         skillCheck: { skill: 'perception', dc: 10, successAppend: 'The technician\'s hands are steady. Their expression is neutral. Their eyes, when they pass near you, are the eyes of someone who has found a place to put this that works for them during working hours. What happens after working hours is their own problem.' },
       },
       {

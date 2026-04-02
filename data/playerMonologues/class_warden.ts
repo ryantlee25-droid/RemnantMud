@@ -169,7 +169,7 @@ export const WARDEN_POOLS: MonologuePool[] = [
     personalLoss: 'promise',
     trigger: 'in_danger',
     lines: [
-      `*"Threat. You protect the mission by being alive. Standard procedure."*`,
+      `*"Threat. Wardens don't retreat from threats. They don't retreat from promises either."*`,
       `*"Something's wrong. You step between it and forward. Forward is the only direction that matters."*`,
       `*"You don't need a reason to hold a line. You are the reason."*`,
     ],
@@ -293,6 +293,7 @@ export const WARDEN_POOLS: MonologuePool[] = [
     lines: [
       `*"The line got longer. You extend your reach. This is what you do."*`,
       `*"Everything escalated. You widen your stance. You hold more ground."*`,
+      `*"The line you couldn't hold then — you hold every other line twice as hard because of it."*`,
     ],
   },
   {
@@ -302,6 +303,7 @@ export const WARDEN_POOLS: MonologuePool[] = [
     lines: [
       `*"The line moved. You move with it. There's always a line to hold."*`,
       `*"Everything changed. You adapt the perimeter. The conviction doesn't adapt."*`,
+      `*"The line got longer. You used to hold one side; they held the other. You hold both now."*`,
     ],
   },
   {
@@ -310,7 +312,8 @@ export const WARDEN_POOLS: MonologuePool[] = [
     trigger: 'act_transition',
     lines: [
       `*"The threat level changed. You raise your shield. That's the entire response."*`,
-      `*"More to protect. The list just got longer. The work just got harder."*`,
+      `*"The line expanded. You expand with it. That's what wardens do when the threat grows."*`,
+      `*"More to hold. The community used to hold it with you. The line is yours now. You hold it."*`,
     ],
   },
   {
@@ -320,6 +323,7 @@ export const WARDEN_POOLS: MonologuePool[] = [
     lines: [
       `*"The world shifted. You widen your stance. Whoever you are, that's the right move."*`,
       `*"Everything changed. You hold the line. That's the only constant you have."*`,
+      `*"The perimeter expanded. You don't know what you're protecting. The body knows to step forward anyway."*`,
     ],
   },
   {
@@ -328,7 +332,8 @@ export const WARDEN_POOLS: MonologuePool[] = [
     trigger: 'act_transition',
     lines: [
       `*"The threat grew. So does your resolve. This is how wardens work."*`,
-      `*"The line expanded. You expand with it. The promise is still behind you."*`,
+      `*"The line expanded. You expand with it. The oath is still behind you."*`,
+      `*"Wardens don't retreat from threats. They don't retreat from oaths either. The line holds."*`,
     ],
   },
 
@@ -342,6 +347,7 @@ export const WARDEN_POOLS: MonologuePool[] = [
     lines: [
       `*"Something is coming. You face it. That's the job."*`,
       `*"The danger increased. You don't take a step back. You don't do that."*`,
+      `*"Threat increased. You set your feet. The line you failed to hold once — you don't fail it twice."*`,
     ],
   },
   {
@@ -351,6 +357,7 @@ export const WARDEN_POOLS: MonologuePool[] = [
     lines: [
       `*"Something is building here. You recognize it. You hold your ground."*`,
       `*"Pressure increasing. You've stood in pressure before. This is just pressure."*`,
+      `*"The threat increased. You set your feet. You used to hold this line for two. You hold it anyway."*`,
     ],
   },
   {
@@ -360,6 +367,7 @@ export const WARDEN_POOLS: MonologuePool[] = [
     lines: [
       `*"The threat is rising. You set your feet. You've set your feet in worse."*`,
       `*"Something is wrong here. You widen your stance and meet it."*`,
+      `*"The threat increased. You set your feet. The math of protecting versus not-protecting has always been clear to you."*`,
     ],
   },
   {
@@ -369,6 +377,7 @@ export const WARDEN_POOLS: MonologuePool[] = [
     lines: [
       `*"Danger. You step forward. That's what you do. Whatever else you've forgotten, you haven't forgotten that."*`,
       `*"Something coming. You face it. The posture is older than your memory."*`,
+      `*"The threat increased. You widen your stance. You don't know the name of the thing behind you. You guard it anyway."*`,
     ],
   },
   {
@@ -376,8 +385,9 @@ export const WARDEN_POOLS: MonologuePool[] = [
     personalLoss: 'promise',
     trigger: 'pressure_spike',
     lines: [
-      `*"Elevated threat. You hold the line between it and the promise. That's the position."*`,
-      `*"The danger grew. You don't retreat from promises. Same rule applies here."*`,
+      `*"Elevated threat. You hold the line between it and the oath. That's the position."*`,
+      `*"The threat increased. You set your feet. That's the whole preparation."*`,
+      `*"Wardens don't retreat from threats. Wardens don't retreat from promises. Same stance."*`,
     ],
   },
 ]

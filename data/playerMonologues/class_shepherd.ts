@@ -115,7 +115,7 @@ export const SHEPHERD_POOLS: MonologuePool[] = [
     lines: [
       `*"Your hands check for a pulse. Old instinct. You're alive. That matters."*`,
       `*"You treat the wound. Efficiently. You have somewhere to be."*`,
-      `*"You survived. The promise is still intact. Keep moving."*`,
+      `*"You survived. The promise made that necessary. Your hands knew it before you did."*`,
     ],
   },
 
@@ -167,7 +167,7 @@ export const SHEPHERD_POOLS: MonologuePool[] = [
     personalLoss: 'promise',
     trigger: 'in_danger',
     lines: [
-      `*"Threat. You need to be alive to keep the promise. Protect the asset."*`,
+      `*"Threat. The procedure requires a functioning surgeon. Keep the surgeon functioning."*`,
       `*"Something is wrong. Your hands are steady. They're always steady when it matters."*`,
       `*"Danger noted. Treatment: survive. Proceed."*`,
     ],
@@ -277,7 +277,7 @@ export const SHEPHERD_POOLS: MonologuePool[] = [
     lines: [
       `*"Your hands stop shaking. The promise can wait three hours. You need this."*`,
       `*"Safe. You allow yourself to feel it briefly. Then you get ready to move."*`,
-      `*"Rest. The promise needs you functional. This is functional maintenance."*`,
+      `*"Rest. The promise needs you whole. Healers who don't rest make mistakes. You know this."*`,
     ],
   },
 
@@ -291,6 +291,7 @@ export const SHEPHERD_POOLS: MonologuePool[] = [
     lines: [
       `*"The scope of the wound got bigger. You treat what you can reach."*`,
       `*"More people need help now. You can't help everyone. You start with whoever is closest."*`,
+      `*"Mass-casualty framing. Your hands already know the triage order. They've known it longer than this child has been gone."*`,
     ],
   },
   {
@@ -300,6 +301,7 @@ export const SHEPHERD_POOLS: MonologuePool[] = [
     lines: [
       `*"The triage changed. The priorities shifted. You adapt the protocol."*`,
       `*"More people are going to die. You focus on the ones who don't have to."*`,
+      `*"The scale of injury increased. You've triaged alone before. You know how to work without a second set of hands."*`,
     ],
   },
   {
@@ -309,6 +311,7 @@ export const SHEPHERD_POOLS: MonologuePool[] = [
     lines: [
       `*"The scale changed. The work doesn't. Help what you can. Grieve the rest later."*`,
       `*"The wound got bigger. You've treated big wounds. Get to work."*`,
+      `*"Mass-casualty conditions. You've run this before. The list of who you could save and who you couldn't — you've been building it for years."*`,
     ],
   },
   {
@@ -318,6 +321,7 @@ export const SHEPHERD_POOLS: MonologuePool[] = [
     lines: [
       `*"Everything changed. Your hands are still ready. Whoever you are, that's what they do."*`,
       `*"The world got worse. You respond to worse. It's what you're for."*`,
+      `*"The situation escalated. Your hands didn't hesitate. Whatever you are, they've seen worse."*`,
     ],
   },
   {
@@ -326,7 +330,8 @@ export const SHEPHERD_POOLS: MonologuePool[] = [
     trigger: 'act_transition',
     lines: [
       `*"The path to the promise got harder. You've walked hard paths."*`,
-      `*"Everything escalated. The promise is still there. Keep moving."*`,
+      `*"Everything escalated. The procedure hasn't changed. Keep the surgeon functional. Keep moving."*`,
+      `*"Scope expanded. You re-triage. The promise is the patient who can't wait. Prioritize accordingly."*`,
     ],
   },
 
@@ -340,6 +345,7 @@ export const SHEPHERD_POOLS: MonologuePool[] = [
     lines: [
       `*"Something is wrong here. The same way a room full of sick people is wrong — in the air."*`,
       `*"You read suffering. This place is saturated with it."*`,
+      `*"The atmosphere here is wrong in the way a patient is wrong before they code. Move carefully."*`,
     ],
   },
   {
@@ -349,6 +355,7 @@ export const SHEPHERD_POOLS: MonologuePool[] = [
     lines: [
       `*"Something here is in pain. The whole place. You feel it the way you feel a patient deteriorating."*`,
       `*"The air is wrong. Medically wrong. You don't have a chart for this. Treat it anyway."*`,
+      `*"Vital signs wrong in here. The room itself has a pulse and it's arrhythmic. Move."*`,
     ],
   },
   {
@@ -358,6 +365,7 @@ export const SHEPHERD_POOLS: MonologuePool[] = [
     lines: [
       `*"The atmosphere changed. Rooms change before people do. You learned to read rooms early."*`,
       `*"Something here needs help. You are not sure what kind of help it needs."*`,
+      `*"Something here is septic. You've treated septic rooms before. Move carefully."*`,
     ],
   },
   {
@@ -365,8 +373,9 @@ export const SHEPHERD_POOLS: MonologuePool[] = [
     personalLoss: 'identity',
     trigger: 'pressure_spike',
     lines: [
-      `*"Wrong. Everything here is wrong. Your body signals it clearly."*`,
+      `*"Something here is wrong. Your diagnostic instinct flagged it before your mind caught up."*`,
       `*"The air here is sick. You've treated sick air before. Stay careful."*`,
+      `*"The room is symptomatic. Whatever the disease is, you know a sick room when you're in one."*`,
     ],
   },
   {
@@ -374,8 +383,9 @@ export const SHEPHERD_POOLS: MonologuePool[] = [
     personalLoss: 'promise',
     trigger: 'pressure_spike',
     lines: [
-      `*"Something worsened. You log the symptoms. You keep moving. The promise doesn't pause."*`,
-      `*"The tension here is clinical. You treat it as a variable. You proceed."*`,
+      `*"Something worsened. You log the symptoms. You keep moving. The promise is the patient who can't wait."*`,
+      `*"The situation is deteriorating. Triage: you are the only instrument that completes this procedure. Keep the instrument functional."*`,
+      `*"Elevated threat. You read it clinically. Prognosis: navigable. Proceed."*`,
     ],
   },
 ]

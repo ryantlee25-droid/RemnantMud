@@ -20,7 +20,7 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     trigger: 'low_hp',
     lines: [
       `*"Systems failing. Core functionality compromised. You need maintenance."*`,
-      `*"You run the numbers on your current state. The numbers are bad. Do the maintenance anyway."*`,
+      `*"You run diagnostics on your current state. The output is bad. Run the repair subroutine anyway."*`,
       `*"Critical failure is not an option. Reconfigure. Continue."*`,
     ],
   },
@@ -30,8 +30,8 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     trigger: 'low_hp',
     lines: [
       `*"Systems failing. Core functionality compromised. You need maintenance."*`,
-      `*"The data says you're running below threshold. Override. Keep running."*`,
-      `*"You've salvaged things in worse condition than this. Salvage yourself."*`,
+      `*"The error log says: running below threshold. Override the threshold. Keep running."*`,
+      `*"You've salvaged systems in worse condition than this. Salvage yourself."*`,
     ],
   },
   {
@@ -49,7 +49,7 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'identity',
     trigger: 'low_hp',
     lines: [
-      `*"Systems failing. Core functionality compromised. Core identity: unknown. Keep going anyway."*`,
+      `*"Systems failing. Core functionality compromised. Core identity: corrupted. Keep going anyway."*`,
       `*"You don't know what you're rebuilding toward. You know how to rebuild. Start there."*`,
       `*"Critical failure is not an option. Reconfigure whatever is left."*`,
     ],
@@ -59,9 +59,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'promise',
     trigger: 'low_hp',
     lines: [
-      `*"Systems failing. The promise requires operational status. Prioritize."*`,
+      `*"Systems failing. The promise is the primary process. Protect the primary process."*`,
       `*"You've run machines past their fail-safe limits. You're a machine. Run past yours."*`,
-      `*"Critical warning: mission incomplete. Maintenance mandatory."*`,
+      `*"Critical warning: process incomplete. Maintenance mandatory. The subroutine that holds the promise does not stop."*`,
     ],
   },
 
@@ -73,9 +73,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'child',
     trigger: 'post_combat',
     lines: [
-      `*"You catalogue the injuries. Yours. Theirs. The data tells a story."*`,
-      `*"Post-action analysis: efficiency was acceptable. Acceptable is not optimal. Improve."*`,
-      `*"You survived. Log it. Move to the next problem."*`,
+      `*"Encounter closed. Bug report: you took more damage than the threat profile suggested. Update the threat model."*`,
+      `*"Post-action log: efficiency suboptimal. Acceptable. Optimize next iteration."*`,
+      `*"You survived. Write the entry. Move to the next process."*`,
     ],
   },
   {
@@ -83,9 +83,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'partner',
     trigger: 'post_combat',
     lines: [
-      `*"You catalogue the injuries. The data tells a story. You read it quickly and stop reading."*`,
-      `*"Post-action analysis: survivable. The other analysis can wait."*`,
-      `*"You survived. The data confirms it. That used to feel like less."*`,
+      `*"Encounter closed. The damage log is readable. You read it and stop reading."*`,
+      `*"Post-action: survivable. The subroutine that wants to keep processing can wait."*`,
+      `*"You survived. The system confirms it. That used to feel like less data than it does now."*`,
     ],
   },
   {
@@ -93,9 +93,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'community',
     trigger: 'post_combat',
     lines: [
-      `*"You catalogue the injuries. Log the resource expenditure. Run the efficiency numbers."*`,
-      `*"The encounter data is useful. File it. Use it next time."*`,
-      `*"Post-action: resources depleted at acceptable rate. Keep moving."*`,
+      `*"Encounter closed. Log the resource expenditure. Compile the efficiency numbers."*`,
+      `*"The encounter data is useful. Archive it. Reference it next time."*`,
+      `*"Post-action: operational integrity maintained. The network that used to process this with you is offline. You process alone."*`,
     ],
   },
   {
@@ -103,9 +103,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'identity',
     trigger: 'post_combat',
     lines: [
-      `*"You catalogue the injuries and the instincts. What you did just now — you've done it before."*`,
-      `*"Post-action analysis: whoever you were, they trained for exactly this."*`,
-      `*"The data from this encounter is consistent with the other encounters. A pattern is forming."*`,
+      `*"Encounter closed. You log the instincts that fired. Whatever you were before, they trained you for exactly this."*`,
+      `*"Post-action analysis: the response sequence was native. The architecture is intact even where the documentation isn't."*`,
+      `*"The encounter log is consistent with prior entries. A pattern is compiling."*`,
     ],
   },
   {
@@ -113,9 +113,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'promise',
     trigger: 'post_combat',
     lines: [
-      `*"You catalogue the encounter. It was a diversion from the mission. Log it, move on."*`,
-      `*"Post-action: viable. The promise timeline is unchanged. Proceed."*`,
-      `*"Resource cost: noted. Value delivered: mission continues. Net positive."*`,
+      `*"Encounter closed. It was a subroutine interruption. Log it, close the thread, return to primary process."*`,
+      `*"Post-action: operational. The promise is the main loop. Everything else is a subroutine. Subroutine closed."*`,
+      `*"Resource cost: noted. Primary process status: running. Net result: continue."*`,
     ],
   },
 
@@ -127,9 +127,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'child',
     trigger: 'in_danger',
     lines: [
-      `*"You read the variables. Something in the system is degrading."*`,
-      `*"Threat detected. You run a quick threat assessment. Respond accordingly."*`,
-      `*"The data says: not good here. The data is usually right. Trust the data."*`,
+      `*"System failure in progress. Locate the breach. Isolate it."*`,
+      `*"Error state detected. Run the diagnostic before the system crashes completely."*`,
+      `*"The environment is throwing errors. Read the log before it overwrites."*`,
     ],
   },
   {
@@ -137,9 +137,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'partner',
     trigger: 'in_danger',
     lines: [
-      `*"Threat assessment in progress. Variables: elevated. Recommendation: caution."*`,
-      `*"Something in the system is wrong. You read systems. This one is failing."*`,
-      `*"The data says: danger. You've learned not to argue with clean data."*`,
+      `*"Anomaly in system state. Variables elevated. Initiating error-handling subroutine."*`,
+      `*"Something in the architecture is failing. You read failing systems. This one is in cascade."*`,
+      `*"Critical error flagged. You've learned not to dismiss critical errors."*`,
     ],
   },
   {
@@ -147,9 +147,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'community',
     trigger: 'in_danger',
     lines: [
-      `*"Threat detected. You run the numbers. The numbers are not good."*`,
-      `*"Something in the pattern broke. You read broken patterns. This one is broken."*`,
-      `*"Danger assessment: confirmed. Response protocol: activate."*`,
+      `*"System failure in progress. Locate the breach. Isolate it."*`,
+      `*"The architecture broke. You read broken architectures. This one needs immediate intervention."*`,
+      `*"Error state: confirmed. Subroutine: threat response. Execute."*`,
     ],
   },
   {
@@ -157,9 +157,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'identity',
     trigger: 'in_danger',
     lines: [
-      `*"Threat detected. Your body had the data before you did. This isn't new behavior."*`,
-      `*"Something is wrong here. You've been reading wrong rooms for longer than you remember."*`,
-      `*"Danger. You respond. Whoever you are, you're very good at the response part."*`,
+      `*"Error state detected. Your threat-response subroutine fired before you authorized it. Trust the subroutine."*`,
+      `*"The environment is throwing errors. You've been reading error states for longer than you remember."*`,
+      `*"Danger. You respond. Whatever the core process is, the threat-handling module is intact."*`,
     ],
   },
   {
@@ -167,9 +167,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'promise',
     trigger: 'in_danger',
     lines: [
-      `*"Threat detected. Calculate cost of engagement versus rerouting. Reroute if viable."*`,
-      `*"Danger. The mission requires you alive. Protect the mission asset."*`,
-      `*"The data says: proceed carefully. You proceed carefully."*`,
+      `*"Error state detected. Calculate: engage or reroute. The promise is the primary process. Protect it."*`,
+      `*"Danger. The primary process requires operational status. Error-handling: keep the system running."*`,
+      `*"System error. Proceed carefully. The main loop does not terminate here."*`,
     ],
   },
 
@@ -181,9 +181,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'child',
     trigger: 'examining_loss_item',
     lines: [
-      `*"The data was there all along. You just couldn't see the format."*`,
-      `*"You turn it over. You run every analysis you know. The analysis is insufficient."*`,
-      `*"Some data is not processable. You've been trying to process this for a long time."*`,
+      `*"The input was there all along. You just couldn't parse the format in time."*`,
+      `*"You run every diagnostic subroutine you have. The analysis returns: insufficient. That's a new error."*`,
+      `*"Some inputs are not processable. You've been running this one through the parser for a long time. No output."*`,
     ],
   },
   {
@@ -191,9 +191,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'partner',
     trigger: 'examining_loss_item',
     lines: [
-      `*"The data was there. You saw it. The interpretation was wrong."*`,
-      `*"You hold it and the data is loud and you don't want to process it."*`,
-      `*"Some things don't resolve into data. This is one of them. That's new for you."*`,
+      `*"The error was in the interpretation, not the input. You read it correctly. The conclusion was wrong."*`,
+      `*"You hold it and the processing load spikes and you don't want to resolve the exception."*`,
+      `*"Some things don't compile into clean output. This is one of them. That's new for you."*`,
     ],
   },
   {
@@ -201,9 +201,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'community',
     trigger: 'examining_loss_item',
     lines: [
-      `*"The failure was documented. The failure was preventable. The documentation is very thorough."*`,
-      `*"You hold it. You catalogue it. You can't fix this one and that's the problem."*`,
-      `*"The data was there all along. You just kept finding reasons the conclusions were wrong."*`,
+      `*"The failure was logged. The failure was preventable. The log is very thorough."*`,
+      `*"You hold it. You run the repair subroutine. This one has no patch. That's the problem."*`,
+      `*"The input was there all along. You kept finding reasons the error output was wrong. It wasn't wrong."*`,
     ],
   },
   {
@@ -211,9 +211,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'identity',
     trigger: 'examining_loss_item',
     lines: [
-      `*"The data was there all along. You just couldn't see the format yet."*`,
-      `*"Another piece of the archive. You're reconstructing from fragments. It's slow work."*`,
-      `*"Something in you recognizes this. The recognition doesn't come with a data label. Frustrating."*`,
+      `*"The input was there all along. You just couldn't read the encoding."*`,
+      `*"Another fragment from the archive. You're reconstructing the core from backup files. It's slow work."*`,
+      `*"Something in the base system recognizes this. The recognition fires without a matching log entry. Unresolved."*`,
     ],
   },
   {
@@ -221,9 +221,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'promise',
     trigger: 'examining_loss_item',
     lines: [
-      `*"The data confirms: this is why. You didn't need confirmation. You have it now."*`,
-      `*"You catalogue the object and what it represents. The catalogue is operational."*`,
-      `*"Motivation: documented. Confirmed. Priority: unchanged."*`,
+      `*"The data confirms: this is the source process. You didn't need confirmation. You have it now."*`,
+      `*"You log the object and what it represents. The primary process entry is current."*`,
+      `*"Motivation: compiled. Confirmed. Priority flag: unchanged. The promise is the root process."*`,
     ],
   },
 
@@ -235,9 +235,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'child',
     trigger: 'safe_rest',
     lines: [
-      `*"The quiet is good for processing. You have a lot to process."*`,
-      `*"Maintenance window. You run diagnostics. You note the systems that need attention."*`,
-      `*"Safe. You use the time efficiently. Rest is part of the system."*`,
+      `*"The quiet used to have more in it. The archive is smaller now."*`,
+      `*"Maintenance window. You run diagnostics. You note the subsystems that need attention."*`,
+      `*"Safe. You allocate the downtime correctly. Rest is a system requirement."*`,
     ],
   },
   {
@@ -245,8 +245,8 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'partner',
     trigger: 'safe_rest',
     lines: [
-      `*"The quiet is good for processing. The loud parts are quieter when nothing else is loud."*`,
-      `*"Maintenance window. You let the system run its own diagnostics for a while."*`,
+      `*"The quiet is good for processing. The exception threads are louder when nothing else is running."*`,
+      `*"Maintenance window. You let the system run its own error-handling for a while."*`,
       `*"You used to have someone to debug with. You debug alone now. It's slower."*`,
     ],
   },
@@ -255,8 +255,8 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'community',
     trigger: 'safe_rest',
     lines: [
-      `*"The quiet is good for processing. You have a backlog."*`,
-      `*"Maintenance window. Systems recovery in progress. You let it happen."*`,
+      `*"Maintenance window. The processing queue is long. You work through it in order."*`,
+      `*"You run the distributed-system recovery protocol. There are no other nodes online. Solo recovery is slower."*`,
       `*"Safe. Use the downtime. There will be less downtime later."*`,
     ],
   },
@@ -265,9 +265,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'identity',
     trigger: 'safe_rest',
     lines: [
-      `*"The quiet is good for processing. Especially when what you're processing is yourself."*`,
-      `*"Maintenance window. You don't know what you're maintaining. You maintain it anyway."*`,
-      `*"Processing. Something is rebuilding. You don't interrupt it."*`,
+      `*"Maintenance window. The core process is unknown. You maintain the subsystems you can identify."*`,
+      `*"You don't know what you're maintaining. You maintain it anyway. Something is rebuilding in the background."*`,
+      `*"Processing. A background thread is reconstructing something. You don't interrupt background threads."*`,
     ],
   },
   {
@@ -275,9 +275,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'promise',
     trigger: 'safe_rest',
     lines: [
-      `*"Maintenance window. The promise is in queue. Systems recovery first."*`,
-      `*"The quiet is good for processing. You process the mission variables. You sleep."*`,
-      `*"Rest is a resource. You allocate it correctly."*`,
+      `*"Maintenance window. The primary process is queued. System recovery runs first."*`,
+      `*"The quiet is good for processing. You compile the mission variables. You sleep."*`,
+      `*"Rest is a resource. You allocate it to keep the primary process running."*`,
     ],
   },
 
@@ -289,8 +289,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'child',
     trigger: 'act_transition',
     lines: [
-      `*"Parameters updated. You rebuild the model with the new data."*`,
-      `*"The system changed. You read the new documentation. You adapt."*`,
+      `*"Parameters updated. You rebuild the model with the new inputs."*`,
+      `*"The system changed. You read the new architecture. You adapt the process."*`,
+      `*"New error state. You've debugged harder systems than this. Find the root cause."*`,
     ],
   },
   {
@@ -298,8 +299,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'partner',
     trigger: 'act_transition',
     lines: [
-      `*"System update. New constraints, new variables. You recalculate."*`,
+      `*"System update. New constraints, new variables. You recalculate the model."*`,
       `*"The architecture changed. You reverse-engineer the new structure. You've done this before."*`,
+      `*"New operational parameters. The loss subroutine logs it and returns control. Continue."*`,
     ],
   },
   {
@@ -307,8 +309,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'community',
     trigger: 'act_transition',
     lines: [
-      `*"Parameters shifted. You rebuild the model. The new model is worse. You use it anyway."*`,
-      `*"The world updated. You update your understanding. The mission continues."*`,
+      `*"Parameters shifted. You rebuild the model. The new model is a degraded version. You run it anyway."*`,
+      `*"System update. You recompile. The network that used to share the processing load is offline — you carry it alone."*`,
+      `*"The environment updated. You patch the model. The primary process continues."*`,
     ],
   },
   {
@@ -316,8 +319,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'identity',
     trigger: 'act_transition',
     lines: [
-      `*"New data available. The model of yourself and the world both need updating."*`,
-      `*"Parameters changed. You adapt. It's what you do. It's apparently always been what you do."*`,
+      `*"New inputs available. The model of yourself and the environment both need a rebuild."*`,
+      `*"Parameters changed. You adapt. It's apparently a core subroutine — it fires before you decide."*`,
+      `*"System update. You don't know the original architecture. You build from the current state."*`,
     ],
   },
   {
@@ -325,8 +329,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'promise',
     trigger: 'act_transition',
     lines: [
-      `*"System changed. The objective variable is constant. Recalculate the path."*`,
+      `*"System changed. The primary process is constant. Recalculate the execution path."*`,
       `*"New constraints. Same endpoint. Solve for the new route."*`,
+      `*"Architecture updated. The promise is hardcoded — it doesn't update with the environment. Recompile everything else around it."*`,
     ],
   },
 
@@ -338,8 +343,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'child',
     trigger: 'pressure_spike',
     lines: [
-      `*"Anomaly detected. The data pattern is degrading. Note it and proceed."*`,
-      `*"Something in the ambient data is wrong. Read it carefully."*`,
+      `*"Anomaly detected. The system state is degrading. Log it and respond before cascade failure."*`,
+      `*"Something in the ambient architecture is wrong. Read the error log carefully."*`,
+      `*"Exception thrown. The subroutine that handles this is active. Execute it."*`,
     ],
   },
   {
@@ -347,8 +353,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'partner',
     trigger: 'pressure_spike',
     lines: [
-      `*"System pressure increasing. You log the delta. The trend is not good."*`,
-      `*"Something changed in the environment. The old model doesn't fit anymore."*`,
+      `*"System pressure increasing. The delta is negative. The trend terminates somewhere bad."*`,
+      `*"Something changed in the operational environment. The old model no longer fits. Recompile."*`,
+      `*"Unhandled exception. You've learned to handle unhandled exceptions. Work the error."*`,
     ],
   },
   {
@@ -356,8 +363,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'community',
     trigger: 'pressure_spike',
     lines: [
-      `*"Ambient threat index elevated. You've been tracking the pattern. Act on it."*`,
-      `*"The data is signaling. You've learned not to ignore the data."*`,
+      `*"Ambient threat index elevated. The system has been logging this pattern. Act on the log."*`,
+      `*"The subroutine is signaling. You've learned not to suppress subroutine signals."*`,
+      `*"Network error. Something external is interfering with normal operation. Isolate the source."*`,
     ],
   },
   {
@@ -365,8 +373,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'identity',
     trigger: 'pressure_spike',
     lines: [
-      `*"Anomaly detected. Your instincts flagged it first. Trust the instincts."*`,
-      `*"The pattern broke. Something changed. Find the change before it finds you."*`,
+      `*"Anomaly detected. The threat-response subroutine flagged it before the primary process did. Trust the subroutine."*`,
+      `*"The system broke from expected state. Something changed. Find the change before it propagates."*`,
+      `*"Unresolved exception in current environment. The base system knows how to handle this even when you don't."*`,
     ],
   },
   {
@@ -374,8 +383,9 @@ export const RECLAIMER_POOLS: MonologuePool[] = [
     personalLoss: 'promise',
     trigger: 'pressure_spike',
     lines: [
-      `*"Elevated threat. The mission timeline may need compression. Adjust."*`,
-      `*"The data is bad here. Log it. Navigate around it. Continue."*`,
+      `*"Elevated threat. The primary process timeline may need compression. Adjust the execution schedule."*`,
+      `*"System error in current environment. Log it. Route around it. The main loop does not terminate."*`,
+      `*"Exception thrown. The promise is the primary process. You do not let a subroutine interrupt the primary process."*`,
     ],
   },
 ]

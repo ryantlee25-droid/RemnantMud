@@ -127,7 +127,7 @@ export const CROSSROADS_ROOMS: Room[] = [
         ],
         night: [
           { sound: 'Coyotes yip somewhere to the west. Normal coyotes, probably.', weight: 3 },
-          { sound: 'The wind has died. The silence is heavy.', weight: 2 },
+          { sound: 'The wind has died. The market beyond the wall has gone down to embers — one voice, the scrape of a pot. The junction is the quietest place within a day\'s walk in any direction.', weight: 2 },
           { sound: null, weight: 2 },
         ],
       },

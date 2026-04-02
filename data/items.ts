@@ -982,7 +982,7 @@ export const ITEMS: Record<string, Item> = {
   empty_water_bottle: {
     id: 'empty_water_bottle',
     name: 'Empty Water Bottle',
-    description: 'A plastic bottle. Empty. Worth something to someone who\'s thirsty.',
+    description: 'A one-liter Nalgene, empty, lid still threaded on. Hard plastic that doesn\'t leach, doesn\'t crack. A clean vessel is hard to find — water you can carry is the basic unit of survival out here, and you can\'t carry it in your hands.',
     type: 'junk',
     weight: 0.3,
     value: 1,
@@ -991,7 +991,7 @@ export const ITEMS: Record<string, Item> = {
   lighter_disposable: {
     id: 'lighter_disposable',
     name: 'Disposable Lighter',
-    description: 'A plastic lighter. Still has fluid.',
+    description: 'A yellow Bic, the logo mostly worn off. The flint still catches. Fire on demand is a luxury so ordinary it stopped feeling like one — until the world ended and you found out what you\'d been taking for granted.',
     type: 'junk',
     weight: 0.1,
     value: 2,
@@ -1000,7 +1000,7 @@ export const ITEMS: Record<string, Item> = {
   old_binoculars: {
     id: 'old_binoculars',
     name: 'Old Binoculars',
-    description: 'Old binoculars. One lens cracked, the other still works.',
+    description: 'Porro-prism field glasses, one objective lens cracked in a starburst pattern that blurs the right half of everything you see. The left side still gives you eight-times magnification. Half a view is better than none, which is something you used to not have to say.',
     type: 'junk',
     weight: 0.8,
     value: 3,
@@ -1009,7 +1009,7 @@ export const ITEMS: Record<string, Item> = {
   binoculars_intact: {
     id: 'binoculars_intact',
     name: 'Intact Binoculars',
-    description: 'Military-grade binoculars. Both lenses clear.',
+    description: 'Military-spec 10x50s, rubber-armored and nitrogen-purged. The reticle is mil-dot. Someone used these professionally and either left them or lost them in a way that suggests they no longer needed them. The optics are clean — whoever owned these cleaned them last.',
     type: 'junk',
     weight: 0.9,
     value: 8,
@@ -1018,7 +1018,7 @@ export const ITEMS: Record<string, Item> = {
   can_opener_quality: {
     id: 'can_opener_quality',
     name: 'Quality Can Opener',
-    description: 'A good can opener. The kind that doesn\'t slip.',
+    description: 'A heavy-frame rotary can opener, butterfly key, broad drive wheel — pre-Collapse OXO Good Grips, which means someone had an opinion about kitchen tools. In a world full of unlabeled cans, it\'s the most reliable instrument you own.',
     type: 'junk',
     weight: 0.3,
     value: 2,
@@ -1036,7 +1036,7 @@ export const ITEMS: Record<string, Item> = {
   hand_tools_basic: {
     id: 'hand_tools_basic',
     name: 'Basic Hand Tools',
-    description: 'Hammer, screwdriver, pliers. Basic tools. Useful.',
+    description: 'A 16-oz claw hammer with a fiberglass handle, a flathead and a Phillips, and a pair of slip-joint pliers with worn grips. Nothing specialized. Everything necessary. The kind of kit that survived the Collapse in a million garages and is now worth more than most weapons.',
     type: 'junk',
     weight: 1.5,
     value: 5,
@@ -1045,7 +1045,7 @@ export const ITEMS: Record<string, Item> = {
   gun_oil: {
     id: 'gun_oil',
     name: 'Gun Oil',
-    description: 'Gun oil. Keeps metal from rusting.',
+    description: 'A small squeeze bottle, about half full. Keeps the action cycling when dust and grit want to stop it. The difference between a gun that fires and one that doesn\'t is usually maintenance, and this is the first part of maintenance.',
     type: 'junk',
     weight: 0.2,
     value: 3,
@@ -1054,7 +1054,7 @@ export const ITEMS: Record<string, Item> = {
   crafting_components: {
     id: 'crafting_components',
     name: 'Crafting Components',
-    description: 'Various small parts. Gears, wires, clips. Something useful in here.',
+    description: 'A ziplock bag of salvaged hardware: brass gears from a clock movement, stripped wire segments, spring clips, a handful of machine screws in two sizes. The Reclaimers call this kind of bag a maybe kit. You don\'t know what you\'ll need it for until you need it.',
     type: 'junk',
     weight: 0.8,
     value: 4,
@@ -1063,7 +1063,7 @@ export const ITEMS: Record<string, Item> = {
   salvaged_engine_part: {
     id: 'salvaged_engine_part',
     name: 'Salvaged Engine Part',
-    description: 'An engine component. Heavy and oily. Someone might want this.',
+    description: 'A camshaft from what was probably a V8 — steel lobes, journal surfaces still bright beneath the grime. Dead weight to anyone without a working engine. To someone trying to keep a generator or a vehicle running, this is the difference between mobility and staying put.',
     type: 'junk',
     weight: 3.0,
     value: 6,
@@ -1072,7 +1072,7 @@ export const ITEMS: Record<string, Item> = {
   mineral_sample: {
     id: 'mineral_sample',
     name: 'Mineral Sample',
-    description: 'A rock sample. Labeled in faded pencil. Worth something to the right buyer.',
+    description: 'A fist-sized core sample in a labeled canvas bag — "SJ-7 DEPTH 340M" in faded pencil. Geological survey material, pre-Collapse. The Reclaimers catalog everything that came out of the ground before the facilities went dark. Whether what\'s in this sample matters, they\'ll want to decide for themselves.',
     type: 'junk',
     weight: 0.5,
     value: 2,
@@ -1081,7 +1081,7 @@ export const ITEMS: Record<string, Item> = {
   smooth_river_stone: {
     id: 'smooth_river_stone',
     name: 'Smooth River Stone',
-    description: 'A smooth river stone. Fits perfectly in the palm.',
+    description: 'A basalt pebble, river-polished to an ellipse that fills the hand without effort. No practical use. You carry it because it is one of the few things in this world that the Collapse did not change, and sometimes that matters.',
     type: 'junk',
     weight: 0.4,
     value: 1,
@@ -1090,7 +1090,7 @@ export const ITEMS: Record<string, Item> = {
   tinder_bundle: {
     id: 'tinder_bundle',
     name: 'Tinder Bundle',
-    description: 'Dry bark and grass, bound with twine. Lights fast.',
+    description: 'Cedar bark and dried cheatgrass, bound tight with a length of twine. Someone prepared this deliberately — the bark is shredded fine, the grass is bone-dry. A fire kit is only as good as its first stage, and this stage is good.',
     type: 'junk',
     weight: 0.3,
     value: 1,
@@ -1108,7 +1108,7 @@ export const ITEMS: Record<string, Item> = {
   wild_herbs: {
     id: 'wild_herbs',
     name: 'Wild Herbs',
-    description: 'A bundle of wild herbs. Medicinal or culinary — you\'re not sure which.',
+    description: 'A bundled handful of dried plants — yarrow, maybe, and something with small pale flowers you can\'t name with certainty. Could be wound-packing material. Could be the base of a broth. Knowledge of what the land offers is the kind of thing that died with the people who had it.',
     type: 'junk',
     weight: 0.2,
     value: 2,
@@ -1117,7 +1117,7 @@ export const ITEMS: Record<string, Item> = {
   ghost_sage_sprig: {
     id: 'ghost_sage_sprig',
     name: 'Ghost Sage Sprig',
-    description: 'Ghost sage. Pale and aromatic. Used in Covenant purification rites.',
+    description: 'The pale variety that grows at elevation, aromatic and slightly bitter. The Covenant of Dusk burns it in their purification ceremonies or carries it on the body. Whether the rite means anything is a theological question. The sage smells like a high-country morning before everything changed. That alone has value.',
     type: 'junk',
     weight: 0.1,
     value: 3,
@@ -1126,7 +1126,7 @@ export const ITEMS: Record<string, Item> = {
   fishing_line_improvised: {
     id: 'fishing_line_improvised',
     name: 'Improvised Fishing Line',
-    description: 'A length of monofilament with a bent-hook lure.',
+    description: 'Twenty feet of mono wrapped around a stick, with a bent nail hammered into a hook and a shred of red cloth lashed to it with thread. Ugly. Probably works. Whoever made this knew that fish don\'t care about the lure as much as the person fishing does.',
     type: 'junk',
     weight: 0.2,
     value: 2,
@@ -1153,7 +1153,7 @@ export const ITEMS: Record<string, Item> = {
   soap_bar: {
     id: 'soap_bar',
     name: 'Bar of Soap',
-    description: 'A bar of soap. Mostly used. Still works.',
+    description: 'A bar of Ivory soap, worked down to a thin oval but still usable. Smells like something from before — a specific chemical sweetness that means clean, that means the world had hot running water. You use it carefully. You will use every sliver.',
     type: 'junk',
     weight: 0.2,
     value: 1,
@@ -1171,7 +1171,7 @@ export const ITEMS: Record<string, Item> = {
   motel_bible: {
     id: 'motel_bible',
     name: 'Motel Bible',
-    description: 'A Gideons Bible. Someone crossed out the 23rd Psalm and wrote something else.',
+    description: 'A Gideons Bible, cover soft from years of hands. Someone has been writing in the margins for a long time — the ink changes color, the handwriting changes size. You don\'t have time to read it, but someone did. Someone kept coming back.',
     type: 'junk',
     weight: 0.4,
     value: 1,
@@ -1211,7 +1211,7 @@ export const ITEMS: Record<string, Item> = {
   rebar_club: {
     id: 'rebar_club',
     name: 'Rebar Club',
-    description: 'A length of rebar. Heavy. Blunt. Effective.',
+    description: 'Three feet of #4 rebar, one end wrapped in electrical tape to keep your palm from shredding. The weight does the work. Before the Collapse it built buildings. Now it keeps them from being rebuilt.',
     type: 'weapon',
     weight: 2.5,
     damage: 6,
@@ -1236,14 +1236,14 @@ export const ITEMS: Record<string, Item> = {
 
   canned_food_random: {
     id: 'canned_food_random',
-    name: 'Canned Food',
-    description: 'A dented can. Label gone. You peel it open and eat without looking.',
+    name: 'Unlabeled Can',
+    description: 'No label, no clue — rust rings on the lid, seams intact, no bulge. The absence of information is information: still sealed means probably still safe. You\'ve eaten worse with more confidence.',
     type: 'consumable',
     weight: 1.0,
     healing: 15,
     value: 5,
     usable: true,
-    useText: 'You eat. It\'s fine. You don\'t ask what it was.',
+    useText: 'You open it. Corn, you think. Maybe hominy. You eat it cold and don\'t complain.',
   },
 
   canned_food_premium: {
@@ -1261,7 +1261,7 @@ export const ITEMS: Record<string, Item> = {
   dried_meat_strip: {
     id: 'dried_meat_strip',
     name: 'Dried Meat Strip',
-    description: 'Salted and dried. Chewy. Better than nothing.',
+    description: 'Hard salt-cured strips, the kind you chew for a while before they give. Protein, salt, calories — everything your body needs and nothing your mouth wants. You eat it anyway. You\'ve learned to eat what you have.',
     type: 'consumable',
     weight: 0.3,
     healing: 10,
@@ -1349,7 +1349,7 @@ export const ITEMS: Record<string, Item> = {
   bandages_clean: {
     id: 'bandages_clean',
     name: 'Clean Bandages',
-    description: 'Sterile bandages. Still in the wrapper.',
+    description: 'Factory-sealed gauze rolls, unbroken packaging, sterile. Finding these still wrapped means they survived in a bag or a cabinet that stayed dry. The seal is the whole point — used gauze is just cloth, but this is still medicine.',
     type: 'consumable',
     weight: 0.2,
     healing: 12,
@@ -1361,7 +1361,7 @@ export const ITEMS: Record<string, Item> = {
   first_aid_kit_basic: {
     id: 'first_aid_kit_basic',
     name: 'Basic First Aid Kit',
-    description: 'A red cross kit. Half the supplies are still inside.',
+    description: 'A red-cross hard case, latched shut. Half the blister packs are still sealed — gauze, antiseptic wipes, medical tape, two ammonia inhalants. Whoever used this before you was careful, or lucky, or both. What\'s left is more than most people find.',
     type: 'consumable',
     weight: 1.5,
     healing: 30,
@@ -1373,7 +1373,7 @@ export const ITEMS: Record<string, Item> = {
   field_dressing: {
     id: 'field_dressing',
     name: 'Field Dressing',
-    description: 'Field dressing. The kind you press into a wound with your palm.',
+    description: 'An H-bandage, olive drab, still in the vacuum seal. The kind you press into a wound with your palm and hold until the pressure tells you it\'s working. Military surplus. Whoever carried this before expected to get shot.',
     type: 'consumable',
     weight: 0.4,
     healing: 15,
@@ -1385,7 +1385,7 @@ export const ITEMS: Record<string, Item> = {
   fresh_water_container: {
     id: 'fresh_water_container',
     name: 'Fresh Water Container',
-    description: 'A container of clean water. Rare enough to be valuable.',
+    description: 'A sealed two-liter container, clear and settled. No particulate, no smell. Someone filtered and stored this, which means they had the equipment and the patience. Clean water is not a given. It is a project. Someone finished that project for you.',
     type: 'consumable',
     weight: 1.2,
     healing: 10,

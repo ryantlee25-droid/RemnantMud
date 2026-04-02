@@ -127,8 +127,9 @@ export const ACT3_EVENTS: WorldEvent[] = [
         ' The same direction as the factions.',
       'A <npc>Salter</npc> hunter counted over two' +
         ' hundred hollow in a single column. They' +
-        ' weren\'t attacking anything. Just moving.' +
-        ' Purposeful. Guided.',
+        ' weren\'t attacking anything. Just moving,' +
+        ' maintaining spacing, at a walking pace that' +
+        ' matched the lead element\'s.',
       'The <keyword>hive mothers</keyword> are moving' +
         ' in the open for the first time anyone' +
         ' can remember. Three of them, side by side,' +
@@ -226,8 +227,8 @@ export const ACT3_EVENTS: WorldEvent[] = [
         ' Everyone who sees it stops walking.',
       'At noon, the sun is in the wrong place by' +
         ' eleven degrees. The <npc>Reclaimers</npc>' +
-        ' are insisting it\'s an atmospheric effect.' +
-        ' No one else believes them.',
+        ' are insisting it\'s an atmospheric effect' +
+        ' and have stopped answering follow-up questions.',
       'Stars visible in daylight now over the eastern' +
         ' horizon. Not faint — bright. The <npc>' +
         'Covenant</npc> elder said: "The door is' +

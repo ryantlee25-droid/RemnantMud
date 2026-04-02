@@ -115,7 +115,7 @@ export const SCOUT_POOLS: MonologuePool[] = [
     lines: [
       `*"You replay it. The opening was at second three. Delay cost you. Don't let it cost you again."*`,
       `*"Threat eliminated. You're still on schedule. Keep moving."*`,
-      `*"You note what you could have done better. You'll be better. There's time."*`,
+      `*"You note what you could have done better. The waypoint still reads. Make the time count."*`,
     ],
   },
 
@@ -223,7 +223,7 @@ export const SCOUT_POOLS: MonologuePool[] = [
     lines: [
       `*"Evidence of why you're here. You don't need more evidence. You keep it anyway."*`,
       `*"You catalogue it. File it under: reasons. The list is sufficient."*`,
-      `*"The data confirms what you already knew. The mission continues."*`,
+      `*"You've catalogued it a dozen times. The read doesn't change. The weight of it does."*`,
     ],
   },
 
@@ -276,7 +276,7 @@ export const SCOUT_POOLS: MonologuePool[] = [
     trigger: 'safe_rest',
     lines: [
       `*"You map exits. You log the timeline. You sleep for exactly as long as you can afford."*`,
-      `*"Rest is tactical. You take it efficiently and without regret."*`,
+      `*"Rest is a position. You choose it deliberately. You hold it for exactly as long as the waypoint allows."*`,
       `*"The deadline is noted. The rest is scheduled. The data doesn't change while you sleep."*`,
     ],
   },
@@ -291,6 +291,7 @@ export const SCOUT_POOLS: MonologuePool[] = [
     lines: [
       `*"The pattern shifted. You log the new variables. The map needs updating."*`,
       `*"Everything you knew about this territory just changed. Start building new models."*`,
+      `*"New terrain. You read it the way you read every room — exits first, threats second, everything else after."*`,
     ],
   },
   {
@@ -300,6 +301,7 @@ export const SCOUT_POOLS: MonologuePool[] = [
     lines: [
       `*"The terrain changed. You adapt the map. Everything else catches up later."*`,
       `*"New parameters. New pattern to read. You've always been good at this part."*`,
+      `*"The trail changed. The tracks are older now. You read old tracks. Adjust the read."*`,
     ],
   },
   {
@@ -309,6 +311,7 @@ export const SCOUT_POOLS: MonologuePool[] = [
     lines: [
       `*"The game changed. You note the new rules and play anyway."*`,
       `*"Pattern disruption detected. Start reading the new one."*`,
+      `*"Footfall pattern changed. Someone knows this space. You need to know it better than they do."*`,
     ],
   },
   {
@@ -318,6 +321,7 @@ export const SCOUT_POOLS: MonologuePool[] = [
     lines: [
       `*"Everything changed. You add it to the reconstruction. Whoever you are, they adapt."*`,
       `*"New map. New data. You've been building this from scratch anyway."*`,
+      `*"New terrain. You read it. Somewhere in the reading, a version of yourself starts to come clear."*`,
     ],
   },
   {
@@ -327,6 +331,7 @@ export const SCOUT_POOLS: MonologuePool[] = [
     lines: [
       `*"The path changed. The destination didn't. Navigate accordingly."*`,
       `*"New terrain. Same waypoint. Get moving."*`,
+      `*"The exits you mapped are no longer the exits you'd trust. Remap. The waypoint doesn't move."*`,
     ],
   },
 
@@ -338,8 +343,9 @@ export const SCOUT_POOLS: MonologuePool[] = [
     personalLoss: 'child',
     trigger: 'pressure_spike',
     lines: [
-      `*"The data is inconsistent. Something in the environment is signaling."*`,
-      `*"You've tracked enough threats to read the air. The air is reading badly."*`,
+      `*"The sign is wrong. Something moved through here that doesn't belong here."*`,
+      `*"You've tracked enough threats to read the terrain. The terrain is reading badly."*`,
+      `*"The exits you mapped are no longer exits you'd trust. Someone changed this space."*`,
     ],
   },
   {
@@ -347,8 +353,9 @@ export const SCOUT_POOLS: MonologuePool[] = [
     personalLoss: 'partner',
     trigger: 'pressure_spike',
     lines: [
-      `*"Something in the noise floor shifted. You caught it. Trust that."*`,
-      `*"Ambient threat level increased. The numbers are soft. The feeling isn't."*`,
+      `*"Something in the wind shifted. You caught it. Trust that."*`,
+      `*"Ambient threat elevated. The read is soft. The track isn't."*`,
+      `*"The trail went cold wrong. Something scared it off. Find what."*`,
     ],
   },
   {
@@ -357,7 +364,8 @@ export const SCOUT_POOLS: MonologuePool[] = [
     trigger: 'pressure_spike',
     lines: [
       `*"The pattern broke. Something is different. Find what changed."*`,
-      `*"You've tracked enough things to know when you're not alone in the data."*`,
+      `*"You've tracked enough things to know when something is tracking back."*`,
+      `*"Footfall pattern changed. Someone knows this space. You need to know it better."*`,
     ],
   },
   {
@@ -365,8 +373,9 @@ export const SCOUT_POOLS: MonologuePool[] = [
     personalLoss: 'identity',
     trigger: 'pressure_spike',
     lines: [
-      `*"Something shifted. Your body caught it before you did. Listen to it."*`,
-      `*"The environment is communicating. You know how to listen."*`,
+      `*"Something shifted. Your training caught it before you understood it. Trust the training."*`,
+      `*"The terrain is communicating. You've always known how to read terrain."*`,
+      `*"The sign is wrong. You read signs. This one says: not yet. Wait."*`,
     ],
   },
   {
@@ -374,8 +383,9 @@ export const SCOUT_POOLS: MonologuePool[] = [
     personalLoss: 'promise',
     trigger: 'pressure_spike',
     lines: [
-      `*"Elevated threat density. You note it. You factor it in. You keep moving."*`,
-      `*"Something's wrong with the pattern. File it, adjust, advance."*`,
+      `*"Elevated threat density. You note it. You factor it in. The waypoint doesn't move."*`,
+      `*"Something's wrong with the read. Adjust, reroute, advance."*`,
+      `*"The direct path is compromised. You've always been better at the indirect path anyway."*`,
     ],
   },
 ]

@@ -128,9 +128,9 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
     },
     personalLossEchoes: {
       child: 'The calf stays close to its mother. The specific geometry of small-thing-near-big-thing, the way they orbit — you know this shape. You knew it with your whole body once, the weight of a small hand in yours, the way they pressed against your leg when something was new or large or strange. The meadow is full of that shape. It is the most natural thing in the world. It is the thing you lost.',
-      partner: 'The beauty of it hits you in the specific way beauty does when there\'s no one to turn to and say look at this. The elk, the meadow, the light. You would have turned. They would have looked. The moment would have been held between you like a shared breath. You\'re holding it alone now and it doesn\'t weigh less. It weighs differently.',
+      partner: 'The beauty of it hits you the way beauty does when there\'s no one to turn to and say look at this. The elk, the meadow, the light. You would have turned. They would have looked. The moment would have been held between you like a shared breath. You\'re holding it alone now and it doesn\'t weigh less. It weighs differently.',
       community: 'This is what you were protecting. Not this meadow specifically, but this — the ordinary continuation of life doing what it does, unhurried, unafraid. The elk graze because grazing is what elk do. Your community did what communities do, until it didn\'t. The meadow is still here. The elk are still here. The thing you were part of is not.',
-      identity: 'The elk don\'t need names. They know what they are by what they do — graze, watch, protect the calves, move with the seasons. The simplicity of an identity that never had to be remembered because it was never lost. You watch them and you feel the specific vertigo of someone who doesn\'t know what they do anymore, because the person who did the doing is missing.',
+      identity: 'The elk don\'t need names. They know what they are by what they do — graze, watch, protect the calves, move with the seasons. The simplicity of an identity that never had to be remembered because it was never lost. You watch them and you feel vertigo: you don\'t know what you do anymore, because the person who did the doing is missing.',
       promise: 'Nothing is wrong with this scene. Nothing at all. You had forgotten that was possible. And standing at the edge of something undamaged, you remember the promise — to protect, to rebuild, to leave things better. The meadow doesn\'t need you. It is better without you. The promise was for the places that aren\'t this.',
     },
     narrativeNotes: 'Beauty room and emotional respite. The elk herd is a signal that the world still contains things worth protecting. The hunting mechanic is available here for food.',
@@ -538,7 +538,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
       {
         keywords: ['light', 'dark', 'canopy', 'shadow', 'twilight'],
-        description: 'The canopy closure is complete — the interlocked crowns of twelve adjacent trees create a continuous ceiling of needles and branch that reduces the light below to perhaps five percent of what falls above. Plants that survive here are specialists: deep-shade ferns, fungi, lichens that grow on the north faces of the buttress roots. The ecosystem is calibrated to the specific dark. You are a large diurnal mammal in a world that was built around your absence.',
+        description: 'The canopy closure is complete — the interlocked crowns of twelve adjacent trees create a continuous ceiling of needles and branch that reduces the light below to perhaps five percent of what falls above. Plants that survive here are specialists: deep-shade ferns, fungi, lichens that grow on the north faces of the buttress roots. The ecosystem is calibrated to this dark — close, muffled, permanent. You are a large diurnal mammal in a world that was built around your absence.',
       },
       {
         keywords: ['time', 'silence', 'quiet', 'feeling', 'presence'],
@@ -546,7 +546,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
       {
         keywords: ['hollow', 'shape', 'movement', 'dark'],
-        description: 'Something moves at the edge of where you can see — peripheral, slow, with the wrong quality of movement. Not shuffler-wrong: this is a different kind of wrong, the wrongness of something that has been in this specific dark for a very long time and absorbed something of its patience. It isn\'t moving toward you. It is moving around you. There is a difference.',
+        description: 'Something moves at the edge of where you can see — peripheral, slow, with the wrong quality of movement. Not shuffler-wrong: this is a different kind of wrong, the wrongness of something that has been in this dark for a very long time and absorbed something of its patience. It isn\'t moving toward you. It is moving around you. There is a difference.',
         skillCheck: { skill: 'perception', dc: 12, successAppend: 'There are two of them. They\'ve been here long enough that the duff has adapted — the forest floor around their usual paths is compressed and darkened. Years of movement. They\'re part of this place the way the fungi are part of this place. They could be aggressive. They are choosing not to be. The choosing is the strange part.' },
       },
     ],
@@ -574,7 +574,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
           { sound: null, weight: 2 },
         ],
         night: [
-          { sound: 'Total dark. Total quiet. Something breathing that is not you.', weight: 2 },
+          { sound: 'The grove has no animal sounds — no frogs, no insects at this altitude at this season. Just the trees. Then: breathing. Slow, nasal, eight feet to your left. Still.', weight: 2 },
           { sound: null, weight: 3 },
         ],
       },
@@ -662,7 +662,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
     flags: { scavengingZone: false, noCombat: false },
     cycleGate: 3,
     description: 'The forest opens into a clearing that isn\'t meadow — there\'s no grass, only compressed earth and dry pine duff, and in the center of it: bones. Something enormous died here long ago. The skeleton is too large for any animal you can name: a ribcage that could shelter four people standing, vertebrae the size of wheel hubs, a skull with teeth that are wrong in ways that take a moment to categorize. Pre-Collapse megafauna, maybe, or something the Collapse made. The bones are bleached and old and undisturbed. The Hollow don\'t come here. You can tell from the absence of their sign — no compressed trails, no territorial markings, nothing. This place is avoided. The hermit leaves it alone for different reasons. Both reactions are probably correct.',
-    descriptionNight: 'At night the bones are pale against the dark clearing. They catch moonlight in a way the surrounding forest doesn\'t. The ribcage creates a skeletal architecture that is somehow more disturbing at night than in daylight — the gaps between the ribs frame pieces of sky. The clearing has a specific quality of emptiness that feels less like absence and more like something cleared deliberately.',
+    descriptionNight: 'At night the bones are pale against the dark clearing. They catch moonlight in a way the surrounding forest doesn\'t. The ribcage creates a skeletal architecture that is somehow more disturbing at night than in daylight — the gaps between the ribs frame pieces of sky. The clearing feels less like absence and more like something cleared deliberately.',
     descriptionDusk: 'Dusk in the bone grove arrives from the canopy down. The trees surrounding the clearing go dark first, the trunks becoming columns of shadow, and the clearing itself holds the last ambient light in a way that makes the bones more prominent — pale shapes on dark earth, catching what remains. The enormous ribcage throws long shadows that reach the tree line and merge with the forest dark. The skull faces west, and for a few minutes the orbital sockets hold the last light, two dim points that could be mistaken for something looking back at you. The wrongness of the teeth is less visible in this light. The wrongness of the clearing is more.',
     shortDescription: 'Pre-collapse bones. Something enormous died here. Hollow avoid it.',
     exits: { west: 'ps_09_old_growth_heart', east: 'ps_16_spore_field' },
@@ -722,7 +722,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
     flags: { fastTravelWaypoint: false, scavengingZone: true },
     cycleGate: 3,
     description: 'The forest thins here. Not meadow-thins — the trees don\'t stop, they just get smaller and farther apart, the understory opening, light returning in quantities you\'d forgotten about. And on the air: salt. Real salt — mineral salt, not ocean salt but something older, deposits from a sea that covered this land seventy million years ago, pushed skyward when the mountains rose. The Cretaceous seabed is up here at eight thousand feet, exposed in the outcrops where the tree roots have split the caprock, and the wind pulls the taste of it into the air. The last survey document here is pinned to a tree with a rusted nail: a USDA Forest Service boundary marker from 2019, its printed text mostly legible. The world was mapped once. The maps were correct once. This is the edge of where they stopped.',
-    descriptionNight: 'At night the salt approach shows the sky in a way the rest of the Pine Sea doesn\'t — more open, stars visible in larger patches. The mineral smell is sharper at night, when the cold concentrates whatever the wind lifts from the exposed salt deposits. The taste on your tongue is ancient and specific — not brine but something drier, the ghost chemistry of a shallow sea that evaporated before the first mammal.',
+    descriptionNight: 'At night the salt approach shows the sky in a way the rest of the Pine Sea doesn\'t — more open, stars visible in larger patches. The mineral smell is sharper at night, when the cold concentrates whatever the wind lifts from the exposed salt deposits. The taste on your tongue is ancient — not brine but something drier, the ghost chemistry of a shallow sea that evaporated before the first mammal.',
     descriptionDawn: 'At dawn the salt approach catches the first light from the east and sends it back — the thin trees are illuminated, the trunks pale in the horizontal light. The mineral salt smell is strongest at dawn, when the temperature shift pulls moisture from the exposed caprock and the air carries the taste of deep geology. If you stand still and let the light and the smell arrive together, it is briefly the most alive you\'ve felt since the Collapse.',
     shortDescription: 'Forest thins. Ancient salt on the air. Edge of the mapped world.',
     exits: { east: 'ps_09_old_growth_heart', south: 'ps_19_windbreak_ruin' },

@@ -113,7 +113,7 @@ export const ENFORCER_POOLS: MonologuePool[] = [
     personalLoss: 'promise',
     trigger: 'post_combat',
     lines: [
-      `*"You count the rounds you used. The promise is still intact. Keep moving."*`,
+      `*"You count the rounds you used. The debt isn't paid yet. This wasn't the payment. Keep moving."*`,
       `*"Threat neutralized. One more obstacle, one less obstacle."*`,
       `*"You replay it. You survived. That's the only metric that matters right now."*`,
     ],
@@ -291,6 +291,7 @@ export const ENFORCER_POOLS: MonologuePool[] = [
     lines: [
       `*"The situation has escalated. You adjust. That's all adjustment is."*`,
       `*"New threat parameters. Same operator. You've worked with worse odds."*`,
+      `*"New parameters. You count the exits again. The number changed. Recalculate."*`,
     ],
   },
   {
@@ -300,6 +301,7 @@ export const ENFORCER_POOLS: MonologuePool[] = [
     lines: [
       `*"The situation has changed. You adapt. That's what you do."*`,
       `*"New parameters. You run the math. It's not good math. You've had worse."*`,
+      `*"The situation escalated. You would have told them to stay low. You're telling yourself now. Stay low."*`,
     ],
   },
   {
@@ -309,6 +311,7 @@ export const ENFORCER_POOLS: MonologuePool[] = [
     lines: [
       `*"The ground shifted. You adjust your footing. That's all you can do."*`,
       `*"New threat level. Same approach: assess, adapt, advance."*`,
+      `*"New parameters. No one's standing watch behind you. You widen your perimeter. You cover the gap."*`,
     ],
   },
   {
@@ -318,6 +321,7 @@ export const ENFORCER_POOLS: MonologuePool[] = [
     lines: [
       `*"Everything changed. You adapt. Whoever you are, that's what you do."*`,
       `*"New parameters. The mission continues regardless of who's running it."*`,
+      `*"The situation escalated. The counting is automatic. The exits are automatic. Some things don't need a name."*`,
     ],
   },
   {
@@ -327,6 +331,7 @@ export const ENFORCER_POOLS: MonologuePool[] = [
     lines: [
       `*"The situation escalated. The promise doesn't care. Neither do you."*`,
       `*"New threat environment. The objective remains unchanged."*`,
+      `*"New parameters. The debt isn't paid yet. Factor that in. Keep the math current."*`,
     ],
   },
 
@@ -340,6 +345,7 @@ export const ENFORCER_POOLS: MonologuePool[] = [
     lines: [
       `*"Something in the air. Your body logged it before you did."*`,
       `*"Threat density increasing. You can feel it in the pattern."*`,
+      `*"Your count is off. Someone changed the room while you weren't watching. Recount. Move."*`,
     ],
   },
   {
@@ -349,6 +355,7 @@ export const ENFORCER_POOLS: MonologuePool[] = [
     lines: [
       `*"The hair on your arms. The quality of sound. Something's coming."*`,
       `*"Intel. Something shifted. Trust the body. Assess."*`,
+      `*"You hesitated. There it is. Don't hesitate again — the room is telling you something."*`,
     ],
   },
   {
@@ -357,7 +364,8 @@ export const ENFORCER_POOLS: MonologuePool[] = [
     trigger: 'pressure_spike',
     lines: [
       `*"You've been in enough situations to know when one is developing."*`,
-      `*"Threat density. The air has weight. Move carefully."*`,
+      `*"Threat density. The air has weight. Move efficiently."*`,
+      `*"No one standing watch. You are the watch. Sector check. Now."*`,
     ],
   },
   {
@@ -367,6 +375,7 @@ export const ENFORCER_POOLS: MonologuePool[] = [
     lines: [
       `*"Your body knows danger. Whatever you've forgotten, it remembers this."*`,
       `*"Something's building. You can feel it. Act on it."*`,
+      `*"The counting stopped. That means something changed. Find what changed."*`,
     ],
   },
   {
@@ -376,6 +385,7 @@ export const ENFORCER_POOLS: MonologuePool[] = [
     lines: [
       `*"It's getting worse. You factor that in and keep going."*`,
       `*"The situation is deteriorating. The mission timeline may need to accelerate."*`,
+      `*"Threat density spiked. The debt doesn't get paid if you ignore this. Deal with it."*`,
     ],
   },
 ]

@@ -19,8 +19,8 @@ export const EMBER_ROOMS: Room[] = [
     visited: false,
     flags: { noCombat: false },
     description: 'The road to The Ember is lined with torches — not improvised camp fire sticks but proper iron-bracket torches, mounted on posts driven into the earth at regular intervals on both sides, burning even in the day, their smoke rising in parallel columns. The theatrical intention is unmistakable and entirely successful: you are walking toward something that wants to be walked toward. The cathedral spire is visible ahead, the original stone weathered but intact, a new iron symbol at its peak — not a cross but a stylized flame. The smell of smoke is not the smell of disaster. It is specific, controlled, deliberate. Someone here has decided that fire means something different than it used to mean, and they are persuading you of it with every step.',
-    descriptionNight: 'At night the torches are the only light for a quarter mile. The effect intensifies. The columns of flame bracket a corridor of darkness made into a processional space, and you walk it feeling the particular pull of atmosphere made physical. The spire ahead is a dark shape until you\'re close enough to see the flame symbol catching the torch-light.',
-    shortDescription: 'A road lined with torches leading to a cathedral spire, the smell of deliberate smoke, and the feeling of being summoned.',
+    descriptionNight: 'At night the torches are the only light for a quarter mile. The columns of flame bracket a corridor you must walk between — no detour, no shadow margin. The spire ahead is a dark shape until you\'re close enough to see the flame symbol catching the torch-light. The road does not ask you. It expects you.',
+    shortDescription: 'A torch-lined road to a cathedral — forty-two flames, deliberate smoke, and a spire crowned with iron instead of a cross.',
     exits: {
       north: 'em_02_gate_of_flame',
       south: 'br_07_canyon_crossroads',

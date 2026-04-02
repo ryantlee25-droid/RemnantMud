@@ -119,7 +119,7 @@ export const COVENANT_ROOMS: Room[] = [
         spawnChance: 0.85,
         spawnType: 'anchored',
         activityPool: [
-          { desc: 'A stout woman arranges canned goods on a table with the methodical precision of someone who counts inventory twice daily and trusts no one else to do it.', weight: 3 },
+          { desc: 'A stout woman arranges canned goods on a table by category, then by date stamp, rotating the older cans to the front. She does this without looking at them.', weight: 3 },
           { desc: 'A vendor calls prices in a steady singsong: "Water tabs, two pennies. Gauze, one penny. Come on, who needs gauze?"', weight: 2 },
         ],
         tradeInventory: ['purification_tabs', 'gauze', 'canned_food', 'salt_1kg'],
@@ -255,7 +255,7 @@ export const COVENANT_ROOMS: Room[] = [
       },
       {
         keywords: ['clerk', 'standing desk', 'writing'],
-        description: 'The clerk is a young man, maybe twenty, who writes with the speed and legibility of someone who was genuinely good at school. He handles petitions, requests, and the enormous volume of paperwork that running eight hundred people apparently generates. He\'s been doing this for two years. He\'s getting better at knowing which questions the Marshal actually wants to hear.',
+        description: 'The clerk is a young man, maybe twenty, who writes fast and legibly — the handwriting of someone who took notes seriously and never stopped. He handles petitions, requests, and the enormous volume of paperwork that running eight hundred people apparently generates. He\'s been doing this for two years. He\'s getting better at knowing which questions the Marshal actually wants to hear.',
       },
       {
         keywords: ['bench', 'citizens', 'petition', 'waiting'],
@@ -268,9 +268,9 @@ export const COVENANT_ROOMS: Room[] = [
         spawnChance: 0.85,
         spawnType: 'anchored',
         activityPool: [
-          { desc: 'Marshal Cross sits at her desk reading a report, red pen in hand, marking something with the precise frustration of someone who has read this kind of bad news before.', weight: 3 },
+          { desc: 'Marshal Cross sits at her desk reading a report, red pen in hand. She marks a line, circles something, draws a hard underline under something else. She\'s been here before with bad news.', weight: 3 },
           { desc: 'Marshal Cross is standing at a wall map of the four-corners region, one hand tracing a route, lips moving slightly as she thinks out loud. She stops when she notices you.', weight: 2 },
-          { desc: 'Cross is in conversation with one of her lieutenants. Her voice is quiet but carries the cadence of someone who is being very precise about what she means.', weight: 2 },
+          { desc: 'Cross is in conversation with one of her lieutenants. Her voice is quiet but every word lands clearly — no filler, no hedging, no room for misinterpretation.', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.3, neutral: 0.5, wary: 0.2, hostile: 0.0 },
         dialogueTree: 'cv_marshal_cross_intro',
@@ -282,7 +282,7 @@ export const COVENANT_ROOMS: Room[] = [
         spawnChance: 0.90,
         spawnType: 'anchored',
         activityPool: [
-          { desc: 'The clerk writes without looking up, then glances at you with the polite, assessing expression of someone who has learned to categorize people quickly.', weight: 4 },
+          { desc: 'The clerk writes without looking up, then glances at you — one beat, a quick categorization — and returns to his ledger.', weight: 4 },
           { desc: 'The clerk is organizing a stack of papers into a filing system, murmuring to himself as he sorts. "Provisioning... provisioning... no, that\'s a grievance..."', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.4, neutral: 0.5, wary: 0.1, hostile: 0.0 },
@@ -353,7 +353,7 @@ export const COVENANT_ROOMS: Room[] = [
         spawnChance: 0.80,
         spawnType: 'anchored',
         activityPool: [
-          { desc: 'A lieutenant stands at the wall map with a marker in hand, updating a patrol route boundary with the methodical care of someone who knows this notation might save lives.', weight: 3 },
+          { desc: 'A lieutenant stands at the wall map with a marker, extending a patrol boundary line three centimeters east, then stepping back to look at it. She adds a second mark. Pauses. Leaves both.', weight: 3 },
           { desc: 'An officer sits at the long table, working through a binder page by page, occasionally making a note in the margin.', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.1, neutral: 0.5, wary: 0.4, hostile: 0.0 },
@@ -545,7 +545,7 @@ export const COVENANT_ROOMS: Room[] = [
         spawnChance: 0.75,
         spawnType: 'wanderer',
         activityPool: [
-          { desc: 'A woman tends her raised bed, pulling weeds with the focused attention of someone who finds this particular task genuinely satisfying.', weight: 3 },
+          { desc: 'A woman tends her raised bed, pulling weeds one-handed and shaking the roots clean before dropping them in a pile. She doesn\'t rush. This is the good part of the day.', weight: 3 },
           { desc: 'An older man sits on a stump at the river\'s edge, mending a shirt. He works without looking at his hands, watching the water.', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.5, neutral: 0.4, wary: 0.1, hostile: 0.0 },
@@ -846,8 +846,8 @@ export const COVENANT_ROOMS: Room[] = [
         spawnChance: 0.95,
         spawnType: 'anchored',
         activityPool: [
-          { desc: 'The guard reads her paperback with the absorbed attention of someone who has found that the best way to be present is to look absent.', weight: 3 },
-          { desc: 'The guard sets down her book and gives you the polite, direct look of someone reminding you that she\'s been here the whole time.', weight: 2 },
+          { desc: 'The guard reads her paperback. Page turn. She marks her place with her thumbnail without looking up. She knows you\'re here.', weight: 3 },
+          { desc: 'The guard sets down her book and gives you a polite, direct look — not hostile, not welcoming. Just noting that she\'s been here the whole time.', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.1, neutral: 0.7, wary: 0.2, hostile: 0.0 },
       },
@@ -1468,10 +1468,10 @@ export const COVENANT_ROOMS: Room[] = [
         spawnType: 'wanderer',
         quantity: { min: 2, max: 4, distribution: 'weighted_low' },
         activityPool: [
-          { desc: 'An off-duty militiaman cleans her rifle at the bench with the automatic focus of someone whose hands know the procedure without instruction.', weight: 4 },
+          { desc: 'An off-duty militiaman cleans her rifle at the bench, hands moving through the steps without pause — bolt, barrel, spring, reassemble.', weight: 4 },
           { desc: 'Two soldiers sit across from each other on their bunks, speaking in low voices about something specific and quiet. They stop when you enter, then resume when they\'ve assessed you.', weight: 3 },
-          { desc: 'A young militia member oils and re-oils the same piece of her gear, a tell of someone who is anxious and working it out with her hands.', weight: 2 },
-          { desc: 'An older soldier sleeps in his bunk with the practiced depth of someone who sleeps whenever the opportunity presents, regardless of time or noise.', weight: 2 },
+          { desc: 'A young militia member oils and re-oils the same piece of her gear. It doesn\'t need it anymore. Her hands need something to do.', weight: 2 },
+          { desc: 'An older soldier sleeps in his bunk — flat on his back, arms at his sides, out cold — the bunk noise and the ambient light irrelevant to him.', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.2, neutral: 0.6, wary: 0.2, hostile: 0.0 },
         dialogueTree: 'cv_militia_barracks',

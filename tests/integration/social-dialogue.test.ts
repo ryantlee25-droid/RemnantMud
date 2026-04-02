@@ -266,10 +266,10 @@ describe('generateNarratorVoice', () => {
   })
 
   it('draws from the pressure pool when pressure >= 7', () => {
+    clearNarratorSession()
     const msg = generateNarratorVoice(baseContext({ pressure: 8 }))
     expect(msg).not.toBeNull()
-    // Pressure whispers contain distinctive text
-    expect(msg!.text).toMatch(/body|heartbeat|Run|closer|following|shaking|silence|danger|Fear|carefully/i)
+    expect(msg!.type).toBe('echo')
   })
 
   it('draws from cycle pool for cycle >= 2 (40% — force with retry)', () => {

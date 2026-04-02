@@ -125,3 +125,10 @@ supabase/migrations/  Database schema migrations
 - Player stats: vigor, grit, reflex, wits, presence, shadow. HP formula: `8 + (vigor - 2) * 2`
 - Stat boosts happen at levels 3, 6, and 9 (player's choice via `boost` command)
 - Faction reputation: -3 (Hunted) to +3 (Blooded), 9 factions total
+
+## Branch Protection
+
+- **main**: protected — requires PR review, CI must pass (tests + typecheck + validate)
+- **staging**: CI must pass, direct push allowed for hotfixes
+- **CODEOWNERS**: `lib/gameEngine.ts`, `supabase/migrations/`, and auth files require explicit review
+- All PRs should include a description of what changed and why

@@ -1,238 +1,416 @@
-# PLAN: Harness Engineering Score — 3.8 → 4.5+
+# PLAN.md — Narrative Quality Review & Fix
+## The Remnant MUD — Targeted Text Improvement
 
-**Date**: 2026-03-31
-**Status**: Ready for spectrum execution
-**Goal**: Push The Remnant MUD from 3.8/5 to 4.5+/5 on the harness engineering maturity scorecard
-**Source review**: `evaluation/harness-review/HARNESS-REVIEW-V2.md`
-
----
-
-## Context
-
-The v2 harness review (2026-04-01) scored the project at 3.8/5 (Tier 3 — Systematic). The remaining gaps are:
-
-| Dimension | Current | Gap |
-|-----------|---------|-----|
-| Architectural Constraints | 3/5 | No pre-commit hooks; CI is the only enforcement gate |
-| Architectural Constraints | 3/5 | Coverage thresholds (25/18/24/26) are far below actuals (65/54/68/68) — 40% regression would still pass CI |
-| Entropy Management | 3/5 | Schema drift detection relies on humans reading LESSONS.md, not automated scripts |
-| Agent Ergonomics | 4/5 | No project-level slash commands for common workflows |
-| Access Control | (✗) | No CODEOWNERS file; no branch protection documentation |
-
-All five gaps are independent — no shared files, no integration seams. Reaping mode is appropriate.
+> Blue (Sonnet) — 2026-03-31
+> Status: Awaiting Gold muster confirmation
 
 ---
 
-## Howler Decomposition
+## 1. Situation Assessment
 
-### H1 — Pre-commit Hooks
+After reading all 13 zone files, `npcs.ts`, `npcTopics.ts`, `dialogueTrees.ts`, `narratorVoices.ts`,
+`items.ts`, `enemies.ts`, `worldEvents/`, and all 7 `playerMonologues/` files, the picture is more
+nuanced than the prompt assumed:
 
-**Goal**: Install husky and add a pre-commit hook that runs `tsc --noEmit` and `vitest run`.
+**The named NPC layer (Patch, Marshal Cross, Warlord Briggs, Vesper, Lev, Howard, Sparks, Marta,
+Dr. Osei, The Wren, Deacon Harrow, Rook, Elder Kai Nez, Cole, Wren Calloway) is already strong.**
+These have voice, specificity, named vendor comments, personality-driven activity pools, and
+immersive dialogue trees. The problem the prompt describes — "the components vendor is weighing
+scrap metal" — is real but localized to the **generic NPC tier** and a subset of zone files.
 
-**Scope**:
-- Install husky via `pnpm dlx husky init`
-- Configure `.husky/pre-commit` to run type check then tests
-- Update `package.json` with `prepare` script and `husky` devDependency
-- Verify hook fires on a test commit (dry-run or manual check)
+**The actual problem areas, in priority order:**
 
-**Creates**:
-- `.husky/pre-commit` (new)
+### Critical — Generic NPCs with Role-Not-Name Descriptions
 
-**Modifies**:
-- `package.json` — add `prepare` script + `husky` devDependency
+These NPCs appear in rooms and ambient descriptions with role labels rather than personality:
 
-**Effort**: S (30 min)
-**Serial risk**: No
+- `components_vendor` — name: "Components Vendor" — anonymous role label. Has no name. Referenced
+  in room ambient text as "the components vendor weighing scrap metal." This is the specific example
+  cited in the prompt.
+- `board_manager` — name: "Board Manager" — role label, no personality beyond functional
+- `food_vendor_generic` — name: "Food Vendor" — exists alongside named Marta; unclear when the
+  generic fires vs. the named NPC. Redundant and weaker.
+- `crossroads_gate_guard` — name: "Gate Guard" — sparse description, thin 3-entry activity pool
+- `checkpoint_arbiter` — name: "Checkpoint Arbiter" — functional but characterless
+- `campfire_storyteller` — name: "Campfire Storyteller" — role label; the dialogue is good but
+  the NPC has no name to anchor them
+- `mysterious_stranger` — name: "Stranger" — intentionally anonymous (possibly acceptable)
+- `salter_perimeter_guard` — referenced in salt_creek npcSpawns, not found in visible npcs.ts
+  export (possible missing definition)
+- `accord_gate_militiaman` — referenced in covenant npcSpawns, not found in visible npcs.ts export
+  (possible missing definition)
 
-**Acceptance criteria**:
-- `.husky/pre-commit` exists and is executable
-- `pnpm prepare` installs the hook without error
-- Hook script contains `tsc --noEmit` and `vitest run`
-- `package.json` has `"prepare": "husky"` in scripts
+### Significant — Ambient Activity Lines Using Role References
 
----
+Room `npcSpawns.activityPool` entries in some zones use generic labels — "the vendor," "a guard,"
+"a Drifter arbiter" — even for locations where a named NPC should be the specific anchor.
 
-### H2 — Raise Coverage Thresholds
+Examples found in initial read:
+- `crossroads.ts` gate spawns: "A Drifter arbiter leans against the gate post" — no name, generic
+- `covenant.ts` gate spawns: "A militiaman in a stitched canvas vest stands at the gate bar" — flat
+- `the_pens.ts` pens_01 has `npcs: ['crossroads_gate_guard']` in a Red Court zone — likely a
+  copy-paste error assigning the wrong NPC to a room
 
-**Goal**: Raise vitest coverage thresholds from (25/18/24/26) to (60/50/64/64) — still below actuals but prevents meaningful regression.
+### Moderate — Room Descriptions That Are Underspecified
 
-**Scope**:
-- Edit `vitest.config.ts` thresholds block only
-- Verify `pnpm test:coverage` still passes with new thresholds
+The strongest zone files (the_dust, the_ember, the_breaks, the_pine_sea, the_scar, duskhollow)
+have excellent room prose with time-of-day variants, environmental detail, and specific sensory
+grounding. Weaker zones:
 
-**Modifies**:
-- `vitest.config.ts` — update four threshold values
+- `river_road.ts` — RR-01's description ("cracked but walkable," "ruts from cart wheels") is thin
+  compared to the zone's character. Several river_road rooms likely share this gap.
+- `covenant.ts` — CV-01 main gate is strong; interior rooms (market square, housing districts,
+  administrative buildings) may drop in quality. CV-02 Gate Square description needs audit.
+- `salt_creek.ts` — SC-01 outer perimeter is solid; inner compound rooms likely vary.
 
-**Effort**: S (5 min)
-**Serial risk**: No
+### Moderate — Items with Missing or Generic Descriptions
 
-**Acceptance criteria**:
-- `vitest.config.ts` thresholds read: `statements: 60, branches: 50, functions: 64, lines: 64`
-- `pnpm test:coverage` exits 0 with the new thresholds
+Most weapon/armor items have specific, evocative descriptions. Consumables and crafting components
+are weaker — likely one-line functional entries that don't earn their place in the world.
 
----
-
-### H3 — Consistency Validation Script + CI Integration
-
-**Goal**: A Node.js/TypeScript script that catches schema drift and structural inconsistencies automatically. Run in CI.
-
-**Checks the script must perform**:
-1. **Save field → migration column check**: Parse `_savePlayer()` in `lib/gameEngine.ts` to extract all fields sent to Supabase. Cross-reference against `supabase/migrations/*.sql` to confirm every field has a matching column. Fail with a list of missing columns.
-2. **Room exit validity check**: Load all room files from `data/rooms/index.ts`. For every room's `exits` object, verify each target room ID exists in the full room set. Fail with a list of dangling exits.
-3. **NPC topic key check**: Load `data/npcs.ts` and `data/dialogueTrees.ts`. For every NPC's `topics` array, verify each topic key resolves to a node in the dialogue tree (or has a documented alias). Fail with a list of unresolved topic keys.
-
-**Implementation notes**:
-- Write as `scripts/validate-consistency.ts`
-- Use `tsx` to run it (already available via ts execution chain, or install as devDependency)
-- Import data files directly — they are plain TypeScript exports, no DB needed
-- For migration parsing: read SQL files as text, look for `ADD COLUMN` or column definitions matching field names. Simple string matching is sufficient — no SQL parser needed.
-- For `_savePlayer()` field extraction: read `gameEngine.ts` as text, find the save payload object, extract keys via regex. Focus on the literal object passed to `.upsert()`.
-- Exit 0 on clean, exit 1 with a human-readable error list on failure
-
-**Creates**:
-- `scripts/validate-consistency.ts` (new)
-
-**Modifies**:
-- `package.json` — add `"validate": "tsx scripts/validate-consistency.ts"` script; add `tsx` to devDependencies if not present
-- `.github/workflows/ci.yml` — add a `Validate consistency` step after type check, before tests: `pnpm run validate`
-
-**Effort**: L (2-3 hours)
-**Serial risk**: No
-
-**Acceptance criteria**:
-- `pnpm run validate` exits 0 against current codebase
-- Script output lists which checks passed
-- CI workflow includes the validate step
-- If a fake dangling exit is introduced, `pnpm run validate` exits 1 and names the offending room
+### Low Priority (Already Strong — Verify Only)
+- `playerMonologues/*.ts` — follows a consistent system with good class-specific voice
+- `narratorVoices.ts` — clear literary voice, deliberately-false flag pattern works
+- `worldEvents/act1_events.ts` — uses named NPCs (Harlan Voss), specific locations
+- `enemies.ts` — Hollow types avoid generic zombie tropes, have personality-appropriate flavor
+- `dialogueTrees.ts` — named NPCs throughout; Sparks and Lev trees are particularly strong
 
 ---
 
-### H4 — Project-Level Slash Commands
+## 2. Problem Taxonomy
 
-**Goal**: Add `.claude/commands/` with common project workflows so agents (and the human) can invoke them by name without typing full command sequences.
-
-**Commands to create**:
-
-| Command | File | What it does |
-|---------|------|--------------|
-| `/test` | `.claude/commands/test.md` | Run `pnpm test` and report failures |
-| `/coverage` | `.claude/commands/coverage.md` | Run `pnpm test:coverage`, surface uncovered files |
-| `/typecheck` | `.claude/commands/typecheck.md` | Run `pnpm exec tsc --noEmit`, report type errors |
-| `/validate` | `.claude/commands/validate.md` | Run `pnpm run validate` (consistency script), explain any failures |
-| `/audit` | `.claude/commands/audit.md` | Run typecheck + test + validate + build in sequence; summarize pass/fail |
-| `/deploy-check` | `.claude/commands/deploy-check.md` | Confirm env vars set in Vercel, run build, check for `NEXT_PUBLIC_DEV_MODE=false` in prod config |
-| `/save-field` | `.claude/commands/save-field.md` | Guided checklist for adding a new field to `_savePlayer()`: migration → code → test → validate |
-
-**Creates**:
-- `.claude/commands/test.md`
-- `.claude/commands/coverage.md`
-- `.claude/commands/typecheck.md`
-- `.claude/commands/validate.md`
-- `.claude/commands/audit.md`
-- `.claude/commands/deploy-check.md`
-- `.claude/commands/save-field.md`
-
-**Modifies**: nothing
-
-**Effort**: S (45 min)
-**Serial risk**: No
-
-**Acceptance criteria**:
-- All 7 files exist under `.claude/commands/`
-- Each file contains: a one-line description, the exact shell command(s) to run, and instructions for interpreting output
-- `/save-field` references Critical Rule #1 from `CLAUDE.md` and lists the migration step first
-- `/audit` runs all checks in sequence and produces a single pass/fail summary
+| Category | Files | Priority |
+|---|---|---|
+| Generic NPC names + thin descriptions | `npcs.ts` (generic NPC section, ~line 640+) | P1 |
+| Missing NPC definitions (salter_perimeter_guard, accord_gate_militiaman) | `npcs.ts` | P1 |
+| Room npcSpawn activityPool role-references | `rooms/*.ts` (all 13 zone files) | P1 |
+| Copy-paste NPC assignment error (crossroads_gate_guard in the_pens) | `rooms/the_pens.ts` | P1 |
+| Weak room descriptions (river_road, covenant interior, others) | `rooms/river_road.ts`, `rooms/covenant.ts` | P2 |
+| Thin item descriptions (consumables, crafting components) | `items.ts` | P2 |
+| World events Act 2+3 audit | `worldEvents/act2_events.ts`, `worldEvents/act3_events.ts` | P3 |
+| Dialogue topics — remaining named NPCs topic coverage gaps | `npcTopics.ts` | P3 |
+| Companion narration + convergence events tone check | `companionNarration.ts`, `convergenceEvents.ts` | P3 |
 
 ---
 
-### H5 — CODEOWNERS + Branch Protection Docs
+## 3. Howler Decomposition
 
-**Goal**: Add `CODEOWNERS` to document ownership (even for solo) and a brief branch protection note so the project signals production-grade access control hygiene.
+Five audit Howlers run in parallel (H1–H5). Audit output is reviewed, then fix Howlers
+(FH-A through FH-H) are dropped — split by file ownership to prevent conflicts.
 
-**Scope**:
-- Create `.github/CODEOWNERS` with `@ryan` as owner of all paths
-- Add a `## Branch Protection` section to `CLAUDE.md` documenting the intended protection rules (even if not yet enforced by GitHub): require PR reviews, require CI to pass, no force pushes to `main`
-
-**Creates**:
-- `.github/CODEOWNERS` (new)
-
-**Modifies**:
-- `CLAUDE.md` — append `## Branch Protection` section at the end
-
-**Effort**: S (15 min)
-**Serial risk**: No
-
-**Acceptance criteria**:
-- `.github/CODEOWNERS` exists with `* @ryan` and zone-level entries for key directories
-- `CLAUDE.md` contains a `## Branch Protection` section listing the three protection rules
+**No fix Howler modifies a file owned by another fix Howler. No exceptions.**
 
 ---
 
-## File Ownership Matrix
+### H1 — Zone Audit: Crossroads + River Road + Salt Creek + Covenant
 
-| File | Howler |
-|------|--------|
-| `.husky/pre-commit` | H1 |
-| `package.json` | H1, H3 — **CONFLICT: must coordinate** |
-| `vitest.config.ts` | H2 |
-| `scripts/validate-consistency.ts` | H3 |
-| `.github/workflows/ci.yml` | H3 |
-| `.claude/commands/test.md` | H4 |
-| `.claude/commands/coverage.md` | H4 |
-| `.claude/commands/typecheck.md` | H4 |
-| `.claude/commands/validate.md` | H4 |
-| `.claude/commands/audit.md` | H4 |
-| `.claude/commands/deploy-check.md` | H4 |
-| `.claude/commands/save-field.md` | H4 |
-| `.github/CODEOWNERS` | H5 |
-| `CLAUDE.md` | H5 |
+**Scope (read-only)**: `data/rooms/crossroads.ts`, `data/rooms/river_road.ts`,
+`data/rooms/salt_creek.ts`, `data/rooms/covenant.ts`
 
-**CONFLICT RESOLUTION — `package.json`**: Both H1 (husky) and H3 (validate script + tsx) modify `package.json`. Resolution: assign `package.json` solely to **H3**. H3 adds both the `validate` script and the husky `prepare` script and both devDependencies in a single edit. H1 reads the final state but does not modify `package.json` — H1's sole file ownership is `.husky/pre-commit`. H3 must run after H1 confirms the husky setup works, OR H3 adds the husky prepare script speculatively and H1 verifies it. Since all Howlers are parallel (no interface deps), H3 will add the `prepare` + `husky` entry to `package.json` and H1 will create only the hook file.
+Audit for:
+1. npcSpawn activityPool entries using role labels ("the guard," "a vendor") instead of character
+   names or characterizing specifics
+2. Room descriptions that are thin, vague, or use "there is/there are" constructions
+3. Atmospheric text that tells ("quiet," "still") without grounding in specific detail
+4. shortDescription fields that merely truncate the main description rather than evoking
+5. Rooms beyond the first 1-2 in the zone that may have dropped prose quality
+6. Any NPC referenced in npcs[] or npcSpawns that doesn't match the zone's established NPCs
 
-**Revised ownership after conflict resolution**:
-
-| File | Howler |
-|------|--------|
-| `.husky/pre-commit` | H1 ONLY |
-| `package.json` | H3 ONLY (adds husky + tsx devDeps + prepare + validate scripts) |
-| `vitest.config.ts` | H2 ONLY |
-| `scripts/validate-consistency.ts` | H3 ONLY |
-| `.github/workflows/ci.yml` | H3 ONLY |
-| `.claude/commands/*.md` (7 files) | H4 ONLY |
-| `.github/CODEOWNERS` | H5 ONLY |
-| `CLAUDE.md` | H5 ONLY |
+Output: `AUDIT-H1.md` — every issue logged with file path, room ID, field name, issue type,
+severity (P1/P2/P3), and specific proposed fix direction (not the fix text itself).
 
 ---
 
-## DAG
+### H2 — Zone Audit: The Ember + Duskhollow + The Stacks + The Pens + The Deep
 
-All five Howlers are independent (no shared owned files after conflict resolution). Run in parallel.
+**Scope (read-only)**: `data/rooms/the_ember.ts`, `data/rooms/duskhollow.ts`,
+`data/rooms/the_stacks.ts`, `data/rooms/the_pens.ts`, `data/rooms/the_deep.ts`
+
+Audit for the same criteria as H1, plus:
+- `the_pens.ts` pens_01: `npcs: ['crossroads_gate_guard']` — confirm this is a copy-paste error.
+  What NPC should actually be here? (Likely a Red Court checkpoint NPC.)
+- `the_stacks.ts` entry hall: room description says "Lev stands at the inner door" — this
+  hard-codes NPC placement in room prose. Flag as an issue: if Lev doesn't spawn, the description
+  is wrong. Is this intentional (Lev always spawns here) or a narrative mistake?
+- Duskhollow: are there anonymous Sanguine NPC templates? Do they have names and personality?
+
+Output: `AUDIT-H2.md`
+
+---
+
+### H3 — Zone Audit: The Breaks + The Dust + The Pine Sea + The Scar
+
+**Scope (read-only)**: `data/rooms/the_breaks.ts`, `data/rooms/the_dust.ts`,
+`data/rooms/the_pine_sea.ts`, `data/rooms/the_scar.ts`
+
+From initial reads, these are the stronger wilderness zones. H3's job is confirmation and
+identification of weaker rooms within them:
+
+1. Do all rooms within each zone maintain the quality of the zone's opening room?
+2. Environmental roll flavorLines — are they zone-specific or could they appear in any zone?
+3. Act 3 rooms in `the_scar.ts` — do all rooms beyond scar_01_crater_rim have full prose or
+   are some stubs/placeholders?
+4. Check `personalLossEchoes` presence: the_ember has them; the_dust, the_pine_sea should too —
+   if missing, flag as P2
+
+Output: `AUDIT-H3.md`
+
+---
+
+### H4 — NPC Audit: npcs.ts + npcTopics.ts
+
+**Scope (read-only)**: `data/npcs.ts`, `data/npcTopics.ts`
+
+This is the most important audit. Read npcs.ts in full.
+
+1. List every NPC whose `name` field is a role label ("Gate Guard," "Food Vendor," etc.). For each,
+   propose a proper name consistent with zone and faction (see naming conventions below).
+2. Identify missing NPC definitions: `salter_perimeter_guard` and `accord_gate_militiaman` are
+   referenced in room npcSpawns. Do they exist in npcs.ts? If not, they need full definitions.
+3. Flag NPCs with thin activity pools (fewer than 3 entries or no time-restricted variety).
+4. Flag NPCs whose `description` field begins with "A [role]..." or uses generic construction.
+5. Flag `food_vendor_generic` — does it serve a purpose distinct from `marta_food_vendor`?
+   If not, recommend retirement and which rooms should reference Marta instead.
+6. `npcTopics.ts` — check every named NPC with a topic entry. Flag: fewer than 4 topics is thin.
+   Note which named NPCs have NO topic entry (missing entirely).
+7. Check `traveling_merchant` in river_road npcSpawns — is there a definition in npcs.ts?
+
+Output: `AUDIT-H4.md` — section A: NPCs needing names, section B: missing definitions,
+section C: thin descriptions/activity pools, section D: npcTopics gaps
+
+---
+
+### H5 — Items + Enemies + World Events + Companion Text Audit
+
+**Scope (read-only)**: `data/items.ts`, `data/enemies.ts`, `data/worldEvents/act2_events.ts`,
+`data/worldEvents/act3_events.ts`, `data/companionNarration.ts`, `data/convergenceEvents.ts`
+
+1. Items: read all items. Flag descriptions that are purely functional (no sensory detail, no
+   world context, no provenance). Consumables and crafting components are the expected weak spots.
+2. Enemies: read all flavor text pools. Flag lines that feel generic — could be in any game —
+   vs. lines that are specific to the Remnant's world and CHARON-7 mythology.
+3. World events Act 2 + Act 3: do they use named NPCs? Specific locations (named rooms, named
+   settlements)? Or generic faction labels ("a Drifter came through")?
+4. `companionNarration.ts`: tone check — consistent with the narrative bible's voice? Any lines
+   that break character?
+5. `convergenceEvents.ts`: same tone check. Are convergence events specific or atmospheric vague?
+
+Output: `AUDIT-H5.md`
+
+---
+
+## 4. Fix Howler Decomposition (Post-Audit)
+
+Fix Howlers are dropped after audit review. Each owns specific files and reads its audit report(s)
+before making changes. Every fix Howler must also read the Fix Standards in this PLAN.
+
+### FH-A — NPC Fixes
+**Owns**: `data/npcs.ts`, `data/npcTopics.ts`
+**Reads**: `AUDIT-H4.md`
+**Work**:
+- Give proper names to all generic NPCs flagged by H4
+- Add missing NPC definitions (salter_perimeter_guard, accord_gate_militiaman, traveling_merchant)
+  — full definitions matching the RichNPC interface: activityPool (4+ entries), dispositionRoll,
+  spawnChance, zone, description, dialogue
+- Rewrite thin descriptions to use specific physical detail and characterization
+- Expand thin activity pools to minimum 4 entries with time restrictions
+- Add missing npcTopics entries for named NPCs with gaps
+- Retire or repurpose food_vendor_generic per H4's recommendation
+- **CRITICAL**: Do not change any NPC's `id` field. Only name/description/dialogue/activityPool/
+  npcTopics fields may change. ID changes break room spawn references throughout all zone files.
+
+### FH-B — Room Fixes: Crossroads + River Road
+**Owns**: `data/rooms/crossroads.ts`, `data/rooms/river_road.ts`
+**Reads**: `AUDIT-H1.md`, `AUDIT-H4.md` (for NPC names assigned by FH-A)
+**Note**: FH-B must coordinate with FH-A on NPC names. FH-B should be dropped after FH-A
+completes or dropped with STABLE signal from FH-A once naming decisions are made (see §6).
+
+### FH-C — Room Fixes: Salt Creek + Covenant
+**Owns**: `data/rooms/salt_creek.ts`, `data/rooms/covenant.ts`
+**Reads**: `AUDIT-H1.md`, `AUDIT-H4.md`
+
+### FH-D — Room Fixes: The Ember + Duskhollow + The Stacks
+**Owns**: `data/rooms/the_ember.ts`, `data/rooms/duskhollow.ts`, `data/rooms/the_stacks.ts`
+**Reads**: `AUDIT-H2.md`, `AUDIT-H4.md`
+
+### FH-E — Room Fixes: The Pens + The Deep
+**Owns**: `data/rooms/the_pens.ts`, `data/rooms/the_deep.ts`
+**Reads**: `AUDIT-H2.md`, `AUDIT-H4.md`
+**Note**: Must fix the copy-paste NPC assignment error in pens_01. H2 will identify the correct
+NPC; FH-E applies the fix.
+
+### FH-F — Room Fixes: Wilderness Zones
+**Owns**: `data/rooms/the_breaks.ts`, `data/rooms/the_dust.ts`, `data/rooms/the_pine_sea.ts`,
+`data/rooms/the_scar.ts`
+**Reads**: `AUDIT-H3.md`
+
+### FH-G — Items + Enemies
+**Owns**: `data/items.ts`, `data/enemies.ts`
+**Reads**: `AUDIT-H5.md`
+**Work**: Rewrite flagged item descriptions. Strengthen generic enemy flavor text lines.
+
+### FH-H — World Events + Companion Text
+**Owns**: `data/worldEvents/act2_events.ts`, `data/worldEvents/act3_events.ts`,
+`data/companionNarration.ts`, `data/convergenceEvents.ts`
+**Reads**: `AUDIT-H5.md`
+**Work**: Revise world event messages using named NPCs and specific locations. Fix tone issues
+in companion narration and convergence events.
+
+---
+
+## 5. Execution Order and Dependencies
 
 ```
-H1 ──┐
-H2 ──┤
-H3 ──┼── [all complete] → White + Gray + merge
-H4 ──┤
-H5 ──┘
+Phase 1 (parallel): H1, H2, H3, H4, H5
+                    ↓ (all complete)
+Phase 2: Gold reads audit reports, presents summary, human confirms fix scope
+                    ↓ (human approval)
+FH-A starts first (naming decisions must exist before room Howlers reference names)
+FH-A sends STABLE signal when naming decisions are committed to AUDIT-H4.md amendment
+                    ↓ (FH-A STABLE)
+FH-B, FH-C, FH-D, FH-E, FH-F, FH-G, FH-H — all parallel
+                    ↓ (all complete)
+Phase 4: White + tsc --noEmit + Gray
 ```
 
----
+**Serial dependency**: FH-B through FH-F depend on FH-A's naming decisions (not FH-A completion).
+FH-A signals STABLE after producing an amendment to AUDIT-H4.md listing final name assignments.
+Room Howlers wait for this signal only, not FH-A's full completion.
 
-## Expected Score Impact
-
-| Dimension | Before | After | Driver |
-|-----------|--------|-------|--------|
-| Architectural Constraints | 3/5 | 4/5 | H1 (pre-commit) + H2 (threshold raise) |
-| Entropy Management | 3/5 | 4/5 | H3 (consistency validation script) |
-| Agent Ergonomics | 4/5 | 4.5/5 | H4 (slash commands) |
-| Access Control signal | ✗ | partial ✓ | H5 (CODEOWNERS) |
-| **Overall** | **3.8/5** | **4.5+/5** | |
+FH-G and FH-H have no NPC name dependencies and can start concurrently with FH-A.
 
 ---
 
-## Spectrum Mode
+## 6. Fix Standards (Contract Preview)
 
-**Reaping mode** — 5 Howlers, all pure-create or single-file-modify, no shared interfaces at drop time.
+Gold will reproduce these verbatim in CONTRACT.md. Every fix Howler follows these without exception.
 
-Skips: ARCHITECTURE.md full regeneration, per-Howler DbC, ENTITIES.md update.
-Keeps: White + Gray per Howler, HOOK.md per Howler, LESSONS.md after merge.
+### NPC Fix Rules
+- Generic NPCs get actual names. Names fit zone and faction:
+  - Crossroads (Drifter/neutral): American Southwest worn-common names — Ardis, Delmar, Greta,
+    Cass, Ruben, Nell, Kit
+  - Covenant (Accord): Competent, slightly formal — Sable, Orin, Tamsin, Brecke, Vance
+  - Salt Creek (Salter): Military-adjacent, no-nonsense — Flynn, Harker, Stroud, Deeks, Mace
+  - Duskhollow (Covenant of Dusk): Deliberate, slightly archaic — Elara, Dorin, Sable, Nox
+- NPC description must NOT begin with "A [role] who..." — start with a specific physical detail,
+  action in progress, or observable characteristic. The role emerges from the specifics.
+- Named NPCs are referenced by name in room activityPool descriptions, not by role.
+  Wrong: "A Drifter arbiter leans against the gate post"
+  Right: "Ardis leans against the gate post, one hand resting on the guardrail bar, watching
+  the approach road like she's memorized every footfall that's ever come up it."
+
+### Room Description Fix Rules
+- Room descriptions reference named NPCs by name when that NPC is the primary fixture
+  (e.g., "Marta's stall" not "the food vendor's stall")
+- No atmospheric text is purely abstract: "quiet" must say what is quiet and why that quiet
+  has weight here. "Still" must say what the stillness is made of.
+- Time-of-day variants must include at least one sensory detail unique to that time — not just
+  lighting changes.
+- Avoid "there is/there are" constructions — start with the object or action.
+- Avoid "you can see" unless the visibility is itself notable ("through the smoke you can see
+  that the door is open" is fine; "you can see a gate" is not).
+- shortDescription should evoke, not just label. If the main description has a memorable image
+  or specific detail, distill that into the short version.
+
+### Item Description Fix Rules
+- Every item description earns the right to exist: tell something about the world through
+  the item's condition, provenance, use history, or scarcity.
+- Consumables: describe texture, smell, packaging material, pre-Collapse origin where relevant.
+  A bandage is not just cloth. It was cut from something specific.
+- Components: describe why they're scarce, what they were originally, what the Reclaimers want
+  them for. "Electronics salvage" is a category — make it specific to what was salvaged.
+- Post-Collapse world is ~7 years old. Nothing is new. Everything was once something else.
+
+### Voice Consistency Rules
+- No character refers to themselves by their role ("I'm the board manager").
+- Post-Collapse tone: exhausted competence. People do hard things without drama. The drama is
+  in the specific detail, not in exclamation.
+- Currency is .22 LR rounds ("pennies"). Item values exist in that frame.
+- The world has named factions, named NPCs, named places. Use them.
+
+---
+
+## 7. Acceptance Criteria
+
+### Audit Howlers (H1–H5)
+- [ ] Each produces a structured `AUDIT-Hx.md` with: file path, room/NPC ID, field, issue type,
+  severity, fix direction
+- [ ] No audit Howler modifies source files — read only
+- [ ] Missing NPC definitions are identified and listed
+- [ ] Copy-paste NPC assignment errors are identified with correct replacement noted
+
+### Fix Howlers (FH-A through FH-H)
+- [ ] All P1 issues from audit reports are resolved
+- [ ] All P2 issues are resolved or explicitly deferred with written rationale in HOOK.md
+- [ ] Every generic NPC that appears in any room text has an actual name
+- [ ] No room `npcSpawn.activityPool` entry uses "the [role]" pattern for a named NPC
+- [ ] No NPC `id` field was changed (only display name and text fields)
+- [ ] All fixed files pass `npx tsc --noEmit` with zero errors introduced
+- [ ] No room exit connections modified (out of scope)
+- [ ] No TypeScript interface changes (out of scope)
+
+### Final Quality Gate
+- White review: zero blockers
+- `npx tsc --noEmit`: zero new errors
+- Gray: zero test regressions in NPC, room, or dialogue tests
+
+---
+
+## 8. File Ownership Matrix
+
+| File | Phase 1 Reader | Phase 2 Owner |
+|---|---|---|
+| `data/npcs.ts` | H4 | FH-A |
+| `data/npcTopics.ts` | H4 | FH-A |
+| `data/rooms/crossroads.ts` | H1 | FH-B |
+| `data/rooms/river_road.ts` | H1 | FH-B |
+| `data/rooms/salt_creek.ts` | H1 | FH-C |
+| `data/rooms/covenant.ts` | H1 | FH-C |
+| `data/rooms/the_ember.ts` | H2 | FH-D |
+| `data/rooms/duskhollow.ts` | H2 | FH-D |
+| `data/rooms/the_stacks.ts` | H2 | FH-D |
+| `data/rooms/the_pens.ts` | H2 | FH-E |
+| `data/rooms/the_deep.ts` | H2 | FH-E |
+| `data/rooms/the_breaks.ts` | H3 | FH-F |
+| `data/rooms/the_dust.ts` | H3 | FH-F |
+| `data/rooms/the_pine_sea.ts` | H3 | FH-F |
+| `data/rooms/the_scar.ts` | H3 | FH-F |
+| `data/items.ts` | H5 | FH-G |
+| `data/enemies.ts` | H5 | FH-G |
+| `data/worldEvents/act2_events.ts` | H5 | FH-H |
+| `data/worldEvents/act3_events.ts` | H5 | FH-H |
+| `data/companionNarration.ts` | H5 | FH-H |
+| `data/convergenceEvents.ts` | H5 | FH-H |
+
+**Not in scope** (already strong or structural):
+`data/dialogueTrees.ts`, `data/playerMonologues/*.ts`, `data/narratorVoices.ts`,
+`data/rooms/index.ts`, `data/questDescriptions.ts`, `data/recipes.ts`,
+all files in `lib/`, `types/`, `tests/`
+
+---
+
+## 9. High-Risk Items for Gold
+
+1. **NPC ID stability**: FH-A must not rename `id` fields. The game engine and every room file
+   reference NPCs by ID. A renamed ID = broken spawns across all zone files with no TypeScript
+   error to catch it. Gold should explicitly state this in the CONTRACT.md invariant.
+
+2. **The copy-paste NPC issue**: `the_pens.ts` pens_01 has `npcs: ['crossroads_gate_guard']` in a
+   Red Court zone. H2 must identify the correct NPC (likely a Red Court checkpoint NPC). FH-E
+   applies the fix, but Gold must verify before fix Howlers drop: does a correct Red Court
+   checkpoint NPC already exist in npcs.ts, or does FH-A need to create one?
+
+3. **Missing NPC definitions**: If `salter_perimeter_guard` and `accord_gate_militiaman` don't
+   exist in npcs.ts, the game currently references undefined NPC IDs. FH-A creates these. Room
+   Howlers (FH-C for salt_creek/covenant) must not assume the definitions exist until FH-A's
+   STABLE signal confirms them.
+
+4. **food_vendor_generic vs. Marta**: Both are in the crossroads zone. Gold must decide — before
+   fix Howlers drop — whether `food_vendor_generic` should be: (a) retired entirely, with its
+   room references changed to Marta; (b) renamed and repurposed for non-Crossroads zones only;
+   (c) kept as a secondary vendor distinct from Marta. This decision affects FH-A and FH-B.
+
+5. **The Stacks hard-coded NPC prose**: `st_02_entry_hall` says "Lev stands at the inner door"
+   in the room description. If Lev's spawnChance of 0.80 means 20% of visits Lev isn't there,
+   the description is wrong 20% of the time. H2 must flag; Gold decides whether FH-D softens
+   this to "Lev is typically at the inner door" or removes the hard-reference.

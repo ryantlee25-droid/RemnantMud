@@ -142,6 +142,11 @@ export default function StatsTab() {
           </div>
         </div>
       )}
+
+      {/* Auto-save indicator */}
+      {state.saving && (
+        <div className="text-amber-700 text-xs italic">saving...</div>
+      )}
     </div>
   )
 }

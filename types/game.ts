@@ -723,6 +723,7 @@ export interface GameState {
   combatState: CombatState | null
   log: GameMessage[]
   loading: boolean
+  saving?: boolean
   initialized: boolean
   playerDead: boolean
   ledger: PlayerLedger | null

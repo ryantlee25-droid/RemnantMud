@@ -1426,6 +1426,23 @@ export const COVENANT_ROOMS: Room[] = [
         depletion: { cooldownMinutes: { min: 99999, max: 99999 }, respawnChance: 0.0 },
       },
     ],
+    hollowEncounter: {
+      baseChance: 0.08,
+      timeModifier: { day: 0.5, dawn: 1.0, dusk: 1.0, night: 1.5 },
+      threatPool: [
+        { type: 'shuffler', weight: 3, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 1, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
+      activityPool: {
+        shuffler: [
+          { desc: 'stands in the narrow aisle between shelves, arms hanging, head turning slowly from box to box as if reading labels it can no longer parse', weight: 3 },
+        ],
+        remnant: [
+          { desc: 'runs its fingers along a shelf\'s edge in the dark, methodical, as if cataloguing by touch what it can no longer understand by sight', weight: 2 },
+        ],
+      },
+    },
     narrativeNotes: 'Act II critical-path lore room. Accessible only via lockpick or courthouse_archive_key. Contains MERIDIAN revelations and Accord history discrepancies that recontextualize the faction. Should feel like a reward for players who pursued the investigation threads.',
   },
 

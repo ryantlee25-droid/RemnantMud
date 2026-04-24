@@ -50,6 +50,7 @@ import { handleCraft } from '@/lib/actions/craft'
 import { attemptStealth } from '@/lib/stealth'
 import { createCycleSnapshot, computeInheritedReputation } from '@/lib/echoes'
 import { suggestVerb as parserSuggestVerb } from '@/lib/parser'
+import { shouldFireIdleHint, markIdleHintFired, IDLE_HINT_MESSAGE } from '@/lib/idleHint'
 
 // ------------------------------------------------------------
 // Narrative Overhaul imports (convoy remnant-narrative-0329)
@@ -222,6 +223,14 @@ export class GameEngine implements EngineCore {
   }
 
   private listeners: Array<(state: GameState) => void> = []
+
+  /**
+   * Transient counter: number of consecutive post-action steps taken without
+   * entering combat. Not persisted to DB. Resets when combat starts (see
+   * wasInCombat -> combatState.active transition in dispatch). Used by the
+   * idle-hint system (H7) to surface a zone nudge after 30 quiet actions.
+   */
+  private _noCombatActionCounter = 0
 
   // ----------------------------------------------------------
   // State subscription
@@ -2015,6 +2024,37 @@ export class GameEngine implements EngineCore {
     if (action.verb === 'talk' && this.state.activeDialogue) {
       await this.attemptTutorialHint('first_npc')
     }
+
+    // ── Idle hint (H7) ──
+    // Surfaces after threshold consecutive non-combat actions, nudging the player
+    // toward higher-density zones. Once per cycle (localStorage). The counter
+    // increments every action; it resets when combat starts (see below where
+    // wasInCombat -> combatState.active transition is detected).
+    {
+      const combatJustStarted = !wasInCombat && !!(this.state.combatState?.active)
+      if (combatJustStarted) {
+        // Reset on combat start so the hint doesn't fire during quiet stretches
+        // right after a fight
+        this._noCombatActionCounter = 0
+      } else if (!this.state.combatState?.active) {
+        // Non-combat action: increment and potentially fire
+        this._noCombatActionCounter += 1
+        const player = this.state.player
+        if (
+          player &&
+          typeof localStorage !== 'undefined' &&
+          shouldFireIdleHint(this._noCombatActionCounter, player.cycle, localStorage)
+        ) {
+          this._appendMessages([{
+            id: crypto.randomUUID(),
+            text: IDLE_HINT_MESSAGE,
+            type: 'system',
+          }])
+          markIdleHintFired(player.cycle, localStorage)
+        }
+      }
+    }
+    // ── End idle hint ──
 
     // Room-discovery persistence: if a movement verb changed the room, record it.
     // Fires after the handler so markVisited has already been called (by movement.ts).

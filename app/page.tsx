@@ -16,12 +16,7 @@ import GameLayout from '@/components/GameLayout'
 import Terminal from '@/components/Terminal'
 import CommandInput from '@/components/CommandInput'
 import Sidebar from '@/components/Sidebar'
-import {
-  initialCreationState,
-  creationPrompt,
-  handleCreationInput,
-  type CreationState,
-} from '@/lib/terminalCreation'
+import CharacterCreation from '@/components/CharacterCreation'
 import {
   deathMessages,
   theBetweenMessages,
@@ -45,9 +40,6 @@ export default function GamePage() {
   const { state, dispatch, engine } = useGame()
   const [authPhase, setAuthPhase] = useState<AuthPhase>('checking')
   const [gameFlow, setGameFlow] = useState<GameFlow>('playing')
-
-  // Character creation state machine (terminal-based)
-  const [creationState, setCreationState] = useState<CreationState | null>(null)
 
   // Retry callback for load-error phase — populated inside the init useEffect
   const retryLoadRef = useRef<(() => void) | null>(null)
@@ -95,10 +87,7 @@ export default function GamePage() {
               engine._appendMessages(prologueMessages())
               setAuthPhase('ready')
             } else {
-              // Start creation directly
-              const cs = initialCreationState()
-              setCreationState(cs)
-              engine._appendMessages(creationPrompt(cs))
+              // Start creation directly — CharacterCreation component renders
               setAuthPhase('creating')
             }
           }
@@ -314,11 +303,8 @@ export default function GamePage() {
         if (typeof window !== 'undefined') localStorage.setItem(PROLOGUE_KEY, '1')
         setGameFlow('playing')
 
-        // If no player exists, start character creation
+        // If no player exists, start character creation (visual component renders)
         if (!state.initialized && !state.player) {
-          const cs = initialCreationState()
-          setCreationState(cs)
-          engine._appendMessages(creationPrompt(cs))
           setAuthPhase('creating')
         }
       } else if (upper === 'RESTART' || upper === 'NEWGAME' || upper === 'RESET') {
@@ -348,57 +334,10 @@ export default function GamePage() {
     }
 
     // ── Character creation phase ───────────────────────────
-    if (authPhase === 'creating' && creationState) {
-      // Bug #1: restart recognized during character creation
-      const upperCreating = trimmed.toUpperCase()
-      if (upperCreating === 'RESTART' || upperCreating === 'NEWGAME' || upperCreating === 'RESET') {
-        const { handleRestart } = await import('@/lib/actions/system')
-        engine._appendMessages(handleRestart())
-        restartWarningShownRef.current = true
-        return
-      }
-
-      // UX #15: detect real game verbs during creation and give a helpful error
-      const { parseCommand: parseCmd } = await import('@/lib/parser')
-      const parsedCreating = parseCmd(trimmed)
-      if (parsedCreating.verb !== 'unknown') {
-        engine._appendMessages([{
-          id: crypto.randomUUID(),
-          text: `You can't ${parsedCreating.verb} right now — you're creating a character. Finish character creation first.`,
-          type: 'system' as const,
-        }])
-        return
-      }
-
-      const result = handleCreationInput(creationState, trimmed)
-      setCreationState(result.nextState)
-      engine._appendMessages(result.messages)
-
-      if (result.done && result.result) {
-        try {
-          if (gameFlow === 'rebirth') {
-            await engine.rebirthWithStats(
-              result.result.name,
-              result.result.stats,
-              result.result.characterClass,
-              result.result.personalLoss,
-            )
-          } else {
-            await engine.createCharacter(
-              result.result.name,
-              result.result.stats,
-              result.result.characterClass,
-              result.result.personalLoss,
-            )
-          }
-        } catch (err) {
-          engine._appendMessages([{
-            id: crypto.randomUUID(),
-            text: `Character creation failed: ${err instanceof Error ? err.message : 'Unknown error'}`,
-            type: 'error' as const,
-          }])
-        }
-      }
+    // The visual CharacterCreation component drives creation/rebirth.
+    // The command input is hidden while authPhase === 'creating', but
+    // guard here in case anything ever dispatches through this path.
+    if (authPhase === 'creating') {
       return
     }
 
@@ -441,10 +380,7 @@ export default function GamePage() {
       const upper = trimmed.toUpperCase()
       if (upper === 'BEGIN') {
         setGameFlow('rebirth')
-        // Start rebirth character creation with echo stats
-        const cs = initialCreationState()
-        setCreationState(cs)
-        engine._appendMessages(creationPrompt(cs))
+        // Visual CharacterCreation component drives rebirth with echo stats
         setAuthPhase('creating')
       } else if (upper === 'RESTART' || upper === 'NEWGAME' || upper === 'RESET') {
         const { handleRestart } = await import('@/lib/actions/system')
@@ -515,7 +451,7 @@ export default function GamePage() {
         type: 'error' as const,
       }])
     }
-  }, [authPhase, gameFlow, creationState, state, engine, dispatch])
+  }, [authPhase, gameFlow, state, engine, dispatch])
 
   // ── Redirect in progress — render nothing ──────────────────
 
@@ -523,8 +459,11 @@ export default function GamePage() {
     return null
   }
 
-  // Terminal is ALWAYS visible. Sidebar shows during gameplay.
+  // Terminal is visible for play / prologue / death / between / ending.
+  // During 'creating' the visual CharacterCreation component takes over
+  // the main pane and the command input is hidden.
   const isGameReady = authPhase === 'ready' && gameFlow === 'playing'
+  const isCreating = authPhase === 'creating'
 
   return (
     <ErrorBoundary>
@@ -532,13 +471,22 @@ export default function GamePage() {
         sidebar={isGameReady ? <Sidebar /> : null}
         showSidebar={isGameReady}
         input={
-          <CommandInputWrapper
-            onSubmit={handleCommand}
-            showHpPrompt={isGameReady}
-          />
+          isCreating ? null : (
+            <CommandInputWrapper
+              onSubmit={handleCommand}
+              showHpPrompt={isGameReady}
+            />
+          )
         }
       >
-        <Terminal messages={state.log} />
+        {isCreating ? (
+          <CharacterCreation
+            isRebirth={gameFlow === 'rebirth'}
+            echoStats={engine.getEchoStats() ?? undefined}
+          />
+        ) : (
+          <Terminal messages={state.log} />
+        )}
       </GameLayout>
     </ErrorBoundary>
   )

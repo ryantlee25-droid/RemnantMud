@@ -209,6 +209,10 @@ tests/          Vitest test suite
 
 ## Release Notes
 
+### 2026-04-24 — Visual character-creation UI restored (two-column layout, no desktop scroll)
+
+Replaced the text-terminal character creation flow (introduced 2026-03-29, commit 51a3444) with a visual React point-buy UI. The new `CharacterCreation` component renders a two-column desktop layout (max-w-5xl): name and class selection on the left, stat allocation on the right. Echo-stat hints from previous cycles surface in the rebirth path. The command input strip and its border are hidden while creation is active (`GameLayout` hides the bottom bar when `input` is `null`). `app/page.tsx` drops the `terminalCreation` imports and `creationState` machine; all three creation entry points (init, prologue SKIP, between→rebirth) now simply set `authPhase = 'creating'`.
+
 ### 2026-04-24 — README: document 11 missing verbs + dialogue numbering + knowledge keys + quick start
 
 README updated to document 11 previously-undocumented verbs: `stash`, `unstash`, `craft`, `give`, `unlock`, `climb`, `swim`, `sneak`, `smell`, `listen`, `touch`. Added called-shot syntax note in Combat (`attack <enemy> <body part>`), dialogue numbering note in Social & Trade (type 1–9 to pick a response), and a Knowledge Keys section explaining the story-specific information-unlock system. Added Quick Start: First 5 Minutes subsection after Getting Started. Test count corrected from "417+" to "1,170+" in Tech Stack.

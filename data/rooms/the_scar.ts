@@ -812,6 +812,27 @@ export const THE_SCAR_ROOMS: Room[] = [
         description: 'You look at the terminals. If you have already made your choice, the room knows. If you haven\'t, it waits.',
         questGate: 'charon_choice',
       },
+      // Flag `companion_the_dog_active` is set by Howler 1 when addCompanion fires for the_dog — see tests/integration/dogAdoption.test.ts
+      {
+        keywords: ['dog cure', 'dog heal', 'dog safe', 'examine dog'],
+        description: 'The dog eats real meat for the first time, not scraps. It lies down in sunlight. Safe. You have fixed something. You are not sure it is the right thing. The dog does not have a vote, but the lying-down-in-sunlight is a vote.',
+        questGate: 'companion_the_dog_active',
+      },
+      {
+        keywords: ['dog weapon', 'dog door', 'dog follows', 'dog wait'],
+        description: 'The dog follows you into the Scar. At the final door, it refuses to go further. It sits, waiting. The posture says: you decide. I will wait. The door closes. The dog remains outside. You do not know if it is there when you come back. You do not know if you come back.',
+        questGate: 'companion_the_dog_active',
+      },
+      {
+        keywords: ['dog seal', 'dog ground', 'dog stands', 'dog remembers'],
+        description: 'The dog stands on the sealed ground and will not move. It knows something is locked there. Something that was going to change and now won\'t. It does not blame you. It does not forgive you. It remembers. That is what dogs do.',
+        questGate: 'companion_the_dog_active',
+      },
+      {
+        keywords: ['dog throne', 'dog looks', 'dog assessment', 'dog change'],
+        description: 'The dog looks at you differently. Not affection. Assessment. You have become something new — something the breeder\'s-mark people would have trained against. The dog tracks the change the way it tracks weather. Whether it stays with you is a decision it has not yet made.',
+        questGate: 'companion_the_dog_active',
+      },
     ],
     narrativeNotes: 'The most important room in the game. No combat. No enemies. Four terminals, each clearly described. The fifth extra (the weight of knowing) is the room\'s thesis. The game does not ask "are you sure?" after a terminal is activated. The choice is permanent.',
   },

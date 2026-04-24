@@ -11,7 +11,7 @@
     "test:ci": "vitest run --coverage --exclude=tests/eval/**",
     "test:coverage": "vitest run --coverage --exclude=tests/eval/**",
     "test:ui": "vitest --ui --exclude=tests/eval/**",
-    "test:eval": "vitest run tests/eval",
+    "test:eval": "vitest run --config vitest.eval.config.ts",
     "prepare": "husky",
     "validate": "tsx scripts/validate-consistency.ts"
   },

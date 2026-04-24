@@ -171,6 +171,10 @@ tests/          Vitest test suite
 
 ## Release Notes
 
+### 2026-04-24 — Fix `pnpm test:eval` script
+
+Eval suite got wiped by the global vitest exclude. Added `vitest.eval.config.ts` with an eval-specific include path; `pnpm test:eval` now runs the 400-case audit as intended while the default `pnpm test` remains 1,120-green.
+
 ### 2026-04-24 — Evaluation convoy output: audit suite + ranked fix backlog
 
 Adds the 8-Howler spectrum evaluation artifacts: five reusable test files in `tests/eval/` (map integrity, dialogue health, combat matrix, ending reachability, faction lockout), per-domain Howler reports in `docs/eval/`, and `EVAL-SUMMARY.md` as the synthesis. Eval tests are excluded from the default suite via `vitest.config.ts` and run on-demand via `pnpm test:eval`. Headline findings: 87 unreachable rooms, 1 main-arc door blocker, 1 critical dialogue orphan, smart-quote contamination across 17+ trees. Fix backlog is ranked blocker/major/minor in `EVAL-SUMMARY.md`.

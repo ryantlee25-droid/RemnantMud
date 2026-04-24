@@ -27,6 +27,7 @@ export const BREAKS_ROOMS: Room[] = [
     exits: {
       north: 'cr_01_approach',
       south: 'br_02_the_wash',
+      east: 'dh_01_long_drive',
     },
     richExits: {
       south: {

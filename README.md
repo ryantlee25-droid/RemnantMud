@@ -171,6 +171,10 @@ tests/          Vitest test suite
 
 ## Release Notes
 
+### 2026-04-24 — dev/eval-fixes-0424: 5 blocker/major fixes from evaluation backlog
+
+Lands five targeted fixes surfaced by the 8-Howler evaluation convoy: reconnects 3 orphan zones (51 rooms now reachable), opens the scar_02 door to all four advertised routes, adds the missing `echo_recognition` dialogue node, corrects a false-positive smart-quote regex in the health test, and wires `narrativeKeys.ts` into movement, examine, and the engine. Eval suite: 33 → 11 failures.
+
 ### 2026-04-24 — Fix `pnpm test:eval` script
 
 Eval suite got wiped by the global vitest exclude. Added `vitest.eval.config.ts` with an eval-specific include path; `pnpm test:eval` now runs the 400-case audit as intended while the default `pnpm test` remains 1,120-green.

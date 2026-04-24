@@ -1041,6 +1041,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     exits: {
       south: 'rr_11_the_bend',
       north: 'cv_01_main_gate',
+      west: 'sc_01_outer_perimeter',
     },
     items: [],
     enemies: [],

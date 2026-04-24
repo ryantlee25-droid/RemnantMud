@@ -9,7 +9,7 @@ export default defineConfig({
       tsconfig: './tsconfig.test.json',
     },
     setupFiles: ['./tests/setup.ts'],
-    exclude: ['**/node_modules/**', '**/dist/**', 'tests/eval/**'],
+    exclude: ['**/node_modules/**', '**/dist/**', 'tests/eval/**', '.claude/worktrees/**'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],

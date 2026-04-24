@@ -261,7 +261,9 @@ export class GameEngine implements EngineCore {
   //
   // localStorage keys: remnant_tutorial_<context>
   // Available contexts: first_room | first_item | first_weapon |
-  //                     first_enemy | first_npc | first_death
+  //                     first_enemy | first_npc | first_death |
+  //                     first_combat_start | first_kill | low_hp_combat |
+  //                     second_encounter
   // ----------------------------------------------------------
 
   async attemptTutorialHint(context: string): Promise<void> {
@@ -2015,6 +2017,49 @@ export class GameEngine implements EngineCore {
     if (action.verb === 'talk' && this.state.activeDialogue) {
       await this.attemptTutorialHint('first_npc')
     }
+
+    // ── First-fight onboarding hints (H3) ──
+    //
+    // four one-time hints that scaffold a new player's first combat loop.
+    // All guarded by remnant_tutorial_<key> localStorage flags (see handleTutorialHint).
+
+    // first_combat_start: fires the FIRST time combat becomes active
+    if (!wasInCombat && this.state.combatState?.active) {
+      await this.attemptTutorialHint('first_combat_start')
+
+      // second_encounter: fires on the SECOND combat-start event.
+      // Strategy: if first_combat_start flag is already set before this transition,
+      // we are entering combat for the second (or later) time.
+      // We use a separate localStorage counter to detect exactly the 2nd start.
+      if (typeof localStorage !== 'undefined') {
+        const countKey = 'remnant_tutorial_combat_count'
+        const prev = parseInt(localStorage.getItem(countKey) ?? '0', 10)
+        const next = prev + 1
+        localStorage.setItem(countKey, String(next))
+        if (next === 2) {
+          await this.attemptTutorialHint('second_encounter')
+        }
+      }
+    }
+
+    // first_kill: fires when combat was active and combatState just cleared (enemy defeated).
+    // Guard: combatState is now null (not just inactive) and the player is alive.
+    if (wasInCombat && !this.state.combatState && this.state.player && this.state.player.hp > 0 && !this.state.playerDead) {
+      await this.attemptTutorialHint('first_kill')
+    }
+
+    // low_hp_combat: fires when in combat and HP has dropped to ≤30% of maxHp.
+    // Gate: player alive (hp > 0) and combatState still active.
+    {
+      const p = this.state.player
+      if (p && p.hp > 0 && this.state.combatState?.active) {
+        if (p.hp / p.maxHp <= 0.3) {
+          await this.attemptTutorialHint('low_hp_combat')
+        }
+      }
+    }
+
+    // ── End first-fight onboarding hints ──
 
     // Room-discovery persistence: if a movement verb changed the room, record it.
     // Fires after the handler so markVisited has already been called (by movement.ts).

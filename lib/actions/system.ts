@@ -415,6 +415,10 @@ const TUTORIAL_HINTS: Record<string, string> = {
   'first_enemy': "Tip: An enemy is here! Type 'attack' to fight, 'flee' to run, or 'sneak' to try slipping past.",
   'first_npc': "Tip: Someone is here. Type 'talk [name]' to speak with them.",
   'first_death': "Tip: Death is not the end. Your memories echo forward. Choose wisely in the next cycle.",
+  'first_combat_start': "You're in combat. Type 'attack' to strike. Type 'flee' if you're outmatched. Each turn: read what changed, then choose.",
+  'first_kill': "The body settles. Loot stays where it falls — type 'look' to see what dropped, then 'take <item>'.",
+  'low_hp_combat': "You're hurt. 'flee' carries a chance of failure but escape lets you rest. Pressing on with 'attack' is a real choice.",
+  'second_encounter': "Each enemy fights differently. Hollow types are listed in the bestiary (DATA tab). 'examine <enemy>' before striking when you can.",
 }
 
 export async function handleTutorialHint(engine: EngineCore, context: string): Promise<void> {

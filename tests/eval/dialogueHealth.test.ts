@@ -337,7 +337,8 @@ describe('Dialogue Tree Health — exhaustive static analysis', () => {
 
   // ── 7. No smart quotes ────────────────────────────────────
   describe('7. No smart quotes in dialogue text or branch labels', () => {
-    const smartQuotePattern = /[''""]/
+    // Match actual Unicode smart/curly quotes: U+2018, U+2019, U+201C, U+201D
+    const smartQuotePattern = /[‘’“”]/
 
     for (const { key, tree } of uniqueTrees) {
       it(`[${key}] no curly/smart quotes in node text or branch labels`, () => {

@@ -478,6 +478,10 @@ export const NPCS: Record<string, RichNPC> = {
         weight: 2,
         timeRestrict: ['dusk', 'night'],
       },
+      {
+        activity: 'watches you with the focused attention of a creature deciding whether you are food, threat, or worth following — its eyes track the food in your pack',
+        weight: 1,
+      },
     ],
   },
 

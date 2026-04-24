@@ -10,6 +10,7 @@
 
 import type { GameMessage } from '@/types/game'
 import { msg } from '@/lib/messages'
+import { echoRetentionFactor } from '@/lib/fear'
 
 // ------------------------------------------------------------
 // Constants moved from deleted components
@@ -200,6 +201,15 @@ export function deathMessages(opts: {
     ))
   }
 
+  // Echo mechanic explainer — only on first death (cycle 1 -> 2)
+  if (opts.cycle === 1) {
+    const retentionPct = Math.round(echoRetentionFactor(3) * 100) // grit 3 = base case, roughly 70%
+    messages.push(msg(
+      `Your stats become echoes. A fraction of every stat you ended this cycle with carries forward — roughly ${retentionPct}% by default, more if your Grit was high. When you create your next character, you will have those echoes pre-allocated, plus fresh points to spend. Each cycle you live longer, you start stronger. The world remembers what you did. So do you.`,
+      'death'
+    ))
+  }
+
   // Closing
   messages.push(msg('The world is not finished with you.', 'death'))
 
@@ -244,6 +254,15 @@ export function theBetweenMessages(opts: {
   const fragments = pickFragments(3)
   for (const fragment of fragments) {
     messages.push(msg(`  "${fragment}"`, 'system'))
+  }
+
+  // Echo mechanic explainer — only on first rebirth (entering cycle 2)
+  if (opts.cycle === 2) {
+    const retentionPct = Math.round(echoRetentionFactor(3) * 100) // grit 3 = base case
+    messages.push(msg(
+      `Your stats become echoes. A fraction of every stat you ended that cycle with carries forward — roughly ${retentionPct}% by default, more if your Grit was high. When you create your next character, you will have those echoes pre-allocated, plus fresh points to spend. Each cycle you live longer, you start stronger. The world remembers what you did. So do you.`,
+      'system'
+    ))
   }
 
   // Echoes -- what carries forward
@@ -374,9 +393,9 @@ export function prologueMessages(): GameMessage[] {
     messages.push(msg(paragraph.join('\n'), 'narrative'))
   }
 
-  // Final prompt
+  // Final prompt — visually separated so it doesn't get lost in the wall of text
   messages.push(msg(
-    'Type SKIP to bypass, or press ENTER to continue.',
+    `${RULE}\n   TYPE SKIP TO BEGIN -- OR PRESS ENTER\n${RULE}`,
     'narrative'
   ))
 

@@ -216,8 +216,13 @@ async function startDialogueTree(engine: EngineCore, npcId: string, treeKey: str
   const display = buildNodeDisplay(startNode, npcName, player, inventory, cycleHistory)
   engine._appendMessages(display)
 
-  // If no branches, conversation ends immediately
-  if (!startNode.branches || startNode.branches.length === 0) {
+  // If branches exist, show a one-time hint about dialogue navigation
+  if (startNode.branches && startNode.branches.length > 0) {
+    engine._appendMessages([
+      { id: crypto.randomUUID(), text: "Type a number to choose a response, or 'leave' to step back.", type: 'system' },
+    ])
+  } else {
+    // If no branches, conversation ends immediately
     engine._setState({ activeDialogue: undefined })
     engine._appendMessages([msg('The conversation ends.')])
   }

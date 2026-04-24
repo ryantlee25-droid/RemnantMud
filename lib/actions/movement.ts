@@ -234,10 +234,12 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
         const capitalizedSkill = skillLabel.charAt(0).toUpperCase() + skillLabel.slice(1)
         if (statVal < dc) {
           const diff = dc - statVal
+          // Show skill name and current value vs needed value so players know what to improve
+          const skillProgressHint = `[${capitalizedSkill} ${statVal} — needs ${dc}]`
           if (diff <= 2) {
-            engine._appendMessages([msg(failMessage), { id: crypto.randomUUID(), text: `[${capitalizedSkill} check failed (close) — you're almost capable enough]`, type: 'system' }])
+            engine._appendMessages([msg(failMessage), { id: crypto.randomUUID(), text: `${skillProgressHint} You're almost capable enough.`, type: 'system' }])
           } else {
-            engine._appendMessages([msg(failMessage), { id: crypto.randomUUID(), text: `[${capitalizedSkill} check failed — you'd need more skill to pass this way]`, type: 'system' }])
+            engine._appendMessages([msg(failMessage), { id: crypto.randomUUID(), text: `${skillProgressHint} You'd need more skill to pass this way.`, type: 'system' }])
           }
           return
         } else {
@@ -468,6 +470,21 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
   }
 
   engine._appendMessages(messages)
+
+  // Keyword-extras hint — fire once per session on first room with extras
+  // Gate via quest flag so it only shows once (audit UX #12)
+  if (nextRoom.extras && nextRoom.extras.length > 0) {
+    const currentQuestFlags = engine.getState().player?.questFlags ?? {}
+    if (!currentQuestFlags['tutorial_keyword_extras']) {
+      engine._appendMessages([{
+        id: crypto.randomUUID(),
+        text: "Tip: room descriptions often have details you can examine. Try `look [keyword]` for any noun that catches your attention.",
+        type: 'system',
+      }])
+      // Mark the flag so it doesn't fire again this session
+      await engine.setQuestFlag('tutorial_keyword_extras', true)
+    }
+  }
 
   // After room entry, check for environmental hazards
   const newRoomFlags = nextRoom.flags ?? {}

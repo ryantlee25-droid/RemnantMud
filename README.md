@@ -27,7 +27,7 @@ Seven years after the CHARON-7 bioweapon escaped the MERIDIAN facility, humanity
 - **Framework**: Next.js 16 (App Router)
 - **Database**: Supabase (Postgres + Auth + RLS)
 - **Styling**: Tailwind CSS 4
-- **Testing**: Vitest (417+ tests)
+- **Testing**: Vitest (1,170+ tests)
 - **Deployment**: Vercel
 
 ## Getting Started
@@ -81,6 +81,21 @@ Dev mode uses an in-memory mock -- no Supabase account needed.
 npx vitest run
 ```
 
+### Quick Start: First 5 Minutes
+
+1. After login, you'll see the prologue. Type `SKIP` to jump in.
+2. Pick a class (1–7). Each tagline hints at the strength.
+3. Allocate stats — see tooltips for what each does.
+4. You spawn at a highway junction. Type `look` to see the room, `north` to enter Crossroads, `talk` to any NPC.
+5. Combat: type `attack <enemy>` (e.g., `attack shuffler`). When you die, you become a Revenant — your stats echo into the next cycle.
+6. Stuck? Type `help`, `hint`, or `journal`.
+
+## Knowledge Keys
+
+**Knowledge keys** are story-specific information unlocks. Some doors and dialogue branches require not an item but a *fact* — something you've learned by examining details, listening to NPCs, or making connections. The journal (`journal`) shows your learned keys.
+
+Secrets accumulate across cycles. A key discovered in cycle 1 carries forward, opening paths that were locked on your first run. Pay attention to what NPCs let slip, what terminals contain, and what the environment itself tells you.
+
 ## Commands
 
 ### Movement
@@ -96,8 +111,13 @@ npx vitest run
 | `down` | | Go down |
 | `travel <zone>` | `warp` | Fast travel to a discovered zone |
 | `map` | | Show the zone map |
+| `climb <direction>` | `scale`, `ascend`, `clamber` | Climb in a direction |
+| `swim <direction>` | `wade`, `ford` | Swim across water |
+| `sneak <direction>` | `stealth`, `hide`, `creep`, `skulk` | Move stealthily; uses Shadow stat |
 
 ### Looking & Exploration
+
+Room descriptions often contain examinable keywords — if a noun catches your eye, try `look <noun>` or `examine <noun>` to inspect it more closely. Hidden details, lore fragments, and sometimes items reward the curious.
 
 | Command | Aliases | Description |
 |---------|---------|-------------|
@@ -106,6 +126,9 @@ npx vitest run
 | `search` | `look around` | Search the room for hidden items |
 | `read <target>` | | Read a note, sign, or document |
 | `open <target>` | | Open a door, container, or lock |
+| `smell` | `sniff`, `scent` | Sensory examination of the room |
+| `listen` | `hear` | Listen for ambient sounds |
+| `touch` | `feel` | Tactile examination |
 
 ### Inventory & Equipment
 
@@ -117,8 +140,12 @@ npx vitest run
 | `use <item>` | `eat` | Use or consume an item |
 | `equip <item>` | `wear`, `wield` | Equip a weapon or armor |
 | `unequip <item>` | `remove`, `take off` | Unequip an item |
+| `stash <item>` | | Store item in cross-cycle stash (preserved across death) |
+| `unstash <item>` | `retrieve` | Retrieve from stash |
 
 ### Combat & Survival
+
+Called shots: `attack <enemy> <body part>` (head, eyes, arms, legs, torso) targets a specific location — armor-piercing precision strike at the cost of accuracy.
 
 | Command | Aliases | Description |
 |---------|---------|-------------|
@@ -127,8 +154,14 @@ npx vitest run
 | `rest` | `sleep` | Rest to recover health |
 | `camp` | | Make camp (safe zones only) |
 | `drink` | `fill` | Drink or fill a water container |
+| `defend` | `block`, `guard` | Reduce incoming damage this turn |
+| `wait` | `patience` | Skip turn for +3 accuracy bonus next attack |
+| `analyze` | `scan`, `study` | Inspect enemy stats (free for Reclaimer; Wits check otherwise) |
+| `ability` | `special`, `power` | Use class-specific ability (once per fight) |
 
 ### Social & Trade
+
+When in conversation, type a number 1–9 to choose a dialogue response, or `leave` to exit the conversation early.
 
 | Command | Aliases | Description |
 |---------|---------|-------------|
@@ -136,6 +169,7 @@ npx vitest run
 | `buy <item>` | `purchase` | Buy from a trader |
 | `sell <item>` | | Sell to a trader |
 | `trade` | `barter` | Open trade with a trader |
+| `give <item> <npc>` | `hand`, `offer`, `present`, `deliver` | Give item to NPC; can advance quests |
 
 ### Information & System
 
@@ -149,6 +183,10 @@ npx vitest run
 | `help` | `?` | Show available commands |
 | `save` | | Save the game |
 | `quit` | `exit` | Quit the game |
+| `craft <recipe>` | `build`, `make`, `forge`, `smith`, `construct`, `assemble`, `create` | Craft from inventory |
+| `unlock <direction>` | `unbolt` | Unlock locked exit using a key item |
+| `hint` | `stuck`, `clue` | Get a quest-aware hint |
+| `reset` | `restart`, `newgame` | Wipe save (asks for `CONFIRM RESTART`) |
 
 ## Architecture
 
@@ -170,6 +208,10 @@ tests/          Vitest test suite
 ```
 
 ## Release Notes
+
+### 2026-04-24 — README: document 11 missing verbs + dialogue numbering + knowledge keys + quick start
+
+README updated to document 11 previously-undocumented verbs: `stash`, `unstash`, `craft`, `give`, `unlock`, `climb`, `swim`, `sneak`, `smell`, `listen`, `touch`. Added called-shot syntax note in Combat (`attack <enemy> <body part>`), dialogue numbering note in Social & Trade (type 1–9 to pick a response), and a Knowledge Keys section explaining the story-specific information-unlock system. Added Quick Start: First 5 Minutes subsection after Getting Started. Test count corrected from "417+" to "1,170+" in Tech Stack.
 
 ### 2026-04-24 — Backlog sweep: engine hardening + Phase 2b/3b closeout + Storyteller tree
 

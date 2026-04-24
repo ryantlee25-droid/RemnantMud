@@ -110,6 +110,15 @@ export async function handleExamineExtra(engine: EngineCore, keyword?: string): 
         if (match.narrativeKeyOnExamine) {
           await engine.grantNarrativeKey(match.narrativeKeyOnExamine, 'examination')
         }
+        // Deduction grant: only fires when all prereq flags are set. After any
+        // quest flag updates above, check whether this examination completes a deduction.
+        if (match.narrativeKeyOnDeduction) {
+          const { keyId, requires } = match.narrativeKeyOnDeduction
+          const currentFlags = engine.getState().player?.questFlags ?? {}
+          if (requires.every(f => currentFlags[f])) {
+            await engine.grantNarrativeKey(keyId, 'deduction')
+          }
+        }
       } else {
         // Failure feedback — close miss if within 2 of DC
         const diff = dc - roll
@@ -133,6 +142,15 @@ export async function handleExamineExtra(engine: EngineCore, keyword?: string): 
   // Grant narrative key on examine if no skill check required
   if (!match.skillCheck && match.narrativeKeyOnExamine) {
     await engine.grantNarrativeKey(match.narrativeKeyOnExamine, 'examination')
+  }
+
+  // Deduction grant on free examine: only fires when all prereq flags are set
+  if (!match.skillCheck && match.narrativeKeyOnDeduction) {
+    const { keyId, requires } = match.narrativeKeyOnDeduction
+    const currentFlags = engine.getState().player?.questFlags ?? {}
+    if (requires.every(f => currentFlags[f])) {
+      await engine.grantNarrativeKey(keyId, 'deduction')
+    }
   }
 }
 

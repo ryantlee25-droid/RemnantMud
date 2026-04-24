@@ -158,6 +158,7 @@ export interface RoomExtra {
   reputationGrant?: { faction: FactionType; delta: number }
   conditionalDescription?: { flag: string; description: string }
   narrativeKeyOnExamine?: string  // grants this narrative key on successful examine (or successful skill check if one is set)
+  narrativeKeyOnDeduction?: { keyId: string; requires: string[] }  // grants the key only if ALL prereq quest flags are set; used for multi-piece deductions
 }
 
 // ------------------------------------------------------------

@@ -448,6 +448,37 @@ export class GameEngine implements EngineCore {
   }
 
   // ----------------------------------------------------------
+  // Room discovery persistence
+  // Appends roomId to player_ledger.discovered_room_ids (idempotent).
+  // Called from executeAction whenever the player enters a new room.
+  // ----------------------------------------------------------
+
+  async _recordRoomDiscovery(roomId: string): Promise<void> {
+    const { player, ledger } = this.state
+    if (!player) return
+
+    const existing = ledger?.discoveredRoomIds ?? []
+    if (existing.includes(roomId)) return   // idempotent — already recorded
+
+    const updated = [...existing, roomId]
+
+    // Update in-memory ledger first (optimistic)
+    if (ledger) {
+      this._setState({ ledger: { ...ledger, discoveredRoomIds: updated } })
+    }
+
+    // Persist to DB — de-duplicated array
+    const supabase = createSupabaseBrowserClient()
+    const { error } = await supabase
+      .from('player_ledger')
+      .update({ discovered_room_ids: updated })
+      .eq('player_id', player.id)
+    if (error) {
+      console.error('Failed to persist room discovery:', error.message)
+    }
+  }
+
+  // ----------------------------------------------------------
   // Player death
   // ----------------------------------------------------------
 
@@ -695,15 +726,27 @@ export class GameEngine implements EngineCore {
 
     const supabase = createSupabaseBrowserClient()
 
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('players')
       .select('*')
       .eq('id', userId)
       .maybeSingle()
 
     if (error) {
-      this._setState({ loading: false })
-      throw new Error(`Failed to load player: ${error.message}`)
+      console.error('Load failed:', error.message, error.code, error.details, error.hint)
+      // Refresh session before retry — expired credentials are the most common cause
+      await supabase.auth.refreshSession()
+      // Retry once — transient auth/network failures are common
+      const { data: retryData, error: retryError } = await supabase
+        .from('players')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle()
+      if (retryError) {
+        this._setState({ loading: false })
+        throw new Error(`Failed to load player: ${retryError.message}`)
+      }
+      data = retryData
     }
 
     if (!data) {
@@ -1833,6 +1876,17 @@ export class GameEngine implements EngineCore {
         } else {
           this._appendMessages([{ id: crypto.randomUUID(), text: `Unknown command. Type 'help' for a list of commands.`, type: 'error' }])
         }
+      }
+    }
+
+    // Room-discovery persistence: if a movement verb changed the room, record it.
+    // Fires after the handler so markVisited has already been called (by movement.ts).
+    // _recordRoomDiscovery is idempotent — safe to call on revisits.
+    const MOVEMENT_VERBS = new Set(['go', 'climb', 'swim', 'sneak'])
+    if (MOVEMENT_VERBS.has(action.verb) && this.state.currentRoom) {
+      const newRoomId = this.state.currentRoom.id
+      if (newRoomId && newRoomId !== prevRoomId) {
+        await this._recordRoomDiscovery(newRoomId)
       }
     }
 

@@ -400,6 +400,7 @@ export const CROSSROADS_ROOMS: Room[] = [
       north: 'rr_07_north_fork',
       west: 'cr_09_campground',
       east: 'cr_14_leather_shop',
+      down: 'cr_18_the_pit',
     },
     richExits: {
       north: {

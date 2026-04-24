@@ -445,6 +445,7 @@ export const BREAKS_ROOMS: Room[] = [
       east: 'br_09_petroglyph_wall',
       west: 'br_08_nesting_gallery',
       up: 'br_12_canyon_rim_west',
+      down: 'br_14_hidden_grotto',
     },
     richExits: {
       up: {

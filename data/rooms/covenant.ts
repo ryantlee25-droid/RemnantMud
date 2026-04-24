@@ -174,6 +174,7 @@ export const COVENANT_ROOMS: Room[] = [
       north: 'cv_04_courthouse',
       east: 'cv_08_riverside_district',
       west: 'cv_09_the_school',
+      up: 'cv_18_rooftop_garden',
     },
     richExits: {},
     items: [],
@@ -229,6 +230,7 @@ export const COVENANT_ROOMS: Room[] = [
       east: 'cv_13_granary',
       west: 'cv_10_the_chapel',
       up: 'cv_05_courthouse_upper',
+      down: 'cv_12_the_jail',
     },
     richExits: {
       up: {
@@ -309,6 +311,7 @@ export const COVENANT_ROOMS: Room[] = [
     exits: {
       down: 'cv_04_courthouse',
       north: 'cv_22_council_chamber',
+      east: 'cv_16_marshals_quarters',
     },
     richExits: {
       down: {
@@ -798,6 +801,7 @@ export const COVENANT_ROOMS: Room[] = [
     exits: {
       up: 'cv_04_courthouse',
       east: 'cv_24_holding_cells',
+      down: 'cv_17_the_basement',
     },
     richExits: {
       up: {

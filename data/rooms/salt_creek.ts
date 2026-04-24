@@ -228,6 +228,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
       north: 'sc_05_barracks',
       south: 'sc_09_the_pit',
       west: 'sc_06_mess_hall',
+      down: 'sc_11_motor_pool',
     },
     richExits: {},
     items: [],
@@ -302,6 +303,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
       south: 'sc_04_the_yard',
       east: 'sc_07_warlords_command',
       west: 'sc_06_mess_hall',
+      north: 'sc_20_mess_hall',
     },
     richExits: {},
     items: [],
@@ -581,6 +583,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     exits: {
       north: 'sc_04_the_yard',
       up: 'sc_08_armory',
+      south: 'sc_12_the_brig',
     },
     richExits: {},
     items: [],

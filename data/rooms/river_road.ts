@@ -315,6 +315,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       south: 'rr_03_east_bank',
       north: 'rr_06_the_narrows',
       east: 'rr_14_riverbank_camp',
+      west: 'rr_19_old_highway_rest',
     },
     items: [],
     enemies: [],
@@ -980,7 +981,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       'The road curves sharply around a rock outcrop, reducing visibility to about thirty feet in either direction.',
     exits: {
       south: 'rr_10_overturned_bus',
-      north: 'rr_12_covenant_outskirts',
+      north: 'rr_18_hanging_tree',
     },
     items: [],
     enemies: [],
@@ -1039,7 +1040,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     shortDescription:
       'The road widens as it approaches the first signs of Covenant.',
     exits: {
-      south: 'rr_11_the_bend',
+      south: 'rr_18_hanging_tree',
       north: 'cv_01_main_gate',
       west: 'sc_01_outer_perimeter',
     },
@@ -1529,9 +1530,14 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     exits: {
       east: 'rr_19_old_highway_rest',
       up: 'rr_22_motel_second_floor',
+      south: 'rr_21_motel_room7',
     },
     richExits: {
       east: {
+        destination: 'rr_19_old_highway_rest',
+        descriptionVerbose: 'east, back out to the highway rest',
+      },
+      south: {
         destination: 'rr_21_motel_room7',
         descriptionVerbose: 'Room 7 (locked — key required)',
         locked: true,
@@ -1630,7 +1636,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     shortDescription:
       'Room 7 was locked for a reason.',
     exits: {
-      west: 'rr_20_abandoned_motel',
+      north: 'rr_20_abandoned_motel',
     },
     items: [],
     enemies: [],

@@ -24,6 +24,7 @@ export const EMBER_ROOMS: Room[] = [
     exits: {
       north: 'em_02_gate_of_flame',
       south: 'br_07_canyon_crossroads',
+      east: 'em_11_char_fields',
     },
     richExits: {},
     items: [],
@@ -712,6 +713,8 @@ export const EMBER_ROOMS: Room[] = [
     exits: {
       east: 'em_12_collapsed_factory_floor',
       north: 'em_01_the_approach',
+      south: 'em_17_ruined_annex',
+      down: 'em_15_burn_shelter',
     },
     richExits: {},
     items: [],

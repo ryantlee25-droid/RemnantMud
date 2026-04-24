@@ -419,7 +419,7 @@ export const THE_DEEP_ROOMS: Room[] = [
     description: 'The passage opens into a space with a ceiling you can\'t see and a floor that is a river — black water moving south, its surface catching your light in shifting patterns. The sound of moving water, which you\'ve been hearing since the junction, is the loudest thing in the Deep. It fills the space and bounces off walls you can barely see. A wooden flat-bottomed boat is tied to a rusted ring on the near bank. The boat has been maintained recently — fresh caulking on one seam, the line replaced. Someone uses this. The fish here don\'t see sunlight. They\'re still fish.',
     descriptionNight: 'The river doesn\'t know it\'s night. The water moves. The boat rocks slightly on its line.',
     shortDescription: 'Underground river. Fishing. Boat to hidden areas.',
-    exits: { west: 'dp_04_junction', east: 'dp_13_sanguine_lair', south: 'dp_14_deep_pool' },
+    exits: { west: 'dp_04_junction', east: 'dp_13_sanguine_lair', south: 'dp_14_deep_pool', north: 'dp_15_bioluminescent_garden' },
     richExits: {
       west: { destination: 'dp_04_junction', descriptionVerbose: 'west, back toward the junction' },
       east: {

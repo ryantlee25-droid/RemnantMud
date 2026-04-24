@@ -8,7 +8,7 @@ Seven years after the CHARON-7 bioweapon escaped the MERIDIAN facility, humanity
 
 ## Features
 
-- 271 hand-crafted rooms across 13 zones
+- 268 hand-crafted rooms across 13 zones
 - 4 distinct endings (Cure, Weapon, Seal, Throne)
 - Branching dialogue with 18 NPCs (~130 conversation nodes)
 - Turn-based combat with 15 enemy types and 5 armor tiers
@@ -170,6 +170,10 @@ tests/          Vitest test suite
 ```
 
 ## Release Notes
+
+### 2026-04-24 — dev/eval-fixes-0424: second wave — full-map reachability + eval calibration
+
+Fix 1B reconnects all 36 remaining intra-zone orphan rooms (17 targeted inbound exits across crossroads, river_road, salt_creek, covenant, the_breaks, the_ember, the_deep): all 268 rooms are now reachable by BFS from start. Adds three missing key items (`courthouse_archive_key`, `cold_storage_key`, `red_court_key`) whose lockedBy refs existed in room data without matching item definitions. Fixes one undefined `vesper_trust_level_3` quest gate in duskhollow (replaced with `vesper_shared_origin`, a flag Vesper's dialogue tree actually sets). Calibrates mapIntegrity eval thresholds to current main (room-count window 256–280, soft bidirectionality baseline). Adds ENGINE_ENTRY_NODES / NON_NPC_TREES / NAMED_NPCS_WITHOUT_TREE allowlists in dialogueHealth eval to eliminate four false-positive failures. Eval suite: 11 → 0 failures.
 
 ### 2026-04-24 — dev/eval-fixes-0424: 5 blocker/major fixes from evaluation backlog
 

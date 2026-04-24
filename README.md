@@ -209,6 +209,17 @@ tests/          Vitest test suite
 
 ## Release Notes
 
+### 2026-04-24 — Combat system overhaul (Round 3)
+
+- Combat prompt now shows enemy state and verb hints; per-round status strip
+- Three miss-reason buckets + weapon-trait strike flavor (blessed/vicious/scorching/draining)
+- Four first-fight tutorial hints introduce combat verbs and tradeoffs progressively
+- Armor formula extracted to `computeArmorReduction` (single source of truth across all damage paths)
+- AdditionalEnemies (screamer summons, etc.) now persist when player flees
+- Save/load round-trip + environment modifier tests added (closes B12)
+- Early-zone spawn density floor lifted; new idle-hint surfaces after 30 quiet actions, nudging players toward denser zones
+- 5 research briefs added under `docs/research/`
+
 ### 2026-04-24 — Tabbed sidebar + interactive World Map
 
 - Right pane is now tabbed (STATS / MAP / INV / DATA), default STATS

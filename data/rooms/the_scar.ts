@@ -42,6 +42,8 @@ export const THE_SCAR_ROOMS: Room[] = [
       {
         keywords: ['facility', 'building', 'structure', 'concrete'],
         description: 'Military construction specification: two-foot-thick reinforced concrete walls, rated for blast overpressure, chemical contamination, seismic events. The bombing was a standard thermobaric strike — calibrated to destroy the surface, not the hardened underground facility. Whoever ordered the strike knew exactly what they were bombing and exactly what would survive.',
+        questFlagOnSuccess: { flag: 'scar_blast_pattern_analyzed', value: true },
+        narrativeKeyOnDeduction: { keyId: 'scar_bombing_truth', requires: ['scar_blast_pattern_analyzed', 'scar_bombing_intent_understood', 'meridian_bombing_orders_found'] },
       },
       {
         keywords: ['haze', 'chemical', 'smell', 'air', 'contamination'],
@@ -52,6 +54,8 @@ export const THE_SCAR_ROOMS: Room[] = [
         keywords: ['bombing', 'lie', 'military', 'history'],
         description: 'The standard narrative: MERIDIAN was a bioweapons lab, the Collapse was an accident, the military bombed the facility to prevent further spread. You\'re standing in the bombing\'s aftermath, looking at an intact facility with working power and a radio signal that has been broadcasting for nearly seven years. The lie required specific knowledge of what would survive. The bombers knew what they were preserving.',
         skillCheck: { skill: 'lore', dc: 9, successAppend: 'Warlord Briggs was MERIDIAN perimeter security. Salt Creek Stronghold knows something about this. Someone in the military chain knew the facility would survive. Someone chose not to pursue the follow-up. That decision is a person. That person has been living with it for nearly seven years.' },
+        questFlagOnSuccess: { flag: 'scar_bombing_intent_understood', value: true },
+        narrativeKeyOnDeduction: { keyId: 'scar_bombing_truth', requires: ['scar_blast_pattern_analyzed', 'scar_bombing_intent_understood', 'meridian_bombing_orders_found'] },
       },
       {
         keywords: ['terminal', 'log', 'broadcast log', 'signal log', 'history'],
@@ -661,6 +665,14 @@ export const THE_SCAR_ROOMS: Room[] = [
         keywords: ['authorization', 'who knew', 'conspiracy', 'trials'],
         description: 'The journal names names. The Congressional committee members. The pharmaceutical board representatives. The general who authorized MERIDIAN\'s escalation. And one name that appears in the journal eight times in the final period — a name you\'ve heard before, in settlements, in faction structures. Someone who survived the Collapse in a leadership role. Someone whose institutional knowledge of MERIDIAN has been informing their post-Collapse decisions all along.',
         skillCheck: { skill: 'lore', dc: 13, successAppend: 'The name is one you recognize from your travels. What you do with this information is yours. The journal doesn\'t tell you. It just names them.' },
+      },
+      {
+        keywords: ['cabinet', 'filing cabinet', 'classified', 'strike order', 'authorization order'],
+        description: 'A steel filing cabinet against the north wall, marked CLASSIFIED in a stencil that has been deliberately left visible rather than papered over. The top drawer holds the paperwork that should not exist — the strike order, signed, dated, authorized. The language is calibrated by people who knew exactly what they were writing: "surface sterilization protocols" not "facility elimination," "contamination suppression measures" not "outbreak response." Every word chosen to read one way to civilians and another way to the officers executing the order. The lie is in the vocabulary. The truth is in the precision of the vocabulary.',
+        skillCheck: { skill: 'lore', dc: 11, successAppend: 'The signature block at the bottom has three names. One is the general Vane\'s journal names. The other two are civilians — not military. Both names appear in post-Collapse faction leadership. The strike order was a joint authorization between the military and parties who are still alive and still making decisions about the world you\'re living in.' },
+        questFlagOnSuccess: { flag: 'meridian_bombing_orders_found', value: true },
+        narrativeKeyOnExamine: 'meridian_bombing_orders',
+        narrativeKeyOnDeduction: { keyId: 'scar_bombing_truth', requires: ['scar_blast_pattern_analyzed', 'scar_bombing_intent_understood', 'meridian_bombing_orders_found'] },
       },
     ],
     hollowEncounter: {

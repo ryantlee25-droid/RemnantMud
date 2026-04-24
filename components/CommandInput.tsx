@@ -20,6 +20,11 @@ export default function CommandInput() {
     inputRef.current?.focus()
   }, [])
 
+  // Re-focus whenever a new message arrives — restores focus after sidebar tab clicks
+  useEffect(() => {
+    inputRef.current?.focus()
+  }, [state.log.length])
+
   async function submit() {
     const trimmed = value.trim()
     if (!trimmed) return

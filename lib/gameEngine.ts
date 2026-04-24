@@ -450,23 +450,28 @@ export class GameEngine implements EngineCore {
       combat_state: this.state.combatState ?? null,
     }
 
-    const { error } = await supabase
-      .from('players')
-      .update(payload)
-      .eq('id', player.id)
-    if (error) {
-      console.error('Save failed:', error.message, error.code, error.details, error.hint)
-      // Refresh session before retry — expired credentials are the most common cause
-      await supabase.auth.refreshSession()
-      // Retry once — transient auth/network failures are common
-      const { error: retryError } = await supabase
+    this._setState({ saving: true })
+    try {
+      const { error } = await supabase
         .from('players')
         .update(payload)
         .eq('id', player.id)
-      if (retryError) {
-        console.error('Save retry failed:', retryError.message)
-        this._appendMessages([systemMsg('⚠ Save failed. Your session may have expired — try reloading the page.')])
+      if (error) {
+        console.error('Save failed:', error.message, error.code, error.details, error.hint)
+        // Refresh session before retry — expired credentials are the most common cause
+        await supabase.auth.refreshSession()
+        // Retry once — transient auth/network failures are common
+        const { error: retryError } = await supabase
+          .from('players')
+          .update(payload)
+          .eq('id', player.id)
+        if (retryError) {
+          console.error('Save retry failed:', retryError.message)
+          this._appendMessages([systemMsg('⚠ Save failed. Your session may have expired — try reloading the page.')])
+        }
       }
+    } finally {
+      this._setState({ saving: false })
     }
   }
 

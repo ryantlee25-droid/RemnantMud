@@ -211,6 +211,23 @@ export default function GamePage() {
     }
   }, [state.endingTriggered, state.endingChoice, gameFlow, state.playerDead, state.player, state.roomsExplored, engine])
 
+  // ── Dialogue choice hint ───────────────────────────────────
+  // Appends a dim hint once each time a dialogue node becomes active so
+  // the player knows how to navigate without having to remember the commands.
+
+  const activeDialogueKey = state.activeDialogue
+    ? `${state.activeDialogue.npcId}:${state.activeDialogue.currentNodeId}`
+    : null
+
+  useEffect(() => {
+    if (!activeDialogueKey) return
+    engine._appendMessages([{
+      id: crypto.randomUUID(),
+      text: "[1-9] to choose, 'leave' to exit",
+      type: 'system' as const,
+    }])
+  }, [activeDialogueKey, engine])
+
   // ── Command interception ───────────────────────────────────
   //
   // CommandInput calls dispatch(action) by default. We need to
@@ -319,13 +336,13 @@ export default function GamePage() {
         if (parsed.verb !== 'unknown') {
           engine._appendMessages([{
             id: crypto.randomUUID(),
-            text: `You can't ${parsed.verb} right now — you're in the prologue. Type SKIP to continue.`,
+            text: `You can't ${parsed.verb} right now — you're in the prologue. Type <keyword>SKIP</keyword> to continue.`,
             type: 'system' as const,
           }])
         } else {
           engine._appendMessages([{
             id: crypto.randomUUID(),
-            text: 'Type SKIP to bypass, or ENTER to continue.',
+            text: 'Type <keyword>SKIP</keyword> to bypass, or ENTER to continue.',
             type: 'system' as const,
           }])
         }

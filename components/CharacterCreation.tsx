@@ -76,12 +76,12 @@ const STAT_LABELS: Record<StatKey, string> = {
 }
 
 const STAT_DESCRIPTIONS: Record<StatKey, string> = {
-  vigor: 'Melee damage, HP, and physical skill checks',
-  grit: 'Fear resistance, rest recovery, resilience, and endurance checks',
-  reflex: 'Flee chance, initiative, and agility-based skill checks',
-  wits: 'Knowledge, awareness, and technical skill checks',
-  presence: 'Social influence, medical skill, and faction reputation gains',
-  shadow: 'Stealth, evasion, and covert skill checks',
+  vigor: 'HP and physical damage',
+  grit: 'Echo retention and resilience',
+  reflex: 'Initiative and dodge',
+  wits: 'Skill checks and awareness',
+  presence: 'Social influence and faction rep',
+  shadow: 'Stealth and sneak',
 }
 
 const BASE = 2
@@ -571,7 +571,7 @@ export default function CharacterCreation({ isRebirth, echoStats, onRebirthCompl
                           <span className="text-blue-600 text-xs">[~echo]</span>
                         )}
                       </div>
-                      <div className="text-amber-600 text-xs leading-snug">{STAT_DESCRIPTIONS[stat]}</div>
+                      <div className="text-amber-700 text-xs leading-snug">{STAT_DESCRIPTIONS[stat]}</div>
                     </div>
 
                     <button

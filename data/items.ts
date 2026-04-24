@@ -357,6 +357,33 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
   },
 
+  courthouse_archive_key: {
+    id: 'courthouse_archive_key',
+    name: 'Courthouse Archive Key',
+    description: 'A brass key worn smooth by decades of use. The tag reads ARCHIVE, hand-lettered in a careful pre-Collapse hand. Covenant\'s record-keepers handed down this key through three Marshals.',
+    type: 'key',
+    weight: 0,
+    value: 0,
+  },
+
+  cold_storage_key: {
+    id: 'cold_storage_key',
+    name: 'Cold Storage Key',
+    description: 'An industrial cylinder key on a loop of wire, the word COLD scratched into the bow. The Stacks ran a walk-in freezer in their research wing; this is what opens it.',
+    type: 'key',
+    weight: 0,
+    value: 0,
+  },
+
+  red_court_key: {
+    id: 'red_court_key',
+    name: 'Red Court Key',
+    description: 'A key stamped with the Red Court seal — a blood drop over a crown. Authorizes access to the Pens\' inner administration and research wings. Possession implies trust, or theft, or both.',
+    type: 'key',
+    weight: 0,
+    value: 0,
+  },
+
   bunker_access_badge: {
     id: 'bunker_access_badge',
     name: 'Bunker Access Badge',

@@ -197,7 +197,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         discoverSkill: 'perception',
         discoverDc: 16,
         discoverMessage: 'You notice a section of the bookshelf that doesn\'t align with the wall behind it.',
-        questGate: 'vesper_trust_level_3',
+        questGate: 'vesper_shared_origin',
       },
     },
     items: [],

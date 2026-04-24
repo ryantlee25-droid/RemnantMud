@@ -123,6 +123,8 @@ const EXTERNALLY_SET_FLAGS: Set<string> = new Set([
   'kindling_contact',                  // world/quest system
   'drifters_contact',                  // world/quest system
   'red_court_contact',                 // world/quest system
+  // Companion system flags (set by lib/companionSystem.ts / addCompanion for the_dog)
+  'companion_the_dog_active',          // set when addCompanion fires for the_dog — see tests/integration/dogAdoption.test.ts
 ])
 
 // ============================================================

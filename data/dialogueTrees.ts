@@ -35,6 +35,13 @@ const levTree: DialogueTree = {
           requiresCycleMin: 2,
           requiresPreviousRelationship: { npcId: 'lev', relationship: 'distrusted' },
         },
+        // ---- Dog companion observation (cycle 2+, dog active) ----
+        {
+          label: '"The dog. You want to say something about the dog."',
+          targetNode: 'lev_dog_tracking',
+          requiresCycleMin: 2,
+          requiresFlag: 'companion_the_dog_active',
+        },
         // ---- Standard branches ----
         {
           label: `Ask about ${rt.keyword('CHARON-7')} research`,
@@ -286,6 +293,19 @@ const levTree: DialogueTree = {
       id: 'lev_keycard_end',
       speaker: 'Lev',
       text: `${rt.npc('Lev')} has already turned back to the tablet, but their hand pauses on the screen. "Be careful down there. That's —" They stop. "That's not a scientific recommendation. Ignore it if you prefer." They don't look up again.`,
+    },
+
+    // ---- Dog: Tracking Observation (cycle 2+) ----
+    lev_dog_tracking: {
+      id: 'lev_dog_tracking',
+      speaker: 'Lev',
+      text: `${rt.npc('Lev')} glances at the dog, then back at their tablet, then at the dog again — the second look longer, more clinical. "That dog keeps looking at you like it's tracking something." A pause long enough to be deliberate. "What did you do before you died?" They don't ask a follow-up. The question sits in the air between you. They are already reading again.`,
+      branches: [
+        {
+          label: 'Back to other topics.',
+          targetNode: 'lev_start',
+        },
+      ],
     },
 
     // ---- Branch 4: Leave ----
@@ -1462,6 +1482,13 @@ const patchTree: DialogueTree = {
           requiresCycleMin: 2,
           requiresPreviousQuest: 'patch_mentioned_scar',
         },
+        // ---- Dog breeder's mark (cycle 3+, dog active) ----
+        {
+          label: '"You\'ve been looking at the dog\'s neck."',
+          targetNode: 'patch_dog_breeders_mark',
+          requiresCycleMin: 3,
+          requiresFlag: 'companion_the_dog_active',
+        },
         // ---- Signal hook (first-visit priority) ----
         {
           label: `"What ${rt.keyword('signal')}? Tell me more."`,
@@ -1587,6 +1614,38 @@ const patchTree: DialogueTree = {
         {
           label: "That's enough for now.",
           targetNode: 'patch_closure',
+        },
+      ],
+    },
+
+    // ---- Dog: Breeder's Mark (cycle 3+) ----
+    patch_dog_breeders_mark: {
+      id: 'patch_dog_breeders_mark',
+      speaker: 'Patch',
+      text: `${rt.npc('Patch')} sets down what they're holding. "Yeah." One finger points at the dog's scruff. "That dog has a breeder's mark under the scruff of its neck. Blue ink, six-digit code format. ${rt.keyword('MERIDIAN')} kennels used those." The transactional mask is flat — this is information, nothing more, nothing less. "Your friend was made, not born. Somebody trained it for something specific." They pick up their tools again. They don't elaborate. They've said what there is to say.`,
+      onEnter: {
+        setFlag: { dog_breeder_mark_noticed: true },
+      },
+      branches: [
+        {
+          label: '"Trained for what?"',
+          targetNode: 'patch_dog_mark_noinfo',
+        },
+        {
+          label: '"I see."',
+          targetNode: 'patch_closure',
+        },
+      ],
+    },
+
+    patch_dog_mark_noinfo: {
+      id: 'patch_dog_mark_noinfo',
+      speaker: 'Patch',
+      text: `"Don't know." ${rt.npc('Patch')} shrugs — one shoulder. "Not my field. But the code format is specific to ${rt.keyword('MERIDIAN')}'s animal programs. I've seen those marks on lab rats, on tracking birds. Whatever the dog was trained for, ${rt.keyword('MERIDIAN')} signed off on it." They go back to work. "Read the mark if you can. The code might mean something to someone who knows how to look."`,
+      branches: [
+        {
+          label: 'Back to other topics.',
+          targetNode: 'patch_start',
         },
       ],
     },
@@ -1960,6 +2019,13 @@ const oseiTree: DialogueTree = {
           targetNode: 'osei_provide_vial',
           requiresItem: 'sanguine_blood_vial',
         },
+        // ---- Dog training protocol recognition (cycle 3+, dog active) ----
+        {
+          label: '"The dog. You\'ve noticed something about it."',
+          targetNode: 'osei_dog_training_protocol',
+          requiresCycleMin: 3,
+          requiresFlag: 'companion_the_dog_active',
+        },
       ],
     },
 
@@ -1989,6 +2055,35 @@ const oseiTree: DialogueTree = {
         removeItem: ['sanguine_blood_vial'],
         grantRep: { faction: 'lucid', delta: 1 },
       },
+      branches: [
+        {
+          label: 'Good luck, Doctor.',
+          targetNode: 'osei_closure',
+        },
+      ],
+    },
+
+    // ---- Dog: MERIDIAN Training Protocol (cycle 3+) ----
+    osei_dog_training_protocol: {
+      id: 'osei_dog_training_protocol',
+      speaker: 'Dr. Ama Osei',
+      text: `${rt.npc('Dr. Ama Osei')} looks at the dog with the steady, unhurried attention she gives to slides under the microscope. "Olfactory signature targeting. ${rt.keyword('MERIDIAN')} ran a canine signature-work program in the facility's early phase — bloodhounds trained to detect ${rt.keyword('CHARON-7')} viral markers in ambient air. Infected individuals exude a distinctive volatile organic compound profile in the hours before expression. The dog was made to find them." A pause. She adjusts a vial. "You carry contained CHARON-7 — ${rt.keyword('Revenant')} expression. The dog tracked the marker and chose you anyway." She does not look up. "That is a scientifically interesting choice."`,
+      branches: [
+        {
+          label: '"Interesting how?"',
+          targetNode: 'osei_dog_interesting',
+        },
+        {
+          label: 'Good luck, Doctor.',
+          targetNode: 'osei_closure',
+        },
+      ],
+    },
+
+    osei_dog_interesting: {
+      id: 'osei_dog_interesting',
+      speaker: 'Dr. Ama Osei',
+      text: `"The training protocol would predict avoidance or alert behavior." ${rt.npc('Dr. Ama Osei')} sets the vial down. "The dog was conditioned to signal infected individuals — not to befriend them. The fact that it didn't follow protocol suggests either significant conditioning drift in the years since ${rt.keyword('MERIDIAN')} fell —" she pauses, "— or the dog evaluated the marker and made a different determination. A judgment." She picks the vial back up. "Dogs are not supposed to exercise judgment. That is, in my experience, not reliable information about what dogs will actually do."`,
       branches: [
         {
           label: 'Good luck, Doctor.',

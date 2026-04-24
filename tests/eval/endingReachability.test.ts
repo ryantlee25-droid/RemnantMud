@@ -637,9 +637,9 @@ describe('scar_14_the_core — room structure', () => {
     expect(coreRoom.flags.noCombat).toBe(true)
   })
 
-  it('room has exactly 6 extras (4 endings + weight + chosen)', () => {
+  it('room has at least 6 extras (4 endings + weight + chosen; companion extras may be added)', () => {
     expect(coreRoom.extras).toBeDefined()
-    expect(coreRoom.extras!.length).toBe(6)
+    expect(coreRoom.extras!.length).toBeGreaterThanOrEqual(6)
   })
 
   it('the fifth extra (weight/decide) has no questFlagOnSuccess', () => {

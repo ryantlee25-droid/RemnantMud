@@ -138,6 +138,11 @@ const levTree: DialogueTree = {
           targetNode: 'lev_charon_authority',
         },
         {
+          label: `"Push Lev on the authority chain — press for the specific names."`,
+          targetNode: 'lev_charon_authority_refusal',
+          requiresFlag: 'lev_trusts_player',
+        },
+        {
           label: 'Back to other topics.',
           targetNode: 'lev_start',
         },
@@ -155,6 +160,29 @@ const levTree: DialogueTree = {
         {
           label: 'Back to other topics.',
           targetNode: 'lev_start',
+        },
+      ],
+    },
+
+    // ---- Lev refusal variant — Reclaimers rep >= 2 ----
+    // Agent C mitigation: at high trust, Lev stops editorializing on the
+    // authority chain and routes the player to primary sources.
+    // Player choice — the direct-answer branch remains available.
+    lev_charon_authority_refusal: {
+      id: 'lev_charon_authority_refusal',
+      speaker: 'Lev',
+      text: `${rt.npc('Lev')} is quiet for a moment. Longer than usual. "I'm going to stop editorializing. What the journal in the Director's Office says, it says. What ${rt.npc('Vane')} says when you reach him, he says. Those are better sources for the names than I am. I'm too close to it — and I have stopped believing that naming names at this distance is a neutral act." A pause that carries weight. "The document chain exists. I can confirm the chain exists. The names at the top of it are for the Director's Office, not for me."`,
+      onEnter: {
+        setFlag: { lev_declined_to_name_authority: true },
+      },
+      branches: [
+        {
+          label: '"I understand. I will find the journal."',
+          targetNode: 'lev_start',
+        },
+        {
+          label: '"Tell me anyway."',
+          targetNode: 'lev_charon_authority',
         },
       ],
     },
@@ -5448,6 +5476,162 @@ const lyrisTree: DialogueTree = {
 }
 
 // ============================================================
+// CAMPFIRE STORYTELLER — Gavel (Crossroads Campground)
+// dialogueTree IDs: 'cr_campfire_lore', 'drifters_storyteller_tree'
+// Voice: oral, generational, trade-route-memory specific.
+// Practical. Not poetic. Cadence of someone who has told this
+// story many times and knows which parts land.
+// Key grant: dust_caravan_cache (gated on listening through both
+// branch 1 and branch 2 first, mirroring Marta's trust pattern)
+// ------------------------------------------------------------
+
+const campfireStorytellerTree: DialogueTree = {
+  npcId: 'campfire_storyteller',
+  startNode: 'gavel_start',
+  nodes: {
+    gavel_start: {
+      id: 'gavel_start',
+      speaker: 'Gavel',
+      text: `${rt.npc('Gavel')} looks up from the fire. An older Drifter, face like old rope, voice that carries without effort. "You sitting down or just blocking the heat?" A pause. "I'll take sitting. I'm working through the second part of the Kinney Pass account. The first month after the Collapse — the caravans, the routes. Pull up a rock."`,
+      branches: [
+        {
+          label: 'Tell me about the Drifter caravans before the Collapse.',
+          targetNode: 'gavel_caravan_history',
+        },
+        {
+          label: 'Teach me how to read trail notation.',
+          targetNode: 'gavel_trail_teach',
+          requiresFlag: 'gavel_heard_trail_notation',
+        },
+        {
+          label: 'Just passing through.',
+          targetNode: 'gavel_leave',
+        },
+      ],
+    },
+
+    gavel_caravan_history: {
+      id: 'gavel_caravan_history',
+      speaker: 'Gavel',
+      text: `"You want the long version or the useful version?" ${rt.npc('Gavel')} doesn't wait for an answer. "Before the Collapse, the ${rt.keyword('Drifters')} ran three main arteries through this region. The western arc went through the Dust — the dead flats people avoid now. The caravans liked it because nothing else moved out there. No Accord checkpoints. No tolls. You could run from the Pine Sea to Salt Creek in seven days and never speak to a settlement. They buried supplies at every dead-camp sign they planted along the way. Food, ammunition, tools. The signs looked like nothing — bent rebar, specific angle, specific depth. My grandmother taught me what to look for. I taught my daughter. She never needed it. Nobody does anymore." He feeds a stick into the fire. "That's the problem with knowing things. You keep knowing them past their usefulness."`,
+      onEnter: {
+        setFlag: { gavel_heard_caravan_history: true },
+      },
+      branches: [
+        {
+          label: 'Tell me about the trail notation.',
+          targetNode: 'gavel_trail_notation',
+        },
+        {
+          label: 'The Dust route. Those supplies are still out there?',
+          targetNode: 'gavel_dust_question',
+        },
+        {
+          label: "That's a useful history. Thank you.",
+          targetNode: 'gavel_leave',
+        },
+      ],
+    },
+
+    gavel_dust_question: {
+      id: 'gavel_dust_question',
+      speaker: 'Gavel',
+      text: `"Some of them." ${rt.npc('Gavel')} turns the stick in the fire. "The western Dust is hard on containers. But the dead-camp markers had a rule — seal for twenty years minimum. Waxed tin, double-wrapped in oilcloth. The caravans ran that route for four years before the Collapse. The math on the caches is still good." He glances at you. "That assumes you can read the markers. Most people can't."`,
+      branches: [
+        {
+          label: 'Can you teach me to read them?',
+          targetNode: 'gavel_trail_notation',
+        },
+        {
+          label: 'I appreciate it.',
+          targetNode: 'gavel_leave',
+        },
+      ],
+    },
+
+    gavel_trail_notation: {
+      id: 'gavel_trail_notation',
+      speaker: 'Gavel',
+      text: `"The notation." ${rt.npc('Gavel')} holds up a hand, index finger extended. "The angle of the rebar tells you direction — lean toward the cache, not away from it. People always get that backward. Depth is how many days out the supply point is, at walking pace. A rebar driven to the second knuckle in the ground means two days' walk. To the wrist means five." He lowers his hand. "The shape at the top matters too. Straight cut means standard supply. Bent hook means water. Cross-cut means the cache is under a structure rather than open ground. My grandmother had a system for eleven cache types. I remember nine of them."`,
+      onEnter: {
+        setFlag: { gavel_heard_trail_notation: true },
+      },
+      branches: [
+        {
+          label: '"Teach me." The whole system.',
+          targetNode: 'gavel_teach',
+          requiresFlag: 'gavel_heard_caravan_history',
+        },
+        {
+          label: 'How many of these caches are still out there?',
+          targetNode: 'gavel_caches_question',
+        },
+        {
+          label: 'That is a remarkable system.',
+          targetNode: 'gavel_leave',
+        },
+      ],
+    },
+
+    gavel_trail_teach: {
+      id: 'gavel_trail_teach',
+      speaker: 'Gavel',
+      text: `${rt.npc('Gavel')} looks at you without the flatness they use on most people. "You came back." Not a question. "The notation, the angle system, the depth markers. You want the working version, not just the story." A pause that is not uncomfortable. "All right. Sit closer."`,
+      branches: [
+        {
+          label: 'Yes. The whole system.',
+          targetNode: 'gavel_teach',
+        },
+      ],
+    },
+
+    gavel_caches_question: {
+      id: 'gavel_caches_question',
+      speaker: 'Gavel',
+      text: `"More than people think." ${rt.npc('Gavel')} straightens. "The western arc had twelve dead-camp signs planted in the forty-year run of that route. I know where three of them were. One went down in the flooding near the river break. One was pulled up — I saw it happen in '31, year before the Collapse, Accord patrol confiscated the rebar thinking it was weapon scrap." A flat look. "It was. Functionally." He pauses. "The third one is still there. Under the dead-camp sign in the Dust, past the salt flat, where the route drops toward the old ranch line. The cache under it has been sitting sealed since 2030."`,
+      branches: [
+        {
+          label: '"Teach me to find it."',
+          targetNode: 'gavel_teach',
+          requiresFlag: 'gavel_heard_caravan_history',
+        },
+        {
+          label: 'Thank you, Gavel.',
+          targetNode: 'gavel_leave',
+        },
+      ],
+    },
+
+    gavel_teach: {
+      id: 'gavel_teach',
+      speaker: 'Gavel',
+      text: `${rt.npc('Gavel')} reaches into the fire ring with a stick and draws in the ash beside the fire. "The dead-camp sign looks like a grave marker — that's the point, nobody moves graves. But it's a lean, not a plumb. Twelve degrees east of north, consistent across the whole western arc system." He draws a line, angles it. "The cache under it goes down eighteen inches and over three feet west — always west, into the prevailing shade. The marker at the Dust site is under the old ranch sign, the one that says KINNEY CROSS in rusted letters. The cross-cut at the top means the cache is under a structure. Find the sign, measure twelve degrees east of north from the base, pace three feet west, and go down eighteen inches." He smooths the ash. "The cache has been there since 2030. Sealed in waxed tin and oilcloth. Whatever is in it has been waiting twenty-six years. My grandmother knew a good hiding place when she found one."`,
+      onEnter: {
+        grantNarrativeKey: 'dust_caravan_cache',
+      },
+      branches: [
+        {
+          label: "I will find it. Thank you.",
+          targetNode: 'gavel_closure',
+        },
+      ],
+    },
+
+    gavel_closure: {
+      id: 'gavel_closure',
+      speaker: 'Gavel',
+      text: `${rt.npc('Gavel')} returns his attention to the fire. "The story continues either way. Whether you find the cache or you don't. That's how the Drifters built their system — each piece works without the others, and the whole is better than the sum. My grandmother understood that. She would have liked you."`,
+    },
+
+    gavel_leave: {
+      id: 'gavel_leave',
+      speaker: 'Gavel',
+      text: `"Second part of the Kinney Pass account runs at dusk. Come back if you have the time for it."`,
+    },
+  },
+}
+
+// ============================================================
 
 export const DIALOGUE_TREES: Record<string, DialogueTree> = {
   // Lev has two spawn points referencing different tree IDs,
@@ -5518,4 +5702,10 @@ export const DIALOGUE_TREES: Record<string, DialogueTree> = {
   pens_kade_philosophy: kadeTree,
   pens_vex_manifest: vexTree,
   pens_lyris_conflict: lyrisTree,
+
+  // --- Campfire Storyteller at Crossroads Campground ---
+  // cr_campfire_lore: canonical ID referenced by crossroads.ts npcSpawn
+  // drifters_storyteller_tree: alias used by task spec and room metadata
+  cr_campfire_lore: campfireStorytellerTree,
+  drifters_storyteller_tree: campfireStorytellerTree,
 }

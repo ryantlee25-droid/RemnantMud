@@ -769,6 +769,7 @@ export const NPCS: Record<string, RichNPC> = {
     description: "An older Drifter who has traded stories for food and shelter since before the Crossroads was the Crossroads. Has a reputation across three settlements — people travel here specifically to hear Gavel's account of the first month after the Collapse, which changes slightly each telling in ways nobody can prove are inaccurate. They know the difference between what happened and what people needed to hear.",
     dialogue: "You want news or stories? News costs a meal. Stories are free but you have to stay for the whole thing. What I know about the north pass is news. What I know about the MERIDIAN signal is something in between.",
     faction: 'drifters',
+    isNamed: true,
     zone: 'crossroads',
     spawnChance: 0.55,
     dispositionRoll: { friendly: 0.40, neutral: 0.45, wary: 0.10, hostile: 0.05 },

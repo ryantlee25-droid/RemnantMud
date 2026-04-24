@@ -301,7 +301,8 @@ describe('createCharacter — ledger state', () => {
     expect(ledger!.totalDeaths).toBe(0)
     expect(Array.isArray(ledger!.discoveredRoomIds)).toBe(true)
     expect(typeof ledger!.worldSeed).toBe('number')
-    expect(ledger!.squirrelAlive).toBe(true)
+    // Mirror DB default — squirrel is acquired through gameplay, not at creation
+    expect(ledger!.squirrelAlive).toBe(false)
     expect(ledger!.squirrelTrust).toBe(0)
     expect(Array.isArray(ledger!.cycleHistory)).toBe(true)
     expect(ledger!.cycleHistory).toHaveLength(0)

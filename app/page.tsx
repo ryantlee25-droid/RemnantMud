@@ -226,6 +226,9 @@ export default function GamePage() {
       text: "[1-9] to choose, 'leave' to exit",
       type: 'system' as const,
     }])
+    // engine is the stable singleton from useGame — listed here only to
+    // satisfy exhaustive-deps. Changing the dep set would let this fire on
+    // every render and duplicate the hint mid-dialogue.
   }, [activeDialogueKey, engine])
 
   // ── Command interception ───────────────────────────────────

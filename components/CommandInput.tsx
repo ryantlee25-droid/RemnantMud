@@ -20,8 +20,11 @@ export default function CommandInput() {
     inputRef.current?.focus()
   }, [])
 
-  // Re-focus whenever a new message arrives — restores focus after sidebar tab clicks
+  // Re-focus whenever a new message arrives — restores focus after sidebar tab clicks.
+  // Don't steal focus if a modal dialog is open (e.g. the WorldMapTab room-inspect modal),
+  // otherwise keyboard nav inside the modal silently breaks when an engine message ticks.
   useEffect(() => {
+    if (typeof document !== 'undefined' && document.querySelector('[role="dialog"]')) return
     inputRef.current?.focus()
   }, [state.log.length])
 

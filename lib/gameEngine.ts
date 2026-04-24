@@ -723,6 +723,11 @@ export class GameEngine implements EngineCore {
       broker: "Everyone here wants something. The question is who's most honest about it.",
     }
 
+    // Mirror the DB defaults from the ledger upsert above (player_ledger
+    // migration 20260327000001_cycle_system.sql defaults squirrel_alive to
+    // FALSE — the squirrel companion is acquired through gameplay, not at
+    // character creation). Keep these values aligned with loadPlayer's
+    // ledger construction so a refresh doesn't desync the in-memory state.
     const newLedger: PlayerLedger = {
       playerId: user.id,
       worldSeed: seed,
@@ -731,7 +736,7 @@ export class GameEngine implements EngineCore {
       pressureLevel: 1,
       discoveredRoomIds: [],
       discoveredEnemies: [],
-      squirrelAlive: true,
+      squirrelAlive: false,
       squirrelTrust: 0,
       squirrelCyclesKnown: 0,
       squirrelName: undefined,

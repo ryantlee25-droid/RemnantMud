@@ -1,124 +1,89 @@
-# Plan: Post-Tabs Followup — Color Convention, Map Bug, UX Polish, Dialogue Audit
-_Created: 2026-04-24 | Type: Bug Fix + Refactor + New Feature_
-
----
-
-## Goal
-
-Fix the `ledger: null` map-rendering bug, unify interactive-element colors across all surfaces
-(terminal, tabs, modal), apply the highest-impact UX audit items still outstanding, and bring
-the dialogue tree to full structural health with expanded test coverage.
+# Plan: Combat System Review — Convoy dev/followup-0425
+_Created: 2026-04-24 | Type: Refactor + Bug Fix + New Feature_
 
 ---
 
 ## Situation
 
-**1. Color convention (Howler 1)**
-`lib/ansiColors.ts` is the single source of truth for terminal tag colors. It already correctly
-assigns `text-cyan-400` to `npc` and `text-green-400` to `exit`. The problem is inconsistency
-between the terminal tags and the React tab surfaces. `StatsTab.tsx` renders the current room
-name and exits line in `text-green-400` — matching the terminal `exit` tag but diverging from
-any "interactive" convention. `WorldMapTab.tsx` modal renders NPC ids and item counts in raw
-`text-amber-400` (narration color), losing the distinction. No shared color constant is imported
-from `ansiColors.ts` into any tab component — they all inline `text-amber-*` strings. The
-chosen convention: **`text-cyan-400` for all interactive entities** (NPCs, exits, items as
-named objects) across terminal tags AND tab surfaces, with amber reserved for narration and UI
-chrome. `text-cyan-400` is already used for the command prompt (`CommandInput.tsx:97`) and
-`npc` tags, making it the natural anchor.
+**What we have.** The Remnant has a working turn-based combat engine split across `lib/combat.ts` (972 lines of pure math), `lib/actions/combat.ts` (877 lines of handlers), and `lib/traits.ts` (228 lines of weapon/armor trait resolution). The math is correct — d10 hit roll vs defense DC, flat damage, 1.5× crits, conditions tracked as `ActiveCondition[]`. Seven class abilities work (408-line test file). Conditions `bleeding | burning | stunned | frightened | poisoned | weakened` are implemented in `types/traits.ts`. All four armor traits are functional, including `warded` (the audit's "unimplemented" claim was wrong — verified at `lib/traits.ts:208`). 1,728 lines of combat tests pass. `components/Terminal.tsx` already carries `role="log" aria-live="polite"` — the ARIA baseline is in place.
 
-**2. Map not rendering bug (Howler 2)**
-`lib/gameEngine.ts:728` (inside `createCharacter`) calls `this._setState({ ..., ledger: null })`
-even though `player_ledger` was upserted two lines earlier (line 668–675). `WorldMapTab.tsx:374`
-guards `if (!state.currentRoom || !state.ledger)` and returns "Loading world..." when either is
-null — so first-time players, including all dev-mode sessions, see only the loading stub forever.
-The fix is to construct a `PlayerLedger` object from the values written to the DB and pass it to
-`_setState`. `rebirthWithStats` (line 1165–1186) takes a different path — it calls `loadPlayer`
-at the end which populates `ledger` from the DB, so rebirth is not affected. A regression
-integration test must assert that after `createCharacter`, `state.ledger` is non-null with the
-expected shape.
+**Where it falls short.** The user's primary axis is *time-to-engage*. Several gaps converge on that axis: (1) The combat prompt shows only `<HP:X/Y>` — no enemy name, no active status, no verb hints. (2) Miss messages are a single generic line ("It glances off nothing") — no reason, no learning signal. (3) The `TUTORIAL_HINTS` table has a `first_enemy` hint but no in-fight scaffolding — no first-kill hint, no "try flee when low HP" trigger, no encounter-two-teaches-new-verb pattern. (4) The armor reduction formula in the flee handler (`15% per defense point, capped at 60%`) diverges from the flat-subtraction used in all other attack paths — inconsistent player experience. (5) Environment modifier paths have zero integration tests. (6) The B12 save/load round-trip during active combat is untested. (7) `additionalEnemies` (screamer summons) are silently discarded when the player flees — the enemies vanish, undercutting their threat. (8) The spawn-distribution audit confirms that a cycle-1 player exploring early zones at daytime sees 0–1 encounters per 10 rooms — technically intentional sparse-by-design, but the design is not *legible* to the player ("the world is empty" rather than "Act I is exploration-first").
 
-**3. UX polish (Howler 3)**
-The `docs/eval/UX-AUDIT-0424.md` lists 17 items. The prior branch addressed items from the tab
-refactor. Items still fully unaddressed and feasible without data model changes:
-- **#14 — Prologue exit prompt color**: the "Type SKIP" prompt is buried in 850 words of gray
-  text; wrapping in `<keyword>` tag makes it visually pop in the terminal (1-line fix).
-- **#11 — Dialogue choice numbering**: choices render as numbered list `1–9` but the UI never
-  teaches this; a one-line "[Type a number to choose]" hint in the dialogue render surface
-  (`app/page.tsx`) removes the discoverability cliff.
-- **#8 — Stat tooltips in character creation**: `CharacterCreation.tsx` shows stat names and
-  point allocators with no description of what Vigor/Grit/etc do; adding one short tooltip line
-  per stat is ~15 lines and directly addresses the E3 audit finding.
-- **Input refocus after tab click**: `CommandInput.tsx` focuses on mount only; clicking a sidebar
-  tab captures focus and never returns it to the input. Adding a `pointerdown` capture listener
-  on the terminal pane (or an exported `focus()` method) solves this without layout changes.
-- **Auto-save silent failure indicator**: `_savePlayer` already appends a system message on retry
-  failure but says nothing on initial failure; a brief "Saving..." → "Saved" indicator on the
-  terminal header or StatsTab would surface the auto-save cycle. Scope: add a `saving` boolean
-  to `GameState`, set it in `_savePlayer`, render a subtle indicator in `StatsTab`.
-Items deferred to a later run: restart flow safety (#1–4), tutorial hint wiring (#5), Phase E
-migration work (#6, #7), Phase D discoverability docs.
+**What this convoy delivers.** Seven focused Howlers: combat prompt and status-strip redesign (UX); miss-reason messaging and weapon-trait strike text (feel); first-fight onboarding layer (accessibility); armor formula normalization (correctness); environment modifier tests + B12 save/load round-trip tests (quality gate); additionalEnemies flee-persistence + miscellaneous bug fixes (correctness); and spawn-density floor lift for early zones + no-combat narrative hint (new-player onboarding).
 
-**4. Dialogue tree audit (Howler 4)**
-`data/dialogueTrees.ts` is 5711 lines with ~20 unique NPC trees (~20 `npcId` entries). The
-existing `tests/eval/dialogueHealth.test.ts` already covers 12 test categories: orphan
-targetNodes, unreachable nodes, terminal nodes, faction refs, skill refs, flag round-trip, smart
-quotes, NPC cross-reference, startNode existence, node id consistency, trapped failNodes, and
-aggregate stats. All 432 eval tests currently pass. What is NOT yet covered:
-- Cycle-gated branches (`requiresCycleMin`) that lack a non-cycle-1 fallback branch in the same
-  node — a cycle-1 player would see zero options and be silently stuck.
-- Faction-gated branches (`requiresRep`) without a fallback — same trapped-player risk.
-- `onEnter.grantItem` references that name item IDs not present in `data/items.ts`.
-- `onEnter.grantNarrativeKey` values that are never consumed by a `requiresNarrativeKey` gate
-  in rooms or dialogue (orphan keys — not a crash but signals drift).
-- Node text length audit: nodes with `text === ''` or text under 5 characters (structural
-  placeholder left in).
-The Howler will add these test categories and fix any failures found.
+**What this convoy explicitly does not deliver.** Monte Carlo balance harness, `stance` tactical knob, stealth/awareness subsystem, AP action budget, non-violence boss exits, `wimpy` auto-flee threshold, Option 2 (first-zone-visit spawn bonus), Option 3 (pressure scaling softening).
 
 ---
 
-## Architecture Decisions
+## Decisions Locked
 
-**Color convention**: `text-cyan-400` = interactive (NPCs, exits, named items). The tag system
-in `lib/ansiColors.ts` already uses `text-cyan-400` for `npc`; we extend the convention to
-`exit` (currently `text-green-400`) and `item` (currently `text-yellow-400`) in the tag map,
-and mirror it in tab components that render the same entity types. `text-green-400` will be
-retired from interactive use (kept only for HP-bar "healthy" coloring, which is semantic, not
-entity-type). `text-yellow-400` will be retired from item tags (kept for currency, which is
-visually distinct by design). `lib/ansiColors.ts` is the single-file contract — tab components
-will import `TAG_COLOR` rather than inlining strings. NOTE: `text-green-400` in `StatsTab`
-room-name line is ambient location indicator, not interactive — change to `text-cyan-400` for
-convention consistency.
+1. **Turn structure granularity:** Keep per-action tick. No WAIT_STATE, no AP budget refactor.
 
-**Map fix**: Construct `PlayerLedger` inline from the upsert values in `createCharacter`; pass
-it to `_setState`. Use `user.id` for `playerId`, `seed` for `worldSeed`, and hardcode the
-cycle-1 defaults (`currentCycle: 1`, `pressureLevel: 1`, `totalDeaths: 0`,
-`discoveredRoomIds: []`, `discoveredEnemies: []`, `squirrelAlive: true`, `squirrelTrust: 0`,
-`squirrelCyclesKnown: 0`). No new DB query needed.
+2. **Combat verb floor:** `attack`/`flee`/`look`/`status`. No new verbs added — only better discoverability via hints (H3).
 
-**UX items selected** (from the 17-item audit):
-1. #14 Prologue color (`app/page.tsx`) — trivial, unblocked, instant visible payoff
-2. #11 Dialogue hint (`app/page.tsx`) — 1 line, removes the biggest discoverability cliff
-3. #8 Stat tooltips (`components/CharacterCreation.tsx`) — small, addresses E3 audit directly
-4. Input refocus (`components/CommandInput.tsx`, `components/tabs/TabBar.tsx`) — small, UX parity
-5. Auto-save indicator (`lib/gameEngine.ts`, `components/tabs/StatsTab.tsx`) — small, surfaces
-   silent behavior
+3. **Status effect set:** Keep the existing six. `Blind` deferred to Phase 2 (shared type risk).
 
-**Dialogue audit methodology**: The Howler runs `pnpm test:eval` as the baseline, then adds new
-`describe` blocks to `tests/eval/dialogueHealth.test.ts` for the uncovered categories, runs
-tests to find failures, fixes failures in `data/dialogueTrees.ts` (or adds missing items to
-`data/items.ts` allowlists in the test file if the item genuinely exists), then re-runs until
-green.
+4. **Called-shot subsystem:** Keep. Verified at `lib/gameEngine.ts:1888`. No regression risk.
+
+5. **Armor formula normalization (flee path):** H4 extracts `computeArmorReduction(rawDamage: number, armorDefense: number): number` in `lib/combat.ts` and updates the flee handler. Default: flat subtraction.
+
+6. **Save/load round-trip during combat (B12):** Test-only (H5). No new migration needed.
+
+7. **Monte Carlo balance harness:** Deferred to Phase 2.
+
+8. **Tutorial hints / first-fight:** H3 adds `first_combat_start`, `first_kill`, `low_hp_combat`, `second_encounter` entries to `TUTORIAL_HINTS` in `lib/actions/system.ts` and trigger sites in `lib/gameEngine.ts` (post-action section, ~lines 1969+).
+
+9. **Spawn density — chosen path:** Option 1 (data-only density floor) + Option 4 (idle no-combat hint). Both assigned to H7.
+   - Option 2 (first-zone-visit bonus) skipped: would disrupt the time-of-day modifiers' rhythm.
+   - Option 3 (soften pressure scaling) skipped: premature without playtest data confirming cycle-3 ramp is too sharp.
+   - Rationale: Option 1 lifts the floor without breaking the intentional 3-run pacing; Option 4 makes the sparse design *legible* to cycle-1 players without changing any density.
+
+10. **Idle-hint implementation pattern:** H7 creates a new `lib/idleHint.ts` (counter logic + message text). `lib/gameEngine.ts` gets one call site added in the post-action section after H3's entries. H7 is sequenced after H3 to avoid a merge conflict in that region.
+
+---
+
+## Scope
+
+**In scope:** Combat prompt redesign, status strip, miss-reason messages, weapon-trait strike text, in-fight onboarding hints, armor formula normalization, B12 save/load test, environment modifier tests, additionalEnemies flee persistence, W-input-maxlength fix, spawn density floor lift for Crossroads/Covenant/Duskhollow/The Stacks, idle no-combat narrative hint.
+
+**Out of scope:** Monte Carlo harness, `stance` knob, stealth system, AP budget, `wimpy`, `Blind` condition, non-violence boss exits, threat-color enemy names, enemy FSM states, `last`/`replay` command, Option 2 (first-visit spawn bonus), Option 3 (pressure scaling), other zones' density (River Road, Salt Creek already adequate per audit).
+
+**Ambiguities resolved:**
+- Flee armor formula defaults to flat subtraction (matching all other paths).
+- `additionalEnemies` re-added to `currentRoom.enemies` immediately on flee; cleared on zone transition.
+- Idle hint threshold: 30 actions without a combat encounter (≈ 15 minutes of exploration). Single fire per cycle — resets when the player next enters combat.
+- Density floor target: `baseChance` 0.06–0.10 for new blocks in the four sparse zones. Tonal consistency via existing `threatPool` patterns from verified rooms in each zone.
 
 ---
 
 ## Type Dependencies
 
-- `PlayerLedger` in `types/game.ts:582` — Howler 2 constructs an instance; no change to the
-  interface itself. Shape must match the fields documented in `loadPlayer` (line 884–897).
-- `GameState` in `types/game.ts:728` — Howler 3 adds `saving?: boolean` for the auto-save
-  indicator. This field is optional so no other module breaks.
-- `TAG_COLOR` in `lib/ansiColors.ts` — Howler 1 modifies two entries (`item`, `exit`). Imported
-  by `components/Terminal.tsx`. All tab components that inline color strings will also import it.
+- `ConditionId` in `types/traits.ts:19` — used by H1 (status strip), H2 (miss messages). Read-only; no changes.
+- `CombatState` in `types/game.ts:618` — H1 reads for status strip; H6 uses existing `additionalEnemies` field. No changes.
+- `ActiveCondition` in `types/traits.ts:42` — read by H1 for status strip rendering. No changes.
+- `Room` / `hollowEncounter` shape in `types/game.ts` — H7 adds new `hollowEncounter` blocks that must conform to the existing interface. H7 must verify the `RoomEncounter` interface before writing data.
+
+Note: `types/traits.ts` is shared infrastructure. H1, H2, and H4 all read it. None modify it.
+
+---
+
+## Architecture
+
+**Turn structure.** Unchanged. Per-action tick. `_dispatchAction` → handler → `_savePlayer`. No AP refactor.
+
+**Verb floor.** `attack`/`flee`/`look`/`status`. H3 adds inline prompt hints; no new verbs in `lib/parser.ts`.
+
+**Status-effect machinery.** Unchanged at the data layer. H1 adds a `buildStatusStrip(player, combatState)` helper in `lib/actions/combat.ts` (near top of file, standalone export).
+
+**Miss-reason vocabulary.** H2 adds three miss-reason buckets in `lib/combat.ts` within `doAttackRound()` and `playerCalledShot()`. Fumble retains its existing message.
+
+**Prompt redesign.** H1 modifies `components/CommandInput.tsx`. New combat prompt: `[HP 80/100] [raider — wounded] (attack/flee) >`.
+
+**Armor util.** H4 extracts `computeArmorReduction` into `lib/combat.ts`. Callers: `doEnemyTurn` (~line 689), flee handler (~line 559 in `lib/actions/combat.ts`).
+
+**Idle hint.** H7 creates `lib/idleHint.ts`. The module tracks `actionsTaken` since `lastCombatActionsTaken` (stored in localStorage, not game state — avoids any save migration). After 30 no-combat actions it fires once. `lib/gameEngine.ts` calls `checkIdleHint(engine)` once in the post-action section, after H3's tutorial hint block. Counter resets when `combatState.active` becomes true.
+
+**Spawn density.** H7 adds `hollowEncounter` blocks to empty rooms in 4 zone files. New blocks use existing `threatPool` patterns from same-zone rooms for tonal consistency.
 
 ---
 
@@ -126,290 +91,156 @@ green.
 
 | Howler | Creates | Modifies |
 |--------|---------|----------|
-| H1 — Color convention | — | `lib/ansiColors.ts`, `components/tabs/StatsTab.tsx`, `components/tabs/WorldMapTab.tsx`, `components/tabs/InventoryTab.tsx`, `components/tabs/DataTab.tsx` |
-| H2 — Map bug | `tests/integration/createCharacterLedger.test.ts` | `lib/gameEngine.ts` |
-| H3 — UX polish | — | `app/page.tsx`, `components/CharacterCreation.tsx`, `components/CommandInput.tsx`, `components/tabs/StatsTab.tsx`, `types/game.ts` |
-| H4 — Dialogue audit | — | `tests/eval/dialogueHealth.test.ts`, `data/dialogueTrees.ts` |
+| H1 — Prompt + Status Strip | — | `components/CommandInput.tsx`, `lib/actions/combat.ts` |
+| H2 — Miss Reasons + Trait Strike Text | — | `lib/combat.ts` |
+| H3 — First-Fight Onboarding | — | `lib/actions/system.ts`, `lib/gameEngine.ts` |
+| H4 — Armor Formula Normalization | — | `lib/combat.ts`, `lib/actions/combat.ts` |
+| H5 — Save/Load + Env Modifier Tests | `tests/integration/save-load-roundtrip.test.ts`, `tests/integration/combat-env.test.ts` | — |
+| H6 — AdditionalEnemies Flee + Bug Fixes | — | `lib/actions/combat.ts`, `lib/gameEngine.ts` |
+| H7 — Spawn Density + Idle Hint | `lib/idleHint.ts`, `tests/unit/idleHint.test.ts` | `data/rooms/crossroads.ts`, `data/rooms/covenant.ts`, `data/rooms/duskhollow.ts`, `data/rooms/the_stacks.ts`, `lib/gameEngine.ts` |
 
-**Conflict check**: `components/tabs/StatsTab.tsx` appears in both H1 and H3. Resolution: H1
-owns all color changes to StatsTab (including any new `TAG_COLOR` imports); H3 adds the `saving`
-boolean indicator to StatsTab but does not touch color classes. Since these are distinct line
-ranges with no overlap, they can run in parallel — but H1 must freeze its StatsTab changes first
-so H3 can merge cleanly. In practice: H3 adds only new JSX at the bottom of the stats panel
-(the saving indicator block) and touches no lines H1 will modify. The Howler that runs second
-must rebase before opening its diff.
-
-**Cross-Howler coordination note**: H1 changes `TAG_COLOR.exit` from `text-green-400` to
-`text-cyan-400` in `lib/ansiColors.ts`. The `Terminal.tsx` component reads `TAG_COLOR` at
-render time — no other file needs updating for terminal output. Tab components that H1 also
-touches are fully owned by H1.
+**Conflict analysis:**
+- `lib/combat.ts` shared by H2 and H4. Different regions (miss-message paths vs armor block). No line overlap; standard merge.
+- `lib/actions/combat.ts` shared by H1 (top, `buildStatusStrip`), H4 (flee handler ~line 558), H6 (flee success ~line 549). Different regions; H4 merges before H6.
+- `lib/gameEngine.ts` shared by H3 (post-action hint section ~lines 1969–2017), H6 (flee success path, different region), and H7 (one call site added after H3's block, ~line 2018+). **H7 merges after H3** — they both write to the post-action section; H7's single line is appended after H3's block rather than interleaved. H6's region is the flee path, not the post-action section — no overlap with H7.
+- `data/rooms/*.ts` — four files owned exclusively by H7. No other Howler touches them.
+- `lib/idleHint.ts` — new file, owned exclusively by H7.
 
 ---
 
 ## Tasks
 
-### H1 — Interactive-element color convention
+- [ ] **H1 — Combat Prompt Redesign + Status Strip** — Replace bare `<HP:X/Y>` with a context-aware combat prompt; append a status strip to every round with active conditions.
+  - Files: MODIFY `components/CommandInput.tsx`, MODIFY `lib/actions/combat.ts`
+  - Tests: No new test file required; confirm existing combat tests pass. Add `maxLength={200}` to the input element (W-input-maxlength fix).
+  - Depends on: nothing
+  - Effort: S
+  - Pre-mortem: If this takes 3× longer, it will be because `CommandInput.tsx` reads game state via a hook that doesn't currently expose `combatState`. Read existing `useGameStore` selectors in the file before writing — `state.player` is already selected, so `state.combatState` is one selector away.
+  - Notes: `buildStatusStrip` must be placed near the top of `lib/actions/combat.ts` — not in the flee handler region (~line 558) owned by H4 or the flee success region (~line 549) owned by H6.
 
-**Scope**: Audit all uses of `text-green-400`, `text-yellow-400` (item tag), and `text-amber-*`
-on interactive entities in the four sidebar tab components and `lib/ansiColors.ts`. Apply the
-`text-cyan-400` = interactive convention. Do NOT change amber usage for UI chrome (borders,
-headers, section labels) or `text-yellow-400` for currency. Do NOT change `text-red-*` for
-enemies or `text-green-400` for HP bar healthy state.
+- [ ] **H2 — Miss-Reason Messaging + Weapon-Trait Strike Text** — Replace generic miss line with three reason buckets; add trait×enemy flavor text for blessed/vicious/scorching/draining on hit.
+  - Files: MODIFY `lib/combat.ts`
+  - Tests: Add 6 new test cases in `tests/integration/combat-math.test.ts` (3 miss-reason buckets, 3 trait strike texts).
+  - Depends on: nothing
+  - Effort: S
+  - Pre-mortem: If this takes 3× longer, it will be because the whisperer debuff at `lib/combat.ts:306` mutates roll context before the miss check, and miss-reason bucketing must account for the debuffed roll total, not the raw roll. Read the full miss path (lines ~278–336) before writing bucket logic.
 
-- Files:
-  - Modify: `lib/ansiColors.ts` — change `TAG_COLOR.item` to `'text-cyan-400'`, `TAG_COLOR.exit`
-    to `'text-cyan-400'` (npc is already `text-cyan-400`)
-  - Modify: `components/tabs/StatsTab.tsx` — import `TAG_COLOR` from `lib/ansiColors.ts`;
-    change room-name `text-green-400` to `text-cyan-400`, exits `text-green-400` to
-    `text-cyan-400`
-  - Modify: `components/tabs/WorldMapTab.tsx` — in the modal, change NPC ids render from
-    unstyled `text-amber-400` to `text-cyan-400`; change items count label from `text-amber-600`
-    to `text-cyan-400`; exits list to `text-cyan-400`
-  - Modify: `components/tabs/InventoryTab.tsx` — change item name `text-amber-300` to
-    `text-cyan-400` for item names (not for stats/values which stay amber)
-  - Modify: `components/tabs/DataTab.tsx` — quest flag names rendered as `text-amber-400`; these
-    are data labels not interactive entities — leave amber. No change needed here unless a
-    specific entity display is found.
+- [ ] **H3 — First-Fight Onboarding Layer** — Add four new `TUTORIAL_HINTS` entries and trigger sites for `first_combat_start`, `first_kill`, `low_hp_combat`, `second_encounter`.
+  - Files: MODIFY `lib/actions/system.ts`, MODIFY `lib/gameEngine.ts`
+  - Tests: Add 4 new test cases confirming each hint fires exactly once per localStorage key, and `low_hp_combat` triggers at ≤30% HP.
+  - Depends on: nothing
+  - Effort: S
+  - Pre-mortem: If this takes 3× longer, it will be because the `low_hp_combat` trigger fires on the wrong side of the player-death check and surfaces after death rather than before. Read `lib/gameEngine.ts` lines 1823–2009 (post-action hook sequence) before wiring the HP trigger.
+  - Notes: H7 depends on H3 — H7 appends one call site after the end of H3's tutorial-hint block (~line 2017+). H3 must merge first.
 
-- Tests: `npx tsc --noEmit` passes. Visual: terminal exits/items/npcs are `text-cyan-400`;
-  StatsTab exits are `text-cyan-400`; WorldMapTab modal NPC/item/exit fields are `text-cyan-400`.
-  No amber on named interactive entities.
+- [ ] **H4 — Armor Formula Normalization** — Extract `computeArmorReduction` utility; normalize flee-path armor to match all other damage paths.
+  - Files: MODIFY `lib/combat.ts` (extract + export utility), MODIFY `lib/actions/combat.ts` (update flee handler)
+  - Tests: Add 3 new test cases in `tests/integration/combat-math.test.ts` pinning the flee-path formula.
+  - Depends on: nothing (but H6 depends on H4)
+  - Effort: S
+  - Pre-mortem: If this takes 3× longer, it will be because `doEnemyTurn` has multiple armor-related code paths and the extraction misses one. Read all of `lib/combat.ts:600–740` before writing — confirm there is exactly one armor-reduction site in `doEnemyTurn`.
 
-- Depends on: nothing
+- [ ] **H5 — Save/Load Round-Trip + Environment Modifier Tests** — Close TODO-RELEASE B12; add four environment modifier test cases. Pure test work.
+  - Files: CREATE `tests/integration/save-load-roundtrip.test.ts`, CREATE `tests/integration/combat-env.test.ts`
+  - Tests: All new (the deliverable IS tests). The save-load test covers three scenarios (combatState active, combatState null, narrative_progress JSONB round-trip). The env test covers 4 environment types.
+  - Depends on: nothing
+  - Effort: M
+  - Pre-mortem: If this takes 3× longer, it will be because `computeEnvironmentEffects` reads deeply from `GameState.currentRoom` and setting up a fixture room with the correct environment property requires understanding the full room initialization chain. Read `computeEnvironmentEffects` and `getEnvironmentModifiers` source in `lib/combat.ts` before writing any test.
 
-- Effort: S
+- [ ] **H6 — AdditionalEnemies Flee Persistence + Bug Fixes** — Re-inject screamer summons into the room when the player flees; document the Overwhelm+Keen non-crit design choice.
+  - Files: MODIFY `lib/actions/combat.ts` (flee success path), MODIFY `lib/gameEngine.ts` (room enemy injection)
+  - Tests: Add 2 new test cases in `tests/integration/combat.test.ts` (additionalEnemies present/absent on flee).
+  - Depends on: H4 (must merge first — flee path armor logic)
+  - Effort: S
+  - Pre-mortem: If this takes 3× longer, it will be because injecting enemies back into `currentRoom.enemies` requires `currentRoom` to be mutable state. Verify that `engine._setState({ currentRoom: { ...currentRoom, enemies: [...] } })` is the correct mutation pattern by checking one existing room-state mutation in `lib/gameEngine.ts` before implementing.
+  - Notes: H6 does NOT touch `components/CommandInput.tsx` — the W-input-maxlength fix is assigned to H1. H6's `lib/gameEngine.ts` edits are in the flee path — a different region from H3's and H7's post-action section.
 
-- Pre-mortem: N/A (S task)
-
-- Notes: `TAG_COLOR` is already imported by `Terminal.tsx` via `parseRichText`. Tab components
-  currently inline strings — importing `TAG_COLOR` is preferred but not required if it adds
-  import complexity; consistent string values are acceptable.
-
----
-
-### H2 — Map not rendering bug + regression test
-
-**Scope**: Fix `lib/gameEngine.ts:728` where `ledger: null` is hardcoded. Add integration test.
-Audit `rebirthWithStats` to confirm it does not share the bug (it calls `loadPlayer` at line
-1190 which populates ledger from DB — confirmed safe, no fix needed there).
-
-- Files:
-  - Modify: `lib/gameEngine.ts` — in `createCharacter`, after the `player_ledger` upsert (line
-    668–675), construct a `PlayerLedger` object and replace `ledger: null` with `ledger: <obj>`
-    in the `_setState` call at line 721–737. Import `PlayerLedger` type from `@/types/game`
-    (already imported via the broader types import at the top of the file — verify with grep).
-  - Create: `tests/integration/createCharacterLedger.test.ts` — integration test using the dev
-    mock (same pattern as existing integration tests in `tests/integration/`). Assertions:
-    after `engine.createCharacter(...)`, `engine.getState().ledger` is non-null,
-    `ledger.currentCycle === 1`, `ledger.pressureLevel === 1`, `ledger.totalDeaths === 0`,
-    `Array.isArray(ledger.discoveredRoomIds)`, `ledger.worldSeed` is a number.
-
-- Tests: `pnpm test --run` (includes the new test file). `npx tsc --noEmit`.
-
-- Depends on: nothing
-
-- Effort: S
-
-- Pre-mortem: N/A (S task)
-
-- Notes: `squirrelAlive`, `squirrelTrust`, `squirrelCyclesKnown` must be included in the
-  constructed `PlayerLedger` — check `PlayerLedger` interface in `types/game.ts:582`. Default
-  values: `squirrelAlive: true`, `squirrelTrust: 0`, `squirrelCyclesKnown: 0`.
-
----
-
-### H3 — UX polish (5 items from audit)
-
-**Scope**: Five targeted fixes from `docs/eval/UX-AUDIT-0424.md`, all feasible without data
-model migrations, all in the front-end layer.
-
-**Item A — #14 Prologue exit prompt color** (`app/page.tsx`): The prologue output string
-contains "Type SKIP to skip" (or similar). Wrap the `SKIP` keyword with `rt.keyword('SKIP')` so
-the terminal renders it in `text-white` (keyword tag). Locate the exact prologue text string and
-apply. ~2 lines.
-
-**Item B — #11 Dialogue choice numbering hint** (`app/page.tsx`): When `state.activeDialogue`
-is active and branches are rendered, append a dim instruction line "[1–9] to choose, 'leave' to
-exit" below the choices. ~5 lines in the dialogue display section.
-
-**Item C — #8 Stat tooltips** (`components/CharacterCreation.tsx`): In the stat allocation
-step, each stat row shows name + current value + +/- buttons. Add a one-line description
-beneath each stat name. Content: Vigor=HP scaling; Grit=echo retention; Reflex=initiative;
-Wits=skill checks; Presence=faction rep gains; Shadow=stealth/sneak. ~18 lines (6 stats × 3
-lines each). Check existing stat row JSX structure before writing.
-
-**Item D — Input refocus after tab click** (`components/CommandInput.tsx`): Add a
-`useEffect` dependency on some game state (e.g., message log length) so the input receives
-focus whenever a new message arrives — this means after dispatch completes, focus returns.
-Alternative: export a `focus()` imperative handle from `CommandInput` via `useImperativeHandle`
-and call it from `GameLayout` on terminal panel click. The simpler approach: add
-`maxLength={200}` (already present) and a `useEffect` that focuses the input whenever
-`state.log.length` changes. ~5 lines.
-
-**Item E — Auto-save indicator** (`lib/gameEngine.ts`, `types/game.ts`,
-`components/tabs/StatsTab.tsx`): Add `saving?: boolean` to `GameState`. In `_savePlayer`, set
-`_setState({ saving: true })` before the Supabase call and `_setState({ saving: false })` after
-(in both success and retry-fail paths). In `StatsTab.tsx`, render a dim `[saving...]` indicator
-in the cycle/location block when `state.saving === true`. ~12 lines total.
-
-- Files:
-  - Modify: `app/page.tsx`
-  - Modify: `components/CharacterCreation.tsx`
-  - Modify: `components/CommandInput.tsx`
-  - Modify: `types/game.ts` (add `saving?: boolean` to GameState)
-  - Modify: `lib/gameEngine.ts` (saving flag in `_savePlayer`)
-  - Modify: `components/tabs/StatsTab.tsx` (saving indicator display)
-
-- Tests: `pnpm test --run`. `npx tsc --noEmit`. Manual: (a) prologue SKIP keyword is white/bright
-  in terminal; (b) dialogue renders hint line; (c) stat tooltips appear; (d) after clicking MAP
-  tab, typing resumes in terminal input without manual click-back; (e) `[saving...]` appears
-  briefly during save.
-
-- Depends on: H1 (StatsTab lines must not conflict — H1 owns color changes, H3 adds new JSX
-  block only)
-
-- Effort: M (5 items, 6 files, small changes but spread across front-end and engine)
-
-- Pre-mortem: "If this task fails or takes 3× longer, it will be because: the prologue text
-  string is dynamically generated in `gameEngine.ts` rather than in `page.tsx`, making the
-  `rt.keyword` wrapping point hard to locate; or the auto-save indicator triggers a React
-  re-render loop."
-
-- Notes: For item D, prefer the `state.log.length` useEffect approach — it's pure React, no
-  imperative handles needed.
-
----
-
-### H4 — Dialogue tree integrity — test expansion + fixes
-
-**Scope**: All 432 eval tests currently pass. Expand `tests/eval/dialogueHealth.test.ts` with
-five new test categories (described below), run to find failures, fix failures in
-`data/dialogueTrees.ts` or add to test-file allowlists where appropriate, then run until all
-pass.
-
-**New test category 13 — Cycle-gated branches have non-cycle-1 fallback**: For every node that
-contains at least one branch with `requiresCycleMin >= 2`, the same node must also contain at
-least one branch WITHOUT `requiresCycleMin` (or with `requiresCycleMin <= 1`). A node where ALL
-branches require cycle 2+ traps cycle-1 players silently (they see an empty branch list and
-the conversation stalls).
-
-**New test category 14 — Faction-gated branches have fallback**: For every node that has at
-least one branch with `requiresRep`, at least one branch in the same node must have no
-`requiresRep` gate (or the node must be a terminal). Same silent-trap pattern.
-
-**New test category 15 — onEnter.grantItem references valid item IDs**: Scan all `onEnter`
-blocks for `grantItem` fields; each item ID must exist in `data/items.ts`. Import `ITEMS` from
-`@/data/items` (check the export name first) and validate.
-
-**New test category 16 — No empty node text**: Every `node.text` must have `trim().length >= 5`.
-Structural placeholders left behind from authoring will fail this.
-
-**New test category 17 — Orphan narrative keys (informational)**: Collect all
-`onEnter.grantNarrativeKey` values across all trees; collect all `requiresNarrativeKey` values
-from room data (grep `data/rooms/` for `requiresNarrativeKey`). Log any keys granted but never
-consumed. This is informational (warn, don't fail) — orphan keys suggest authored content that
-was never hooked up to a gate.
-
-After adding tests, the Howler will run `pnpm test:eval` and fix any failures in
-`data/dialogueTrees.ts` — adding missing fallback branches, fixing grantItem IDs, filling empty
-node text. If a fix requires adding a new item to `data/items.ts`, scope it narrowly (name +
-type + description only, no stats required for quest-only items).
-
-- Files:
-  - Modify: `tests/eval/dialogueHealth.test.ts`
-  - Modify: `data/dialogueTrees.ts` (fixes for any failures)
-  - Possibly modify: `data/items.ts` (if grantItem references a missing item)
-
-- Tests: `pnpm test:eval` green (all categories including new 13–17). `npx tsc --noEmit`.
-
-- Depends on: nothing (reads its own test file, does not touch files owned by H1–H3)
-
-- Effort: M
-
-- Pre-mortem: "If this task fails or takes 3× longer, it will be because: the 5711-line
-  `dialogueTrees.ts` has many cycle-gated nodes where no cycle-1 fallback was authored —
-  adding fallback branches requires writing new NPC dialogue text that must be tonally
-  consistent with the existing character voice, which is time-consuming and requires judgment
-  calls. If >10 nodes need new fallback branches, split into H4a (tests + audit report) and
-  H4b (fixes)."
-
-- Notes: The `grantNarrativeKey` / `requiresNarrativeKey` test is informational only — do not
-  add hard assertions for orphan keys in this pass.
+- [ ] **H7 — Spawn Density Floor + Idle No-Combat Hint** — Add `hollowEncounter` blocks to ~15–20 currently-empty rooms in four early zones; add a one-shot idle hint after 30 no-combat actions pushing players toward denser zones.
+  - Files: MODIFY `data/rooms/crossroads.ts` (2→4 encounter rooms), MODIFY `data/rooms/covenant.ts` (5→10 encounter rooms), MODIFY `data/rooms/duskhollow.ts` (6→10 encounter rooms), MODIFY `data/rooms/the_stacks.ts` (7→10 encounter rooms), CREATE `lib/idleHint.ts`, MODIFY `lib/gameEngine.ts` (one call site in post-action section), CREATE `tests/unit/idleHint.test.ts`
+  - Tests: (a) Unit tests in `tests/unit/idleHint.test.ts` — hint fires after 30 no-combat actions, does not fire again until next combat, resets on `combatState.active`, does not fire if localStorage flag set for current cycle. (b) Manual verification: density table from audit visibly improved for four zones after adding blocks (re-run the grep-based count from the audit).
+  - Depends on: H3 (must merge first — H7 appends one `lib/gameEngine.ts` call site after H3's tutorial-hint block, so H3's block must be in place before H7 can position its line correctly)
+  - Effort: M
+  - Pre-mortem: If this takes 3× longer, it will be because: (1) choosing which specific rooms to add encounters to requires reading each zone file in full to find rooms with `noCombat: false` (or no `noCombat` flag) that currently lack `hollowEncounter` — and some "empty" rooms may be `noCombat: true` for lore/quest reasons that must not be overridden; (2) the idle-hint cycle-reset logic using localStorage requires a per-cycle key (e.g., `remnant_idle_hint_cycle_${player.cycle}`) — verify the `player.cycle` field is accessible from `gameEngine.ts` at the call site before writing.
+  - Notes: `baseChance` for new blocks should be 0.06–0.10; use existing `threatPool` entries from same-zone rooms for tonal consistency (e.g., `shuffler` + `remnant` weights already established in `crossroads.ts:106`). Do NOT add encounters to rooms with `flags.noCombat: true`, `flags.safeRest: true`, or `flags.questHub: true` — those are intentionally safe. H7 must NOT touch `lib/spawn.ts` (pressure scaling) or `types/game.ts` (no new fields needed — localStorage only).
 
 ---
 
 ## Cross-Howler Coordination
 
-1. **H1 before H3 on StatsTab**: H1 changes color classes on lines 104 and 113 of
-   `StatsTab.tsx`. H3 adds a new JSX block (saving indicator) at the end of the stats panel —
-   no line overlap. H3 should rebase on top of H1's StatsTab changes before committing.
+**Merge order:** H1, H2, H4, H5, H6 can merge in any order with these constraints:
+- H6 merges after H4 (flee armor path dependency)
+- H7 merges after H3 (post-action section in `lib/gameEngine.ts`)
 
-2. **`lib/ansiColors.ts` is frozen after H1 merges**: H2, H3, H4 must not touch
-   `lib/ansiColors.ts`. H1 is the sole owner.
+**H4 frozen contract for H6:** `computeArmorReduction(rawDamage: number, armorDefense: number): number` exported from `lib/combat.ts`. H6 imports and calls it.
 
-3. **`data/dialogueTrees.ts` is frozen for H4**: No other Howler touches this file.
+**H3 frozen contract for H7:** H7's `lib/gameEngine.ts` call site (`await checkIdleHint(engine, this.state)`) must be placed on the first line after H3's hint block closes (the `first_npc` check at ~line 2016). If H3's block ends at a different line number after merge, H7 appends immediately after whatever the last `attemptTutorialHint` call is.
 
-4. **`types/game.ts` shared caution**: H3 adds `saving?: boolean` to `GameState`. H2 reads but
-   does not modify `types/game.ts` (uses `PlayerLedger` which already exists). No conflict.
+**Shared type guard:** No Howler modifies `types/traits.ts` or `types/game.ts`. If any Howler discovers a change is needed, surface to main thread before proceeding.
 
 ---
 
-## Out of Scope
+## Open Questions
 
-- UX audit Phase A (restart flow safety, `CONFIRM RESTART` guard) — requires changes to
-  `app/page.tsx` logic paths that are also touched by H3; defer to avoid page.tsx conflicts.
-- UX audit Phase B (tutorial hint wiring) — `handleTutorialHint` dead code fix requires
-  wiring into 4 action handlers; defer to its own session.
-- UX audit Phase D (README docs update, `help` command sync) — content work, not code; defer.
-- UX audit Phase E (dialogue/combat persistence column) — requires a Supabase migration;
-  defer (migration risk, needs own session).
-- DataTab quest flag rendering as human-readable strings — requires a flag→description lookup
-  table; data model change, defer.
-- New commands or verbs.
-- Any changes to Supabase schema.
-- Mobile viewport touch-first layout overhaul.
-- `CommandInput maxLength` increase (200 is adequate; not a reported bug).
+- [ ] **Flee armor formula preference.** H4 defaults to flat-subtraction to match `doEnemyTurn`. Blocks: H4, H6. **Default if unresolved:** flat subtraction.
+- [ ] **AdditionalEnemies re-spawn scope.** Blocks: H6. **Default if unresolved:** re-add to `currentRoom.enemies` immediately; cleared on zone transition.
+- [ ] **Idle hint cycle-reset key.** Should `lib/idleHint.ts` key off `player.cycle` (resets hint each new cycle) or fire once ever? Blocks: H7. **Default if unresolved:** key off `player.cycle` — the hint becomes useful again each time a player starts a new cycle and re-explores early zones.
+
+---
+
+## Phase 2 / Deferred
+
+| Item | Why deferred |
+|------|-------------|
+| Monte Carlo balance harness | Standalone Howler; no dependency on this convoy. Run 7×15 = 105 class×enemy scenarios. |
+| `stance offensive/balanced/defensive` | Touches turn-loop, parser, and GameState. Fits its own convoy. |
+| Stealth / multi-state enemy awareness | New system (`unaware/alert/engaged`). High impact, medium scope. |
+| AP action budget per turn | Would refactor the entire turn loop. Risk of regression high. |
+| `wimpy <hp%>` auto-flee threshold | Requires new player setting field and possible migration. |
+| `Blind` as a 7th condition | Requires `ConditionId` union change. Cross-Howler coordination risk. |
+| Non-violence boss exits | Content work per boss + new stat-check plumbing. |
+| Threat-color enemy names | Needs product decision on threat-tier palette. |
+| Enemy FSM states | Adding FSM touches `data/enemies.ts` and round loop. Phase 2. |
+| `last`/`replay` command | Belongs with a broader UX pass. |
+| Option 2 — first-zone-visit spawn bonus | Skipped: disrupts time-of-day rhythm. Re-evaluate if H7 still feels sparse. |
+| Option 3 — soften pressure scaling | Skipped: premature without playtest data. |
+| Procedural density tuning (other zones) | River Road (43.5%), Salt Creek (45%) already adequate. The Breaks/Dust/Pine Sea/Deep are dense. Only the four listed zones need lifting. |
+
+---
+
+## Acceptance Criteria (Convoy-Level)
+
+- [ ] All existing tests pass: `pnpm test --run` (baseline: 1,728+ lines in 5 combat test files)
+- [ ] `tsc --noEmit` clean
+- [ ] First fight reachable from a fresh dev character in ≤ 90 seconds of typing (manual): start game → see `first_enemy` hint → type `attack [enemy]` → get combat prompt with enemy name → land a hit with damage → see `first_combat_start` hint
+- [ ] Miss messages contain at least one of: "sidesteps", "plating turns", "graze" — no bare "It glances off nothing" for non-fumble misses
+- [ ] Status strip appears in combat log when conditions are active on player or enemy
+- [ ] Combat prompt shows `[HP X/Y] [target — state] (attack/flee) >` during active combat
+- [ ] Save/load round-trip test passes with `combatState` populated (B12 closed)
+- [ ] Environment modifier tests pass (4 new test cases in `combat-env.test.ts`)
+- [ ] Armor formula consistent between `doEnemyTurn` and flee free-attack path (verified by H4 tests)
+- [ ] Screamer summons re-appear in room after flee success (verified by H6 tests)
+- [ ] Crossroads `hollowEncounter` room count ≥ 4 (was 2); Covenant ≥ 10 (was 5); Duskhollow ≥ 10 (was 6); The Stacks ≥ 10 (was 7) — verified by grep counts
+- [ ] Idle no-combat hint surfaces in a manual session after 30 no-combat actions in early zones; does not repeat until next combat + reexplore
+- [ ] No regressions in `combat-abilities.test.ts`, `combat-edge-cases.test.ts`, `combat-social-deep.test.ts`
 
 ---
 
 ## Risks
 
-1. **`TAG_COLOR` change breaks Terminal rendering**: Changing `exit` from `text-green-400` to
-   `text-cyan-400` in `lib/ansiColors.ts` immediately affects all terminal output. If players
-   have mentally mapped green=exits, this is a perceptible change. Risk is low (game is not
-   shipped to a broad audience yet) but the Howler should verify via `pnpm test --run` that all
-   terminal tests pass after the change.
+1. **`lib/actions/combat.ts` three-Howler contention (HIGH).** H1, H4, and H6 all modify this file. Mitigations: strict region separation — H1 adds `buildStatusStrip` near top of file, H4 touches flee handler (~line 558), H6 touches flee success path (~line 549); enforced merge order (H4 before H6). Gold must verify region separation in SPLIT.md before dropping Howlers.
 
-2. **`createCharacter` ledger construction drift**: The `PlayerLedger` fields hardcoded in the
-   fix must match the DB schema columns. If a migration has added a column that was not
-   backfilled into the `loadPlayer` mapper (lines 884–897), the manually constructed object will
-   be missing a field. H2 must cross-check `types/game.ts:PlayerLedger` against the `loadPlayer`
-   mapper before writing the fix.
+2. **`lib/gameEngine.ts` post-action section contention (HIGH).** H3 and H7 both write to the post-action hint block (~lines 1969–2018). Mitigation: enforced H3-before-H7 merge order. H7's single call site is appended after H3's block, not interleaved. Gold must include this in merge order instructions.
 
-3. **Dialogue fallback branch authoring quality**: If H4 finds many cycle-gated nodes without
-   fallbacks and writes terse generic branches ("I have nothing more to say."), it risks
-   flattening NPC voice. The Howler must read the surrounding node text and match tone.
-   If the fix count exceeds 10 nodes, the Howler should surface a report and await author review
-   rather than auto-generating all fixes.
+3. **H7 accidental encounter injection into safe rooms (HIGH).** If H7 adds `hollowEncounter` to rooms with `noCombat: true` or `safeRest: true`, players will see encounters in safe zones — breaking faction hub and healing room contracts. Mitigation: H7 must grep for rooms that currently have `noCombat: false` (or no `noCombat` flag) and zero `hollowEncounter` before choosing targets. Any room with `questHub: true` or `safeRest: true` is off-limits regardless of `noCombat` value.
 
-4. **H3 auto-save indicator re-render loop**: Setting `saving: true` in `_setState` triggers a
-   React re-render; if `_savePlayer` is called inside a render-triggered effect, this could
-   cycle. H3 must verify `_savePlayer` is only called from explicit user actions or the
-   `executeAction` dispatch path — not from any `useEffect`.
+4. **`CommandInput.tsx` prompt change breaks test assertions (MEDIUM).** Prompt string changes from `<HP:X/Y>` to `[HP X/Y]`. Mitigation: H1 must `grep -rn "HP:" tests/` before committing and update any matching assertions.
 
-5. **StatsTab file conflict (H1 vs H3)**: Both Howlers modify `StatsTab.tsx`. If they run
-   simultaneously in worktrees and both land on main before a rebase, there will be a merge
-   conflict. Mitigation: H1 runs first and merges; H3 rebases before pushing.
+5. **Tutorial hint localStorage state pollution in dev (LOW).** H3 uses new key names (`remnant_tutorial_first_combat_start`, etc.) — no collision with existing keys. H7's idle hint uses a cycle-scoped key (`remnant_idle_hint_cycle_N`) — also collision-free.
 
----
+6. **Environment modifier fixture complexity (MEDIUM).** `computeEnvironmentEffects` reads from `GameState.currentRoom`. Mitigation: H5 must read source before writing any test.
 
-## Definition of Done
+7. **Flee armor normalization is a behavior change (MEDIUM).** Defense 3 armor on a 10-damage parting shot: current formula ~5 damage; flat subtraction gives 7. Parting shots become slightly more dangerous. Document explicitly in H4 PR description — this is a feature, not a regression.
 
-- [ ] Code written and self-reviewed by each Howler
-- [ ] `npx tsc --noEmit` passes (zero type errors) after all changes
-- [ ] `pnpm test --run` passes (integration + unit suite)
-- [ ] `pnpm test:eval` passes (all 432 + new H4 tests green)
-- [ ] Terminal exits/NPCs/items render in `text-cyan-400` in both terminal and tab surfaces
-- [ ] MAP tab shows the world map for a brand-new dev-mode character (no "Loading world...")
-- [ ] PR description notes: color change is a perceptible visual shift; any coverage gaps from
-  H4 fallback branches that needed manual dialogue authoring
+8. **AdditionalEnemies room injection breaks static room data contract (MEDIUM).** Room data in `data/rooms/` is imported as static const. Mitigation: H6 must verify that `engine._setState({ currentRoom: {...} })` replaces the mutable copy in `GameState`, not the static import (confirmed at `lib/gameEngine.ts:200`).
+
+9. **Idle hint fires too early or loops (MEDIUM).** If the 30-action threshold is miscalibrated or the reset logic has an off-by-one, the hint fires on every session. Mitigation: H7 unit tests must cover the "fires exactly once then suppresses" and "resets correctly after next combat" cases before merge.

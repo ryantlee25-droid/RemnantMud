@@ -1,177 +1,201 @@
-# SPLIT: tabs-worldmap-0425
-_Date: 2026-04-24 | Branch: dev/tabs-worldmap-0425_
-_Base commit (all Howlers): `0a3698241e9c56fbd2ac32f97d3124eff01ef1a5`_
+# SPLIT: post-tabs-followup-0424
+
+Base commit: `adbb1423fc83cc816ae26193bc7f482f062b1335`
+Branch: `dev/tabs-worldmap-0425`
+Plan: `PLAN.md` (written 2026-04-24)
 
 ---
 
-## File Ownership Matrix
+## H1 — Interactive-element color convention
 
-| Howler | Creates | Modifies | Deletes |
-|--------|---------|----------|---------|
-| H1 | `components/tabs/TabBar.tsx`, `components/tabs/StatsTab.tsx` | `components/Sidebar.tsx` | `components/MiniMap.tsx` |
-| H2 | `lib/mapLayout.ts`, `data/zoneMetadata.ts`, `tests/unit/mapLayout.test.ts` | `lib/mapRenderer.ts` | — |
-| H3 | `components/tabs/WorldMapTab.tsx`, `tests/unit/worldMapTab.test.tsx` | — | — |
-| H4 | `components/tabs/InventoryTab.tsx` | — | — |
-| H5 | `components/tabs/DataTab.tsx` | — | — |
+**Scope**: Unify all interactive-entity colors to `text-cyan-400` across `lib/ansiColors.ts` and
+the four sidebar tab components. Retire `text-green-400` and `text-yellow-400` from interactive
+entity rendering.
 
----
+### Files
 
-## Worktree Locations
+| Action | File |
+|--------|------|
+| MODIFY | `lib/ansiColors.ts` |
+| MODIFY | `components/tabs/StatsTab.tsx` _(lines 25–130 range — color classes only)_ |
+| MODIFY | `components/tabs/WorldMapTab.tsx` |
+| MODIFY | `components/tabs/InventoryTab.tsx` |
+| MODIFY | `components/tabs/DataTab.tsx` _(audit-only; no change expected unless interactive entity display found)_ |
 
-| Howler | Worktree path | Branch |
-|--------|--------------|--------|
-| H1 | `/tmp/remnant-worktrees/tabs-worldmap-h1` | `parallel/tabs-worldmap-0425/h1` |
-| H2 | `/tmp/remnant-worktrees/tabs-worldmap-h2` | `parallel/tabs-worldmap-0425/h2` |
-| H3 | `/tmp/remnant-worktrees/tabs-worldmap-h3` | `parallel/tabs-worldmap-0425/h3` |
-| H4 | `/tmp/remnant-worktrees/tabs-worldmap-h4` | `parallel/tabs-worldmap-0425/h4` |
-| H5 | `/tmp/remnant-worktrees/tabs-worldmap-h5` | `parallel/tabs-worldmap-0425/h5` |
+### Notes
 
----
-
-## Per-Howler Scope
-
-### H1 — Tab Shell + StatsTab
-Scope: Rewrite `Sidebar.tsx` to a tabbed container; create `TabBar.tsx` and `StatsTab.tsx`; delete `MiniMap.tsx`.
-
-Owned files:
-- CREATE `components/tabs/TabBar.tsx`
-- CREATE `components/tabs/StatsTab.tsx`
-- MODIFY `components/Sidebar.tsx`
-- DELETE `components/MiniMap.tsx`
-
-Reference: PLAN.md §H1. The `components/tabs/` subdirectory does not exist in the base commit — H1 must create it with `mkdir -p`. Directory creation is idempotent in git; H3/H4/H5 working in the same directory is not a conflict.
-
-Notes:
-- Verify `grep -r MiniMap components/` returns zero hits after deletion
-- No new unit tests required for H1 (tab switching exercised by H3's render tests)
-- `TabBar.tsx` props contract: `tabs: string[]`, `active: string`, `onChange: (tab: string) => void`
-- `StatsTab.tsx` reads all state via `useGame()` — no props
+- Change `TAG_COLOR.exit` from `text-green-400` → `text-cyan-400`.
+- Change `TAG_COLOR.item` from `text-yellow-400` → `text-cyan-400`.
+- `TAG_COLOR.npc` is already `text-cyan-400` — no change needed.
+- Do NOT touch `text-green-400` used for HP-bar healthy state.
+- Do NOT touch `text-yellow-400` for currency display.
+- Do NOT touch `text-amber-*` used for UI chrome (borders, headers, section labels).
+- `lib/ansiColors.ts` is FROZEN for all other Howlers once H1 merges.
+- Verify pass: `npx tsc --noEmit` + `pnpm test --run`.
+- Depends on: nothing.
 
 ---
 
-### H2 — Map Foundation
-Scope: Extract BFS from `mapRenderer.ts` into `mapLayout.ts`; create `zoneMetadata.ts` and `mapLayout.test.ts`.
+## H2 — Map rendering bug fix + regression test
 
-Owned files:
-- CREATE `lib/mapLayout.ts`
-- CREATE `data/zoneMetadata.ts`
-- CREATE `tests/unit/mapLayout.test.ts`
-- MODIFY `lib/mapRenderer.ts`
+**Scope**: Fix `lib/gameEngine.ts:728` where `_setState({ ledger: null })` discards the
+`player_ledger` row just upserted, causing `WorldMapTab.tsx` to display "Loading world..."
+forever for new characters. Add an integration test asserting `state.ledger` shape after
+`createCharacter`.
 
-Reference: PLAN.md §H2.
+### Files
 
-Frozen exports (H3 depends on these — must not change after H2 lands):
-```ts
-export interface LayoutResult {
-  positions: Map<string, { x: number; y: number }>
-  bounds: { minX: number; maxX: number; minY: number; maxY: number }
-}
+| Action | File |
+|--------|------|
+| MODIFY | `lib/gameEngine.ts` |
+| CREATE | `tests/integration/createCharacterLedger.test.ts` |
 
-export function computeLayout(
-  rooms: Room[],
-  anchorRoomId: string,
-  visitedIds: Set<string>,
-  radius?: number,  // default 10
-): LayoutResult
+### Notes
 
-export interface ZoneMeta {
-  label: string
-  color: string      // Tailwind class only — no hex
-  dangerTier: number // 1–5
-}
-export const ZONE_META: Record<ZoneType, ZoneMeta>
-```
-
-Critical: `computeLayout` returns absolute coordinates (not normalized). The normalization step (`x - minX`, `y - minY`) stays inside `lib/mapRenderer.ts`. Pass `radius=7` when calling from the renderer to preserve byte-identical ASCII output.
+- Construct `PlayerLedger` inline from upsert values in `createCharacter`; no new DB query.
+- Required fields: `playerId` (from `user.id`), `worldSeed` (from `seed`), `currentCycle: 1`,
+  `pressureLevel: 1`, `totalDeaths: 0`, `discoveredRoomIds: []`, `discoveredEnemies: []`,
+  `squirrelAlive: true`, `squirrelTrust: 0`, `squirrelCyclesKnown: 0`.
+- Cross-check `types/game.ts:PlayerLedger` (line ~582) against `loadPlayer` mapper
+  (lines ~884–897) before writing the constructed object — the field list must be exhaustive.
+- `rebirthWithStats` is confirmed safe (calls `loadPlayer` which populates ledger from DB).
+- Integration test: follow existing pattern in `tests/integration/`. Use dev mock.
+  Assert: `engine.getState().ledger` is non-null; `ledger.currentCycle === 1`;
+  `ledger.pressureLevel === 1`; `ledger.totalDeaths === 0`;
+  `Array.isArray(ledger.discoveredRoomIds)`; `ledger.worldSeed` is a number.
+- Does not modify `types/game.ts` — reads `PlayerLedger` (already exists).
+- Verify pass: `pnpm test --run` + `npx tsc --noEmit`.
+- Depends on: nothing.
 
 ---
 
-### H3 — WorldMapTab
-Scope: Create `WorldMapTab.tsx` SVG world map component with fog-of-war, danger overlay, controls, overlay modal, and unit tests.
+## H3 — UX polish (5 audit items)
 
-Owned files:
-- CREATE `components/tabs/WorldMapTab.tsx`
-- CREATE `tests/unit/worldMapTab.test.tsx`
+**Scope**: Five targeted fixes from `docs/eval/UX-AUDIT-0424.md`. All front-end layer, no schema
+changes. The StatsTab change is additive only — a new JSX block appended after line 130.
 
-Reference: PLAN.md §H3.
+### Files
 
-Dependency on H2: H3 imports `computeLayout` from `lib/mapLayout.ts` and `ZONE_META` from `data/zoneMetadata.ts`. These signatures are frozen before dispatch (see H2 section above). During development, H3 stubs both locally:
+| Action | File |
+|--------|------|
+| MODIFY | `app/page.tsx` |
+| MODIFY | `components/CharacterCreation.tsx` |
+| MODIFY | `components/CommandInput.tsx` |
+| MODIFY | `components/tabs/StatsTab.tsx` _(saving-indicator JSX block appended after line ~130 — no edits to lines 25–130 owned by H1)_ |
+| MODIFY | `types/game.ts` _(add `saving?: boolean` to `GameState` only)_ |
+| MODIFY | `lib/gameEngine.ts` _(`_savePlayer` function only — no overlap with H2's `createCharacter` edit)_ |
 
-```ts
-// Stub — replace with real imports in final commit
-import type { LayoutResult } from '../lib/mapLayout'
-function computeLayout(...): LayoutResult { /* stub */ }
-const ZONE_META: Record<ZoneType, ZoneMeta> = { /* stub */ }
-```
+### Notes
 
-H3 MUST replace stubs with real imports (`from 'lib/mapLayout'` and `from 'data/zoneMetadata'`) in its final commit. H2 must be merged to the feature branch before H3's final commit can be validated.
-
----
-
-### H4 — InventoryTab
-Scope: Create `InventoryTab.tsx` with equipped weapon/armor, currency, and grouped inventory sections.
-
-Owned files:
-- CREATE `components/tabs/InventoryTab.tsx`
-
-Reference: PLAN.md §H4. Structural reference: `git show 8751cb2^:components/tabs/InventoryTab.tsx` (strip save/theme/stash logic).
-
-No new unit tests required. H4 must run `tsc --noEmit` and confirm zero errors before reporting done.
-
----
-
-### H5 — DataTab
-Scope: Create `DataTab.tsx` with faction reputation, quest flags, cycle history, and discovered enemies sections.
-
-Owned files:
-- CREATE `components/tabs/DataTab.tsx`
-
-Reference: PLAN.md §H5. Structural reference: `git show 8751cb2^:components/tabs/DataTab.tsx` (strip `ExplorationProgress`/`getEnemy`/`ENEMIES` dependencies).
-
-No new unit tests required. H5 must run `tsc --noEmit` and confirm zero errors before reporting done.
-
-Note on quest flag filtering: use `value !== false && value !== null && value !== undefined` — not a truthy check. `0` values must display.
+- **Item A (#14)**: Wrap `SKIP` keyword in prologue output with `rt.keyword('SKIP')` so terminal
+  renders it in `text-white`. Locate exact string in `app/page.tsx` before editing.
+- **Item B (#11)**: When `state.activeDialogue` is active and branches are rendered, append a dim
+  instruction line `[1–9] to choose, 'leave' to exit` below choices in `app/page.tsx`.
+- **Item C (#8)**: Add one-line description beneath each stat name in `CharacterCreation.tsx` stat
+  allocation step. Read existing stat row JSX structure first. Descriptions: Vigor=HP scaling;
+  Grit=echo retention; Reflex=initiative; Wits=skill checks; Presence=faction rep gains;
+  Shadow=stealth/sneak.
+- **Item D (refocus)**: Add `useEffect` keyed on `state.log.length` in `CommandInput.tsx` that
+  focuses the input whenever a new message arrives. Prefer this over `useImperativeHandle`.
+- **Item E (auto-save indicator)**: Add `saving?: boolean` to `GameState` in `types/game.ts`.
+  Set `_setState({ saving: true })` before the Supabase call in `_savePlayer` and
+  `_setState({ saving: false })` after (both success and retry-fail paths). Render dim
+  `[saving...]` in StatsTab when `state.saving === true`.
+- H3's `lib/gameEngine.ts` edit touches `_savePlayer` only. H2's edit touches `createCharacter`
+  only. Different functions, no overlap.
+- H3 must rebase on top of H1 before pushing — H1 edits StatsTab lines 25–130; H3 appends
+  after that range. Rebase is expected to be trivial (no shared lines).
+- Verify pass: `pnpm test --run` + `npx tsc --noEmit`.
+- Depends on: H1 (StatsTab merge order).
 
 ---
 
-## Cross-Howler Dependency
+## H4 — Dialogue tree integrity — test expansion + fixes
 
-H3 depends on H2's frozen exported signatures:
-- `computeLayout` + `LayoutResult` from `lib/mapLayout.ts`
-- `ZONE_META` + `ZoneMeta` from `data/zoneMetadata.ts`
+**Scope**: Add five new test categories (13–17) to `tests/eval/dialogueHealth.test.ts`, run
+`pnpm test:eval` to find failures, fix failures in `data/dialogueTrees.ts`, re-run until all
+pass.
 
-These are locked before dispatch and must not change after H2 lands. H3 stubs them locally and replaces with real imports at final commit.
+### Files
 
-**No other cross-Howler dependencies.** H1/H4/H5 are fully independent of each other and of H2/H3. H4 and H5 only need the `components/tabs/` directory to exist (H1 creates it; idempotent).
+| Action | File |
+|--------|------|
+| MODIFY | `tests/eval/dialogueHealth.test.ts` |
+| MODIFY | `data/dialogueTrees.ts` |
+| MODIFY | `data/items.ts` _(conditional — only if a `grantItem` ID references a genuinely missing item)_ |
 
----
+### Notes
 
-## Integration Order
-
-H1, H2, H4, H5 may merge in any order.
-H3 must merge after H2 (so `lib/mapLayout.ts` and `data/zoneMetadata.ts` exist when H3's stubs are replaced).
+- **Category 13**: For every node with at least one branch where `requiresCycleMin >= 2`, the
+  same node must also have at least one branch without a cycle gate (or `requiresCycleMin <= 1`).
+  Fail if ALL branches require cycle 2+.
+- **Category 14**: For every node with at least one branch where `requiresRep` is set, at least
+  one branch in the same node must have no `requiresRep` gate (or the node must be terminal).
+- **Category 15**: All `onEnter.grantItem` IDs must exist in `data/items.ts`. Verify export name
+  before importing `ITEMS`.
+- **Category 16**: `node.text.trim().length >= 5`. Hard fail on empty or near-empty nodes.
+- **Category 17**: Collect all `onEnter.grantNarrativeKey` values; collect all
+  `requiresNarrativeKey` gates from `data/rooms/`. Log orphan keys — warn only, no hard assert.
+- `data/dialogueTrees.ts` is FROZEN for all other Howlers.
+- When writing fallback branches to fix categories 13/14, read surrounding node text and match
+  NPC tone. If fix count exceeds 10 nodes, surface an audit report and await author review
+  rather than auto-generating all fixes.
+- Verify pass: `pnpm test:eval` green (all 432 + new categories) + `npx tsc --noEmit`.
+- Depends on: nothing.
 
 ---
 
 ## Conflict Audit
 
-Union of all owned files across all Howlers:
+Full union of all owned files across H1–H4:
 
-```
-components/tabs/TabBar.tsx          → H1 only
-components/tabs/StatsTab.tsx        → H1 only
-components/Sidebar.tsx              → H1 only
-components/MiniMap.tsx              → H1 only (delete)
-lib/mapLayout.ts                    → H2 only
-data/zoneMetadata.ts                → H2 only
-tests/unit/mapLayout.test.ts        → H2 only
-lib/mapRenderer.ts                  → H2 only
-components/tabs/WorldMapTab.tsx     → H3 only
-tests/unit/worldMapTab.test.tsx     → H3 only
-components/tabs/InventoryTab.tsx    → H4 only
-components/tabs/DataTab.tsx         → H5 only
-```
+| File | Owner | Edit Scope | Advisory |
+|------|-------|------------|----------|
+| `lib/ansiColors.ts` | H1 | entire file — FROZEN after H1 merges | — |
+| `components/tabs/StatsTab.tsx` | H1 | lines 25–130 range (color classes) | ADVISORY — see below |
+| `components/tabs/StatsTab.tsx` | H3 | new JSX block appended after line ~130 | ADVISORY — see below |
+| `components/tabs/WorldMapTab.tsx` | H1 | NPC/item/exit color classes in modal | — |
+| `components/tabs/InventoryTab.tsx` | H1 | item name color class | — |
+| `components/tabs/DataTab.tsx` | H1 | audit-only; no change expected | — |
+| `lib/gameEngine.ts` | H2 | `createCharacter` function (~line 728) | — |
+| `lib/gameEngine.ts` | H3 | `_savePlayer` function only | — |
+| `tests/integration/createCharacterLedger.test.ts` | H2 | CREATE (new file) | — |
+| `app/page.tsx` | H3 | prologue text + dialogue hint lines | — |
+| `components/CharacterCreation.tsx` | H3 | stat row JSX | — |
+| `components/CommandInput.tsx` | H3 | `useEffect` for input refocus | — |
+| `types/game.ts` | H3 | `GameState` interface — add `saving?: boolean` | — |
+| `tests/eval/dialogueHealth.test.ts` | H4 | new `describe` blocks (categories 13–17) | — |
+| `data/dialogueTrees.ts` | H4 | entire file — FROZEN for others | — |
+| `data/items.ts` | H4 | conditional (missing `grantItem` IDs only) | — |
 
-Result: **no file overlap.** Every file appears in exactly one Howler's ownership column.
+**ADVISORY — `components/tabs/StatsTab.tsx`**: H1 edits color classes in the lines 25–130
+range. H3 appends a new saving-indicator JSX block after that range. There is no line overlap
+and no logical conflict. The advisory exists only because both Howlers write to the same file.
+If both run in parallel worktrees and H3 merges before H1, H3's rebase will need a trivial
+conflict resolution. Mitigation: H1 merges first; H3 rebases before pushing. This is the only
+advisory in this convoy — there are no hard conflicts.
 
-Shared directory note: `components/tabs/` is created by H1 and written into by H3/H4/H5. Directory creation is not a file conflict — git tracks files, not directories. Each Howler writes distinct files within that directory.
+**`lib/gameEngine.ts` note**: H2 edits `createCharacter` (~line 728); H3 edits `_savePlayer`.
+Separate functions, no shared lines. Normal merge — no advisory needed.
+
+---
+
+## Coordination Notes
+
+1. **H1 before H3 on StatsTab**: H1 must merge its StatsTab color edits before H3 pushes its
+   saving-indicator block. H3 rebases on top of H1 before opening its diff.
+
+2. **`lib/ansiColors.ts` frozen after H1**: H2, H3, and H4 must not touch this file.
+
+3. **`data/dialogueTrees.ts` frozen for H4**: No other Howler touches this file.
+
+4. **`types/game.ts` usage split**: H3 adds `saving?: boolean` to `GameState`. H2 reads
+   `PlayerLedger` (already exists) but does not modify the file. No write conflict.
+
+5. **Recommended merge sequence**:
+   - Parallel round 1: H2 and H4 — fully independent, no shared files, merge in any order.
+   - Parallel round 2: H1 — color convention changes including StatsTab lines 25–130.
+   - Sequential: H3 — rebase on H1's StatsTab result, then merge.
+   - Alternative: run all four Howlers in parallel worktrees simultaneously; when complete,
+     merge H2 and H4 first, then H1, then H3 (with rebase). The rebase is expected to be
+     trivial given non-overlapping line ranges.

@@ -4,7 +4,7 @@
 
 import { describe, it, expect, vi } from 'vitest'
 import type { Player, Enemy, CombatState } from '@/types/game'
-import { startCombat, playerAttack, enemyAttack } from '@/lib/combat'
+import { startCombat, playerAttack, enemyAttack, computeArmorReduction } from '@/lib/combat'
 import { statModifier, DC } from '@/lib/dice'
 import { ENEMIES } from '@/data/enemies'
 
@@ -152,5 +152,21 @@ describe('combat math (real, not mocked)', () => {
       expect(remnant.xp).toBeGreaterThan(shuffler.xp)
     })
 
+  })
+
+  describe('computeArmorReduction', () => {
+    it('flee path: defense=3, raw 10 damage → 6 (45% reduction)', () => {
+      // 15% × 3 = 45% reduction; 10 × 0.55 = 5.5 → ceil = 6
+      expect(computeArmorReduction(10, 3)).toBe(6)
+    })
+
+    it('flee path: defense=5, raw 10 damage → 4 (cap at 60%, 10 × 0.4 = 4)', () => {
+      // 15% × 5 = 75%, capped at 60%; 10 × 0.4 = 4 → Math.max(1, ceil(4)) = 4
+      expect(computeArmorReduction(10, 5)).toBe(4)
+    })
+
+    it('zero raw damage returns 0 regardless of defense (no-op for misses)', () => {
+      expect(computeArmorReduction(0, 5)).toBe(0)
+    })
   })
 })

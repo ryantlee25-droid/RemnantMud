@@ -168,6 +168,19 @@ function pickFlavorText(enemy: Enemy): string | undefined {
   return enemy.flavorText[Math.floor(Math.random() * enemy.flavorText.length)]
 }
 
+/**
+ * Compute the post-armor damage value.
+ * 15% reduction per defense point, capped at 60% total reduction.
+ * Minimum 1 damage is always dealt (no full block).
+ * Returns 0 when rawDamage is 0 (no-op for misses).
+ */
+export function computeArmorReduction(rawDamage: number, defenseValue: number): number {
+  if (rawDamage <= 0) return 0
+  const reductionPct = Math.min(0.15 * Math.max(0, defenseValue), 0.60)
+  const reduced = Math.max(1, Math.ceil(rawDamage * (1 - reductionPct)))
+  return reduced
+}
+
 /** Return a rough health description for the enemy. */
 export function enemyHpIndicator(currentHp: number, maxHp: number): string {
   const ratio = currentHp / maxHp

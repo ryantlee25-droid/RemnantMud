@@ -171,6 +171,10 @@ tests/          Vitest test suite
 
 ## Release Notes
 
+### 2026-04-23 — Pre-evaluation cleanup: .gitignore agent scratch dirs
+
+Excluded `.claude/`, `.tages/`, and `/benchmarks/` from version control. These are spectrum agent worktrees/sessions, a stray Tages project brief, and benchmark output — none are game code. Baseline heading into the 8-Howler evaluation convoy: 44 test files, 1,120 passing, typecheck clean.
+
 ### 2026-03-29 — UX rewrite cleanup: delete dead tab components, fix Vercel build
 
 Committed the remaining UX rewrite deletions that were staged but not pushed. The Vercel build failed because `components/tabs/InventoryTab.tsx` still imported the deleted `@/lib/theme` module. This commit deletes all 5 tab components (`CommandsTab`, `DataTab`, `InventoryTab`, `MapTab`, `StatTab`), moves their stats/inventory/equipment display logic into terminal-printed commands (`stats`, `inventory`, `equipment`, `hint`), updates `Terminal.tsx` to use centralized ANSI color constants, adds an HP prompt to `CommandInput`, and cleans up the parser and game engine.

@@ -106,6 +106,10 @@ export async function handleExamineExtra(engine: EngineCore, keyword?: string): 
         if (match.reputationGrant) {
           await engine.adjustReputation(match.reputationGrant.faction, match.reputationGrant.delta)
         }
+        // Grant narrative key on successful skill check if configured
+        if (match.narrativeKeyOnExamine) {
+          await engine.grantNarrativeKey(match.narrativeKeyOnExamine, 'examination')
+        }
       } else {
         // Failure feedback — close miss if within 2 of DC
         const diff = dc - roll
@@ -124,6 +128,11 @@ export async function handleExamineExtra(engine: EngineCore, keyword?: string): 
     for (const { flag, value } of flags) {
       await engine.setQuestFlag(flag, value)
     }
+  }
+
+  // Grant narrative key on examine if no skill check required
+  if (!match.skillCheck && match.narrativeKeyOnExamine) {
+    await engine.grantNarrativeKey(match.narrativeKeyOnExamine, 'examination')
   }
 }
 

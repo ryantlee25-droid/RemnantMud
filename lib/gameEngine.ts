@@ -108,6 +108,9 @@ import {
   clearNarratorSession,
 } from '@/lib/narratorVoice'
 
+// Rider E — Narrative Keys
+import { grantNarrativeKey as grantNarrativeKeyMessages } from '@/lib/narrativeKeys'
+
 // ------------------------------------------------------------
 // Narrative session state (ephemeral — reset per session load)
 // NOT stored on Player or in DB. Lost on page refresh, which is
@@ -1180,6 +1183,20 @@ export class GameEngine implements EngineCore {
   // ----------------------------------------------------------
 
   private static readonly VALID_ENDINGS: Set<string> = new Set(['cure', 'weapon', 'seal', 'throne'])
+
+  async grantNarrativeKey(keyId: string, source: 'dialogue' | 'examination' | 'deduction'): Promise<void> {
+    const { player } = this.state
+    if (!player) return
+
+    const currentKeys = player.narrativeKeys ?? []
+    if (currentKeys.includes(keyId)) return
+
+    const narration = grantNarrativeKeyMessages(keyId, source, currentKeys)
+    const updatedPlayer: Player = { ...player, narrativeKeys: [...currentKeys, keyId] }
+    this._setState({ player: updatedPlayer })
+    if (narration.length > 0) this._appendMessages(narration)
+    // narrativeKeys is persisted inside narrative_progress JSONB by the next _savePlayer call.
+  }
 
   async setQuestFlag(flag: string, value: string | boolean | number): Promise<void> {
     const { player } = this.state

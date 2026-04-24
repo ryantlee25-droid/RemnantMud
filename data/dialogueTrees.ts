@@ -3492,7 +3492,43 @@ const vesperTree: DialogueTree = {
           targetNode: 'vesper_rook',
         },
         {
+          label: `"${rt.npc('Vex')} showed me the manifest. The Accord buys Red Court blood. So does the Covenant."`,
+          targetNode: 'vesper_supply_confrontation',
+          requiresFlag: 'pens_covenant_arrangement',
+        },
+        {
           label: '"I should go."',
+          targetNode: 'vesper_leave',
+        },
+      ],
+    },
+
+    vesper_supply_confrontation: {
+      id: 'vesper_supply_confrontation',
+      speaker: 'Vesper',
+      text: `${rt.npc('Vesper')} does not look away. That is the first thing you notice. If she had looked away, there would still be some philosophical distance to preserve. She does not. "Yes. Twelve percent of the Covenant's transfusion supply is Red Court yield. I arrange the transfer. I sign the ledger. I have told myself for four years that twelve percent is small enough to be complicated rather than damning." A small pause. "I was wrong. It is damning. It has been damning. The complication is my comfort, not the truth." She places both hands flat on the arms of the chair. "Thank you for saying the number back to me. Philosophical constructs deteriorate when they meet inventory."`,
+      onEnter: {
+        setFlag: { vesper_admitted_supply: true, covenant_accord_secret_exposed: true },
+      },
+      branches: [
+        {
+          label: `"So what do you do with that admission?"`,
+          targetNode: 'vesper_supply_reckoning',
+        },
+        {
+          label: `"Keep signing the ledger, and stop pretending it's ethics."`,
+          targetNode: 'vesper_leave',
+        },
+      ],
+    },
+
+    vesper_supply_reckoning: {
+      id: 'vesper_supply_reckoning',
+      speaker: 'Vesper',
+      text: `"I do not know. That is the honest answer and it is unsatisfying. Telling the Covenant would destabilize a feeding system that keeps people alive. Not telling them is the arrangement you have just named." ${rt.npc('Vesper')} looks at the floor between you — the first time in this conversation she has not held your gaze. "If you want a better Vesper, I can perform one. I have the vocabulary. It would be a lie. What I can offer instead is this: I will not pretend with you. You came here carrying a number. I am going to carry it too, now. Neither of us gets to put it down."`,
+      branches: [
+        {
+          label: `"That's more than nothing."`,
           targetNode: 'vesper_leave',
         },
       ],

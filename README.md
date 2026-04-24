@@ -171,6 +171,10 @@ tests/          Vitest test suite
 
 ## Release Notes
 
+### 2026-04-24 — Narrative Plan Phase 1: dialogue-grant engine extension + 4 playable Act I narrative keys
+
+Adds `DialogueNode.onEnter.grantNarrativeKey` (parallel to `setFlag`/`grantRep`/`grantItem`) and wires it into `applyNodeEffects` in `lib/actions/social.ts`, giving dialogue trees a clean path to grant knowledge unlocks. Ships the Phase 1 plan (`docs/plan/NARRATIVE-PLAN.md`) and 4 of 5 planned Tier-1 narrative keys: `crossroads_signal_source` (Sparks shares 4.127 MHz frequency via dialogue), `crossroads_hidden_cellar` (Marta reveals pre-settlement Drifter cache after feeding the player), `river_road_submerged_cache` (Howard gives waxed-tin location after fee waiver), and `crossroads_guard_rotation` (examine gate rotation at `cr_02_gate`, Survival DC 9). The 5th key (`dust_caravan_cache`) is deferred to Phase 5. Eval remains 400/400 green; default suite 1,120 green.
+
 ### 2026-04-24 — dev/eval-fixes-0424: second wave — full-map reachability + eval calibration
 
 Fix 1B reconnects all 36 remaining intra-zone orphan rooms (17 targeted inbound exits across crossroads, river_road, salt_creek, covenant, the_breaks, the_ember, the_deep): all 268 rooms are now reachable by BFS from start. Adds three missing key items (`courthouse_archive_key`, `cold_storage_key`, `red_court_key`) whose lockedBy refs existed in room data without matching item definitions. Fixes one undefined `vesper_trust_level_3` quest gate in duskhollow (replaced with `vesper_shared_origin`, a flag Vesper's dialogue tree actually sets). Calibrates mapIntegrity eval thresholds to current main (room-count window 256–280, soft bidirectionality baseline). Adds ENGINE_ENTRY_NODES / NON_NPC_TREES / NAMED_NPCS_WITHOUT_TREE allowlists in dialogueHealth eval to eliminate four false-positive failures. Eval suite: 11 → 0 failures.

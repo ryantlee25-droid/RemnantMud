@@ -189,6 +189,13 @@ export const CROSSROADS_ROOMS: Room[] = [
         description:
           'You can hear haggling, laughter, the clatter of a dropped pan, someone calling a name. Ordinary sounds. The sounds of people living in proximity without trying to kill each other. It\'s remarkable how remarkable that\'s become.',
       },
+      {
+        keywords: ['schedule', 'rotation', 'shift', 'arbiter_schedule', 'pattern'],
+        description:
+          'You watch the checkpoint long enough to see the rotation: three arbiters, six-hour shifts, changeovers at the ninth hour after dawn, the fifteenth, and the twenty-first. The handover is clean — except for the second-to-third. The outgoing arbiter reports inside the chute-hut before the incoming one takes her post. About fifteen minutes. The north approach is single-watched the whole time, and in the last five minutes nobody is really looking north at all.',
+        skillCheck: { skill: 'survival', dc: 9, successAppend: 'You note the exact timing. If you ever need to cross the gate without being seen, the third shift change is the window.' },
+        narrativeKeyOnExamine: 'crossroads_guard_rotation',
+      },
     ],
     npcSpawns: [
       {

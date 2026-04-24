@@ -380,9 +380,10 @@ const sparksTree: DialogueTree = {
     sparks_signal: {
       id: 'sparks_signal',
       speaker: 'Sparks',
-      text: `"Shortwave, repeating loop, been running for — I don't know, years? Everyone thinks it's automated." ${rt.npc('Sparks')} pulls a notebook from under a pile of capacitors. "I've decoded maybe forty percent. The modulation shifts. Automated systems don't shift." She taps the notebook hard enough to dent the page. "Someone is down there. In the ${rt.keyword('Scar')}. Broadcasting."`,
+      text: `"Shortwave, repeating loop, been running for — I don't know, years? Everyone thinks it's automated." ${rt.npc('Sparks')} pulls a notebook from under a pile of capacitors. "I've decoded maybe forty percent. The modulation shifts. Automated systems don't shift." She taps the notebook hard enough to dent the page. "Someone is down there. In the ${rt.keyword('Scar')}. Broadcasting." She slides the notebook toward you. "Frequency's 4.127 megahertz. Interval variance keyed to a scaled twelve-tone. If you find a terminal that wants authentication, try that."`,
       onEnter: {
         setFlag: 'sparks_shared_decode',
+        grantNarrativeKey: 'crossroads_signal_source',
       },
       branches: [
         {
@@ -1510,7 +1511,27 @@ const howardTree: DialogueTree = {
       text: `"Don't know. Don't want to." ${rt.npc('Howard')} looks north. "I've been on this bridge since '32. I know what normal movement looks like. This isn't that. Small groups, no torches, moving fast. Something's pulling them toward the pine country."`,
       branches: [
         {
+          label: "You've been watching this river a long time. It must drop things.",
+          targetNode: 'howard_cache_hint',
+          requiresFlag: 'howard_waived_fee',
+        },
+        {
           label: 'I appreciate the warning.',
+          targetNode: 'howard_closure',
+        },
+      ],
+    },
+
+    howard_cache_hint: {
+      id: 'howard_cache_hint',
+      speaker: 'Howard',
+      text: `${rt.npc('Howard')} watches the water for a while before he answers. "Current eats everything eventually. Drops what it eats at the bends. There's a bend three hundred yards south of the narrows, where a big basalt shelf kinks the flow. Drifter caravans used to stash supplies upstream of it, seal them in waxed tins, let the current take them down to the shelf. The tins wedge under the rock. They're still there. Ammunition, mostly. Sealed well enough to last another twenty years." He looks at you. "You pulled me out of a hard month last time we talked. I wouldn't tell most people. Don't make me regret it."`,
+      onEnter: {
+        grantNarrativeKey: 'river_road_submerged_cache',
+      },
+      branches: [
+        {
+          label: "I won't. Thank you.",
           targetNode: 'howard_closure',
         },
       ],
@@ -1631,7 +1652,27 @@ const martaTree: DialogueTree = {
       text: `"The Kindling believe in purification. Transformation. They think CHARON-7 is a gift and the rest of us just aren't ready for it." She shakes her head. "They're not wrong about everything. They're just wrong about the fire part."`,
       branches: [
         {
+          label: "You've been here a long time, haven't you?",
+          targetNode: 'marta_cellar_memory',
+          requiresFlag: 'marta_fed_player',
+        },
+        {
           label: 'I appreciate you telling me.',
+          targetNode: 'marta_closure',
+        },
+      ],
+    },
+
+    marta_cellar_memory: {
+      id: 'marta_cellar_memory',
+      speaker: 'Marta',
+      text: `${rt.npc('Marta')} looks at you for a long moment. Weighing. Then she leans close enough that her voice doesn't carry past the cookstove. "Longer than the Crossroads has been Crossroads. My mother ran caravans through here when it was just a waystation — before the stalls, before the wall. The Drifters buried things in the ground here, for seasons when the going was bad." She glances down at the packed dirt between the stalls. "Second stall from the end, near the leather shop. The floor sounds different if you step on it right. My mother showed me where to press. I haven't opened it since she died. I'm telling you because you've eaten my stew and you haven't lied to me yet. That's rare."`,
+      onEnter: {
+        grantNarrativeKey: 'crossroads_hidden_cellar',
+      },
+      branches: [
+        {
+          label: "Thank you for trusting me.",
           targetNode: 'marta_closure',
         },
       ],

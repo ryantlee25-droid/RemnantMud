@@ -29,6 +29,39 @@ import { removeItem, getInventory } from '@/lib/inventory'
 import { msg, systemMsg, combatMsg, errorMsg } from '@/lib/messages'
 
 // ------------------------------------------------------------
+// Status strip helper — surfaces active conditions to the log
+// ------------------------------------------------------------
+
+/**
+ * Build a one-line status strip summarising active player and enemy conditions.
+ * Returns null when no conditions are active on either side.
+ * Format: "[bleeding 2 | stunned 1 | enemy: weakened 1]"
+ *
+ * NOTE: must stay near the TOP of this file, above handleAttack and well
+ * above the flee handler (~line 558+), so parallel Howlers H4/H6 can modify
+ * that lower region without merge conflicts.
+ */
+export function buildStatusStrip(player: Player, combatState: CombatState | null): string | null {
+  if (!combatState) return null
+
+  const parts: string[] = []
+
+  // Player conditions
+  for (const c of combatState.playerConditions) {
+    parts.push(`${c.id} ${c.remainingTurns}`)
+  }
+
+  // Enemy conditions (prefixed)
+  for (const c of combatState.enemyConditions) {
+    parts.push(`enemy: ${c.id} ${c.remainingTurns}`)
+  }
+
+  if (parts.length === 0) return null
+
+  return `[${parts.join(' | ')}]`
+}
+
+// ------------------------------------------------------------
 // Noise-triggered hollow encounter
 // ------------------------------------------------------------
 
@@ -409,6 +442,23 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
 
     // Show HP hint
     engine._appendMessages([systemMsg(`HP: ${newHp}/${latestPlayer.maxHp}`)])
+  }
+
+  // ── Append status strip if any conditions are active (once per round) ──
+  {
+    const roundState = engine.getState()
+    const roundPlayer = roundState.player
+    const roundCombat = roundState.combatState
+    if (roundPlayer && roundCombat) {
+      const strip = buildStatusStrip(roundPlayer, roundCombat)
+      if (strip !== null) {
+        const log = roundState.log
+        const lastEntry = log[log.length - 1]
+        if (!lastEntry || lastEntry.text !== strip) {
+          engine._appendMessages([systemMsg(strip)])
+        }
+      }
+    }
   }
 
   await engine._savePlayer()

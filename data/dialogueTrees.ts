@@ -4618,6 +4618,376 @@ const act1ClimaxTree: DialogueTree = {
 }
 
 // ============================================================
+// === Red Court Arc: Kade / Vex / Lyris (Phase 3) ===
+// ============================================================
+
+const kadeTree: DialogueTree = {
+  npcId: 'kade_red_court',
+  startNode: 'kade_start',
+  nodes: {
+    kade_start: {
+      id: 'kade_start',
+      speaker: 'Kade',
+      text: `${rt.npc('Kade')} closes the journal over his thumb. He looks at you for a long moment before he speaks — not assessment, just genuine interest. "The first year was the loudest. Everyone was deciding what they were — Covenant, Red Court, Hollow, or something that hadn't been named yet. I made my decision early. I've been thinking about it ever since. Not regretting. Thinking. There's a difference."`,
+      branches: [
+        {
+          label: `"Why the Red Court, specifically?"`,
+          targetNode: 'kade_why_court',
+        },
+        {
+          label: `"How do you live with what happens in this building?"`,
+          targetNode: 'kade_the_arrangement',
+        },
+        {
+          label: `"I need to ask you about ${rt.npc('Lyris')}."`,
+          targetNode: 'kade_on_lyris',
+          requiresFlag: 'lyris_doubter_revealed',
+        },
+        {
+          label: `"I'll leave you to your work."`,
+          targetNode: 'kade_leave',
+        },
+      ],
+    },
+
+    kade_why_court: {
+      id: 'kade_why_court',
+      speaker: 'Kade',
+      text: `"The Covenant calls what it does regrettable. They are right. Regret is a sign of moral clarity. But regret is not the same as stopping." ${rt.npc('Kade')} opens the journal to a marked page and taps it twice. "I listened to Vesper's arguments and found them honest. She had not answered them. She had arranged them beautifully, and then she had gone on feeding. Red Court is what you get when you stop arranging. It is not kinder. It is simply less polite about what it is."`,
+      onEnter: {
+        setFlag: { red_court_philosophy_encountered: true },
+      },
+      branches: [
+        {
+          label: `"That's a rationalization."`,
+          targetNode: 'kade_the_arrangement',
+        },
+        {
+          label: `"Thank you for being direct about it."`,
+          targetNode: 'kade_leave',
+        },
+      ],
+    },
+
+    kade_the_arrangement: {
+      id: 'kade_the_arrangement',
+      speaker: 'Kade',
+      text: `"Rationalization. The word is not inaccurate." ${rt.npc('Kade')} nods, as if you have said something he agrees with entirely. "Everything we do after we name what we are is rationalization. The question isn't whether we are rationalizing. The question is what we are rationalizing for. I have chosen sustainability over pretense. Vesper has chosen pretense over dissolution. Neither of us is innocent. One of us has stopped trying to sound innocent." He sets the pen down. "You have walked through ${rt.npc('Ward A')}. You have seen the wristbands. What bothered you — the practice, or the fact that the practice has a schedule?"`,
+      branches: [
+        {
+          label: `"The schedule. The bureaucracy of it."`,
+          targetNode: 'kade_bureaucracy',
+        },
+        {
+          label: `"The practice. The fact that it exists at all."`,
+          targetNode: 'kade_leave',
+        },
+      ],
+    },
+
+    kade_bureaucracy: {
+      id: 'kade_bureaucracy',
+      speaker: 'Kade',
+      text: `"Yes. That's the honest answer." A small sound — not a laugh, but the shape a laugh would take if it were permitted here. "Horror that is organized is harder to unsee than horror that is chaotic. Chaos you can grieve. Organization you have to argue with. Which is what I wanted, when I chose this. An argument I could keep having. I was tired of grieving." He closes the journal. "If you come back, we can continue. If you go to ${rt.npc('Cross')} tomorrow with what you've learned here, I will understand that too."`,
+      branches: [
+        {
+          label: `"I accept the argument. I understand the Red Court."`,
+          targetNode: 'kade_accept',
+        },
+        {
+          label: `"I'll think about it."`,
+          targetNode: 'kade_leave',
+        },
+      ],
+    },
+
+    kade_accept: {
+      id: 'kade_accept',
+      speaker: 'Kade',
+      text: `${rt.npc('Kade')} regards you with something close to recognition — not warmth, but the specific attention of one rationalizer acknowledging another. "Then you understand that conflict within the system is how the system proves it is reasonable. Whatever you choose to do, choose deliberately. The Red Court will remember the choice either way."`,
+      onEnter: {
+        setFlag: { join_kade_philosophy: true, red_court_arc_complete: true },
+        grantRep: { faction: 'red_court', delta: 1 },
+      },
+      branches: [
+        {
+          label: `"I'll remember it too."`,
+          targetNode: 'kade_leave',
+        },
+      ],
+    },
+
+    kade_on_lyris: {
+      id: 'kade_on_lyris',
+      speaker: 'Kade',
+      text: `A pause. He does not pretend not to know what you mean. "She was conflicted when we turned her. She is still conflicted. I was conflicted once." ${rt.npc('Kade')} glances toward the door as if she might walk through it. "The question is whether conflict is the beginning of change or just a luxury we allow ourselves when we are comfortable enough to afford it. I do not know her answer yet. I am not sure she does either. What you do with her is yours. What I do is to keep being someone she can ask, if she ever decides to ask."`,
+      onEnter: {
+        setFlag: { kade_awareness_of_lyris: true },
+      },
+      branches: [
+        {
+          label: `"That's all you have to say about it?"`,
+          targetNode: 'kade_leave',
+        },
+      ],
+    },
+
+    kade_leave: {
+      id: 'kade_leave',
+      speaker: 'Kade',
+      text: `${rt.npc('Kade')} opens the journal again. "Come back. Or don't. Either is a form of honesty."`,
+      branches: [],
+    },
+  },
+}
+
+const vexTree: DialogueTree = {
+  npcId: 'vex_red_court',
+  startNode: 'vex_start',
+  nodes: {
+    vex_start: {
+      id: 'vex_start',
+      speaker: 'Vex',
+      text: `${rt.npc('Vex')} does not stop writing when you enter. The pen moves at a steady rate; the eyes flick up and return to the ledger without losing place. "Supply chain. Territory management. Resource allocation. What I do isn't complicated — it just sounds worse once you know what the supply is. What do you need?"`,
+      branches: [
+        {
+          label: `"Walk me through the manifest."`,
+          targetNode: 'vex_manifest',
+        },
+        {
+          label: `"Your numbers don't match ${rt.npc('Rook')}'s private ledger."`,
+          targetNode: 'vex_discrepancy',
+          requiresFlag: 'pens_yield_discrepancy_found',
+        },
+        {
+          label: `"Some of your supplies are going missing."`,
+          targetNode: 'vex_theft',
+        },
+        {
+          label: `"Nothing. Leaving."`,
+          targetNode: 'vex_leave',
+        },
+      ],
+    },
+
+    vex_manifest: {
+      id: 'vex_manifest',
+      speaker: 'Vex',
+      text: `The pen continues. Vex speaks to the ledger, not to you. "Intake is thirty-four percent voluntary, twenty-eight percent involuntary, thirty-eight percent contract-unclear. Distribution: sixty percent goes to the ${rt.keyword('Accord')} on their monthly purchase order. Twelve percent to the ${rt.keyword('Covenant of Dusk')} — that transfer is arranged through Vesper's people, not ours. Eighteen percent internal use. Ten percent research protocol, cold-stored for Transit Point 4." Vex finally looks up. "You want me to pretend I don't know what contract-unclear means. I will not. It means not-voluntary and not-involuntary. It means someone signed a form under pressure that the form did not acknowledge. The ratios have been shifting. The shift is not a problem. It is something we have optimized."`,
+      onEnter: {
+        setFlag: { pens_covenant_arrangement: true, vex_manifest_shared: true },
+      },
+      branches: [
+        {
+          label: `"The Accord is BUYING from the Red Court?"`,
+          targetNode: 'vex_accord_buying',
+        },
+        {
+          label: `"What is Transit Point 4?"`,
+          targetNode: 'vex_transit_point',
+        },
+        {
+          label: `"That's enough. Leaving."`,
+          targetNode: 'vex_leave',
+        },
+      ],
+    },
+
+    vex_accord_buying: {
+      id: 'vex_accord_buying',
+      speaker: 'Vex',
+      text: `"Yes." No hedge. No softening. "The Accord has been purchasing Red Court yield for four years. Their own citizens believe the supply is voluntary Covenant tithe only. It is not. The tithe accounts for roughly a third. The rest is ours. ${rt.npc('Cross')} knows. Vesper knows. The citizens of ${rt.keyword('Covenant')} who receive transfusions do not. This is the arrangement. The arrangement is stable because nobody wants to say what the arrangement is."`,
+      branches: [
+        {
+          label: `"That's Vesper's philosophy with extra steps."`,
+          targetNode: 'vex_leave',
+        },
+        {
+          label: `"Does ${rt.npc('Vesper')} know exactly how much?"`,
+          targetNode: 'vex_leave',
+        },
+      ],
+    },
+
+    vex_transit_point: {
+      id: 'vex_transit_point',
+      speaker: 'Vex',
+      text: `Vex's pen pauses for the first time. Resumes. "Above my clearance. Research protocol material goes northwest on a schedule. The destination is not on the manifest. ${rt.npc('Rook')} authorizes the shipment; I arrange the cold chain. Who receives it is not my question." A very small look. "It has become your question, perhaps. That's Rook's problem."`,
+      branches: [
+        {
+          label: `"Back to other topics."`,
+          targetNode: 'vex_start',
+        },
+      ],
+    },
+
+    vex_discrepancy: {
+      id: 'vex_discrepancy',
+      speaker: 'Vex',
+      text: `"Rook runs a private variance. Three point two percent, consistent, over eighteen months." The pen moves again without pause. "I see the discrepancy every time I reconcile. I have not reported it. The total remains within sustainable capacity; the allocation simply differs from the ledger. Rook is entitled to a variance budget. The Council does not need to know every allocation. That is management."`,
+      branches: [
+        {
+          label: `"You're covering for Rook."`,
+          targetNode: 'vex_leave',
+        },
+        {
+          label: `"Where is the three percent going?"`,
+          targetNode: 'vex_leave',
+        },
+      ],
+    },
+
+    vex_theft: {
+      id: 'vex_theft',
+      speaker: 'Vex',
+      text: `"Theft is a variance." Flat. Unbothered. "The system can absorb variance within zero point three percent. At zero point eight, the variance becomes reportable. At one point two, it becomes a security matter. We are currently at zero point two percent." Vex looks at you directly for the first time. "The system is still within tolerance. I know who takes the supplies. I have not stopped her. The math says the loss is negligible. That is all the system requires of me."`,
+      onEnter: {
+        setFlag: { vex_silent_tolerance_revealed: true },
+      },
+      branches: [
+        {
+          label: `"You're letting ${rt.npc('Lyris')} do this."`,
+          targetNode: 'vex_leave',
+        },
+        {
+          label: `"Mathematics as mercy. That's cold."`,
+          targetNode: 'vex_leave',
+        },
+      ],
+    },
+
+    vex_leave: {
+      id: 'vex_leave',
+      speaker: 'Vex',
+      text: `The pen resumes. The eyes return to the ledger. "Close the door on the way out."`,
+      branches: [],
+    },
+  },
+}
+
+const lyrisTree: DialogueTree = {
+  npcId: 'lyris_red_court',
+  startNode: 'lyris_start',
+  nodes: {
+    lyris_start: {
+      id: 'lyris_start',
+      speaker: 'Lyris',
+      text: `${rt.npc('Lyris')} straightens the way someone does when they've been caught thinking about something. "Six months. I know it doesn't show on the outside but it does on the inside — there's a version of me that's still figuring out the rules. Not the Red Court rules. The other rules. The ones for being what I am now."`,
+      branches: [
+        {
+          label: `"Are you sure this is what you want?"`,
+          targetNode: 'lyris_conflict',
+        },
+        {
+          label: `"I saw you in the quarantine wing with a white-banded donor."`,
+          targetNode: 'lyris_caught',
+          requiresFlag: 'pens_covenant_arrangement',
+        },
+        {
+          label: `"Keep the rounds. Good luck with the rules."`,
+          targetNode: 'lyris_leave',
+        },
+      ],
+    },
+
+    lyris_conflict: {
+      id: 'lyris_conflict',
+      speaker: 'Lyris',
+      text: `A pause. She looks at her hands — a thing she's been doing for months now, the inventory of a body that is no longer the body she grew up in. "Six months ago I didn't know enough to question this. Three months ago I knew enough to question it. Now —" She stops. Starts again. "Now I know enough to do something, and I'm doing the minimum thing I can do that still means something. I don't know what that makes me. I don't think Kade's argument fits me. I don't think I fit the argument."`,
+      onEnter: {
+        setFlag: { lyris_doubter_revealed: true },
+      },
+      branches: [
+        {
+          label: `"What's the minimum thing?"`,
+          targetNode: 'lyris_caught',
+        },
+        {
+          label: `"Talk to ${rt.npc('Kade')}. Don't let him answer for you."`,
+          targetNode: 'lyris_leave',
+        },
+      ],
+    },
+
+    lyris_caught: {
+      id: 'lyris_caught',
+      speaker: 'Lyris',
+      text: `${rt.npc('Lyris')} goes very still. When she speaks, the control in her voice is the control of someone who has rehearsed the admission for weeks. "The AB-negative donor. She was white-banded for research protocol — Transit Point 4 is not research. I've been stealing a field surgery kit together. I'm going to move her through the transit tunnel tonight. Not free — delayed. There is no version of this where I get everyone out. I am buying one person a different ending than the one Rook authorized." A breath. "${rt.npc('Rook')} knows. ${rt.npc('Vex')} knows. They're letting me. The math says the loss is small. It's not mercy. It's tolerance. I'll take it. But I need someone on my side of the door who isn't one of them."`,
+      onEnter: {
+        setFlag: { lyris_extraction_planned: true },
+      },
+      branches: [
+        {
+          label: `"I'll help you move her out."`,
+          targetNode: 'lyris_aid',
+        },
+        {
+          label: `"I'm going to the ${rt.keyword('Accord')} with all of this."`,
+          targetNode: 'lyris_expose',
+        },
+        {
+          label: `"This is your problem. I'm not making it mine."`,
+          targetNode: 'lyris_refuse',
+        },
+      ],
+    },
+
+    lyris_aid: {
+      id: 'lyris_aid',
+      speaker: 'Lyris',
+      text: `The relief on her face is brief — she does not let it settle — but it was there. "Good. Thank you. Be at the transit tunnel at shift change." She pulls something from an inner pocket: a thin translucent slide, cold to the touch, threaded on a simple cord. "My biometric. If you end up at the ${rt.keyword('Scar')} and you need Sanguine authentication and you don't want to owe ${rt.npc('Vesper')} for it — use mine. I gave it. I gave it knowing what you might do with it. That's not a small thing where I come from." She closes your hand around it. "Don't tell ${rt.npc('Kade')} I said thank you. He'd write it down."`,
+      onEnter: {
+        setFlag: { aid_lyris_extraction: true, sanguine_biometric_obtained: true, red_court_arc_complete: true },
+        grantRep: { faction: 'red_court', delta: -1 },
+      },
+      branches: [
+        {
+          label: `"Tonight. Transit tunnel."`,
+          targetNode: 'lyris_leave',
+        },
+      ],
+    },
+
+    lyris_expose: {
+      id: 'lyris_expose',
+      speaker: 'Lyris',
+      text: `${rt.npc('Lyris')} takes a step back. Her face does not change — the face has been trained by six months of Sanguine discipline — but the distance is the statement. "Then we don't have anything else to say. The donor goes to Transit Point 4 tonight. The kit stays here. You will have done the bigger right thing and the smaller wrong one. I hope it's worth it to you. It won't be to her."`,
+      onEnter: {
+        setFlag: { disrupt_vex_system: true, red_court_arc_complete: true },
+      },
+      branches: [
+        {
+          label: `[ leave ]`,
+          targetNode: 'lyris_leave',
+        },
+      ],
+    },
+
+    lyris_refuse: {
+      id: 'lyris_refuse',
+      speaker: 'Lyris',
+      text: `"Fair." She does not sound disappointed. She sounds like someone updating a mental ledger. "You saw. You decided the seeing was enough. That's a position. It's not mine, but it's a position." She turns back toward her patrol route. "If you change your mind, I'm at the tunnel at shift change. Otherwise — walk good, traveler."`,
+      onEnter: {
+        setFlag: { passive_observer: true, red_court_arc_complete: true },
+      },
+      branches: [
+        {
+          label: `[ leave ]`,
+          targetNode: 'lyris_leave',
+        },
+      ],
+    },
+
+    lyris_leave: {
+      id: 'lyris_leave',
+      speaker: 'Lyris',
+      text: `${rt.npc('Lyris')} resumes her patrol. The measured gait of someone still thinking about the steps.`,
+      branches: [],
+    },
+  },
+}
+
+// ============================================================
 
 export const DIALOGUE_TREES: Record<string, DialogueTree> = {
   // Lev has two spawn points referencing different tree IDs,
@@ -4683,4 +5053,9 @@ export const DIALOGUE_TREES: Record<string, DialogueTree> = {
   echo_tree: echoTree,
   act1_climax_encounter: act1ClimaxTree,
   // --- [/RIDER A] ---
+
+  // --- Red Court Arc (Phase 3) ---
+  pens_kade_philosophy: kadeTree,
+  pens_vex_manifest: vexTree,
+  pens_lyris_conflict: lyrisTree,
 }

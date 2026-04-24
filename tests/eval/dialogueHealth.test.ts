@@ -73,11 +73,6 @@ const NAMED_NPCS_WITHOUT_TREE: Set<string> = new Set([
   'the_dog',            // companion — commentary, no conversation
   'dory',               // background NPC handled via room extras
   'leatherworker_vin',  // vendor — trade interface only
-  // Red Court Sanguine patrol — flagged named but currently encounter-only.
-  // Dialogue authoring is follow-up design work; noted in EVAL-SUMMARY.md.
-  'kade_red_court',
-  'vex_red_court',
-  'lyris_red_court',
 ])
 
 // Milestone flags considered "known-set" by the echo system — never orphaned
@@ -119,6 +114,7 @@ const EXTERNALLY_SET_FLAGS: Set<string> = new Set([
   'discovered_archive_meridian_connection', // data/rooms/the_deep.ts
   'pens_rooks_letter_found',           // data/rooms/the_pens.ts
   'pens_rook_met_in_office',           // data/rooms/the_pens.ts
+  'pens_yield_discrepancy_found',      // data/rooms/the_pens.ts — Rook's ledger extra (Perception DC 12)
   // npcTopics.ts
   'harrow_mentioned_tunnels',          // data/npcTopics.ts setsFlag
   'bombing_revealed',                  // referenced in npcTopics.ts requiresFlag

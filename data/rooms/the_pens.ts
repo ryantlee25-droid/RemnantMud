@@ -155,6 +155,7 @@ export const THE_PENS_ROOMS: Room[] = [
           { desc: 'Lyris has stopped at the bulletin board and is reading the donor calendar with an expression that is hard to place. She notices you and straightens.', weight: 2, timeRestrict: ['day'] },
         ],
         dispositionRoll: { friendly: 0.20, neutral: 0.55, wary: 0.20, hostile: 0.05 },
+        dialogueTree: 'pens_lyris_conflict',
       },
     ],
     narrativeNotes: 'pens_03. Ward A is the best-case version of The Pens. Show it honestly — clean, lit, functional. The horror is in the normalcy. The donors are not suffering in ways they would articulate as suffering.',
@@ -448,6 +449,7 @@ export const THE_PENS_ROOMS: Room[] = [
           { desc: 'Kade stands at the scheduling board, studying the grid with the patient attention of someone reading a text they\'ve read before.', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.15, neutral: 0.55, wary: 0.25, hostile: 0.05 },
+        dialogueTree: 'pens_kade_philosophy',
       },
       {
         npcId: 'the_wren',
@@ -663,6 +665,7 @@ export const THE_PENS_ROOMS: Room[] = [
           { desc: 'Vex is staging collection bags near the loading door, arranging them by blood type with the automatic precision of someone who has done this hundreds of times.', weight: 3 },
         ],
         dispositionRoll: { friendly: 0.05, neutral: 0.65, wary: 0.25, hostile: 0.05 },
+        dialogueTree: 'pens_vex_manifest',
       },
     ],
     narrativeNotes: 'pens_12. The Accord complicity detail lands here. Deep Waypoint 7 as a destination seeds the The Deep zone connection. The voluntary/involuntary ratio shift is the statistical version of what players have already seen qualitatively.',
@@ -785,6 +788,7 @@ export const THE_PENS_ROOMS: Room[] = [
         keywords: ['ledger', 'numbers', 'yield', 'rook'],
         description: 'The open ledger on the desk is different from the administration records upstairs. This one has Rook\'s personal annotations alongside the official figures: small marks, private shorthand, numbers that don\'t appear in the official record. The totals in Rook\'s private column don\'t match the totals in the official column. The difference is not large. It is systematic.',
         skillCheck: { skill: 'perception', dc: 12, successAppend: 'The discrepancy between Rook\'s private column and the official yield figures represents a consistent 3–4% diversion. The diverted yield does not appear in the Accord manifest. It does not appear in any distribution record you have seen. Rook has been skimming yield from the Red Court\'s own extraction operation. The question is why, and where it goes.' },
+        questFlagOnSuccess: { flag: 'pens_yield_discrepancy_found', value: true },
       },
       {
         keywords: ['rook', 'castellan', 'them', 'expression'],

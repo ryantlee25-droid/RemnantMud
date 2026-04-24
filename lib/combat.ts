@@ -393,18 +393,19 @@ export function playerAttack(
     traitBonusDamage = traitResult.bonusDamage
     healPlayer = traitResult.healPlayer
     suppressNoise = traitResult.suppressNoise
-    traitConditionsApplied = traitResult.conditionsToApply
-
     // Detect if blessed fired against a Sanguine enemy
-    const enemyHollowType = enemy.hollowType as string | undefined
+    const enemyHollowType = enemy.hollowType
     const isSanguineEnemy = enemyHollowType === 'elder_sanguine' || enemyHollowType === 'sanguine_feral'
     blessedFiredVsSanguine = weaponTraits.includes('blessed') && isSanguineEnemy && traitResult.bonusDamage > 0
 
-    // Apply conditions from weapon traits to enemy
+    // Apply conditions from weapon traits to enemy. Only record conditions that
+    // actually landed — applyCondition returns applied:false for already-active
+    // and immune conditions, and we don't want flavor text firing on those.
     for (const condId of traitResult.conditionsToApply) {
       const immunities = enemy.resistanceProfile?.conditionImmunities
       const condResult = applyCondition(updatedEnemyConditions, condId, weapon.name, immunities)
       updatedEnemyConditions = condResult.conditions
+      if (condResult.applied) traitConditionsApplied.push(condId)
     }
 
     // Show trait messages

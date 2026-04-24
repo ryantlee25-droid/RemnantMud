@@ -1175,6 +1175,12 @@ export class GameEngine implements EngineCore {
     const hasInheritedRep = Object.keys(inheritedRep).length > 0
 
     // rebirthWithStats — clear dialogue/combat state on rebirth (they don't survive a cycle)
+    // Also reset the per-session combat counter so the second_encounter tutorial
+    // hint can re-fire next cycle (the per-cycle once-only flag for the hint
+    // itself remains set; this only clears the session counter)
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('remnant_tutorial_combat_count')
+    }
     await supabase
       .from('players')
       .update({

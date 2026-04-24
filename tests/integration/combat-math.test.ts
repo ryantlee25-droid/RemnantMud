@@ -249,10 +249,11 @@ describe('combat math (real, not mocked)', () => {
     })
 
     it('vicious — bleeding applied emits red-flowers line', () => {
-      // Force crit hit so vicious trait fires reliably
+      // Use remnant (not shuffler — shuffler is bleeding-immune per
+      // data/enemies.ts:41). Force crit hit so vicious trait fires reliably.
       vi.spyOn(Math, 'random').mockReturnValue(0.95)
       const player = makePlayer({ vigor: 10 })
-      const state = makeCombatState(shuffler)
+      const state = makeCombatState(remnant)
       const weapon = makeTraitWeapon(['vicious'])
       const { result } = playerAttack(player, state, [2, 4], weapon)
       expect(result.hit).toBe(true)
@@ -325,6 +326,13 @@ describe('combat math (real, not mocked)', () => {
 
     it('zero raw damage returns 0 regardless of defense (no-op for misses)', () => {
       expect(computeArmorReduction(0, 5)).toBe(0)
+    })
+
+    it('1-damage hit always deals at least 1 (Math.max floor; ceil already guards too)', () => {
+      // raw=1 with cap-defense: 1 * 0.4 = 0.4, ceil → 1. Pins the minimum-1
+      // contract regardless of whether ceil or floor is used internally.
+      expect(computeArmorReduction(1, 5)).toBe(1)
+      expect(computeArmorReduction(1, 10)).toBe(1)
     })
   })
 })

@@ -76,7 +76,7 @@ export default function InventoryTab() {
   }
 
   return (
-    <div role="tabpanel" id="tabpanel-inv" className="p-3 space-y-3 text-amber-400">
+    <div role="tabpanel" id="tabpanel-inv" aria-labelledby="tab-inv" className="p-3 space-y-3 text-amber-400">
 
       {/* ---- Equipped Weapon ---- */}
       <div className="space-y-0.5">

@@ -10,6 +10,7 @@ import {
   useState,
   useRef,
   useEffect,
+  useMemo,
   useCallback,
   type KeyboardEvent,
 } from 'react'
@@ -48,12 +49,26 @@ function WorldMapInner({ currentRoomId, discoveredRoomIds }: WorldMapInnerProps)
   // Container ref for scroll control
   const containerRef = useRef<HTMLDivElement | null>(null)
 
-  // Stable room map
-  const roomMap = new Map<string, Room>(ALL_ROOMS.map((r) => [r.id, r]))
-  const visitedIds = new Set([...discoveredRoomIds, currentRoomId])
+  // Modal close-button ref (receives focus when modal opens)
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null)
 
-  // Compute layout (always called; no hooks after this)
-  const layout: LayoutResult = computeLayout(ALL_ROOMS, currentRoomId, visitedIds, 10) as LayoutResult
+  // ALL_ROOMS is module-stable; roomMap can be built once for the component's lifetime
+  const roomMap = useMemo(
+    () => new Map<string, Room>(ALL_ROOMS.map((r) => [r.id, r])),
+    [],
+  )
+
+  // visitedIds depends on the (stable) discoveredRoomIds array and currentRoomId
+  const visitedIds = useMemo(
+    () => new Set([...discoveredRoomIds, currentRoomId]),
+    [discoveredRoomIds, currentRoomId],
+  )
+
+  // Layout memoized on anchor + visited set
+  const layout = useMemo<LayoutResult>(
+    () => computeLayout(ALL_ROOMS, currentRoomId, visitedIds, 10),
+    [currentRoomId, visitedIds],
+  )
   const { positions, bounds } = layout
 
   const svgWidth = (bounds.maxX - bounds.minX + 1) * CELL
@@ -103,6 +118,13 @@ function WorldMapInner({ currentRoomId, discoveredRoomIds }: WorldMapInnerProps)
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [selectedRoomId, closeModal])
+
+  // Move focus into the modal when it opens so keyboard/screen-reader users
+  // can reach its controls. Pairs with the focus-restore on close.
+  useEffect(() => {
+    if (!selectedRoomId) return
+    closeButtonRef.current?.focus()
+  }, [selectedRoomId])
 
   // Determine if a room should be rendered at all
   function isRoomVisible(roomId: string): boolean {
@@ -224,7 +246,7 @@ function WorldMapInner({ currentRoomId, discoveredRoomIds }: WorldMapInnerProps)
   const selectedVisited = selectedRoomId ? visitedIds.has(selectedRoomId) : false
 
   return (
-    <div role="tabpanel" id="tabpanel-map" className="flex flex-col h-full">
+    <div role="tabpanel" id="tabpanel-map" aria-labelledby="tab-map" className="flex flex-col h-full">
       {/* Controls row */}
       <div className="flex gap-1 p-2 border-b border-amber-900">
         <button
@@ -294,6 +316,7 @@ function WorldMapInner({ currentRoomId, discoveredRoomIds }: WorldMapInnerProps)
                   </h3>
                 )}
                 <button
+                  ref={closeButtonRef}
                   aria-label="Close"
                   className="text-amber-600 hover:text-amber-400 ml-2"
                   onClick={closeModal}
@@ -350,7 +373,7 @@ export default function WorldMapTab() {
 
   if (!state.currentRoom || !state.ledger) {
     return (
-      <div role="tabpanel" id="tabpanel-map" className="p-3 text-amber-600 text-xs">
+      <div role="tabpanel" id="tabpanel-map" aria-labelledby="tab-map" className="p-3 text-amber-600 text-xs">
         Loading world...
       </div>
     )

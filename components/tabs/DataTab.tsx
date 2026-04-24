@@ -212,8 +212,13 @@ export default function DataTab() {
             {ledger.cycleHistory?.length ?? 0}
           </span>
         </div>
-        {(ledger.cycleHistory?.length ?? 0) > 0 ? (() => {
-          const last = ledger.cycleHistory![ledger.cycleHistory!.length - 1]
+        {(() => {
+          const last = ledger.cycleHistory?.at(-1)
+          if (!last) {
+            return player.cycle === 1 ? (
+              <div className="text-amber-700 text-xs mt-1">First cycle.</div>
+            ) : null
+          }
           return (
             <div className="mt-1 pt-1 border-t border-amber-900">
               <div className="text-amber-600 text-xs uppercase tracking-widest mb-0.5">
@@ -239,11 +244,7 @@ export default function DataTab() {
               </div>
             </div>
           )
-        })() : (
-          player.cycle === 1 && (
-            <div className="text-amber-700 text-xs mt-1">First cycle.</div>
-          )
-        )}
+        })()}
       </div>
     </section>
   ) : null
@@ -266,6 +267,7 @@ export default function DataTab() {
     <div
       role="tabpanel"
       id="tabpanel-data"
+      aria-labelledby="tab-data"
       className="p-3 space-y-3 text-amber-400"
     >
       {factionSection}

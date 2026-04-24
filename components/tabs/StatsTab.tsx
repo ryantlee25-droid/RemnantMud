@@ -24,7 +24,7 @@ const TIME_LABELS: Record<TimeOfDay, string> = {
 
 const TIME_COLORS: Record<TimeOfDay, string> = {
   dawn:  'text-orange-400',
-  day:   'text-yellow-300',
+  day:   'text-amber-300',
   dusk:  'text-orange-500',
   night: 'text-blue-400',
 }
@@ -64,7 +64,7 @@ export default function StatsTab() {
   const hpBarColor = hpColor(player.hp, player.maxHp)
 
   return (
-    <div role="tabpanel" id="tabpanel-stats" className="p-3 space-y-3">
+    <div role="tabpanel" id="tabpanel-stats" aria-labelledby="tab-stats" className="p-3 space-y-3">
       {/* HP bar block */}
       <div className="border-b border-gray-800 pb-2 space-y-0.5">
         <div className="flex items-center gap-1">
@@ -127,7 +127,7 @@ export default function StatsTab() {
         {/* Hollow pressure block */}
         <div>
           <span className="text-gray-500">Pressure:</span>{' '}
-          <span className={hollowPressure >= 7 ? 'text-red-500' : hollowPressure >= 4 ? 'text-yellow-400' : 'text-gray-300'}>
+          <span className={hollowPressure >= 7 ? 'text-red-500' : hollowPressure >= 4 ? 'text-amber-400' : 'text-gray-300'}>
             {hollowPressure}
           </span>
         </div>

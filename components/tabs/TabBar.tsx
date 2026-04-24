@@ -58,7 +58,9 @@ export default function TabBar({ tabs, active, onChange }: TabBarProps): JSX.Ele
         return (
           <button
             key={tab.id}
+            type="button"
             role="tab"
+            id={`tab-${tab.id}`}
             ref={el => { buttonRefs.current[i] = el }}
             aria-selected={isActive}
             aria-controls={`tabpanel-${tab.id}`}

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import type { Room } from '@/types/game'
-import { computeLayout } from '../../lib/mapLayout'
-import { renderZoneMap } from '../../lib/mapRenderer'
+import { computeLayout } from '@/lib/mapLayout'
+import { renderZoneMap } from '@/lib/mapRenderer'
 
 // ── Shared fixture helpers ────────────────────────────────────────────────────
 

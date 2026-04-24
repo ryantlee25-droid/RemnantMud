@@ -237,4 +237,75 @@ describe('handleFlee', () => {
     expect(errorMsgs.length).toBe(1)
     expect(errorMsgs[0]!.text).toContain('not in combat')
   })
+
+  it('re-injects additionalEnemies into currentRoom on successful flee', async () => {
+    const mainEnemy: Enemy = {
+      id: 'shuffler', name: 'Shuffler', description: 'test',
+      hp: 5, maxHp: 5, attack: 2, defense: 8, damage: [1, 3],
+      xp: 10, loot: [],
+    }
+    const brute: Enemy = {
+      id: 'brute', name: 'Brute', description: 'A hulking mass.',
+      hp: 12, maxHp: 12, attack: 5, defense: 6, damage: [2, 6],
+      xp: 20, loot: [],
+    }
+    const engine = makeEngine({
+      currentRoom: makeRoom({ enemies: ['shuffler'] }),
+      combatState: {
+        enemy: mainEnemy,
+        enemyHp: 5,
+        playerGoesFirst: true,
+        turn: 1,
+        active: true,
+        playerConditions: [],
+        enemyConditions: [],
+        abilityUsed: false,
+        defendingThisTurn: false,
+        waitingBonus: 0,
+        additionalEnemies: [brute],
+      },
+    })
+
+    await handleFlee(engine)
+
+    // Combat should be cleared
+    expect(engine.state.combatState).toBeNull()
+    // Brute should now be in the room enemies list
+    expect(engine.state.currentRoom!.enemies).toContain('brute')
+    // System message about remaining enemies
+    expect(engine.messages.some(m => m.text.includes('They wait'))).toBe(true)
+  })
+
+  it('does not modify room enemies when additionalEnemies is empty on flee', async () => {
+    const mainEnemy: Enemy = {
+      id: 'shuffler', name: 'Shuffler', description: 'test',
+      hp: 5, maxHp: 5, attack: 2, defense: 8, damage: [1, 3],
+      xp: 10, loot: [],
+    }
+    const engine = makeEngine({
+      currentRoom: makeRoom({ enemies: ['shuffler'] }),
+      combatState: {
+        enemy: mainEnemy,
+        enemyHp: 5,
+        playerGoesFirst: true,
+        turn: 1,
+        active: true,
+        playerConditions: [],
+        enemyConditions: [],
+        abilityUsed: false,
+        defendingThisTurn: false,
+        waitingBonus: 0,
+        additionalEnemies: [],
+      },
+    })
+
+    await handleFlee(engine)
+
+    // Combat should be cleared
+    expect(engine.state.combatState).toBeNull()
+    // Room enemies unchanged — still only has the original shuffler
+    expect(engine.state.currentRoom!.enemies).toEqual(['shuffler'])
+    // No "They wait" message
+    expect(engine.messages.some(m => m.text.includes('They wait'))).toBe(false)
+  })
 })

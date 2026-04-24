@@ -293,6 +293,12 @@ export function playerAttack(
     ? { roll: 10, modifier: 0, total: 99, dc: effectiveDefense, success: true, critical: false, fumble: false }
     : rollCheck(effectiveVigor, effectiveDefense)
 
+  // Design choice: Overwhelming guarantees a hit but does NOT roll for crit,
+  // even with Keen weapons. The trade-off is: Overwhelming = certainty,
+  // Keen = variance. Stacking both would make Keen redundant on every
+  // Overwhelm-active turn. If a future design wants Overwhelm-with-crit-roll,
+  // flip critical to undefined here so downstream Keen logic re-evaluates.
+
   // Keen weapon trait: crit on natural 9 or 10 (instead of just 10)
   const hasKeen = weaponTraits.includes('keen')
   if (hasKeen && !isOverwhelm && check.roll >= 9 && !check.critical) {

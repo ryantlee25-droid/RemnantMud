@@ -546,6 +546,23 @@ export async function handleFlee(engine: EngineCore): Promise<void> {
   engine._appendMessages(result.messages)
 
   if (result.success) {
+    // Re-inject any summoned additional enemies (e.g. screamer brutes) back into
+    // the room so they're still there if the player returns.
+    const additionalEnemies = combatState.additionalEnemies ?? []
+    if (additionalEnemies.length > 0) {
+      const { currentRoom } = engine.getState()
+      if (currentRoom) {
+        const additionalIds = additionalEnemies.map((e) => e.id)
+        const updatedRoom: Room = {
+          ...currentRoom,
+          enemies: [...currentRoom.enemies, ...additionalIds],
+        }
+        engine._setState({ currentRoom: updatedRoom })
+      }
+      engine._appendMessages([
+        systemMsg("You flee — but you can hear them moving in the room behind you. They wait."),
+      ])
+    }
     engine._setState({ combatState: null })
     await engine._savePlayer()
     return

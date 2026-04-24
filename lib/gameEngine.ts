@@ -50,6 +50,7 @@ import { handleCraft } from '@/lib/actions/craft'
 import { attemptStealth } from '@/lib/stealth'
 import { createCycleSnapshot, computeInheritedReputation } from '@/lib/echoes'
 import { suggestVerb as parserSuggestVerb } from '@/lib/parser'
+import { shouldFireIdleHint, markIdleHintFired, IDLE_HINT_MESSAGE } from '@/lib/idleHint'
 
 // ------------------------------------------------------------
 // Narrative Overhaul imports (convoy remnant-narrative-0329)
@@ -223,6 +224,14 @@ export class GameEngine implements EngineCore {
 
   private listeners: Array<(state: GameState) => void> = []
 
+  /**
+   * Transient counter: number of consecutive post-action steps taken without
+   * entering combat. Not persisted to DB. Resets when combat starts (see
+   * wasInCombat -> combatState.active transition in dispatch). Used by the
+   * idle-hint system (H7) to surface a zone nudge after 30 quiet actions.
+   */
+  private _noCombatActionCounter = 0
+
   // ----------------------------------------------------------
   // State subscription
   // ----------------------------------------------------------
@@ -261,7 +270,9 @@ export class GameEngine implements EngineCore {
   //
   // localStorage keys: remnant_tutorial_<context>
   // Available contexts: first_room | first_item | first_weapon |
-  //                     first_enemy | first_npc | first_death
+  //                     first_enemy | first_npc | first_death |
+  //                     first_combat_start | first_kill | low_hp_combat |
+  //                     second_encounter
   // ----------------------------------------------------------
 
   async attemptTutorialHint(context: string): Promise<void> {
@@ -1164,6 +1175,12 @@ export class GameEngine implements EngineCore {
     const hasInheritedRep = Object.keys(inheritedRep).length > 0
 
     // rebirthWithStats — clear dialogue/combat state on rebirth (they don't survive a cycle)
+    // Also reset the per-session combat counter so the second_encounter tutorial
+    // hint can re-fire next cycle (the per-cycle once-only flag for the hint
+    // itself remains set; this only clears the session counter)
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('remnant_tutorial_combat_count')
+    }
     await supabase
       .from('players')
       .update({
@@ -2015,6 +2032,79 @@ export class GameEngine implements EngineCore {
     if (action.verb === 'talk' && this.state.activeDialogue) {
       await this.attemptTutorialHint('first_npc')
     }
+
+    // ── First-fight onboarding hints (H3) ──
+    //
+    // four one-time hints that scaffold a new player's first combat loop.
+    // All guarded by remnant_tutorial_<key> localStorage flags (see handleTutorialHint).
+
+    // first_combat_start: fires the FIRST time combat becomes active
+    if (!wasInCombat && this.state.combatState?.active) {
+      await this.attemptTutorialHint('first_combat_start')
+
+      // second_encounter: fires on the SECOND combat-start event.
+      // Strategy: if first_combat_start flag is already set before this transition,
+      // we are entering combat for the second (or later) time.
+      // We use a separate localStorage counter to detect exactly the 2nd start.
+      if (typeof localStorage !== 'undefined') {
+        const countKey = 'remnant_tutorial_combat_count'
+        const prev = parseInt(localStorage.getItem(countKey) ?? '0', 10)
+        const next = prev + 1
+        localStorage.setItem(countKey, String(next))
+        if (next === 2) {
+          await this.attemptTutorialHint('second_encounter')
+        }
+      }
+    }
+
+    // first_kill: fires when combat was active and combatState just cleared (enemy defeated).
+    // Guard: combatState is now null (not just inactive) and the player is alive.
+    if (wasInCombat && !this.state.combatState && this.state.player && this.state.player.hp > 0 && !this.state.playerDead) {
+      await this.attemptTutorialHint('first_kill')
+    }
+
+    // low_hp_combat: fires when in combat and HP has dropped to ≤30% of maxHp.
+    // Gate: player alive (hp > 0) and combatState still active.
+    {
+      const p = this.state.player
+      if (p && p.hp > 0 && this.state.combatState?.active) {
+        if (p.hp / p.maxHp <= 0.3) {
+          await this.attemptTutorialHint('low_hp_combat')
+        }
+      }
+    }
+
+    // ── End first-fight onboarding hints ──
+
+    // ── Idle hint (H7) ──
+    // Surfaces after threshold consecutive non-combat actions, nudging the player
+    // toward higher-density zones. Once per cycle (localStorage). The counter
+    // increments every action; it resets when combat starts.
+    {
+      const combatJustStarted = !wasInCombat && !!(this.state.combatState?.active)
+      if (combatJustStarted) {
+        // Reset on combat start so the hint doesn't fire during quiet stretches
+        // right after a fight
+        this._noCombatActionCounter = 0
+      } else if (!this.state.combatState?.active) {
+        // Non-combat action: increment and potentially fire
+        this._noCombatActionCounter += 1
+        const player = this.state.player
+        if (
+          player &&
+          typeof localStorage !== 'undefined' &&
+          shouldFireIdleHint(this._noCombatActionCounter, player.cycle, localStorage)
+        ) {
+          this._appendMessages([{
+            id: crypto.randomUUID(),
+            text: IDLE_HINT_MESSAGE,
+            type: 'system',
+          }])
+          markIdleHintFired(player.cycle, localStorage)
+        }
+      }
+    }
+    // ── End idle hint ──
 
     // Room-discovery persistence: if a movement verb changed the room, record it.
     // Fires after the handler so markVisited has already been called (by movement.ts).

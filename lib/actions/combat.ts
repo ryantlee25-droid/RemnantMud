@@ -14,6 +14,7 @@ import {
   getEnvironmentModifiers,
   getEnvironmentNarration,
   computeEnvironmentEffects,
+  computeArmorReduction,
 } from '@/lib/combat'
 import { getItem } from '@/data/items'
 import { getEnemy } from '@/data/enemies'
@@ -26,6 +27,39 @@ import { cureCondition, tickConditions, tryShakeFrightened } from '@/lib/conditi
 import { buildAnalyzeMessages } from '@/lib/abilities'
 import { removeItem, getInventory } from '@/lib/inventory'
 import { msg, systemMsg, combatMsg, errorMsg } from '@/lib/messages'
+
+// ------------------------------------------------------------
+// Status strip helper — surfaces active conditions to the log
+// ------------------------------------------------------------
+
+/**
+ * Build a one-line status strip summarising active player and enemy conditions.
+ * Returns null when no conditions are active on either side.
+ * Format: "[bleeding 2 | stunned 1 | enemy: weakened 1]"
+ *
+ * NOTE: must stay near the TOP of this file, above handleAttack and well
+ * above the flee handler (~line 558+), so parallel Howlers H4/H6 can modify
+ * that lower region without merge conflicts.
+ */
+export function buildStatusStrip(player: Player, combatState: CombatState | null): string | null {
+  if (!combatState) return null
+
+  const parts: string[] = []
+
+  // Player conditions
+  for (const c of combatState.playerConditions) {
+    parts.push(`${c.id} ${c.remainingTurns}`)
+  }
+
+  // Enemy conditions (prefixed)
+  for (const c of combatState.enemyConditions) {
+    parts.push(`enemy: ${c.id} ${c.remainingTurns}`)
+  }
+
+  if (parts.length === 0) return null
+
+  return `[${parts.join(' | ')}]`
+}
 
 // ------------------------------------------------------------
 // Noise-triggered hollow encounter
@@ -359,9 +393,8 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
       equippedArmor?.item,
       envMod,
     )
-    // Apply armor reduction (percentage-based: each defense point = 15%, capped at 60%, minimum 1 damage)
-    const reductionPct = Math.min(armorDefense * 0.15, 0.60)
-    const actualDamage = rawDamage > 0 ? Math.max(1, Math.ceil(rawDamage * (1 - reductionPct))) : 0
+    // Apply armor reduction (15% per defense point, capped 60%, minimum 1 damage)
+    const actualDamage = computeArmorReduction(rawDamage, armorDefense)
 
     // Rewrite last damage message to reflect armor
     const adjustedMsgs = eMsgs.map((m, i) => {
@@ -385,8 +418,7 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
           enemyHp: addEnemy.hp,
         }
         const { damage: addRawDmg, messages: addMsgs } = enemyAttack(latestPlayer, addCombatState, equippedArmor?.item, envMod)
-        const addReductionPct = Math.min(armorDefense * 0.15, 0.60)
-        const addActualDmg = addRawDmg > 0 ? Math.max(1, Math.ceil(addRawDmg * (1 - addReductionPct))) : 0
+        const addActualDmg = computeArmorReduction(addRawDmg, armorDefense)
 
         const addAdjustedMsgs = addMsgs.map((m, i) => {
           if (i === addMsgs.length - 1 && addActualDmg !== addRawDmg && addRawDmg > 0) {
@@ -410,6 +442,23 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
 
     // Show HP hint
     engine._appendMessages([systemMsg(`HP: ${newHp}/${latestPlayer.maxHp}`)])
+  }
+
+  // ── Append status strip if any conditions are active (once per round) ──
+  {
+    const roundState = engine.getState()
+    const roundPlayer = roundState.player
+    const roundCombat = roundState.combatState
+    if (roundPlayer && roundCombat) {
+      const strip = buildStatusStrip(roundPlayer, roundCombat)
+      if (strip !== null) {
+        const log = roundState.log
+        const lastEntry = log[log.length - 1]
+        if (!lastEntry || lastEntry.text !== strip) {
+          engine._appendMessages([systemMsg(strip)])
+        }
+      }
+    }
   }
 
   await engine._savePlayer()
@@ -546,6 +595,23 @@ export async function handleFlee(engine: EngineCore): Promise<void> {
   engine._appendMessages(result.messages)
 
   if (result.success) {
+    // Re-inject any summoned additional enemies (e.g. screamer brutes) back into
+    // the room so they're still there if the player returns.
+    const additionalEnemies = combatState.additionalEnemies ?? []
+    if (additionalEnemies.length > 0) {
+      const { currentRoom } = engine.getState()
+      if (currentRoom) {
+        const additionalIds = additionalEnemies.map((e) => e.id)
+        const updatedRoom: Room = {
+          ...currentRoom,
+          enemies: [...currentRoom.enemies, ...additionalIds],
+        }
+        engine._setState({ currentRoom: updatedRoom })
+      }
+      engine._appendMessages([
+        systemMsg("You flee — but you can hear them moving in the room behind you. They wait."),
+      ])
+    }
     engine._setState({ combatState: null })
     await engine._savePlayer()
     return
@@ -555,9 +621,8 @@ export async function handleFlee(engine: EngineCore): Promise<void> {
   if (freeAttack) {
     const equippedArmor = engine.getState().inventory.find((ii) => ii.equipped && ii.item.type === 'armor')
     const armorDefense = equippedArmor?.item.defense ?? 0
-    // Percentage-based armor reduction (each defense point = 15%, capped at 60%, minimum 1 damage)
-    const fleeReductionPct = Math.min(armorDefense * 0.15, 0.60)
-    const actualDamage = freeAttack.damage > 0 ? Math.max(1, Math.ceil(freeAttack.damage * (1 - fleeReductionPct))) : 0
+    // Armor reduction via shared utility (15% per defense point, capped 60%, minimum 1 damage)
+    const actualDamage = computeArmorReduction(freeAttack.damage, armorDefense)
 
     // Rewrite damage messages to reflect armor
     const adjustedMsgs = freeAttack.messages.map((m, i) => {
@@ -701,9 +766,8 @@ async function doEnemyTurn(engine: EngineCore): Promise<void> {
   // Enemy attacks (pass armor and environment modifiers for trait resolution)
   const { damage: rawDamage, messages: eMsgs, newState: afterEnemy } = enemyAttack(player, activeCombat, equippedArmor?.item, envModET)
 
-  // Apply armor reduction
-  const reductionPct = Math.min(armorDefense * 0.15, 0.60)
-  let actualDamage = rawDamage > 0 ? Math.max(1, Math.ceil(rawDamage * (1 - reductionPct))) : 0
+  // Apply armor reduction (15% per defense point, capped 60%, minimum 1 damage)
+  let actualDamage = computeArmorReduction(rawDamage, armorDefense)
 
   // Defending reduction is already applied inside enemyAttack via state.defendingThisTurn (30% reduction).
   // Do NOT apply it again here.

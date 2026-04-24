@@ -1182,6 +1182,23 @@ export const CROSSROADS_ROOMS: Room[] = [
       },
     ],
     itemSpawns: [],
+    hollowEncounter: {
+      baseChance: 0.06,
+      timeModifier: { day: 0.5, dawn: 1.0, dusk: 1.0, night: 1.5 },
+      threatPool: [
+        { type: 'shuffler', weight: 3, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 1, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.5, awarePassive: 0.3, awareAggressive: 0.2 },
+      activityPool: {
+        shuffler: [
+          { desc: 'stands at the edge of the pit, swaying slightly, as if it wants to climb down into the sand but can\'t remember why', weight: 3 },
+        ],
+        remnant: [
+          { desc: 'circles the pit rim with slow mechanical steps, head tilted, as if watching a fight that ended years ago', weight: 2 },
+        ],
+      },
+    },
     narrativeNotes:
       'The Pit is an optional combat training area. Players can spar here for XP and reputation. Winning fights raises Salter reputation slightly. The bookie offers side quests — rigged fights, debts to collect.',
   },

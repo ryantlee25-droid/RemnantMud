@@ -3,8 +3,8 @@
 // ============================================================
 
 import { describe, it, expect, vi } from 'vitest'
-import type { Player, Enemy, CombatState } from '@/types/game'
-import { startCombat, playerAttack, enemyAttack } from '@/lib/combat'
+import type { Player, Enemy, CombatState, Item } from '@/types/game'
+import { startCombat, playerAttack, enemyAttack, computeArmorReduction } from '@/lib/combat'
 import { statModifier, DC } from '@/lib/dice'
 import { ENEMIES } from '@/data/enemies'
 
@@ -152,5 +152,187 @@ describe('combat math (real, not mocked)', () => {
       expect(remnant.xp).toBeGreaterThan(shuffler.xp)
     })
 
+  })
+
+  // ------------------------------------------------------------------
+  // Miss-reason buckets (H2: miss messaging)
+  // ------------------------------------------------------------------
+  describe('miss-reason buckets', () => {
+    // Helper weapon for miss tests — gives a named weapon in messages
+    const makeTestWeapon = (overrides: Partial<Item> = {}): Item => ({
+      id: 'test-blade',
+      name: 'rusty blade',
+      description: 'A test weapon.',
+      type: 'weapon',
+      weight: 2,
+      damage: 3,
+      value: 5,
+      ...overrides,
+    })
+
+    it('glanced — fumble (natural 1) emits overextend message', () => {
+      // Math.random() = 0.0 → roll1d10 = 1 → fumble
+      vi.spyOn(Math, 'random').mockReturnValue(0.0)
+      const player = makePlayer({ vigor: 5 })
+      const state = makeCombatState(shuffler)
+      const { result } = playerAttack(player, state, [2, 4], makeTestWeapon())
+      expect(result.fumble).toBe(true)
+      expect(result.hit).toBe(false)
+      const text = result.messages.map(m => m.text).join(' ')
+      expect(text).toContain('overextend')
+      vi.restoreAllMocks()
+    })
+
+    it('glanced — barely misses (gap 1) emits overextend message', () => {
+      // vigor 5 → modifier 0; defense 8 → dc 8; roll 7 → total 7; gap = 1 → glanced
+      // Math.random() = 0.65 → floor(6.5) + 1 = 7
+      vi.spyOn(Math, 'random').mockReturnValue(0.65)
+      const player = makePlayer({ vigor: 5 })
+      const enemy: Enemy = { ...shuffler, defense: 8 }
+      const state = makeCombatState(enemy)
+      const { result } = playerAttack(player, state, [2, 4], makeTestWeapon())
+      expect(result.hit).toBe(false)
+      expect(result.fumble).toBe(false)
+      const text = result.messages.map(m => m.text).join(' ')
+      expect(text).toContain('overextend')
+      vi.restoreAllMocks()
+    })
+
+    it('dodged — small gap (gap 2) emits "twists aside" message with weapon name', () => {
+      // vigor 5 → modifier 0; defense 8 → dc 8; roll 6 → total 6; gap = 2 → dodged
+      // Math.random() = 0.55 → floor(5.5) + 1 = 6
+      vi.spyOn(Math, 'random').mockReturnValue(0.55)
+      const player = makePlayer({ vigor: 5 })
+      const enemy: Enemy = { ...shuffler, defense: 8 }
+      const state = makeCombatState(enemy)
+      const weapon = makeTestWeapon({ name: 'iron pipe' })
+      const { result } = playerAttack(player, state, [2, 4], weapon)
+      expect(result.hit).toBe(false)
+      expect(result.fumble).toBe(false)
+      const text = result.messages.map(m => m.text).join(' ')
+      expect(text).toContain('twists aside')
+      expect(text).toContain('iron pipe')
+      vi.restoreAllMocks()
+    })
+
+    it('armored — large gap (gap > 2) emits "rings off armor" message', () => {
+      // vigor 5 → modifier 0; defense 8 → dc 8; roll 3 → total 3; gap = 5 → armored
+      // Math.random() = 0.25 → floor(2.5) + 1 = 3
+      vi.spyOn(Math, 'random').mockReturnValue(0.25)
+      const player = makePlayer({ vigor: 5 })
+      const enemy: Enemy = { ...shuffler, defense: 8 }
+      const state = makeCombatState(enemy)
+      const weapon = makeTestWeapon({ name: 'iron pipe' })
+      const { result } = playerAttack(player, state, [2, 4], weapon)
+      expect(result.hit).toBe(false)
+      expect(result.fumble).toBe(false)
+      const text = result.messages.map(m => m.text).join(' ')
+      expect(text).toContain("rings off")
+      expect(text).toContain("armor")
+      vi.restoreAllMocks()
+    })
+  })
+
+  // ------------------------------------------------------------------
+  // Weapon-trait strike text (H2: trait flavor on hit)
+  // ------------------------------------------------------------------
+  describe('weapon-trait strike text', () => {
+    const makeTraitWeapon = (traits: Item['weaponTraits']): Item => ({
+      id: 'trait-weapon',
+      name: 'serrated blade',
+      description: 'A trait weapon.',
+      type: 'weapon',
+      weight: 2,
+      damage: 3,
+      value: 10,
+      weaponTraits: traits,
+    })
+
+    it('vicious — bleeding applied emits red-flowers line', () => {
+      // Use remnant (not shuffler — shuffler is bleeding-immune per
+      // data/enemies.ts:41). Force crit hit so vicious trait fires reliably.
+      vi.spyOn(Math, 'random').mockReturnValue(0.95)
+      const player = makePlayer({ vigor: 10 })
+      const state = makeCombatState(remnant)
+      const weapon = makeTraitWeapon(['vicious'])
+      const { result } = playerAttack(player, state, [2, 4], weapon)
+      expect(result.hit).toBe(true)
+      const text = result.messages.map(m => m.text).join(' ')
+      expect(text).toContain('bleeds')
+      expect(text).toContain('Red flowers')
+      vi.restoreAllMocks()
+    })
+
+    it('scorching — burning applied emits heat-licks line', () => {
+      // First call: Math.random() = 0.95 → roll 10 = crit hit
+      // Second call (rollDamage): also 0.95 → deterministic damage
+      // Third call (scorching 30% check): Math.random() = 0.1 < 0.30 → burns
+      vi.spyOn(Math, 'random')
+        .mockReturnValueOnce(0.95)   // roll1d10 → 10 (crit hit)
+        .mockReturnValueOnce(0.95)   // rollDamage
+        .mockReturnValueOnce(0.1)    // scorching check → fires
+      const player = makePlayer({ vigor: 10 })
+      const state = makeCombatState(shuffler)
+      const weapon = makeTraitWeapon(['scorching'])
+      const { result } = playerAttack(player, state, [2, 4], weapon)
+      expect(result.hit).toBe(true)
+      const text = result.messages.map(m => m.text).join(' ')
+      expect(text).toContain('Heat licks')
+      expect(text).toContain('flesh blackens')
+      vi.restoreAllMocks()
+    })
+
+    it('draining — heal emits warmth-thread line', () => {
+      // Force crit hit so draining heals 2 HP
+      vi.spyOn(Math, 'random').mockReturnValue(0.95)
+      const player = makePlayer({ vigor: 10 })
+      const state = makeCombatState(shuffler)
+      const weapon = makeTraitWeapon(['draining'])
+      const { result } = playerAttack(player, state, [2, 4], weapon)
+      expect(result.hit).toBe(true)
+      const text = result.messages.map(m => m.text).join(' ')
+      expect(text).toContain('thread of warmth')
+      expect(text).toContain("vigor lessens")
+      vi.restoreAllMocks()
+    })
+
+    // blessed vs Sanguine: harder to fixture (requires elder_sanguine / sanguine_feral enemy)
+    // Included: force crit hit with blessed weapon vs sanguine_feral
+    it('blessed — vs Sanguine enemy emits sanctified-steel line', () => {
+      vi.spyOn(Math, 'random').mockReturnValue(0.95)
+      const player = makePlayer({ vigor: 10 })
+      const sanguineEnemy = ENEMIES['sanguine_feral']!
+      const state = makeCombatState(sanguineEnemy)
+      const weapon = makeTraitWeapon(['blessed'])
+      const { result } = playerAttack(player, state, [2, 4], weapon)
+      expect(result.hit).toBe(true)
+      const text = result.messages.map(m => m.text).join(' ')
+      expect(text).toContain('blessing flares')
+      expect(text).toContain('sanctified steel')
+      vi.restoreAllMocks()
+    })
+  })
+
+  describe('computeArmorReduction', () => {
+    it('flee path: defense=3, raw 10 damage → 6 (45% reduction)', () => {
+      // 15% × 3 = 45% reduction; 10 × 0.55 = 5.5 → ceil = 6
+      expect(computeArmorReduction(10, 3)).toBe(6)
+    })
+
+    it('flee path: defense=5, raw 10 damage → 4 (cap at 60%, 10 × 0.4 = 4)', () => {
+      // 15% × 5 = 75%, capped at 60%; 10 × 0.4 = 4 → Math.max(1, ceil(4)) = 4
+      expect(computeArmorReduction(10, 5)).toBe(4)
+    })
+
+    it('zero raw damage returns 0 regardless of defense (no-op for misses)', () => {
+      expect(computeArmorReduction(0, 5)).toBe(0)
+    })
+
+    it('1-damage hit always deals at least 1 (Math.max floor; ceil already guards too)', () => {
+      // raw=1 with cap-defense: 1 * 0.4 = 0.4, ceil → 1. Pins the minimum-1
+      // contract regardless of whether ceil or floor is used internally.
+      expect(computeArmorReduction(1, 5)).toBe(1)
+      expect(computeArmorReduction(1, 10)).toBe(1)
+    })
   })
 })

@@ -168,6 +168,19 @@ function pickFlavorText(enemy: Enemy): string | undefined {
   return enemy.flavorText[Math.floor(Math.random() * enemy.flavorText.length)]
 }
 
+/**
+ * Compute the post-armor damage value.
+ * 15% reduction per defense point, capped at 60% total reduction.
+ * Minimum 1 damage is always dealt (no full block).
+ * Returns 0 when rawDamage is 0 (no-op for misses).
+ */
+export function computeArmorReduction(rawDamage: number, defenseValue: number): number {
+  if (rawDamage <= 0) return 0
+  const reductionPct = Math.min(0.15 * Math.max(0, defenseValue), 0.60)
+  const reduced = Math.max(1, Math.ceil(rawDamage * (1 - reductionPct)))
+  return reduced
+}
+
 /** Return a rough health description for the enemy. */
 export function enemyHpIndicator(currentHp: number, maxHp: number): string {
   const ratio = currentHp / maxHp
@@ -280,6 +293,12 @@ export function playerAttack(
     ? { roll: 10, modifier: 0, total: 99, dc: effectiveDefense, success: true, critical: false, fumble: false }
     : rollCheck(effectiveVigor, effectiveDefense)
 
+  // Design choice: Overwhelming guarantees a hit but does NOT roll for crit,
+  // even with Keen weapons. The trade-off is: Overwhelming = certainty,
+  // Keen = variance. Stacking both would make Keen redundant on every
+  // Overwhelm-active turn. If a future design wants Overwhelm-with-crit-roll,
+  // flip critical to undefined here so downstream Keen logic re-evaluates.
+
   // Keen weapon trait: crit on natural 9 or 10 (instead of just 10)
   const hasKeen = weaponTraits.includes('keen')
   if (hasKeen && !isOverwhelm && check.roll >= 9 && !check.critical) {
@@ -318,9 +337,12 @@ export function playerAttack(
     markTargetAttacks: (state.markTargetAttacks ?? 0) > 0 ? (state.markTargetAttacks! - 1) : 0,
   }
 
+  const weaponName = weapon?.name ?? 'strike'
+
   if (check.fumble) {
+    // Glanced — fumble (natural 1): player overextends
     messages.push(
-      msg(`You swing wildly. ${rt.enemy(enemy.name)} sidesteps and you nearly fall.`),
+      msg(`You overextend — your blow glances off ${rt.enemy(enemy.name)}.`),
     )
     const newState: CombatState = { ...state, ...baseStateUpdates, turn: state.turn + 1 }
     return {
@@ -330,7 +352,18 @@ export function playerAttack(
   }
 
   if (!check.success) {
-    messages.push(msg(`You lunge at ${rt.enemy(enemy.name)}. It glances off nothing.`))
+    // Miss-reason bucketing based on how badly the roll missed
+    const gap = check.dc - check.total
+    if (gap <= 1) {
+      // Glanced — barely missed (gap of 1): player overextends
+      messages.push(msg(`You overextend — your blow glances off ${rt.enemy(enemy.name)}.`))
+    } else if (gap <= 2 && check.dc > 0) {
+      // Dodged — small gap: enemy twists aside
+      messages.push(msg(`${rt.enemy(enemy.name)} twists aside — your ${weaponName} finds nothing but air.`))
+    } else {
+      // Armored / blocked — large gap: weapon rings off solid defense
+      messages.push(msg(`Your ${weaponName} rings off ${rt.enemy(enemy.name)}'s armor. No damage.`))
+    }
     const newState: CombatState = { ...state, ...baseStateUpdates, turn: state.turn + 1 }
     return {
       result: { hit: false, damage: 0, critical: false, fumble: false, messages },
@@ -351,18 +384,28 @@ export function playerAttack(
   let healPlayer = 0
   let suppressNoise = false
   let updatedEnemyConditions = [...state.enemyConditions]
+  // Track which conditions trait resolution wanted to apply (for flavor text)
+  let traitConditionsApplied: ConditionId[] = []
+  let blessedFiredVsSanguine = false
 
   if (weapon) {
     const traitResult = resolveWeaponTraits(player, weapon, enemy, check.critical, damage)
     traitBonusDamage = traitResult.bonusDamage
     healPlayer = traitResult.healPlayer
     suppressNoise = traitResult.suppressNoise
+    // Detect if blessed fired against a Sanguine enemy
+    const enemyHollowType = enemy.hollowType
+    const isSanguineEnemy = enemyHollowType === 'elder_sanguine' || enemyHollowType === 'sanguine_feral'
+    blessedFiredVsSanguine = weaponTraits.includes('blessed') && isSanguineEnemy && traitResult.bonusDamage > 0
 
-    // Apply conditions from weapon traits to enemy
+    // Apply conditions from weapon traits to enemy. Only record conditions that
+    // actually landed — applyCondition returns applied:false for already-active
+    // and immune conditions, and we don't want flavor text firing on those.
     for (const condId of traitResult.conditionsToApply) {
       const immunities = enemy.resistanceProfile?.conditionImmunities
       const condResult = applyCondition(updatedEnemyConditions, condId, weapon.name, immunities)
       updatedEnemyConditions = condResult.conditions
+      if (condResult.applied) traitConditionsApplied.push(condId)
     }
 
     // Show trait messages
@@ -442,6 +485,20 @@ export function playerAttack(
       const line = hitLines[damage % hitLines.length]!
       messages.push(msg(line))
     }
+  }
+
+  // Weapon-trait strike flavor text (appended after the damage line, only when the trait fired)
+  if (blessedFiredVsSanguine) {
+    messages.push(msg(`The blessing flares — ${rt.enemy(enemy.name)} recoils from sanctified steel.`))
+  }
+  if (traitConditionsApplied.includes('bleeding')) {
+    messages.push(msg(`${rt.enemy(enemy.name)} bleeds. Red flowers on the ground.`))
+  }
+  if (traitConditionsApplied.includes('burning')) {
+    messages.push(msg(`Heat licks the wound — ${rt.enemy(enemy.name)} shudders as flesh blackens.`))
+  }
+  if (healPlayer > 0 && weaponTraits.includes('draining')) {
+    messages.push(msg(`You feel a thread of warmth pass into you. ${rt.enemy(enemy.name)}'s vigor lessens.`))
   }
 
   // Apply draining heal

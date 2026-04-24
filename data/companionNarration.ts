@@ -1221,6 +1221,27 @@ export const COMPANION_COMBAT_REACTIONS: Record<string, Record<CombatOutcome, st
         'You notice this. It says something about priorities.',
     ],
   },
+  the_dog: {
+    victory: [
+      'The dog circles the fallen shape once, making sure. Then it returns ' +
+        'to your side. Whatever it saw satisfied it.',
+      'The dog does not celebrate. It checks you. Then it checks the exits. ' +
+        'Then it sits, tail still, waiting for the next thing.',
+    ],
+    close_call: [
+      'The dog licks blood off its muzzle — yours, not its own. ' +
+        'It does not apologize for the intimacy. It cleaned the wound ' +
+        'because the wound needed cleaning.',
+      'The dog stays pressed against your leg for a long time after it ends. ' +
+        'Its breathing slows before yours does. It has done this before.',
+    ],
+    retreat: [
+      'The dog is already moving by the time you decide to run. It knows ' +
+        'the difference between fighting and leaving. It knows which is this.',
+      'The dog stays between you and the threat while you retreat. ' +
+        'When you are clear, it falls in. Wordless. The way a professional moves.',
+    ],
+  },
   avery_kindling: {
     victory: [
       '<npc>Avery</npc> looks at the body. Then at her hands. ' +
@@ -1358,6 +1379,21 @@ export const COMPANION_DISCOVERY_REACTIONS: Record<string, Record<string, string
     route:
       '<npc>Lev</npc> adds the route to her map. ' +
       '"Consistent with the signal propagation patterns," she says.',
+  },
+  the_dog: {
+    default:
+      'The dog investigates with its nose, not its eyes. It catalogs. ' +
+      'Whatever conclusion it reaches is not one it shares.',
+    lore_item:
+      'The dog sniffs the paper once and loses interest. Paper does not ' +
+      'carry the information dogs look for. You are on your own with this one.',
+    tech:
+      'The dog will not come near the device. It does not flinch from it; ' +
+      'it simply declines to be in the same air. You note the decision.',
+    route:
+      'The dog tests the new path with one paw, then the rest. ' +
+      'Whatever it learns, it learns quickly. It looks back at you once, ' +
+      'permission either given or withheld. You decide which.',
   },
   avery_kindling: {
     default:
@@ -1615,6 +1651,228 @@ export const PERSONAL_MOMENTS: PersonalMoment[] = [
 ]
 
 // ============================================================
+// THE DOG — the_dog
+// Voice: actions over words. Observation. Uncanny timing.
+// A stray that has survived by reading intentions. Never waspish,
+// never cute. A creature that chooses you despite knowing better.
+// ============================================================
+
+export const THE_DOG_NARRATION: CompanionCommentary[] = [
+  // Danger — high-difficulty rooms. The dog knows before you do.
+  {
+    contextKey: CTX_DANGER,
+    narrative:
+      'The dog goes very still. Not cowering. Still like a drawn arrow. ' +
+      'Its eyes track something you can\'t see yet. Something in the room ' +
+      'has its full attention.',
+    weight: 3,
+  },
+  {
+    contextKey: CTX_DANGER,
+    narrative:
+      'The dog moves to your left without waiting for you to ask. ' +
+      'It takes a position that makes your exit harder to reach. ' +
+      'It is not protecting you. It is securing the ground.',
+    weight: 2,
+  },
+  {
+    contextKey: CTX_DANGER,
+    narrative:
+      'The dog stops growling. That is the tell. The wind through the room ' +
+      'has not changed. The dog has stopped growling because something is ' +
+      'close enough that growling would be a mistake.',
+    weight: 2,
+  },
+
+  // Ruins — loss the dog doesn\'t find interesting
+  {
+    contextKey: CTX_RUINS,
+    narrative:
+      'The dog sniffs the rubble, methodical. Its hackles don\'t rise. ' +
+      'It loses interest and moves on. Nothing here that needs killing. ' +
+      'Nothing here that was worth killing, either.',
+    weight: 2,
+  },
+  {
+    contextKey: CTX_RUINS,
+    narrative:
+      'The dog approaches a collapsed wall and pauses. Its ears twitch. ' +
+      'Something below. Something old. It moves on, unbothered. ' +
+      'Scavengers don\'t interest it.',
+    weight: 2,
+  },
+  {
+    contextKey: CTX_RUINS,
+    narrative:
+      'The dog lifts a paw near the edge of a crack in the floor and holds it ' +
+      'there. Not afraid. Listening. After a moment it chooses a different ' +
+      'path around the crack. You follow.',
+    weight: 2,
+  },
+
+  // Open / wilderness — the dog\'s domain
+  {
+    contextKey: CTX_OPEN,
+    narrative:
+      'The dog moves differently here. Gait changes. Head up. ' +
+      'This is where the dog wants to be. You realize it has not been safe ' +
+      'anywhere else. It has only ever been home in open country.',
+    weight: 3,
+  },
+  {
+    contextKey: CTX_OPEN,
+    narrative:
+      'The dog breaks away, hunting. It returns ten minutes later with nothing ' +
+      'to show — just the look of something that remembered what it was. ' +
+      'It settles by your side, content. The hunt mattered more than the catch.',
+    weight: 2,
+  },
+  {
+    contextKey: CTX_OPEN,
+    narrative:
+      'The dog stops and sniffs the wind for a long time. Prey animals, small ' +
+      'ones, living things that still live. The dog\'s shoulders drop. ' +
+      'Relief is something you do not usually see in this particular shape.',
+    weight: 2,
+  },
+
+  // Tech / the_stacks — unease around the machinery
+  {
+    contextKey: CTX_TECH,
+    narrative:
+      'The dog\'s ears flatten at the hum. It presses close to your leg. ' +
+      'This is wrong, its body says. This place smells like things ' +
+      'that shouldn\'t still be moving.',
+    weight: 3,
+  },
+  {
+    contextKey: CTX_TECH,
+    narrative:
+      'The dog tolerates the tech the way it tolerates rain. Endured, not ' +
+      'investigated. When a servo clicks somewhere above, the dog does not ' +
+      'startle — but the look it gives you is the look of something that ' +
+      'would very much like to leave.',
+    weight: 2,
+  },
+
+  // Night — the world the dog watches for you
+  {
+    contextKey: CTX_NIGHT,
+    narrative:
+      'The dog\'s eyes catch what light there is. It is not looking at you. ' +
+      'It is looking at the shapes beyond the edge of the room. It has been ' +
+      'doing this since the sun went down. It will do it until the sun comes back.',
+    weight: 3,
+  },
+  {
+    contextKey: CTX_NIGHT,
+    narrative:
+      'The dog circles the room\'s perimeter once, checking exits. ' +
+      'Then it settles with its back to a wall and its face toward the door. ' +
+      'It does not sleep. That is not what this posture is for.',
+    weight: 2,
+  },
+
+  // Rest / safeRest — relief that is not relief
+  {
+    contextKey: CTX_REST,
+    narrative:
+      'The dog settles differently in safe rooms. Not relaxed: relieved to be ' +
+      'trapped. It picks a spot with clear sight lines and lies with its back ' +
+      'to a wall. You realize sanctuary reads to it as last stand.',
+    weight: 3,
+  },
+
+  // Deep / underground — the air is wrong
+  {
+    contextKey: CTX_DEEP,
+    narrative:
+      'The dog does not like the air down here. Its nose works overtime. ' +
+      'Whatever it is smelling, the categories in its head do not cover it. ' +
+      'It stays close. It does not explore.',
+    weight: 2,
+  },
+  {
+    contextKey: CTX_DEEP,
+    narrative:
+      'The dog tests the stone with a paw before committing weight to it. ' +
+      'Not every step. Just the ones that sound hollow to ears that hear ' +
+      'hollow better than yours do.',
+    weight: 2,
+  },
+
+  // Generic fallback — the waiting
+  {
+    contextKey: CTX_GENERIC,
+    narrative:
+      'The dog lies and watches the exit. Ears up. Eyes on the path. ' +
+      'It has been doing this long before it met you. It will do it after. ' +
+      'Vigilance is what the dog is.',
+    weight: 2,
+  },
+  {
+    contextKey: CTX_GENERIC,
+    narrative:
+      'The dog sits at your feet. Not touching. Close enough that moving would ' +
+      'require a decision. A decision the dog has not yet made.',
+    weight: 1,
+  },
+]
+
+export const THE_DOG_JOIN_NARRATION: string[] = [
+  'The stray stops being a stray. It falls in at your side with no fanfare ' +
+    'and no ceremony — the quiet commitment of something that chooses you ' +
+    'despite everything it knows.',
+  'The dog sits beside you. It does not ask. It has decided. ' +
+  'The notched ear twitches once. It is listening to you now.',
+  'The dog comes close enough to touch, though it does not ask for it. ' +
+    'It has made a choice. Whatever was holding it back — hunger, habit, ' +
+    'the long memory of being hunted — is not holding it back anymore.',
+]
+
+export const THE_DOG_LEAVE_NARRATION: Record<string, string[]> = {
+  quest_complete: [
+    'The dog lies down in the sunlight and does not get up when you do. ' +
+      'It has decided staying is enough. You release it, or it releases you. ' +
+      'The difference does not matter to the dog.',
+    'The dog stops following. It finds a place with good sight lines and ' +
+      'settles. "You kept me alive," the posture says. "That will do."',
+  ],
+  player_choice: [
+    'You tell the dog to go. It listens. It walks back the way you came, ' +
+      'toward the open country, and does not look back. It was always waiting ' +
+      'for permission to be wild again.',
+  ],
+  death: [
+    'The dog goes down without sound. A moment of motion. Then stillness. ' +
+      'The notched ear is still. Whatever it was, it is over.',
+    'The dog makes a choice in the last moment — putting itself between you ' +
+      'and the blow. It dies the way it lived: watching. Deciding. ' +
+      'The body goes cool on the stone.',
+  ],
+  separation: [
+    'The dog turns back the way you came. "I cannot follow further," ' +
+      'its steady gaze says. "But I was here. That was enough. ' +
+      'You do not forget, and neither will I."',
+  ],
+}
+
+export const THE_DOG_INTRODUCTION: string[] = [
+  'A stray watches you from high ground — a shape against scrub, notched ear, ' +
+    'ribs visible when it breathes. It does not approach. It does not leave. ' +
+    'It measures you the way it measures everything: slowly, without apology.',
+  'You offer food. The dog eats at distance. It does not thank you. ' +
+    'The next time you cross its territory, it comes closer. The next time ' +
+    'after that, it does not leave when you do.',
+  'On the third meeting, the dog sits beside you during a rest and does not ' +
+    'move when you stand. Somewhere along the way, it decided. You do not ' +
+    'remember when. The dog does.',
+  'It has no name. You can give it one or not. Dogs outlast the names they ' +
+    'are given. What follows you now is the thing itself, under whatever word ' +
+    'you choose.',
+]
+
+// ============================================================
 // MASTER INDEX — maps NPC ID to commentary pool
 // ============================================================
 
@@ -1626,6 +1884,7 @@ export const COMPANION_NARRATION_POOLS: Record<string, CompanionCommentary[]> = 
   vesper: VESPER_NARRATION,
   marshal_cross: CROSS_NARRATION,
   sparks_radio: SPARKS_NARRATION,
+  the_dog: THE_DOG_NARRATION,
 }
 
 // ============================================================
@@ -1760,4 +2019,5 @@ export const COMPANION_INTRODUCTIONS: Record<string, string[]> = {
   vesper: VESPER_INTRODUCTION,
   marshal_cross: CROSS_INTRODUCTION,
   sparks_radio: SPARKS_INTRODUCTION,
+  the_dog: THE_DOG_INTRODUCTION,
 }

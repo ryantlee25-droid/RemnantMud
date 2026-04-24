@@ -501,6 +501,23 @@ export const THE_STACKS_ROOMS: Room[] = [
         { line: 'A shooting star traces a line across the north sky and ends above the Scar valley.', chance: 0.10, time: ['night'] },
       ],
     },
+    hollowEncounter: {
+      baseChance: 0.06,
+      timeModifier: { day: 0.5, dawn: 1.0, dusk: 1.0, night: 1.5 },
+      threatPool: [
+        { type: 'shuffler', weight: 3, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 1, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.4, awarePassive: 0.4, awareAggressive: 0.2 },
+      activityPool: {
+        shuffler: [
+          { desc: 'stands at the rooftop railing, head tilted back, face toward the northwest where the MERIDIAN light sits on the horizon, motionless in the cold wind', weight: 3 },
+        ],
+        remnant: [
+          { desc: 'hunches over the telescope mount, hands on the eyepiece, pressing its face against the glass again and again as if remembering what looking meant', weight: 2 },
+        ],
+      },
+    },
     narrativeNotes: 'Climactic observatory scene. The MERIDIAN light is a key visual payoff. The telescope check is one of the most significant single skill checks in Act II — confirming MERIDIAN is inhabited.',
   },
 
@@ -1071,6 +1088,23 @@ export const THE_STACKS_ROOMS: Room[] = [
         skillCheck: { skill: 'mechanics', dc: 8, successAppend: 'You could fix this in ten minutes with the parts on the shelf by the door. The ballast is standard T8 fluorescent, common enough that three spares are sitting in a bin labeled LIGHTING. Nobody has fixed it because nobody has had ten free minutes. That tells you everything about the Reclaimers\' workload.' },
       },
     ],
+    hollowEncounter: {
+      baseChance: 0.08,
+      timeModifier: { day: 0.5, dawn: 1.0, dusk: 1.0, night: 1.5 },
+      threatPool: [
+        { type: 'shuffler', weight: 3, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 1, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+      awarenessRoll: { unaware: 0.5, awarePassive: 0.35, awareAggressive: 0.15 },
+      activityPool: {
+        shuffler: [
+          { desc: 'moves along the shelving rows with slow, sweeping arm motions, knocking drives onto the floor one by one, drawn by some vestigial pattern it can\'t name', weight: 3 },
+        ],
+        remnant: [
+          { desc: 'crouches in the flickering light, holding a hard drive in both hands, turning it over and over with the focused attention of someone trying to remember what it contains', weight: 2 },
+        ],
+      },
+    },
     narrativeNotes: 'Scavenging hub for electronics and data. The CDC encrypted files are a significant lore gate — the contingency orders folder connects to the military questline. The DOE floppy disks predate CHARON-7 and imply Department of Energy involvement in MERIDIAN\'s origins. The hidden passage to the map room rewards exploration.',
   },
 

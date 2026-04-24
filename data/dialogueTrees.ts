@@ -3949,6 +3949,25 @@ const echoTree: DialogueTree = {
       ],
     },
 
+    echo_recognition: {
+      id: 'echo_recognition',
+      speaker: 'Echo',
+      text: `The figure stops. Completely. The fingers freeze mid-letter. The eyes find yours and there is a moment where something crosses the distance between you — not quite memory, but the shape memory leaves when it has been asked to leave. "Before. Before you. You... were here. Here before." The voice rises, almost urgent. "The. The way you stand. I... I know. I know the. The way you stand." A tremor runs through the body. The fingers resume, but the letters are different now — not E C H O. Something older. "You. You come. Come back. Again."`,
+      onEnter: {
+        setFlag: { echo_encountered: true },
+      },
+      branches: [
+        {
+          label: '"Yes. I\'ve come back before."',
+          targetNode: 'echo_recognition_affirm',
+        },
+        {
+          label: '"I\'m not sure. Maybe."',
+          targetNode: 'echo_recognition_deny',
+        },
+      ],
+    },
+
     echo_recognition_affirm: {
       id: 'echo_recognition_affirm',
       speaker: 'Echo',

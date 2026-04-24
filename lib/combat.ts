@@ -318,9 +318,12 @@ export function playerAttack(
     markTargetAttacks: (state.markTargetAttacks ?? 0) > 0 ? (state.markTargetAttacks! - 1) : 0,
   }
 
+  const weaponName = weapon?.name ?? 'strike'
+
   if (check.fumble) {
+    // Glanced — fumble (natural 1): player overextends
     messages.push(
-      msg(`You swing wildly. ${rt.enemy(enemy.name)} sidesteps and you nearly fall.`),
+      msg(`You overextend — your blow glances off ${rt.enemy(enemy.name)}.`),
     )
     const newState: CombatState = { ...state, ...baseStateUpdates, turn: state.turn + 1 }
     return {
@@ -330,7 +333,18 @@ export function playerAttack(
   }
 
   if (!check.success) {
-    messages.push(msg(`You lunge at ${rt.enemy(enemy.name)}. It glances off nothing.`))
+    // Miss-reason bucketing based on how badly the roll missed
+    const gap = check.dc - check.total
+    if (gap <= 1) {
+      // Glanced — barely missed (gap of 1): player overextends
+      messages.push(msg(`You overextend — your blow glances off ${rt.enemy(enemy.name)}.`))
+    } else if (gap <= 2 && check.dc > 0) {
+      // Dodged — small gap: enemy twists aside
+      messages.push(msg(`${rt.enemy(enemy.name)} twists aside — your ${weaponName} finds nothing but air.`))
+    } else {
+      // Armored / blocked — large gap: weapon rings off solid defense
+      messages.push(msg(`Your ${weaponName} rings off ${rt.enemy(enemy.name)}'s armor. No damage.`))
+    }
     const newState: CombatState = { ...state, ...baseStateUpdates, turn: state.turn + 1 }
     return {
       result: { hit: false, damage: 0, critical: false, fumble: false, messages },
@@ -351,12 +365,21 @@ export function playerAttack(
   let healPlayer = 0
   let suppressNoise = false
   let updatedEnemyConditions = [...state.enemyConditions]
+  // Track which conditions trait resolution wanted to apply (for flavor text)
+  let traitConditionsApplied: ConditionId[] = []
+  let blessedFiredVsSanguine = false
 
   if (weapon) {
     const traitResult = resolveWeaponTraits(player, weapon, enemy, check.critical, damage)
     traitBonusDamage = traitResult.bonusDamage
     healPlayer = traitResult.healPlayer
     suppressNoise = traitResult.suppressNoise
+    traitConditionsApplied = traitResult.conditionsToApply
+
+    // Detect if blessed fired against a Sanguine enemy
+    const enemyHollowType = enemy.hollowType as string | undefined
+    const isSanguineEnemy = enemyHollowType === 'elder_sanguine' || enemyHollowType === 'sanguine_feral'
+    blessedFiredVsSanguine = weaponTraits.includes('blessed') && isSanguineEnemy && traitResult.bonusDamage > 0
 
     // Apply conditions from weapon traits to enemy
     for (const condId of traitResult.conditionsToApply) {
@@ -442,6 +465,20 @@ export function playerAttack(
       const line = hitLines[damage % hitLines.length]!
       messages.push(msg(line))
     }
+  }
+
+  // Weapon-trait strike flavor text (appended after the damage line, only when the trait fired)
+  if (blessedFiredVsSanguine) {
+    messages.push(msg(`The blessing flares — ${rt.enemy(enemy.name)} recoils from sanctified steel.`))
+  }
+  if (traitConditionsApplied.includes('bleeding')) {
+    messages.push(msg(`${rt.enemy(enemy.name)} bleeds. Red flowers on the ground.`))
+  }
+  if (traitConditionsApplied.includes('burning')) {
+    messages.push(msg(`Heat licks the wound — ${rt.enemy(enemy.name)} shudders as flesh blackens.`))
+  }
+  if (healPlayer > 0 && weaponTraits.includes('draining')) {
+    messages.push(msg(`You feel a thread of warmth pass into you. ${rt.enemy(enemy.name)}'s vigor lessens.`))
   }
 
   // Apply draining heal

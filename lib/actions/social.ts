@@ -176,6 +176,11 @@ async function applyNodeEffects(engine: EngineCore, node: DialogueNode): Promise
       engine._appendMessages([systemMsg(`Lost: ${rt.item(name)}`)])
     }
   }
+
+  // Grant narrative key — knowledge unlock earned through dialogue
+  if (node.onEnter.grantNarrativeKey) {
+    await engine.grantNarrativeKey(node.onEnter.grantNarrativeKey, 'dialogue')
+  }
 }
 
 /**

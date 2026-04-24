@@ -6,10 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "test:ui": "vitest --ui"
+    "test": "vitest run --exclude=tests/eval/**",
+    "test:watch": "vitest --exclude=tests/eval/**",
+    "test:ci": "vitest run --coverage --exclude=tests/eval/**",
+    "test:coverage": "vitest run --coverage --exclude=tests/eval/**",
+    "test:ui": "vitest --ui --exclude=tests/eval/**",
+    "test:eval": "vitest run --config vitest.eval.config.ts",
+    "prepare": "husky",
+    "validate": "tsx scripts/validate-consistency.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",
@@ -29,8 +33,10 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitest/coverage-v8": "^4.1.2",
+    "husky": "^9.1.7",
     "jsdom": "^29.0.1",
     "tailwindcss": "^4",
+    "tsx": "^4.19.3",
     "typescript": "^5",
     "vitest": "^4.1.2"
   }

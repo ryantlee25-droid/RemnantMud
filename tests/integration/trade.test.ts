@@ -32,11 +32,15 @@ vi.mock('@/data/items', () => ({
   }),
 }))
 
-vi.mock('@/lib/inventory', () => ({
-  getInventory: vi.fn().mockResolvedValue([]),
-  addItem: vi.fn().mockResolvedValue(undefined),
-  removeItem: vi.fn().mockResolvedValue(undefined),
-}))
+vi.mock('@/lib/inventory', async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    getInventory: vi.fn().mockResolvedValue([]),
+    addItem: vi.fn().mockResolvedValue(undefined),
+    removeItem: vi.fn().mockResolvedValue(undefined),
+  }
+})
 
 // ------------------------------------------------------------
 // Helpers

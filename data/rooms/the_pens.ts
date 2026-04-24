@@ -19,7 +19,7 @@ export const THE_PENS_ROOMS: Room[] = [
     },
     items: [],
     enemies: ['red_court_enforcer'],
-    npcs: ['crossroads_gate_guard'],
+    npcs: ['pens_gate_sentry'],
     extras: [
       {
         keywords: ['sign', 'mercy', 'general', 'extended', 'care'],
@@ -66,7 +66,7 @@ export const THE_PENS_ROOMS: Room[] = [
     },
     items: ['patient_intake_form'],
     enemies: [],
-    npcs: ['courthouse_clerk', 'drifter_newcomer'],
+    npcs: ['pens_intake_officer', 'pens_intake_orderly'],
     extras: [
       {
         keywords: ['clipboard', 'form', 'paperwork', 'intake'],
@@ -145,6 +145,19 @@ export const THE_PENS_ROOMS: Room[] = [
         { type: 'shuffler', weight: 100, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
     },
+    npcSpawns: [
+      {
+        npcId: 'lyris_red_court',
+        spawnChance: 0.60,
+        spawnType: 'patrol',
+        activityPool: [
+          { desc: 'Lyris moves through the corridor on a security pass — measured, deliberate, still practicing the form of someone who does this without thinking about it.', weight: 3 },
+          { desc: 'Lyris has stopped at the bulletin board and is reading the donor calendar with an expression that is hard to place. She notices you and straightens.', weight: 2, timeRestrict: ['day'] },
+        ],
+        dispositionRoll: { friendly: 0.20, neutral: 0.55, wary: 0.20, hostile: 0.05 },
+        dialogueTree: 'pens_lyris_conflict',
+      },
+    ],
     narrativeNotes: 'pens_03. Ward A is the best-case version of The Pens. Show it honestly — clean, lit, functional. The horror is in the normalcy. The donors are not suffering in ways they would articulate as suffering.',
   },
 
@@ -248,9 +261,9 @@ export const THE_PENS_ROOMS: Room[] = [
     difficulty: 2,
     visited: false,
     flags: { noCombat: true },
-    description: 'The blue-wristband corridor is maintained — lights working, floor swept — but the texture is different from Ward A. The donors here move less freely. Not restricted: the doors are open, the corridor access unrestricted. But they move like people who have been somewhere long enough to develop the economy of motion of someone who has accepted their range. A few sit in the corridor itself, backs against the wall, doing nothing in particular. Blue wristbands on every wrist — A-positive, voluntary, but the "voluntary" has a quality here that feels more calculated and less chosen. A bulletin board has the same laminated sheets as Ward A, but fewer handwritten additions. The birthdays board is empty.',
-    descriptionNight: 'The Ward B corridor at night is quieter than the day would suggest it should be. The donors who are awake are awake the way people are awake who can\'t sleep rather than the way people are awake who chose to stay up.',
-    shortDescription: 'Ward B corridor. Blue wristbands. Still maintained. Quieter.',
+    description: 'The blue-wristband corridor is maintained — lights working, floor swept, the clinical smell of disinfectant applied on schedule. But the temperature is different from Ward A: cooler by two degrees, the ventilation more aggressive, the lighting colder. A-positive donors are less in demand than O-negative; the benefits package reflects this. The donors here move with the economy of motion of people who have calculated their situation precisely and found that the calculation comes out the same every time. A bulletin board carries the same laminated schedules as Ward A. No handwritten additions. The birthdays board is empty. Someone put it up optimistically and no one has written anything on it.',
+    descriptionNight: 'The Ward B corridor at night is quieter than the day would suggest it should be. The donors who are awake are awake the way people are awake who can\'t sleep rather than the way people are awake who chose to stay up. The cold fluorescent light runs all night. No one has asked for it to be dimmed. No one expects accommodation.',
+    shortDescription: 'Ward B corridor. Blue wristbands. Colder. Quieter. The birthday board is empty.',
     exits: { west: 'pens_02_intake_hall', north: 'pens_07_cafeteria' },
     richExits: {
       west: { destination: 'pens_02_intake_hall', descriptionVerbose: 'back west to the intake hall' },
@@ -273,7 +286,19 @@ export const THE_PENS_ROOMS: Room[] = [
         description: 'The person sitting against the wall nearest you has been watching the corridor entrance since you arrived. Not watching you specifically. Watching it. When you meet their eyes they look away first, without expression, and go back to watching the corridor entrance.',
         skillCheck: { skill: 'perception', dc: 10, successAppend: 'They are watching for something specific — someone specific, by the pattern of their attention. They look when a door opens. They look when someone new comes in. They are waiting for someone who has not arrived in a long time.' },
       },
+      {
+        keywords: ['schedule', 'draw', 'frequency', 'extraction', 'calendar'],
+        description: 'The draw schedule in Ward B is posted on the back of the clinic door: A-positive donors, bi-weekly draws, ten-day minimum recovery interval. Same schedule as Ward A on paper. But the recovery room in Ward B runs at higher utilization — the bed count and the rotation log suggest the actual recovery window here is shorter. The paperwork says ten days. The log says seven.',
+        skillCheck: { skill: 'field_medicine', dc: 12, successAppend: 'Seven-day recovery instead of ten for a regular bi-weekly draw is within acceptable medical parameters — technically. But it narrows the margin. Over six months, the cumulative difference in iron levels and platelet recovery between a seven-day and ten-day rotation becomes significant. Someone knows this. The question is whether the someone who knows it is the same someone who set the schedule.' },
+      },
     ],
+    personalLossEchoes: {
+      child: 'The empty birthday board. Someone put it up expecting names and dates, the small celebrations that make a place feel like somewhere people live. No one wrote anything. You think about birthdays you kept track of — the date, the cake, the small face — and the calendar that stopped mattering when they were gone.',
+      partner: 'Two degrees colder than the other corridor, which is already cold. The ventilation hums a slightly higher pitch. You notice these things the way you notice the absence of a person in a room — not a dramatic absence, just the wrong temperature, the wrong frequency, the space where warmth used to be.',
+      community: 'Ward B donors don\'t talk to each other the way Ward A donors do. They sit alone or in pairs. The community here is thinner — lower incentives, lower demand, less reason to invest in the place. Your community had every reason to invest and still lost the thread. You\'re not sure which is worse.',
+      identity: 'Blue wristband: A-positive. You look at the wristbands. You don\'t know your blood type with certainty, which means you don\'t know which corridor you\'d be in, which schedule you\'d be on, which version of this calculus would be yours. The form at intake asks for blood type self-reported. You would have to guess.',
+      promise: 'Voluntary status, technically. The schedule is shorter than it should be and the recovery window has been trimmed and the birthday board is empty and the people here made a calculation that worked out to: this, for as long as this is what works out. You made a promise that was supposed to prevent this from being anyone\'s best option. It didn\'t work. You kept the promise anyway. It didn\'t matter.',
+    },
     hollowEncounter: {
       baseChance: 0.02,
       timeModifier: { day: 0.4, night: 0.6, dawn: 0.4, dusk: 0.5 },
@@ -281,7 +306,14 @@ export const THE_PENS_ROOMS: Room[] = [
         { type: 'shuffler', weight: 100, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
     },
-    narrativeNotes: 'pens_06. Ward B is the same system, different texture. The missing birthday calendar and the Wednesday office hours note do the work. Same facility, slightly different flavor of resignation.',
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The fluorescent light hums at a frequency you feel in your teeth. The people under it have stopped hearing it. You have not stopped hearing it yet.', chance: 0.25, time: null },
+        { line: 'A door opens somewhere in the ward and closes again. The person sitting against the wall looks up. It is not the person they are waiting for.', chance: 0.20, time: null },
+        { line: 'The disinfectant smell is stronger near the extraction room door. Clean is a word that works harder in this corridor than anywhere else you have been.', chance: 0.15, time: null },
+      ],
+    },
+    narrativeNotes: 'pens_06. Ward B is the same system, colder and more controlled. The missing birthday calendar, the shortened recovery window in the draw schedule, and the Wednesday office hours note do the work. The ethical horror here is procedural optimization, not cruelty.',
   },
 
   {
@@ -293,7 +325,7 @@ export const THE_PENS_ROOMS: Room[] = [
     visited: false,
     flags: { noCombat: true, campfireAllowed: false },
     description: 'The cafeteria is the argument The Pens makes most convincingly. Real food — hot, varied, portioned to actual nutritional standards, not the caloric minimum of desperation. Canned goods, preserved protein, occasionally fresh vegetables from somewhere. The room holds sixty people at long tables, and the noise level is what it would be in any communal dining space: conversation, the clatter of trays, someone laughing at the far end of a table. Most wristbands are yellow and blue, visible at table level. The cost of the meal is visible too: forearms, some more marked than others, the accumulation of a schedule that repeats until the person decides to leave or the person stops being able to. A Red Court food server ladles out portions with the impartial efficiency of a person who has made their separate peace with this work.',
-    descriptionNight: 'Night meal is quieter, fewer people. The kitchen runs reduced service but the food quality holds. Some donors eat alone. Most eat together. The cafeteria at night has the specific warmth of a place that is, in a narrow and complicated sense, working.',
+    descriptionNight: 'Night meal is quieter, fewer people. The kitchen runs reduced service but the food quality holds. Some donors eat alone. Most eat together. The noise level is the noise level of a shared meal — spoons, conversation, the sounds of people who have adapted to this. You watch for what\'s missing. Nothing is.',
     shortDescription: 'Donor cafeteria. Better food than most settlements. The cost is on their arms.',
     exits: { south: 'pens_06_ward_b_corridor', west: 'pens_03_ward_a_corridor' },
     richExits: {
@@ -302,7 +334,7 @@ export const THE_PENS_ROOMS: Room[] = [
     },
     items: ['preserved_rations', 'water_bottle_sealed'],
     enemies: [],
-    npcs: ['food_vendor_generic', 'breaks_wanderer_at_rest', 'riverside_resident'],
+    npcs: ['pens_cafeteria_cook', 'pens_donor_long_term', 'pens_donor_ward_b'],
     extras: [
       {
         keywords: ['food', 'meal', 'tray', 'eating'],
@@ -323,6 +355,19 @@ export const THE_PENS_ROOMS: Room[] = [
       timeModifier: { day: 0.3, night: 0.5, dawn: 0.4, dusk: 0.4 },
       threatPool: [
         { type: 'shuffler', weight: 100, quantity: { min: 1, max: 1, distribution: 'single' } },
+      ],
+    },
+    personalLossEchoes: {
+      child: 'The laughter at the far table. Real laughter, from a person who has been here eight months and has made their peace with it. You think about the meals you made for them — not this quality, not this variety, but made with a different kind of investment. The Red Court feeds people to keep them productive. You fed them because the act of feeding was the act of love, and the two things used the same gestures and produced the same sounds and were not the same thing at all.',
+      partner: 'Someone laughing at the far end of a table. The sound of it reaches you across the cafeteria the way certain sounds used to reach you across rooms where they were — specific, locatable, drawing your attention before your mind caught up. The cafeteria is full of shared meals and you remember shared meals and the fork in your hand feels different when you remember who used to sit across from you.',
+      community: 'Sixty people at long tables, the noise level of any communal dining space. Conversation, clatter, someone laughing. The infrastructure of community, performed in a place that harvests the people performing it. Your community ate together too. The tables were different. The warmth was different. The laughter was not optimized for yield.',
+      promise: 'The food is better here than anywhere in the Breaks. The bed is softer than ground. The calculation makes sense if you don\'t look at the cost, and the cost is visible on every forearm. Your promise was supposed to be a calculation too — an exchange, a debt, a thing given for a thing owed. You watch the donors eat and you wonder if your promise has a yield classification somewhere in a ledger you haven\'t seen.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The smell of hot food is a physical event after days of trail rations. Your body responds before your ethics do.', chance: 0.25, time: null },
+        { line: 'A donor holds out a piece of bread to the person beside them. The person takes it. The gesture is ordinary and therefore extraordinary.', chance: 0.15, time: null },
+        { line: 'The server behind the counter has not made eye contact with anyone in the time you have been watching. The ladle moves. The portions are exact. The eyes are elsewhere.', chance: 0.20, time: null },
       ],
     },
     narrativeNotes: 'pens_07. The cafeteria is the most ambiguous room in the zone — genuine comfort, genuine community, at a genuine cost. The key insight: the food quality is optimized for yield, not charity.',
@@ -370,7 +415,7 @@ export const THE_PENS_ROOMS: Room[] = [
     },
     items: [],
     enemies: ['red_court_enforcer'],
-    npcs: ['courthouse_clerk', 'checkpoint_arbiter'],
+    npcs: ['pens_admin_clerk', 'pens_scheduling_officer'],
     extras: [
       {
         keywords: ['ledger', 'ledgers', 'records', 'files'],
@@ -394,6 +439,32 @@ export const THE_PENS_ROOMS: Room[] = [
         { type: 'remnant', weight: 40, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
     },
+    npcSpawns: [
+      {
+        npcId: 'kade_red_court',
+        spawnChance: 0.70,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'Kade is working at one of the administration desks, writing in a journal. He doesn\'t look up when you enter, but his pen slows.', weight: 3 },
+          { desc: 'Kade stands at the scheduling board, studying the grid with the patient attention of someone reading a text they\'ve read before.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.15, neutral: 0.55, wary: 0.25, hostile: 0.05 },
+        dialogueTree: 'pens_kade_philosophy',
+      },
+      {
+        npcId: 'the_wren',
+        spawnChance: 0.15,
+        spawnType: 'wanderer',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'A lean man in clothes chosen for silence stands at the filing cabinets, pulling a folder with the methodical attention of someone who has done this search before and expects to do it again. He reads standing up. He reads fast. He does not sit down because sitting down implies staying, and staying implies this is where he wants to be.', weight: 3 },
+          { desc: 'The Wren checks intake records at the nearest desk, cross-referencing something against a list he carries folded in his jacket pocket. The list is handwritten. The handwriting is precise in the way that precision becomes a form of self-control. He finds what he is looking for. His expression does not change. He folds the list and puts it back.', weight: 2 },
+          { desc: 'The Wren stands at the scheduling board, not reading it — memorizing it. The grid of names and dates reflected in his pale eyes. He is building a map of this facility in his head, the way he once built maps of missing persons cases, and the efficiency of the skill applied to this purpose is something he has stopped thinking about because thinking about it is a luxury the job does not allow.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.00, neutral: 0.35, wary: 0.50, hostile: 0.15 },
+        narrativeNotes: 'The Wren in administration is The Wren at work — the hunter checking files, the detective running cases, the professional whose competence is the thing he hates most about himself. Low spawn chance reflects that he does not linger here. He gets what he needs and leaves.',
+      },
+    ],
     narrativeNotes: 'pens_08. The administrative hub. Six exits from here — this is the routing node for the back half of the zone. The yield ledger DEPARTED column is the key detail.',
   },
 
@@ -429,7 +500,7 @@ export const THE_PENS_ROOMS: Room[] = [
       },
       {
         keywords: ['guard', 'guards', 'enforcer', 'patrol'],
-        description: 'The enforcers at the corridor entrance have the specific stillness of people who have decided not to think about what they are guarding. One of them meets your eyes briefly and looks away. There is something in the look — not shame, not apology, not agreement. Just acknowledgment that you saw each other, and that both of you know what this place is.',
+        description: 'The enforcers at the corridor entrance are very still — the stillness of people who have decided not to think about what they are guarding. One of them meets your eyes briefly and looks away. There is something in the look — not shame, not apology, not agreement. Just acknowledgment that you saw each other, and that both of you know what this place is.',
       },
     ],
     hollowEncounter: {
@@ -475,7 +546,7 @@ export const THE_PENS_ROOMS: Room[] = [
       },
       {
         keywords: ['technician', 'staff', 'scrubs', 'procedure'],
-        description: 'The technician moves through the room with the same efficiency as the technician in Room A. The procedure is identical. They check lines, note readings, adjust the collection bag position. They do not speak to the people in the occupied chairs. The people in the occupied chairs do not speak either. The silence has a specific texture.',
+        description: 'The technician moves through the room with the same efficiency as the technician in Room A. The procedure is identical. They check lines, note readings, adjust the collection bag position. They do not speak to the people in the occupied chairs. The people in the occupied chairs do not speak either. The silence is absolute — no conversation, no sound between the chair occupants and the staff, just the equipment noise and the ambient hum.',
         skillCheck: { skill: 'perception', dc: 10, successAppend: 'The technician\'s hands are steady. Their expression is neutral. Their eyes, when they pass near you, are the eyes of someone who has found a place to put this that works for them during working hours. What happens after working hours is their own problem.' },
       },
       {
@@ -584,6 +655,19 @@ export const THE_PENS_ROOMS: Room[] = [
         { type: 'remnant', weight: 40, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
     },
+    npcSpawns: [
+      {
+        npcId: 'vex_red_court',
+        spawnChance: 0.75,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'Vex is working through the shipping manifest at the central table, cross-checking bag counts against a clipboard. The pen moves without pausing.', weight: 4 },
+          { desc: 'Vex is staging collection bags near the loading door, arranging them by blood type with the automatic precision of someone who has done this hundreds of times.', weight: 3 },
+        ],
+        dispositionRoll: { friendly: 0.05, neutral: 0.65, wary: 0.25, hostile: 0.05 },
+        dialogueTree: 'pens_vex_manifest',
+      },
+    ],
     narrativeNotes: 'pens_12. The Accord complicity detail lands here. Deep Waypoint 7 as a destination seeds the The Deep zone connection. The voluntary/involuntary ratio shift is the statistical version of what players have already seen qualitatively.',
   },
 
@@ -605,6 +689,21 @@ export const THE_PENS_ROOMS: Room[] = [
     items: ['scavenged_rations', 'water_bottle_sealed'],
     enemies: [],
     npcs: ['salter_off_duty', 'brig_guard'],
+    npcSpawns: [
+      {
+        npcId: 'the_wren',
+        spawnChance: 0.20,
+        spawnType: 'wanderer',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'The Wren sits in a chair near the window with a stillness that is not rest. He is off duty in the way that a weapon is off duty when it is cleaned and set aside — technically inactive, functionally the same object. His eyes move to the window and stay there. Whatever he sees in the dark outside is not the same thing other people see in the dark outside.', weight: 3, timeRestrict: ['night', 'dusk'] },
+          { desc: 'The Wren stands at the common-room table where the card game happens, not playing, not watching, just present in the space where people do normal things. He picks up a card from the discard pile, turns it over, sets it back. The gesture has the quality of someone remembering a language they used to speak.', weight: 2 },
+          { desc: 'The Wren is cleaning his knife at the table with a cloth and a can of oil, each stroke the same length, the same pressure, the same direction. The efficiency of someone who wants to be done. Not done with the knife. Done with the day. Done with the series of decisions that led to this chair in this room in this facility, cleaning this knife that has been used for things the coffee schedule on the corkboard does not account for.', weight: 2, timeRestrict: ['night'] },
+        ],
+        dispositionRoll: { friendly: 0.05, neutral: 0.40, wary: 0.45, hostile: 0.10 },
+        narrativeNotes: 'The Wren off duty. His internal struggle is visible here in a way it is not in the administration wing. The card he picks up and puts down. The window he watches. The knife cleaned with the mechanical attention of someone who has automated the parts of his life he cannot bear to think about. He is a former detective who tracks people for a blood extraction operation, and in this room, at this hour, that fact sits on him like weather.',
+      },
+    ],
     extras: [
       {
         keywords: ['corkboard', 'coffee', 'schedule', 'sign'],
@@ -689,6 +788,7 @@ export const THE_PENS_ROOMS: Room[] = [
         keywords: ['ledger', 'numbers', 'yield', 'rook'],
         description: 'The open ledger on the desk is different from the administration records upstairs. This one has Rook\'s personal annotations alongside the official figures: small marks, private shorthand, numbers that don\'t appear in the official record. The totals in Rook\'s private column don\'t match the totals in the official column. The difference is not large. It is systematic.',
         skillCheck: { skill: 'perception', dc: 12, successAppend: 'The discrepancy between Rook\'s private column and the official yield figures represents a consistent 3–4% diversion. The diverted yield does not appear in the Accord manifest. It does not appear in any distribution record you have seen. Rook has been skimming yield from the Red Court\'s own extraction operation. The question is why, and where it goes.' },
+        questFlagOnSuccess: { flag: 'pens_yield_discrepancy_found', value: true },
       },
       {
         keywords: ['rook', 'castellan', 'them', 'expression'],
@@ -697,6 +797,10 @@ export const THE_PENS_ROOMS: Room[] = [
           { flag: 'pens_rook_dialogue_unlocked', value: true },
           { flag: 'pens_rook_met_in_office', value: true },
         ],
+      },
+      {
+        keywords: ['vesper', 'duskhollow', 'covenant', 'arrangement', 'tithe'],
+        description: 'You mention Duskhollow. Rook\'s pen stops moving. The silence that follows is not hesitation — it is the silence of someone selecting words from a very short list. "Vesper\'s arrangement," Rook says. The word \'arrangement\' does precise, unsentimental work. "A philosophy professor who built a blood tithe and called it coexistence. The residents give blood on a schedule. The Sanguine provide protection. Vesper writes papers about the moral standing of symbiotic relationships." Rook uncaps the pen and recaps it. A mechanical gesture, repeated. "It is a more elaborate way of arriving at the same conclusion. The blood moves from the people who have it to the people who need it, and the people who have it are told it was their choice. Vesper believes this. That is the difference between us. I do not require myself to believe it." Rook sets the pen down with the finality of a period. "The Covenant is The Pens with better lighting and a reading list. Vesper would disagree. Vesper is wrong in ways that require a university education to achieve."',
       },
     ],
     hollowEncounter: {
@@ -715,7 +819,7 @@ export const THE_PENS_ROOMS: Room[] = [
     name: 'The Pens — Surgical Theater',
     zone: 'the_pens',
     act: 2,
-    difficulty: 4,
+    difficulty: 5, // Endgame content
     visited: false,
     flags: { hiddenRoom: true, dark: true },
     description: 'The surgical theater is a pre-Collapse operating room that has been expanded rather than repurposed — the original surgical table remains at the center, flanked by two additional tables that were never designed for this space, brought in from somewhere else, bolted to the floor at angles that accommodate the overhead surgical lighting array. The lights are adjustable and someone has adjusted them with precision: three cones of white illumination on three tables, the rest of the room in functional dark. Instrument trays line the east wall — not the extraction room\'s phlebotomy kit but a full surgical complement: retractors, bone saws, rib spreaders, oscillating drills, and things you do not have names for that are clean and oiled and arranged in the sequence of a procedure you hope never to understand. A drain channel runs the length of the floor beneath the tables, terminating at a grate in the north wall. The drain is stained in a way that mopping has not fully addressed. The room smells like iodine and iron and the particular absence of smell that comes from aggressive chemical sanitization of a space that keeps needing to be sanitized.',
@@ -830,7 +934,7 @@ export const THE_PENS_ROOMS: Room[] = [
     name: 'The Pens — Quarantine Wing',
     zone: 'the_pens',
     act: 2,
-    difficulty: 4,
+    difficulty: 5, // Endgame content
     visited: false,
     flags: { hiddenRoom: true },
     description: 'The quarantine wing is a sealed negative-pressure corridor lined with six isolation rooms, each visible through double-paned observation windows reinforced with wire mesh. The air pressure differential is tangible — you feel it in your ears when you pass through the plastic barrier, a faint pull toward the ventilation intake at the far end. Five of the six rooms are occupied. The occupants wear white wristbands that have been supplemented with a red stripe drawn in marker — a designation that does not appear on any intake form or scheduling board. They sit or stand or move in patterns that you recognize from the research wing subjects, but further along: tracking things that are not there, responding to stimuli that do not exist in any spectrum you can perceive, their attention fixed on something interior and absolute. One subject in the nearest room is writing on the wall with their fingertip, tracing letters in a script you almost recognize. The writing is not visible on the wall. Their finger moves with the confidence of someone who can see what they are writing.',

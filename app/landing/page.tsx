@@ -1,273 +1,122 @@
 // ============================================================
-// /landing — Static marketing page for The Remnant MUD
+// /landing — Clean landing page for The Remnant MUD
 // Server Component: zero client JS, fully static on Vercel
 // ============================================================
 
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import RemnantLogo from '@/components/RemnantLogo'
 
 export const metadata: Metadata = {
-  title: 'The Remnant — Post-Apocalyptic Text MUD',
+  title: 'The Remnant -- Post-Apocalyptic Text MUD',
   description:
     'A single-player text adventure set 7 years after the CHARON-7 bioweapon collapse. 271 rooms, 4 endings, branching dialogue. Play free in your browser.',
   openGraph: {
     title: 'The Remnant',
-    description: "What's left is what matters.",
+    description: "What is left is what matters.",
     type: 'website',
   },
 }
 
-// Static — never revalidate
 export const revalidate = false
 
-// ── Inline components ────────────────────────────────────────
-
-function Divider() {
-  return (
-    <div className="border-t border-amber-900 my-10 opacity-40" />
-  )
-}
-
-function StatBadge({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="border border-amber-900 px-3 py-2 text-center">
-      <div className="text-amber-300 text-lg font-mono">{value}</div>
-      <div className="text-amber-600 text-xs uppercase tracking-widest mt-0.5">{label}</div>
-    </div>
-  )
-}
-
-function FactionCard({
-  name,
-  tag,
-  description,
-}: {
-  name: string
-  tag: string
-  description: string
-}) {
-  return (
-    <div className="border border-amber-900 p-4 hover:border-amber-700 transition-colors">
-      <div className="text-amber-600 text-xs uppercase tracking-widest mb-1">{tag}</div>
-      <div className="text-amber-300 text-sm mb-2">{name}</div>
-      <div className="text-amber-700 text-xs leading-relaxed">{description}</div>
-    </div>
-  )
-}
-
-function CommandLine({ command, response }: { command: string; response: string }) {
-  return (
-    <div className="text-xs leading-relaxed">
-      <span className="text-amber-600">&gt; </span>
-      <span className="text-amber-400">{command}</span>
-      <br />
-      <span className="text-amber-700 pl-4">{response}</span>
-    </div>
-  )
-}
-
-// ── Page ─────────────────────────────────────────────────────
+const FEATURES = [
+  { label: '271 hand-crafted rooms across 14 zones' },
+  { label: '7 character classes with unique abilities' },
+  { label: '4 morally complex endings' },
+  { label: 'Faction reputation that shapes the world' },
+  { label: 'Death is not the end -- the cycle continues' },
+  { label: 'Crafting, combat, companions, mysteries' },
+]
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-black font-mono text-amber-500">
+    <div className="min-h-screen bg-gray-950 font-mono text-gray-200">
+      <div className="max-w-5xl mx-auto px-6 py-16 sm:py-24">
 
-      {/* CRT scanlines */}
-      <div
-        className="fixed inset-0 pointer-events-none z-50"
-        style={{
-          background:
-            'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px)',
-        }}
-      />
-
-      <div className="max-w-3xl mx-auto px-6 py-16 relative z-10">
-
-        {/* ── Boot header ── */}
-        <div className="mb-12">
-          <div className="text-amber-600 text-xs uppercase tracking-widest mb-4">
-            TERMINAL v2.38 — FOUR CORNERS NETWORK — SECURE CHANNEL
-          </div>
-          <div className="border border-amber-900 p-6 mb-4">
-            <div className="text-amber-600 text-xs mb-3">INCOMING BROADCAST — SIGNAL ORIGIN: UNKNOWN</div>
-            <div className="text-amber-400 text-xs leading-relaxed italic">
-              &ldquo;...Scar site... containment breach... data survives...
-              if you can read, if you can think, if you are still you...
-              come to the Four Corners... the answer is here... repeating...&rdquo;
-            </div>
-          </div>
-          <div className="text-amber-700 text-xs">
-            Signal received 3 weeks ago. Source unconfirmed. Dozens have already followed it north.
-          </div>
-        </div>
-
-        {/* ── Title ── */}
-        <div className="mb-12">
-          <RemnantLogo size="full" />
-          <p className="text-amber-700 text-sm leading-relaxed max-w-xl mt-6">
-            A text-based survival RPG. Post-apocalyptic American Southwest.
-            Seven years after the collapse. You are no one. You have nothing.
-            That might be exactly the right credential.
+        {/* Title */}
+        <div className="text-center mb-16">
+          <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight mb-4">
+            THE REMNANT
+          </h1>
+          <p className="text-lg text-gray-400">
+            A Post-Collapse Text Adventure
           </p>
         </div>
 
-        {/* ── Stats ── */}
-        <div className="grid grid-cols-3 gap-3 mb-12">
-          <StatBadge value="250+" label="Rooms" />
-          <StatBadge value="4" label="Endings" />
-          <StatBadge value="∞" label="Cycles" />
+        {/* Hero */}
+        <div className="max-w-2xl mx-auto text-center mb-16">
+          <p className="text-gray-300 leading-relaxed">
+            Seven years after CHARON-7 ended the world, someone is still
+            broadcasting from inside the facility everyone said was destroyed.
+            You are a Revenant — you die, you come back, you remember. Find the
+            source of the signal.
+          </p>
         </div>
 
-        <Divider />
-
-        {/* ── What it is ── */}
-        <div className="mb-12">
-          <div className="text-amber-600 text-xs uppercase tracking-widest mb-4">
-            What is this
-          </div>
-          <div className="space-y-3 text-amber-700 text-sm leading-relaxed">
-            <p>
-              The Remnant is a MUD — a multi-user dungeon played entirely in text,
-              in your browser. No download. No install. You type commands.
-              The world responds.
-            </p>
-            <p>
-              It&rsquo;s 2038. A weaponized pathogen called CHARON-7 escaped a black-site
-              facility in the Colorado Rockies seven years ago. Sixty percent of humanity
-              became the Hollow — stripped down to hunger and reflex, walking through the
-              ruins of their own lives. One in ten thousand became something else. Something
-              faster. Something that feeds.
-            </p>
-            <p>
-              You survived. Now you&rsquo;re here, in the Four Corners, where people are still
-              trying to be people. You&rsquo;ve heard a signal. You want to know what&rsquo;s
-              at the end of it.
-            </p>
-            <p>
-              So does everyone else.
-            </p>
-          </div>
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-16 max-w-3xl mx-auto">
+          {FEATURES.map((f) => (
+            <div
+              key={f.label}
+              className="border border-gray-800 rounded px-4 py-3 text-sm text-gray-300"
+            >
+              {f.label}
+            </div>
+          ))}
         </div>
 
-        {/* ── Demo terminal ── */}
-        <div className="border border-amber-900 p-5 mb-12 bg-black">
-          <div className="text-amber-600 text-xs uppercase tracking-widest mb-4">
-            TERMINAL SESSION EXCERPT
-          </div>
-          <div className="space-y-3">
-            <CommandLine
-              command="look"
-              response="The highway curves north through scrub oak and juniper. A hand-painted sign reads COVENANT — 2 MI. The paint is fresh. Someone lives there."
-            />
-            <CommandLine
-              command="go north"
-              response="You move toward the road. A dog trots out of the brush and falls in behind you. It keeps its distance."
-            />
-            <CommandLine
-              command="look dog"
-              response="Mutt. Medium size. One ear missing. It sits when you stop. It isn't growling."
-            />
-            <CommandLine
-              command="take jerky"
-              response="You hold out a strip of dried meat. The dog takes it from your hand so gently you feel the individual teeth."
-            />
-            <div className="text-amber-700 text-xs pt-2">
-              — it follows you for the rest of the game, if you let it —
+        {/* Terminal Preview */}
+        <div className="max-w-2xl mx-auto mb-16">
+          <div className="border border-gray-800 rounded overflow-hidden">
+            <div className="bg-gray-900 px-4 py-2 text-xs text-gray-500 border-b border-gray-800">
+              Terminal Preview
+            </div>
+            <div className="bg-black p-4 text-sm leading-relaxed space-y-2">
+              <div>
+                <span className="text-gray-500">&gt; </span>
+                <span className="text-gray-200">look</span>
+              </div>
+              <div className="text-gray-300 pl-4">
+                The market is a sprawl of tarps and salvaged tent poles. A
+                hand-lettered sign reads{' '}
+                <span className="text-yellow-400">TRADES WELCOME</span>. The
+                air smells like woodsmoke and boiled leather.
+              </div>
+              <div className="text-gray-300 pl-4">
+                Exits:{' '}
+                <span className="text-green-400">north</span>,{' '}
+                <span className="text-green-400">south</span>,{' '}
+                <span className="text-green-400">east</span>
+              </div>
+              <div className="text-gray-300 pl-4">
+                A <span className="text-cyan-400">weathered merchant</span>{' '}
+                stands behind a counter of scavenged goods.
+              </div>
+              <div className="mt-2">
+                <span className="text-gray-500">&gt; </span>
+                <span className="text-gray-200">talk merchant</span>
+              </div>
+              <div className="text-gray-300 pl-4">
+                &quot;What do you need? I&apos;ve got ammunition, bandages, and
+                information. The information costs more.&quot;
+              </div>
             </div>
           </div>
         </div>
 
-        <Divider />
-
-        {/* ── Factions ── */}
-        <div className="mb-12">
-          <div className="text-amber-600 text-xs uppercase tracking-widest mb-4">
-            The factions
-          </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <FactionCard
-              name="The Accord"
-              tag="Unturned — Law"
-              description="Former sheriff holds 800 people together through force of character. They share. They ration. They negotiate blood-tithe treaties with vampires so people don't starve. Nobody said it was clean."
-            />
-            <FactionCard
-              name="The Salters"
-              tag="Unturned — Strength"
-              description="Ex-Marine. Walls. Guns. No compromise. The democracy died with the grid, and Briggs knows something about MERIDIAN he isn't telling you."
-            />
-            <FactionCard
-              name="Covenant of Dusk"
-              tag="Sanguine — Coexistence"
-              description="Former philosophy professor. She believes in living alongside humans. She feeds on them to survive. These are not contradictions she's resolved. They're contradictions she's chosen to carry."
-            />
-            <FactionCard
-              name="The Kindling"
-              tag="Unturned — Faith"
-              description="Fire kills the infection. Sometimes it also kills the patient. Harrow's success rate is climbing. His methods are getting more extreme. He is absolutely certain he is doing the right thing."
-            />
-            <FactionCard
-              name="The Reclaimers"
-              tag="Unturned — Knowledge"
-              description="They have files on you. They study everything — the Hollow, the Sanguine, the signal. They've decoded part of the broadcast. The name on the personnel file is Dr. Elias Vane."
-            />
-            <FactionCard
-              name="The Drifters"
-              tag="Unturned — Independence"
-              description="No walls. No allegiance. A medic named Patch knows everyone and owes nothing. Information is currency. Medicine is information. She'll see you now."
-            />
-          </div>
-        </div>
-
-        <Divider />
-
-        {/* ── How it plays ── */}
-        <div className="mb-12">
-          <div className="text-amber-600 text-xs uppercase tracking-widest mb-4">
-            How it works
-          </div>
-          <div className="space-y-2 text-sm">
-            {[
-              ['You type commands.', 'go north, look, take knife, talk vesper, attack, flee'],
-              ['The world is text.', 'Description, atmosphere, consequence. Nothing is hidden behind a UI.'],
-              ['You grow stronger.', '7 classes, 6 stats, and stat boosts at levels 3, 6, and 9 — you choose where to invest.'],
-              ['Death is not the end.', 'You die. You wake up in The Between. You come back. Changed.'],
-              ['Your choices persist.', 'Faction reputation, world events, discovered rooms — they carry across deaths.'],
-              ['There is a mystery.', 'MERIDIAN. What happened there. What\'s still inside. Who is broadcasting.'],
-              ['There are four endings.', 'None of them are obviously right. The game will not tell you which to choose.'],
-            ].map(([label, detail]) => (
-              <div key={label} className="flex gap-4 text-xs">
-                <span className="text-amber-500 shrink-0 w-40">{label}</span>
-                <span className="text-amber-600">{detail}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <Divider />
-
-        {/* ── CTA ── */}
-        <div className="text-center py-4">
-          <div className="text-amber-600 text-xs uppercase tracking-widest mb-6">
-            No download. No account setup. Enter your email and play.
-          </div>
+        {/* CTA */}
+        <div className="text-center mb-16">
           <Link
             href="/login"
-            className="inline-block border border-amber-600 text-amber-400 px-10 py-3 text-sm hover:bg-amber-950 hover:border-amber-500 transition-colors"
+            className="inline-block bg-white text-gray-950 font-bold px-8 py-3 rounded text-sm tracking-wide hover:bg-gray-200 transition-colors"
           >
-            Enter the Wasteland
+            PLAY NOW
           </Link>
-          <div className="mt-4 text-amber-700 text-xs">
-            Browser-based · Free during early access · Save persists across sessions
-          </div>
         </div>
 
-        <Divider />
-
-        {/* ── Footer ── */}
-        <div className="text-amber-700 text-xs text-center leading-relaxed">
-          <div className="mb-1">THE REMNANT — Early Access</div>
-          <div>Four Corners, Colorado · 2038 · CHARON-7 Year Seven</div>
+        {/* Footer */}
+        <div className="text-center text-sm text-gray-500">
+          Free to play. Browser-based. No download required.
         </div>
 
       </div>

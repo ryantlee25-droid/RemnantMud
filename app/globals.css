@@ -1,14 +1,24 @@
 @import "tailwindcss";
 
 /* ============================================================
-   Global styles — post-apocalyptic terminal aesthetic
+   Global styles — black terminal aesthetic
    ============================================================ */
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #d4a44c;
-  --amber: #d4a44c;
+  --background: #000000;
+  --foreground: #d1d5db;
   --font-mono-stack: 'Courier New', Courier, 'Lucida Console', monospace;
+}
+
+/* Kill all smooth transitions globally — terminals have no interpolation */
+*, *::before, *::after {
+  transition: none !important;
+  animation-duration: 0s !important;
+}
+
+/* Exception: keep cursor blink */
+.cursor-blink {
+  animation-duration: 1s !important;
 }
 
 @theme inline {
@@ -31,40 +41,11 @@ body {
 }
 
 body {
-  background-color: #0a0a0a;
-  color: var(--amber);
+  background-color: #000000;
+  color: #d1d5db;
   font-family: var(--font-mono-stack);
   font-size: 14px;
   line-height: 1.5;
-}
-
-/* CRT scanline overlay — applied to inner screen div via class */
-.crt-scanlines::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 50;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.08) 2px,
-    rgba(0, 0, 0, 0.08) 4px
-  );
-}
-
-/* Bezel scratch marks */
-.pipboy-scratches::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 10;
-  background:
-    linear-gradient(15deg, transparent 45%, rgba(255, 255, 255, 0.03) 45.5%, rgba(255, 255, 255, 0.03) 46%, transparent 46.5%),
-    linear-gradient(-30deg, transparent 60%, rgba(255, 255, 255, 0.04) 60.5%, rgba(255, 255, 255, 0.04) 61%, transparent 61.5%),
-    linear-gradient(75deg, transparent 30%, rgba(255, 255, 255, 0.02) 30.5%, rgba(255, 255, 255, 0.02) 31.5%, transparent 32%);
 }
 
 /* Blinking cursor animation for command input */
@@ -83,26 +64,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: #000000;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3a2a0a;
+  background: #374151;
   border-radius: 0;
 }
 
 /* Selection */
 ::selection {
-  background: #4a3010;
-  color: #f0c060;
-}
-
-/* INV button pulse — 3 pulses then stop */
-@keyframes inv-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
-  50%      { box-shadow: 0 0 8px 2px rgba(251, 191, 36, 0.5); }
-}
-
-.inv-pulse {
-  animation: inv-pulse 0.8s ease-in-out 3;
+  background: #374151;
+  color: #ffffff;
 }

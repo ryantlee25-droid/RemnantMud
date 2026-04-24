@@ -34,8 +34,11 @@ jobs:
       - name: Type check
         run: pnpm exec tsc --noEmit
 
+      - name: Validate consistency
+        run: pnpm run validate
+
       - name: Test
-        run: pnpm test
+        run: pnpm run test:ci
 
       - name: Build
         run: pnpm build

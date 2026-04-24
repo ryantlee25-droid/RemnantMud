@@ -27,6 +27,7 @@ export const BREAKS_ROOMS: Room[] = [
     exits: {
       north: 'cr_01_approach',
       south: 'br_02_the_wash',
+      east: 'dh_01_long_drive',
     },
     richExits: {
       south: {
@@ -156,6 +157,8 @@ export const BREAKS_ROOMS: Room[] = [
     flags: { noCombat: false },
     description: 'The slot canyon is the showcase of The Breaks and the nightmare of its threat. The walls are close enough to span with outstretched arms, the rock worn smooth by millennia of water into curves that look sculpted, the colors shifting from burnt orange to deep burgundy to a coral that has no better name in a language made for other purposes. The light comes from a gap twenty meters above — a blue stripe of sky that the canyon frames like an accident of architecture. And on the wall at chest height, for maybe thirty meters of corridor, claw marks. Not the marks of an animal: methodical, repeated, the groove pattern of fingers applied with intent rather than panic. The marks face into the canyon. Whatever made them was coming out.',
     descriptionNight: 'The slot canyon at night is a sensory narrowing. The sky gap above shows stars — a narrow strip of them, the Milky Way visible if the angle is right, impossibly clear in that small frame. The walls press. The claw marks are invisible until your light hits them.',
+    descriptionDawn: 'First light enters the slot at a shallow angle and catches the east wall only — an amber stripe that slides down the carved stone as the sun climbs, illuminating the claw marks in sequence like a slow reveal. The burgundy deepens to blood in the horizontal light. The air is cold and still and smells of mineral dust and the particular dryness of stone that has not seen rain in weeks. For five minutes the canyon is a cathedral lit by a single window, and then the stripe narrows and vanishes and the slot returns to its permanent twilight.',
+    descriptionDusk: 'The last light climbs the west wall of the slot in a column that moves upward as the sun drops — coral stone catching fire, the claw marks throwing shadows that grow longer as the column rises. The slot exhales cool air from its depths, the temperature falling ahead of the dark, the rock releasing the day\'s stored heat in a breath you can feel on your face. The sky gap above goes from blue to violet. The walls go from orange to black. The transition takes seven minutes and then the canyon belongs to whatever made the claw marks.',
     shortDescription: 'Water-sculpted walls, coral and burgundy, light from twenty meters up, and claw marks that face the wrong way.',
     exits: {
       north: 'br_02_the_wash',
@@ -166,7 +169,7 @@ export const BREAKS_ROOMS: Room[] = [
       up: {
         destination: 'br_04_ledge_trail',
         skillGate: { skill: 'climbing', dc: 10, failMessage: 'The ledge access is a technical climb. You can see the handholds, but making that sequence without the skill for it ends badly.' },
-        descriptionVerbose: 'a chimney exit to the ledge trail above — Climbing DC 10',
+        descriptionVerbose: 'a narrow chimney climb leads up the canyon wall to a ledge trail thirty meters above the slot floor',
       },
     },
     items: [],
@@ -230,7 +233,12 @@ export const BREAKS_ROOMS: Room[] = [
       north: 'br_07_canyon_crossroads',
       south: 'br_06_the_overhang',
     },
-    richExits: {},
+    richExits: {
+      down: {
+        destination: 'br_03_narrow_slot_canyon',
+        descriptionVerbose: 'a chimney crack descends back into the slot canyon floor thirty meters below',
+      },
+    },
     items: [],
     enemies: [],
     npcs: [],
@@ -352,7 +360,7 @@ export const BREAKS_ROOMS: Room[] = [
     difficulty: 2,
     visited: false,
     flags: { safeRest: true, campfireAllowed: true },
-    description: 'A natural shelter — a sandstone overhang that provides cover from rain, shade from midday sun, and a defensible position with sightlines on three approach directions. Dry, sheltered, with a blackened fire circle at the back wall that has been used dozens of times. The smoke staining on the overhang ceiling tells the history of those fires in overlapping layers. On the back wall, under the overhang\'s deepest protection, the cave paintings: ancient pictographs in red ochre — hunting scenes, animal silhouettes, hand prints. Overlaid on them, in more recent layers: graffiti, tags, small drawings, a name and a date from 1987, a memorial to someone who died here in 2033. The wall is a three-thousand-year conversation that people have been adding to for as long as there\'s been anyone to add.',
+    description: 'A natural shelter on the canyon wall — a sandstone overhang forty feet above the canyon floor, accessible by the ledge trail, with sightlines on three approach directions and a drop below you that you feel in your knees when you stand at the edge. Dry, sheltered, with a blackened fire circle at the back wall that has been used hundreds of times. On the back wall: ancient pictographs in red ochre — hunting scenes, animal silhouettes, hand prints three thousand years old. Overlaid in more recent layers: graffiti, tags, a memorial to someone who died here in 2033. The wall is a three-thousand-year conversation that people have been adding to for as long as there\'s been anyone to add.',
     descriptionNight: 'The overhang at night is the safest rest in The Breaks. The fire circle, the stone shelter, the limited approach routes — it\'s the right room for this. With a fire, the warmth reflects from the back wall and the space becomes, briefly, comfortable. The cave paintings move in firelight.',
     descriptionDawn: 'Dawn under the overhang is indirect — the sandstone ceiling catches reflected light from the canyon floor and glows a soft amber that intensifies as the sun rises. The cave paintings are clearest at this hour, the red ochre warming in the reflected light, the hunting scenes and handprints vivid against the pale stone. The fire circle holds gray ash and the specific warmth of coals that burned through the night. The air smells of juniper smoke and the mineral cold of the canyon morning. Someone\'s handprint on the wall, three thousand years old, catches the same dawn light it caught when it was made.',
     shortDescription: 'A dry overhang with a fire circle, three-thousand-year-old paintings, and graffiti from 1987 and 2033 added to the conversation.',
@@ -381,7 +389,18 @@ export const BREAKS_ROOMS: Room[] = [
         keywords: ['handprints', 'hands', 'palm', 'print'],
         description: 'The handprints are clustered at about shoulder height — adults. Some lower — children, maybe, or the same adults kneeling. They\'re pressed flat against the stone with pigment on the palm, a direct touch. Three thousand years ago, a person stood here and put their hand to this rock as a statement of presence: I was here. The rock kept it. You put your hand over one of the larger prints. Close. Not quite matching.',
       },
+      {
+        keywords: ['edge', 'drop', 'height', 'cliff', 'below', 'view', 'exposed'],
+        description: 'The overhang\'s lip is the edge of the world. Forty feet of air between your boots and the canyon floor, the slot canyon\'s narrow corridor below looking like a scratch in the earth from up here. The exposure is total at the rim — wind, height, the very specific vulnerability of standing on stone with nothing between you and a long fall but your own sense of balance. Step back two feet and it\'s fine. Step forward one foot and it isn\'t. You stay back two feet.',
+        skillCheck: { skill: 'perception', dc: 10, successAppend: 'From the overhang\'s edge you can see the full length of the slot canyon — the ledge trail above, the hollow of the canyon floor below, the two exits north and south. Also: a figure moving on the canyon floor, too far to identify, moving with the specific unhurried consistency of something that doesn\'t get tired.' },
+      },
     ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'Wind comes up the canyon wall and hits the overhang from below — not cold, just present, reminding you what forty feet of air feels like when it moves.', chance: 0.25, time: null },
+        { line: 'From here you can hear the canyon but not see its depths. Sound travels up. Not all of the sounds make sense.', chance: 0.20, time: null },
+      ],
+    },
     npcSpawns: [
       {
         npcId: 'breaks_wanderer_at_rest',
@@ -426,8 +445,14 @@ export const BREAKS_ROOMS: Room[] = [
       east: 'br_09_petroglyph_wall',
       west: 'br_08_nesting_gallery',
       up: 'br_12_canyon_rim_west',
+      down: 'br_14_hidden_grotto',
     },
-    richExits: {},
+    richExits: {
+      up: {
+        destination: 'br_12_canyon_rim_west',
+        descriptionVerbose: 'a broken talus slope climbs steeply to the west canyon rim above — exposed and slow going',
+      },
+    },
     items: [],
     enemies: [],
     npcs: [],
@@ -621,6 +646,18 @@ export const BREAKS_ROOMS: Room[] = [
         description: 'Multiple approach paths converge on this spring, worn to bare earth from repeated use. The paths have a quality of time — not made in a season but established over years of foot traffic converging on water. Animal paths and human paths, both, and the older human paths are from before the Collapse, which means this spring was known and used long before the current set of problems.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The spring is dry but the cottonwoods are alive, which means water is there, just out of reach. You understand this principle intimately. The thing you need most is present somewhere beneath the surface, and you know it exists because the evidence surrounds you, and you cannot get to it no matter how far you dig.',
+      partner: 'The worn paths converge on the spring from every direction — animal paths and human paths, all of them bent toward the same necessity. You walked a path like that once, every direction leading to the same person, every decision curved by the gravity of someone who was the water in every dry season you endured.',
+      promise: 'Seasonality is a pattern, not a disaster. The spring will run again. You hold this thought alongside your promise and try to believe both things simultaneously — that the dry season ends, that the thing you swore to do is still possible, that patience is not the same as failure.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'A cottonwood leaf falls into the dry spring mouth and rests there, green against the mineral stain, alive on top of the evidence of absence.', chance: 0.25, time: null },
+        { line: 'The canyon breeze carries the faint smell of wet stone from somewhere underground. The spring remembers what it is even when it isn\'t.', chance: 0.20, time: ['dawn', 'dusk'] },
+        { line: 'Something moves on one of the approach paths — a jackrabbit, pausing at the spring mouth, testing the air, then moving on. It knows the schedule better than you do.', chance: 0.15, time: ['dawn'] },
+      ],
+    },
     npcSpawns: [],
     itemSpawns: [
       {
@@ -705,7 +742,12 @@ export const BREAKS_ROOMS: Room[] = [
       down: 'br_07_canyon_crossroads',
       east: 'br_13_canyon_rim_east',
     },
-    richExits: {},
+    richExits: {
+      down: {
+        destination: 'br_07_canyon_crossroads',
+        descriptionVerbose: 'the talus slope drops steeply back down into the canyon crossroads below',
+      },
+    },
     items: [],
     enemies: [],
     npcs: [],
@@ -733,6 +775,19 @@ export const BREAKS_ROOMS: Room[] = [
         description: 'A section of the west rim edge has been worn smooth at a specific point and shows rope friction marks on the rock face — a rappel point, used regularly enough to leave consistent wear. From this point, the descent to the canyon floor is forty feet. A skilled climber can free-climb it. A smart climber uses a rope. A rope isn\'t here right now.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The canyon system spreads below you for miles. You have a view of everything and a view of nothing that matters. Somewhere in this geography, or outside it, the absence you carry has a location you cannot see from any rim, any height, any vantage point the world provides.',
+      partner: 'The Duskhollow manor on its promontory, lit at dusk. Someone is in those windows, looking out. You know what it looks like to watch someone from a distance — the shape of a person in a lit frame, the silhouette that tells you everything and nothing. You watched them that way once, from across a room, before the word distance meant what it means now.',
+      community: 'From up here the canyon country is a system — ridgelines, corridors, the slot canyon a dark line, the crossroads a widening. A community of geography. You had a community of people once, and from the right distance, it would have looked like this: connected, navigable, a system that made sense. The distance you needed to see it clearly was the distance that meant you had already left.',
+      identity: 'The scale becomes visible from the rim. You\'ve been inside the canyons, reading them at ground level, the walls close and the sky narrow. From up here, the person you were inside those walls — cautious, directed, purposeful — is a version of you that the rim dissolves. Up here you are just a figure on a rock, and the canyon does not know your name.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'A thermal updraft from the canyon floor carries the dry smell of juniper and the faintest trace of something else — iron, old blood, the kill site somewhere below.', chance: 0.20, time: ['day'] },
+        { line: 'The Duskhollow manor catches a moment of light on its upper windows and flashes once, a heliograph signal that means nothing and registers anyway.', chance: 0.15, time: ['dusk'] },
+        { line: 'A raven rides the rim updraft at eye level, close enough that you can see the individual feathers adjusting to the current. It looks at you. It decides you are uninteresting. It leaves.', chance: 0.20, time: null },
+      ],
+    },
     npcSpawns: [],
     itemSpawns: [],
   },
@@ -784,6 +839,18 @@ export const BREAKS_ROOMS: Room[] = [
         skillCheck: { skill: 'perception', dc: 13, successAppend: 'Confirmation: upper story window, east face. A figure, still enough to be watching, movement minimal. And — you\'re almost certain — a second figure in the adjacent window, not watching you but watching the first figure. They\'re aware of you. They\'re discussing you. The Covenant of Dusk knows you\'re on their perimeter.' },
       },
     ],
+    personalLossEchoes: {
+      child: 'The manor is close enough to see and far enough to misread. A building on a rise, lit windows, the domestic shape of a place where people live. You look at it and think: someone\'s child is in there, maybe, growing up inside walls that keep the world at a distance. You wanted that for them. Walls and distance and the luxury of not knowing what\'s outside.',
+      partner: 'The quality of being watched. You feel it from the manor direction, the sense of eyes on you, the specific physics of attention across distance. You remember being looked at by someone who loved you — the weight of that gaze, the way it found you in any room, any crowd. This gaze is not that. But the sensation in your body is the same, and your body does not know the difference.',
+      promise: 'The in-between space between The Breaks and Duskhollow territory. You are past one boundary and not yet inside another. Your promise lives in this kind of space — between the thing you swore and the thing you\'ve done about it, between the intention and the completion. The manor watches from its ridge. Your promise watches from the same distance.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The manor\'s upper windows hold the last dusk light for a moment longer than the surrounding landscape, as if the building is reluctant to let go of the day.', chance: 0.20, time: ['dusk'] },
+        { line: 'Wind from the east carries something you can\'t identify — not smoke, not dust, something floral and old, like dried roses in a room that hasn\'t been opened in years.', chance: 0.15, time: ['night'] },
+        { line: 'A hawk circles between you and the manor, hunting the thermal boundary where canyon air meets open ground. It drops and rises without apparent effort, marking the invisible line.', chance: 0.20, time: ['day'] },
+      ],
+    },
     npcSpawns: [],
     itemSpawns: [],
   },
@@ -889,7 +956,12 @@ export const BREAKS_ROOMS: Room[] = [
       down: 'br_07_canyon_crossroads',
       east: 'br_18_the_chimney',
     },
-    richExits: {},
+    richExits: {
+      down: {
+        destination: 'br_07_canyon_crossroads',
+        descriptionVerbose: 'the mesa edge drops back into the canyon system — a steep descent to the canyon crossroads below',
+      },
+    },
     items: [],
     enemies: [],
     npcs: [],
@@ -1025,7 +1097,7 @@ export const BREAKS_ROOMS: Room[] = [
       up: {
         destination: 'br_18_the_chimney',
         skillGate: { skill: 'climbing', dc: 11, failMessage: 'The chimney walls are smooth from wind polish. You can see the holds, but the sequence requires a confidence in vertical movement that you haven\'t earned yet.' },
-        descriptionVerbose: 'a vertical chimney in the rock, climbing up — Climbing DC 11',
+        descriptionVerbose: 'a smooth-walled vertical chimney rises from the passage — wind-polished rock, sixty feet to open sky',
       },
     },
     items: [],
@@ -1096,11 +1168,11 @@ export const BREAKS_ROOMS: Room[] = [
     richExits: {
       down: {
         destination: 'br_17_wind_carved_passage',
-        descriptionVerbose: 'down the chimney to the wind-carved passage below',
+        descriptionVerbose: 'the sandstone ledges descend back through the shaft to the wind-carved passage sixty feet below',
       },
       west: {
         destination: 'br_15_mesa_top',
-        descriptionVerbose: 'west along the rim trail to the mesa top',
+        descriptionVerbose: 'west along the rim trail to the mesa top — exposed, no cover',
       },
     },
     items: [],
@@ -1190,7 +1262,7 @@ export const BREAKS_ROOMS: Room[] = [
         discoverDc: 12,
         discoverMessage: 'Behind the juniper\'s root mass, where the edge fracture has opened a gap in the rock face, you notice airflow — cool and damp, rising from below. A narrow chimney descends into darkness. It\'s passable.',
         skillGate: { skill: 'climbing', dc: 12, failMessage: 'The descent is a tight chimney with minimal holds. You can feel the damp air rising from below but the route down requires more skill than you currently possess.' },
-        descriptionVerbose: 'a narrow chimney behind the juniper roots, descending — Perception DC 12 to discover, Climbing DC 12 to descend',
+        descriptionVerbose: 'a tight chimney behind the juniper roots drops into cool, damp darkness — damp air rises from somewhere below',
       },
     },
     items: [],
@@ -1260,7 +1332,7 @@ export const BREAKS_ROOMS: Room[] = [
     richExits: {
       up: {
         destination: 'br_19_bleached_mesa_edge',
-        descriptionVerbose: 'up the chimney to the bleached mesa edge',
+        descriptionVerbose: 'the chimney climbs back up through the mesa rock to the bleached white edge above',
       },
     },
     items: [],
@@ -1300,6 +1372,13 @@ export const BREAKS_ROOMS: Room[] = [
         description: 'The fire ring is small and carefully built — flat stones set in a circle barely a foot across, sized for a cooking fire, not a warming fire. The smoke staining on the ceiling above it is channeled toward the chimney by the natural airflow, which means someone tested the ventilation before building the ring here. The carved message beside the shelf: DRINK. REST. LEAVE IT BETTER. Six words in letters an inch tall, cut into the stone with the depth of someone who intended them to outlast their author. The message has been obeyed. The grotto is clean. The cache is maintained. Someone is listening to the carved words, even now.',
       },
     ],
+    personalLossEchoes: {
+      child: 'DRINK. REST. LEAVE IT BETTER. The carved words are instructions for a place, but they sound like instructions for a life, the kind of thing you\'d say to a child before sending them into the world. You said things like that. Smaller versions. Brush your teeth. Be kind. Come home safe. The grotto keeps the words the way you kept the hope — carved deep enough to outlast the carver.',
+      partner: 'The grotto is beautiful the way shared spaces are beautiful — the fire ring built for two, the shelf stocked by someone who expected someone else to find it. You and your partner built spaces like this. Not grottos — kitchens, bedrooms, the specific geography of a life organized around the assumption of another person. The water seeps and the moss grows and the beauty holds, with no one to share it.',
+      community: 'LEAVE IT BETTER. The cache is maintained by strangers for strangers — the backcountry protocol, the shared ethic, the community that exists without meeting. Your community worked like this once, the thousand small reciprocities that held the whole thing together. Someone stocks the shelf. Someone splits the firewood. The system works because everyone believes the next person will contribute. You believed that once. You believe it here.',
+      identity: 'The carved shelf, the sealed tin, the note inside: The next person is you in a different body. You read it twice. The next person is you in a different body. If you don\'t know who you are, does that mean the next person is also no one, or does it mean everyone is the same person, repeating? The grotto doesn\'t answer. The water seeps. The moss grows.',
+      promise: 'DRINK. REST. LEAVE IT BETTER. You said you\'d leave things better. The words are carved into the stone beside the shelf, and they are your promise in someone else\'s handwriting, written before you made it, kept by strangers who don\'t know you made it. The grotto is better than you found it. You will leave it better than you found it. You can do that here. You can do this one small thing.',
+    },
     npcSpawns: [
       {
         npcId: 'breaks_wanderer_at_rest',

@@ -57,7 +57,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     difficulty: 2,
     visited: false,
     flags: { noCombat: true, safeRest: false },
-    description: 'Concrete floor, strip lighting overhead — working, humming at sixty hertz — and the faint bite of ozone from the UV decontamination station that processes every body and piece of gear that comes through the gate. Everything is labeled: the brushes in their rack, the sealed chamber for biologicals, the laminated protocol on the wall in clear, non-condescending language. The silence here is the silence of concentration, not fear. Lev stands at the inner door, clipboard in hand, scientific curiosity barely contained behind professional courtesy. You\'ve been seen before. You just haven\'t been catalogued yet.',
+    description: 'Concrete floor, strip lighting overhead — working, humming at sixty hertz — and the faint bite of ozone from the UV decontamination station that processes every body and piece of gear that comes through the gate. Everything is labeled: the brushes in their rack, the sealed chamber for biologicals, the laminated protocol on the wall in clear, non-condescending language. The silence here is the silence of concentration, not fear. A Reclaimer staffer is at the inner door, processing intake with practiced efficiency. The Stacks runs on curiosity and careful record-keeping; both are visible from the threshold.',
     descriptionNight: 'The entry hall is the same at night — the Stacks doesn\'t have a night cycle the way most places do. The strip lighting is on. The decon station is staffed. Lev is here or someone like Lev is here, because the Reclaimers run on curiosity and curiosity doesn\'t sleep.',
     shortDescription: 'Entry hall. Decontamination station. Lev greets you.',
     exits: { east: 'st_01_approach', west: 'st_03_server_room', north: 'st_04_research_lab', south: 'st_05_workshop' },
@@ -201,7 +201,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     flags: { noCombat: true, scavengingZone: false },
     description: 'The best crafting station in the Four Corners, full stop. The Reclaimers converted the warehouse\'s loading dock into a working shop with real tools — a lathe, a drill press, a MIG welder, soldering stations, an electronics bench with a working oscilloscope. The smell is solder flux and machine oil and competence. Things get fixed here. Things get made. There is a waiting list on a corkboard for workshop time, and the list is long.',
     descriptionNight: 'The workshop runs late — the welding mask hanging empty on the hook, the lathe powered down but still smelling of metal. A night-shift technician does electronics work at the bench, working by lamplight because the oscilloscope needs clean power and they\'ve learned to be patient with the generator.',
-    shortDescription: 'The best crafting station in the game. Electronics specialty.',
+    shortDescription: 'The best crafting station in the Four Corners. Electronics specialty.',
     exits: { north: 'st_02_entry_hall' },
     richExits: {
       north: { destination: 'st_02_entry_hall', descriptionVerbose: 'back to the entry hall' },
@@ -343,9 +343,9 @@ export const THE_STACKS_ROOMS: Room[] = [
     difficulty: 2,
     visited: false,
     flags: { noCombat: true, questHub: true },
-    description: 'Lev\'s office is organized in layers — the desk surface is working space, beneath it is filing space, the walls are reference space, the floor under the desk is archive space. A single personal object: a photograph in a small frame, face-down on the bookshelf. On the desk, a folder labeled REVENANT COHORT — CYCLE OBSERVATIONS sits open. Inside: you, or someone who cycles the way you cycle, documented across multiple iterations. Lev has been watching. Lev has been waiting. Lev is about to ask you something important.',
-    descriptionNight: 'Lev is usually in this office at night. Reading, making notes, running through analysis. The photograph stays face-down. The REVENANT COHORT folder is always out. At night Lev is quieter — the questions more direct, as if the dark takes away the professional courtesy and leaves only the actual curiosity.',
-    shortDescription: 'Lev\'s office. Quest hub. MERIDIAN keycard quest.',
+    description: 'Lev\'s office tells you who Lev is before Lev speaks. The wall behind the desk is all references: maps with annotation layers, printouts with dense handwritten margins, a MERIDIAN site diagram covered in question marks. A coffee mug with a ring-stained bottom sits on a research journal that was clearly being used as a coaster while Lev was reading something else. Three other mugs at various distances suggest a working radius. On the bookshelf: a photograph in a small frame, face-down, always face-down. On the desk: a folder labeled REVENANT COHORT — CYCLE OBSERVATIONS, open. Inside it: you, or someone who cycles the way you cycle, documented across multiple iterations. Lev has been watching. Lev has been waiting. Lev is about to ask you something.',
+    descriptionNight: 'Lev is usually in this office at night. The coffee is always fresh, which means either Lev doesn\'t sleep or keeps very odd hours — the mug near the lamp is still warm. The photograph stays face-down. The REVENANT COHORT folder is always out. At night Lev is quieter — the questions more direct, as if the dark takes away the professional courtesy and leaves only the actual curiosity.',
+    shortDescription: 'Lev\'s office. Three coffee mugs. A face-down photograph. A folder with your name in it.',
     exits: { south: 'st_07_comm_center', west: 'st_04_research_lab' },
     richExits: {
       south: { destination: 'st_07_comm_center', descriptionVerbose: 'south to the comm center' },
@@ -376,6 +376,15 @@ export const THE_STACKS_ROOMS: Room[] = [
         description: 'You pick up the photograph carefully. A family: Lev (younger, clearly), two children, and a partner. All four are laughing at something outside the frame. The date on the back: 2030. One year before the Collapse. You set it back down face-down because that is how Lev keeps it.',
       },
       {
+        keywords: ['coffee', 'mug', 'cup', 'ring', 'stain'],
+        description: 'You count four mugs in various positions around the office. The one on the lamp table is warm. The one on the research journal has been there long enough that the ring stain has dried and been added to several times, a Venn diagram of caffeine and urgency. The one on the windowsill is a trophy — it has WORLD\'S OKAYEST SCIENTIST printed on it in faded letters, a pre-Collapse joke gift that Lev has kept for seven years and still uses.',
+      },
+      {
+        keywords: ['wall', 'reference', 'maps', 'annotations', 'research', 'printouts'],
+        description: 'The reference wall is a biography of an obsession. Maps of the Scar valley with topographic markings. Photographs of the MERIDIAN crater rim from multiple approach vectors. Printouts from the server archive with dense marginalia in two different pen colors — Lev\'s analytical system, you learn if you ask: blue for established fact, red for inference or hypothesis. There is significantly more red than blue on the MERIDIAN pages. The question marks outnumber the answers.',
+        skillCheck: { skill: 'lore', dc: 10, successAppend: 'One section of the wall is dedicated to a single diagram: the CHARON-7 divergence timeline. R-1 is marked as the prototype, with a date of 2028 and an arrow labeled SANGUINE EXPRESSION. R-8 is marked as a derivation, 2030, HOLLOW EXPRESSION. Between them: a date in red with a question mark — 2029. Something happened in 2029 that Lev has circled seven times and still can\'t account for.' },
+      },
+      {
         keywords: ['folder', 'revenant', 'cohort', 'files'],
         description: 'The file on you is thorough. Physical descriptions from multiple observations. Skill retention percentages across cycles. Notes on personality shifts between deaths. The final entry reads: "Subject demonstrates unusual coherence. Memory fragmentation within expected range but integration significantly above. Query: is subject aware they are being studied? Should we ask?"',
         cycleGate: 2,
@@ -394,7 +403,13 @@ export const THE_STACKS_ROOMS: Room[] = [
         reputationGrant: { faction: 'reclaimers', delta: 1 },
       },
     ],
-    narrativeNotes: 'Primary questgiver room. The MERIDIAN keycard quest originates here. The photograph humanizes Lev. The revenant cohort file is a significant player-mirror moment. The keycard quest requires discovered_field_station_echo from the comm center map room.',
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The reference wall has a quality you recognize: something built over years, each addition placed with the precision of someone who knows it won\'t be the last addition.', chance: 0.25, time: null },
+        { line: 'The coffee mug on the lamp table is warm. Lev was here recently, or is coming back.', chance: 0.20, time: null },
+      ],
+    },
+    narrativeNotes: 'Primary questgiver room. The MERIDIAN keycard quest originates here. The photograph humanizes Lev. The revenant cohort file is a significant player-mirror moment. New extras: coffee mugs (personality), reference wall (CHARON-7 timeline lore hook). The keycard quest requires discovered_field_station_echo from the comm center map room.',
   },
 
   {
@@ -446,7 +461,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     act: 2,
     difficulty: 2,
     visited: false,
-    flags: { fastTravelWaypoint: false },
+    flags: { fastTravelWaypoint: false, combat_high_ground: true },
     description: 'The warehouse roof has been converted into an observation platform — a railing at the perimeter, a weatherproofed telescope on a fixed mount, and a folding chair beside it for the long nights. The view is the best in the Four Corners: the whole desert basin north, the distant smudge of Crossroads east, the Dust west. On a clear night, due north-northwest, a faint orange light sits in the horizon like a star that got lost. That\'s the Scar valley. Lev calls it "the light that shouldn\'t be there."',
     descriptionNight: 'At night the roof is where everything becomes clear — the stars, the distances, the orange light due north-northwest that the telescope resolves into a crater edge and below it, seven hundred feet down, something that still generates heat. MERIDIAN. Still warm. Seven years after the bombing. Heat doesn\'t come from nothing.',
     shortDescription: 'Roof observatory. Telescope. You can see MERIDIAN on a clear night.',
@@ -496,7 +511,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     act: 2,
     difficulty: 3,
     visited: false,
-    flags: { scavengingZone: true },
+    flags: { scavengingZone: true, combat_high_ground: true },
     description: 'The collapse folded two skyscrapers into each other and left the upper floors at ground level — a connected elevated platform of concrete slab and steel beam, accessible by a rubble ramp that takes some nerve to climb. Up here the city opens. You can see the full sweep of The Stacks\' geography: the twisted grid of streets buried under debris, the punctuation of standing walls, and at the northern edge, the smudge of the Dust horizon. The wind is stronger. The footing is uncertain. And you are visible to anything for half a mile.',
     descriptionNight: 'At night the Upper Stacks is a different kind of exposed — the open sky above, every source of light below highlighted by the darkness. The Stacks facility glows to the south. Crossroads emits a faint orange smear to the east. You are a silhouette up here. Anything that looks this way will see you before you see it.',
     descriptionDawn: 'Dawn from the Upper Stacks turns the rubble gold. The light comes from the east and catches every broken edge and shattered pane, the wreckage briefly beautiful before the day makes it just wreckage again.',
@@ -563,7 +578,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     act: 2,
     difficulty: 3,
     visited: false,
-    flags: { dark: true, scavengingZone: true },
+    flags: { dark: true, scavengingZone: true, combat_darkness: true, combat_narrow_passage: true },
     description: 'Forty feet underground, reached by a stairwell the collapse partially spared, the data center survived because it was built to survive — reinforced concrete, dual power feeds, fire suppression still intact. The suppression foam has long since dried to a crust over everything. Rack after rack of dead servers stands in rows, screens black, indicator lights dark — except for three units in the northeast corner, where a backup UPS still draws power from somewhere and something hums. Not the equipment. Something in the equipment. A system that was never meant to be shut down running on the last of its reserves, processing something no one has asked it to process in seven years.',
     descriptionNight: 'The server room doesn\'t know it\'s night. The three humming units in the northeast corner put out a faint amber light that is the only illumination. In that amber glow, in the silence, the processing sounds almost like breathing.',
     shortDescription: 'Pre-collapse data center. Mostly dead. Three units still hum.',
@@ -655,7 +670,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     act: 2,
     difficulty: 3,
     visited: false,
-    flags: { dark: true },
+    flags: { dark: true, combat_darkness: true, combat_narrow_passage: true },
     description: 'A parking structure collapsed cleanly across a city block and left a tunnel. Not engineered — fortunate. The ceiling is the underside of a concrete deck with rebar hanging through it in places, close enough to touch. The floor is the original street surface, now permanently damp from groundwater that found a new path when the building came down. The smell is standing water and mildew and something else: the particular sour-mineral smell of Hollow. They use this route. The passage is narrow enough that you move single file, and the darkness at the far end doesn\'t resolve until you\'re already committed.',
     descriptionNight: 'The Underpass at night is the same as the Underpass at any other time — no light penetrates from either end after dark. The sounds change: outside ambience drops to zero and you hear only the drip of water, the compression of the damp floor underfoot, and whatever is sharing the tunnel with you.',
     shortDescription: 'A tunnel through collapsed parking structure. Hollow territory. Shortcut.',
@@ -746,7 +761,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     act: 2,
     difficulty: 3,
     visited: false,
-    flags: { scavengingZone: true },
+    flags: { scavengingZone: true, combat_collapsing: true },
     description: 'The atrium of a former office tower, thirty feet high at its peak and now half that, the upper floors driven down through the interior by the collapse. The scale is still legible — a grand entrance hall designed to impress people arriving for meetings that no longer exist. Marble flooring, most of it intact under a layer of rubble, catches light from the gaps in the collapsed roof. The reception desk is half-buried, the laminate surface split but the structure standing. Behind the desk, a building directory board hangs at an angle. Most of the tenant plaques are still in their slots. You can read some of them.',
     descriptionNight: 'At night the collapsed roof gaps become windows to the stars. Enough light comes through to navigate by. The marble reflects it faintly, the floor glowing a pale blue in the dark. The desk is a black shape. The directory is unreadable without a light. Something about the scale — the ceilings that were meant to make you feel the building\'s importance — makes the dark feel more absolute.',
     descriptionDawn: 'Dawn sends light through the eastern collapse gaps at a low angle that crosses the marble floor in orange bars. The building directory catches it and one name on the tenant list is briefly illuminated before the angle shifts: MERIDIAN SYSTEMS INC — FLOORS 14-22.',
@@ -965,6 +980,10 @@ export const THE_STACKS_ROOMS: Room[] = [
         description: 'Chicory root, roasted and ground, brewed strong. The smell is close enough to coffee that your body responds before your brain corrects it. The Reclaimers grow chicory in their small greenhouse — one of the few luxuries they maintain. Lev\'s thermos is refilled daily. It is, by some measures, the most human artifact in the entire Stacks.',
       },
       {
+        keywords: ['child', 'kid', 'young', 'reading', 'corner'],
+        description: 'In the far corner, curled into the chair nearest the lamp, a child reads with the complete absorption that only children and researchers achieve. The book is too advanced for their age — a field guide to regional botany, illustrated, the kind of text that assumes adult literacy. They are reading it anyway, one finger tracing the illustrations, mouthing the Latin names with the careful concentration of someone learning a language they have decided to learn. A blanket has been folded under them to raise the seat height. Someone adjusted this chair for them. Someone in the Stacks decided that a child reading botany in the warm light of a repurposed lamp is worth accommodating.',
+      },
+      {
         keywords: ['lamp', 'light', 'central', 'glow'],
         description: 'The lamp is a repurposed industrial work light with a dimmer switch wired in by someone who understood that not all light needs to be bright. At its lowest setting it produces the warm amber glow of something that existed before LEDs, before fluorescents, before the particular harshness of light designed for productivity. This light was designed for reading. Someone thought about that.',
         skillCheck: { skill: 'electronics', dc: 7, successAppend: 'The dimmer is hand-soldered — clean work, the kind that suggests the person who did it could have built something more impressive but chose to build something kind instead. The lamp draws twelve watts. In a facility that generates kilowatts, that\'s nothing. But someone still took the time.' },
@@ -973,7 +992,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     environmentalRolls: {
       flavorLines: [
         { line: 'The reading room is warm. The lamp hums at its lowest setting. For a moment, nothing is wrong.', chance: 0.30, time: ['night'] },
-        { line: 'Someone turns a page. The sound is impossibly loud in the silence, and then it isn\'t.', chance: 0.25, time: null },
+        { line: 'A page rustles somewhere — paper settling in the warmth, or the draft from the door you just opened. The sound dissolves into the room\'s quiet.', chance: 0.25, time: null },
       ],
     },
     personalLossEchoes: {
@@ -993,7 +1012,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     act: 2,
     difficulty: 3,
     visited: false,
-    flags: { scavengingZone: true, dark: true },
+    flags: { scavengingZone: true, dark: true, combat_darkness: true, combat_narrow_passage: true },
     description: 'The annex was a storage room before the Reclaimers converted it, and the conversion shows — bare cinderblock walls, no windows, a single overhead strip light that flickers at a frequency designed to produce migraines. The shelves here hold hard drives, tape backups, optical media, and a section of hand-labeled floppy disks that somebody recovered from a government office and hasn\'t been able to read yet because the drives don\'t exist anymore. The Reclaimers estimate they have recovered twelve terabytes of pre-Collapse data and have processed roughly nine percent of it. The other ninety-one percent waits on these shelves, each drive a sealed room full of things that might matter enormously or might be someone\'s vacation photographs.',
     descriptionNight: 'The archive at night is darker than the rest of the Stacks — the strip light dies at eleven and nobody has fixed the timer. In the dark the drives are just shapes on shelves. The data they contain is the same whether the light works or not, which is either a comfort or a philosophical problem depending on how long you\'ve been down here.',
     shortDescription: 'Data archive. Twelve terabytes of unprocessed history.',
@@ -1062,7 +1081,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     act: 2,
     difficulty: 3,
     visited: false,
-    flags: { scavengingZone: true, dark: true },
+    flags: { scavengingZone: true, dark: true, combat_narrow_passage: true, combat_collapsing: true },
     description: 'The public library wing of the complex collapsed unevenly — the ceiling buckled but held, the walls bowed inward, and the industrial metal shelving units that once held the municipal collection fell in a domino pattern that created a narrow canyon of steel and paper. The passage through them is single-file, bent at angles where the shelves met obstacles and folded rather than toppled. Books are everywhere — compressed into strata, pulped by water damage, fused into bricks of paper by years of humidity and pressure. The smell is mildew and rust and the particular sweetness of decomposing cellulose. Somewhere in the compressed mass, spines are still legible. Titles surface like fossils in sediment.',
     descriptionNight: 'At night the shelving canyon is absolute dark. Your light catches the metal edges of shelf frames and the pallid surfaces of compressed paper. The shadows move when you move. The canyon makes sounds at night — the slow complaint of metal under sustained load, the papery whisper of compressed books settling deeper into their own weight.',
     shortDescription: 'Collapsed shelving. Narrow passage. Books compressed into strata.',
@@ -1147,7 +1166,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     act: 2,
     difficulty: 3,
     visited: false,
-    flags: { dark: true, scavengingZone: true },
+    flags: { dark: true, scavengingZone: true, combat_darkness: true },
     description: 'The basement of the municipal complex stored what basements always store — the things that matter but not enough to see daylight. Filing cabinets in rows that extend beyond your light, standing in four inches of black water that came in through a crack in the foundation and never left. The water is cold and still and the smell is the mineral smell of standing groundwater and the iron smell of rusting steel. The filing cabinets are labeled by department and year, the labels printed on card stock that has curled and yellowed but remains legible. Public Works. Health Department. City Planning. Police. And at the far end of the third row, a cabinet that has been pried open recently — the water around it disturbed, the lock drilled out with a precision that suggests battery-powered tools and a specific purpose.',
     descriptionNight: 'The basement records don\'t change at night. The water is the same temperature. The dark is the same dark. Your light finds the same filing cabinets in their same patient rows, waiting to be read by a civilization that has other priorities now. The drilled cabinet at the far end is the only evidence that someone has been here since the water came in.',
     shortDescription: 'Flooded basement. Filing cabinets. Someone drilled one open recently.',
@@ -1292,7 +1311,7 @@ export const THE_STACKS_ROOMS: Room[] = [
     ],
     environmentalRolls: {
       flavorLines: [
-        { line: 'Someone has added a new pin to the central map. You don\'t recognize the location. Someone does.', chance: 0.25, time: ['day'] },
+        { line: 'A new pin has been added to the central map since your last visit. You don\'t recognize the location. Someone does.', chance: 0.25, time: ['day'] },
         { line: 'The plotter runs in the corner, printing a new route chart. The sound is the sound of preparation.', chance: 0.20, time: null },
       ],
     },

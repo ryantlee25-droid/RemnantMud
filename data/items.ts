@@ -357,6 +357,33 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
   },
 
+  courthouse_archive_key: {
+    id: 'courthouse_archive_key',
+    name: 'Courthouse Archive Key',
+    description: 'A brass key worn smooth by decades of use. The tag reads ARCHIVE, hand-lettered in a careful pre-Collapse hand. Covenant\'s record-keepers handed down this key through three Marshals.',
+    type: 'key',
+    weight: 0,
+    value: 0,
+  },
+
+  cold_storage_key: {
+    id: 'cold_storage_key',
+    name: 'Cold Storage Key',
+    description: 'An industrial cylinder key on a loop of wire, the word COLD scratched into the bow. The Stacks ran a walk-in freezer in their research wing; this is what opens it.',
+    type: 'key',
+    weight: 0,
+    value: 0,
+  },
+
+  red_court_key: {
+    id: 'red_court_key',
+    name: 'Red Court Key',
+    description: 'A key stamped with the Red Court seal — a blood drop over a crown. Authorizes access to the Pens\' inner administration and research wings. Possession implies trust, or theft, or both.',
+    type: 'key',
+    weight: 0,
+    value: 0,
+  },
+
   bunker_access_badge: {
     id: 'bunker_access_badge',
     name: 'Bunker Access Badge',
@@ -373,6 +400,26 @@ export const ITEMS: Record<string, Item> = {
     type: 'key',
     weight: 4,
     value: 0,
+  },
+
+  sanguine_biometric_slide: {
+    id: 'sanguine_biometric_slide',
+    name: 'Sanguine Biometric Slide',
+    description: 'A slim translucent slide keyed to Vesper\'s genetic authority. The Covenant of Dusk\'s biometric clearance in physical form. Cold to the touch in a way that isn\'t temperature.',
+    type: 'key',
+    weight: 0,
+    value: 0,
+  },
+
+  purified_stims: {
+    id: 'purified_stims',
+    name: 'Purified Stims',
+    description: 'Military-grade stimulant compound, Patch\'s formulation. Cleaner than the standard waste-circuit product. The vial is labeled in a cramped shorthand that only Patch can read.',
+    type: 'consumable',
+    weight: 0,
+    value: 15,
+    usable: true,
+    useText: 'The stim hits fast and clean — no edge shake, no crash taste. You feel more alert than circumstances warrant. You can work with that.',
   },
 
   // ----------------------------------------------------------
@@ -521,6 +568,28 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'What we are: the last professional military force in the Four Corners. What we do: protect the living from everything that wants them dead. What we don\'t do: negotiate with Sanguine. Treat. Coexist. The Accord calls this "hardline." We call it "looking at what those things actually are." — Warlord Briggs, Salt Creek Compact, 2036.',
+  },
+
+  bombing_site_notes: {
+    id: 'bombing_site_notes',
+    name: 'Bombing Site Notes',
+    description: 'A water-damaged field notebook, pages stiff with crater residue. The entries are tactical observations from someone at the perimeter during the bombing.',
+    type: 'lore',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'DAY 1. 0340 hrs. Strike confirmed. Surface structures destroyed. Per protocol: no re-entry. DAY 1. 1200 hrs. Facility power still active — thermal signature unchanged. Structure intact below grade. DAY 2. Command told us to file it as destroyed and move out. The power readings contradict this. Nobody in my chain wants to hear it. DAY 3. Three names in the roll call are wrong — two soldiers on perimeter acknowledged they saw movement after the strike. They have been reassigned. I am writing this down because this did not happen the way the report says it happened. — Sgt. D. Briggs, USMC, MERIDIAN perimeter detail.',
+  },
+
+  commanders_notes: {
+    id: 'commanders_notes',
+    name: "Commander's Notes",
+    description: 'A folded set of deployment orders and field notes, kept in Briggs\'s vest for years. The paper is worn at the creases.',
+    type: 'key',
+    weight: 0,
+    value: 0,
+    usable: true,
+    loreText: 'OPERATION MERIDIAN SEAL — CLASSIFIED. Unit: 3rd Battalion, B Company, Perimeter Security Command. Issued: 14 October 2031. Objective: Maintain outer perimeter, prevent civilian re-entry, confirm detonation coverage. Actual outcome: [Handwritten margin] The facility is intact. I watched it happen. The bombs hit the surface. The bunker survived. I was ordered not to report the power signature. I am keeping this in case someone needs to know it was real. — Major D. Briggs.',
   },
 
   // ----------------------------------------------------------
@@ -940,7 +1009,7 @@ export const ITEMS: Record<string, Item> = {
   empty_water_bottle: {
     id: 'empty_water_bottle',
     name: 'Empty Water Bottle',
-    description: 'A plastic bottle. Empty. Worth something to someone who\'s thirsty.',
+    description: 'A one-liter Nalgene, empty, lid still threaded on. Hard plastic that doesn\'t leach, doesn\'t crack. A clean vessel is hard to find — water you can carry is the basic unit of survival out here, and you can\'t carry it in your hands.',
     type: 'junk',
     weight: 0.3,
     value: 1,
@@ -949,7 +1018,7 @@ export const ITEMS: Record<string, Item> = {
   lighter_disposable: {
     id: 'lighter_disposable',
     name: 'Disposable Lighter',
-    description: 'A plastic lighter. Still has fluid.',
+    description: 'A yellow Bic, the logo mostly worn off. The flint still catches. Fire on demand is a luxury so ordinary it stopped feeling like one — until the world ended and you found out what you\'d been taking for granted.',
     type: 'junk',
     weight: 0.1,
     value: 2,
@@ -958,7 +1027,7 @@ export const ITEMS: Record<string, Item> = {
   old_binoculars: {
     id: 'old_binoculars',
     name: 'Old Binoculars',
-    description: 'Old binoculars. One lens cracked, the other still works.',
+    description: 'Porro-prism field glasses, one objective lens cracked in a starburst pattern that blurs the right half of everything you see. The left side still gives you eight-times magnification. Half a view is better than none, which is something you used to not have to say.',
     type: 'junk',
     weight: 0.8,
     value: 3,
@@ -967,7 +1036,7 @@ export const ITEMS: Record<string, Item> = {
   binoculars_intact: {
     id: 'binoculars_intact',
     name: 'Intact Binoculars',
-    description: 'Military-grade binoculars. Both lenses clear.',
+    description: 'Military-spec 10x50s, rubber-armored and nitrogen-purged. The reticle is mil-dot. Someone used these professionally and either left them or lost them in a way that suggests they no longer needed them. The optics are clean — whoever owned these cleaned them last.',
     type: 'junk',
     weight: 0.9,
     value: 8,
@@ -976,7 +1045,7 @@ export const ITEMS: Record<string, Item> = {
   can_opener_quality: {
     id: 'can_opener_quality',
     name: 'Quality Can Opener',
-    description: 'A good can opener. The kind that doesn\'t slip.',
+    description: 'A heavy-frame rotary can opener, butterfly key, broad drive wheel — pre-Collapse OXO Good Grips, which means someone had an opinion about kitchen tools. In a world full of unlabeled cans, it\'s the most reliable instrument you own.',
     type: 'junk',
     weight: 0.3,
     value: 2,
@@ -994,7 +1063,7 @@ export const ITEMS: Record<string, Item> = {
   hand_tools_basic: {
     id: 'hand_tools_basic',
     name: 'Basic Hand Tools',
-    description: 'Hammer, screwdriver, pliers. Basic tools. Useful.',
+    description: 'A 16-oz claw hammer with a fiberglass handle, a flathead and a Phillips, and a pair of slip-joint pliers with worn grips. Nothing specialized. Everything necessary. The kind of kit that survived the Collapse in a million garages and is now worth more than most weapons.',
     type: 'junk',
     weight: 1.5,
     value: 5,
@@ -1003,7 +1072,7 @@ export const ITEMS: Record<string, Item> = {
   gun_oil: {
     id: 'gun_oil',
     name: 'Gun Oil',
-    description: 'Gun oil. Keeps metal from rusting.',
+    description: 'A small squeeze bottle, about half full. Keeps the action cycling when dust and grit want to stop it. The difference between a gun that fires and one that doesn\'t is usually maintenance, and this is the first part of maintenance.',
     type: 'junk',
     weight: 0.2,
     value: 3,
@@ -1012,7 +1081,7 @@ export const ITEMS: Record<string, Item> = {
   crafting_components: {
     id: 'crafting_components',
     name: 'Crafting Components',
-    description: 'Various small parts. Gears, wires, clips. Something useful in here.',
+    description: 'A ziplock bag of salvaged hardware: brass gears from a clock movement, stripped wire segments, spring clips, a handful of machine screws in two sizes. The Reclaimers call this kind of bag a maybe kit. You don\'t know what you\'ll need it for until you need it.',
     type: 'junk',
     weight: 0.8,
     value: 4,
@@ -1021,7 +1090,7 @@ export const ITEMS: Record<string, Item> = {
   salvaged_engine_part: {
     id: 'salvaged_engine_part',
     name: 'Salvaged Engine Part',
-    description: 'An engine component. Heavy and oily. Someone might want this.',
+    description: 'A camshaft from what was probably a V8 — steel lobes, journal surfaces still bright beneath the grime. Dead weight to anyone without a working engine. To someone trying to keep a generator or a vehicle running, this is the difference between mobility and staying put.',
     type: 'junk',
     weight: 3.0,
     value: 6,
@@ -1030,7 +1099,7 @@ export const ITEMS: Record<string, Item> = {
   mineral_sample: {
     id: 'mineral_sample',
     name: 'Mineral Sample',
-    description: 'A rock sample. Labeled in faded pencil. Worth something to the right buyer.',
+    description: 'A fist-sized core sample in a labeled canvas bag — "SJ-7 DEPTH 340M" in faded pencil. Geological survey material, pre-Collapse. The Reclaimers catalog everything that came out of the ground before the facilities went dark. Whether what\'s in this sample matters, they\'ll want to decide for themselves.',
     type: 'junk',
     weight: 0.5,
     value: 2,
@@ -1039,7 +1108,7 @@ export const ITEMS: Record<string, Item> = {
   smooth_river_stone: {
     id: 'smooth_river_stone',
     name: 'Smooth River Stone',
-    description: 'A smooth river stone. Fits perfectly in the palm.',
+    description: 'A basalt pebble, river-polished to an ellipse that fills the hand without effort. No practical use. You carry it because it is one of the few things in this world that the Collapse did not change, and sometimes that matters.',
     type: 'junk',
     weight: 0.4,
     value: 1,
@@ -1048,7 +1117,7 @@ export const ITEMS: Record<string, Item> = {
   tinder_bundle: {
     id: 'tinder_bundle',
     name: 'Tinder Bundle',
-    description: 'Dry bark and grass, bound with twine. Lights fast.',
+    description: 'Cedar bark and dried cheatgrass, bound tight with a length of twine. Someone prepared this deliberately — the bark is shredded fine, the grass is bone-dry. A fire kit is only as good as its first stage, and this stage is good.',
     type: 'junk',
     weight: 0.3,
     value: 1,
@@ -1066,7 +1135,7 @@ export const ITEMS: Record<string, Item> = {
   wild_herbs: {
     id: 'wild_herbs',
     name: 'Wild Herbs',
-    description: 'A bundle of wild herbs. Medicinal or culinary — you\'re not sure which.',
+    description: 'A bundled handful of dried plants — yarrow, maybe, and something with small pale flowers you can\'t name with certainty. Could be wound-packing material. Could be the base of a broth. Knowledge of what the land offers is the kind of thing that died with the people who had it.',
     type: 'junk',
     weight: 0.2,
     value: 2,
@@ -1075,7 +1144,7 @@ export const ITEMS: Record<string, Item> = {
   ghost_sage_sprig: {
     id: 'ghost_sage_sprig',
     name: 'Ghost Sage Sprig',
-    description: 'Ghost sage. Pale and aromatic. Used in Covenant purification rites.',
+    description: 'The pale variety that grows at elevation, aromatic and slightly bitter. The Covenant of Dusk burns it in their purification ceremonies or carries it on the body. Whether the rite means anything is a theological question. The sage smells like a high-country morning before everything changed. That alone has value.',
     type: 'junk',
     weight: 0.1,
     value: 3,
@@ -1084,7 +1153,7 @@ export const ITEMS: Record<string, Item> = {
   fishing_line_improvised: {
     id: 'fishing_line_improvised',
     name: 'Improvised Fishing Line',
-    description: 'A length of monofilament with a bent-hook lure.',
+    description: 'Twenty feet of mono wrapped around a stick, with a bent nail hammered into a hook and a shred of red cloth lashed to it with thread. Ugly. Probably works. Whoever made this knew that fish don\'t care about the lure as much as the person fishing does.',
     type: 'junk',
     weight: 0.2,
     value: 2,
@@ -1111,7 +1180,7 @@ export const ITEMS: Record<string, Item> = {
   soap_bar: {
     id: 'soap_bar',
     name: 'Bar of Soap',
-    description: 'A bar of soap. Mostly used. Still works.',
+    description: 'A bar of Ivory soap, worked down to a thin oval but still usable. Smells like something from before — a specific chemical sweetness that means clean, that means the world had hot running water. You use it carefully. You will use every sliver.',
     type: 'junk',
     weight: 0.2,
     value: 1,
@@ -1129,7 +1198,7 @@ export const ITEMS: Record<string, Item> = {
   motel_bible: {
     id: 'motel_bible',
     name: 'Motel Bible',
-    description: 'A Gideons Bible. Someone crossed out the 23rd Psalm and wrote something else.',
+    description: 'A Gideons Bible, cover soft from years of hands. Someone has been writing in the margins for a long time — the ink changes color, the handwriting changes size. You don\'t have time to read it, but someone did. Someone kept coming back.',
     type: 'junk',
     weight: 0.4,
     value: 1,
@@ -1169,7 +1238,7 @@ export const ITEMS: Record<string, Item> = {
   rebar_club: {
     id: 'rebar_club',
     name: 'Rebar Club',
-    description: 'A length of rebar. Heavy. Blunt. Effective.',
+    description: 'Three feet of #4 rebar, one end wrapped in electrical tape to keep your palm from shredding. The weight does the work. Before the Collapse it built buildings. Now it keeps them from being rebuilt.',
     type: 'weapon',
     weight: 2.5,
     damage: 6,
@@ -1194,14 +1263,14 @@ export const ITEMS: Record<string, Item> = {
 
   canned_food_random: {
     id: 'canned_food_random',
-    name: 'Canned Food',
-    description: 'A dented can. Label gone. You peel it open and eat without looking.',
+    name: 'Unlabeled Can',
+    description: 'No label, no clue — rust rings on the lid, seams intact, no bulge. The absence of information is information: still sealed means probably still safe. You\'ve eaten worse with more confidence.',
     type: 'consumable',
     weight: 1.0,
     healing: 15,
     value: 5,
     usable: true,
-    useText: 'You eat. It\'s fine. You don\'t ask what it was.',
+    useText: 'You open it. Corn, you think. Maybe hominy. You eat it cold and don\'t complain.',
   },
 
   canned_food_premium: {
@@ -1219,7 +1288,7 @@ export const ITEMS: Record<string, Item> = {
   dried_meat_strip: {
     id: 'dried_meat_strip',
     name: 'Dried Meat Strip',
-    description: 'Salted and dried. Chewy. Better than nothing.',
+    description: 'Hard salt-cured strips, the kind you chew for a while before they give. Protein, salt, calories — everything your body needs and nothing your mouth wants. You eat it anyway. You\'ve learned to eat what you have.',
     type: 'consumable',
     weight: 0.3,
     healing: 10,
@@ -1307,7 +1376,7 @@ export const ITEMS: Record<string, Item> = {
   bandages_clean: {
     id: 'bandages_clean',
     name: 'Clean Bandages',
-    description: 'Sterile bandages. Still in the wrapper.',
+    description: 'Factory-sealed gauze rolls, unbroken packaging, sterile. Finding these still wrapped means they survived in a bag or a cabinet that stayed dry. The seal is the whole point — used gauze is just cloth, but this is still medicine.',
     type: 'consumable',
     weight: 0.2,
     healing: 12,
@@ -1319,7 +1388,7 @@ export const ITEMS: Record<string, Item> = {
   first_aid_kit_basic: {
     id: 'first_aid_kit_basic',
     name: 'Basic First Aid Kit',
-    description: 'A red cross kit. Half the supplies are still inside.',
+    description: 'A red-cross hard case, latched shut. Half the blister packs are still sealed — gauze, antiseptic wipes, medical tape, two ammonia inhalants. Whoever used this before you was careful, or lucky, or both. What\'s left is more than most people find.',
     type: 'consumable',
     weight: 1.5,
     healing: 30,
@@ -1331,7 +1400,7 @@ export const ITEMS: Record<string, Item> = {
   field_dressing: {
     id: 'field_dressing',
     name: 'Field Dressing',
-    description: 'Field dressing. The kind you press into a wound with your palm.',
+    description: 'An H-bandage, olive drab, still in the vacuum seal. The kind you press into a wound with your palm and hold until the pressure tells you it\'s working. Military surplus. Whoever carried this before expected to get shot.',
     type: 'consumable',
     weight: 0.4,
     healing: 15,
@@ -1343,7 +1412,7 @@ export const ITEMS: Record<string, Item> = {
   fresh_water_container: {
     id: 'fresh_water_container',
     name: 'Fresh Water Container',
-    description: 'A container of clean water. Rare enough to be valuable.',
+    description: 'A sealed two-liter container, clear and settled. No particulate, no smell. Someone filtered and stored this, which means they had the equipment and the patience. Clean water is not a given. It is a project. Someone finished that project for you.',
     type: 'consumable',
     weight: 1.2,
     healing: 10,
@@ -2075,161 +2144,178 @@ export const ITEMS: Record<string, Item> = {
   crafted_purified_antiseptic: {
     id: 'crafted_purified_antiseptic',
     name: 'Purified Antiseptic',
-    description: 'A concentrated antiseptic solution distilled from basic chemicals and clean water. Stronger and more stable than raw antiseptic. Cures early-stage infection.',
+    description: 'A glass bottle of concentrated antiseptic, distilled twice through salvaged lab filters until the liquid runs clear with a faint chemical bite. The smell is sharp and clean -- isopropyl cut with something botanical that the Shepherds add to reduce skin irritation. Each dose is measured by the capful. Two capfuls per wound, three if the wound has been open more than six hours. The difference between this and raw antiseptic is the difference between a scar and a grave.',
     type: 'consumable',
     weight: 0.5,
+    healing: 6,
     value: 25,
+    tier: 2,
     usable: true,
-    useText: 'You apply the purified solution. The wound is clean. The infection risk drops sharply.',
+    useText: 'The antiseptic hisses against raw tissue. Clean heat, then nothing. The wound edges go pale. Stable. The infection risk drops to almost zero -- almost being the operative word in a world without sterile environments.',
   },
 
   crafted_combat_medkit: {
     id: 'crafted_combat_medkit',
     name: 'Combat Medkit',
-    description: 'Bandages reinforced with pain tablets and a compression wrap — built for use during or immediately after fighting. Crude. Effective.',
+    description: 'A flat canvas pouch held shut with a strip of duct tape, packed tight: compression bandages pre-rolled and secured with wire ties, two pain tablets in a sealed foil blister, and a length of rubber tubing for tourniquet work. The whole thing fits against a hip or inside a vest. Designed by Salter enforcers for the ten seconds between getting hit and getting hit again -- when you cannot stop moving, cannot afford to black out, and cannot waste a single motion on something that does not keep you upright. Crude. Effective. The blood on the outside is from the last person who needed it.',
     type: 'consumable',
     weight: 1,
     healing: 10,
     value: 30,
+    tier: 2,
     usable: true,
-    useText: 'You work fast. The compression wrap bites down. The bleeding slows. You keep moving.',
+    useText: 'You tear the tape seal. Your hands know the order: tourniquet first, compression wrap second, pain tab dry-swallowed between steps. The bleeding slows. The pain dulls to a manageable roar. You keep moving because the alternative is not moving ever again.',
   },
 
   crafted_trauma_kit: {
     id: 'crafted_trauma_kit',
     name: 'Trauma Kit',
-    description: 'A proper trauma package: clean gauze, antiseptic, bandages, and antibiotics. Built for catastrophic injury management. Heavier and bulkier than a combat medkit. Saves lives that a combat medkit cannot.',
+    description: 'A proper field trauma package in a rigid plastic case that latches shut with two clasps. Inside: sterile gauze pads still in their original packaging, antiseptic solution in a squeeze bottle, compression bandages in three widths, a single dose of broad-spectrum antibiotics, and a laminated instruction card written in block letters by someone who assumed the reader would be shaking. This is what a field medic carries when they expect casualties that a bandage cannot handle -- the deep lacerations, the compound fractures, the wounds that kill in minutes if you do not know exactly what you are doing. Heavier than a combat medkit. Bulkier. Saves the lives that a combat medkit watches end.',
     type: 'consumable',
     weight: 2,
-    healing: 15,
+    healing: 20,
     value: 80,
+    tier: 3,
     usable: true,
-    useText: 'The work takes time. When it\'s done the wound is cleaned, closed, and treated. You will live.',
+    useText: 'The work takes time. Gauze first to clear the field. Antiseptic -- the patient gasps. Compression wrap, tight enough to blanch the skin. Antibiotics administered. When it is done the wound is cleaned, closed, and treated. The laminated card says "reassess in four hours." You will not be here in four hours. But you will be alive.',
   },
 
   crafted_improvised_trap: {
     id: 'crafted_improvised_trap',
     name: 'Improvised Trap',
-    description: 'Scrap metal fashioned into a spring-loaded spike trap. Throwable in combat for 8 damage. Set it in a doorway and something will bleed for passing through.',
+    description: 'A spring-loaded contraption built from flattened scrap metal teeth and wire-coil tension bars, folded into a package roughly the size of a dinner plate. The trigger mechanism is a bent nail soldered to a pressure plate. Step on it and the teeth snap upward through whatever is above them -- boot leather, shin bone, the soft underside of a Hollow that does not watch where it drags itself. Drifters leave these in doorways. The Ferals have learned to check. Travelers have not. The device smells like rust and old solder.',
     type: 'consumable',
     weight: 1,
     damage: 8,
     value: 15,
+    tier: 1,
     usable: true,
-    useText: 'You set the trap. The spring tension is ugly but it will hold.',
+    useText: 'You set the trap low, pressure plate flush with the ground. The spring tension holds -- ugly but functional. Wire coil creaks once as it settles. Anything that steps here is going to have a very bad moment.',
   },
 
   crafted_reinforced_plate: {
     id: 'crafted_reinforced_plate',
     name: 'Reinforced Plate',
-    description: 'Two pieces of scrap metal welded together into a rigid armor panel. Rough but thick. Stops the first hit with authority.',
+    description: 'Two sheets of salvaged scrap metal -- one from a car door panel, one from a section of industrial shelving -- hammered flat, stacked, and riveted together with eight hand-punched holes and eight bolts tightened until the metal warped slightly at the edges. The result is a rigid breastplate panel roughly fourteen inches square, heavy enough to shift your center of gravity when you wear it, thick enough to turn a knife blade and absorb the first round from a pipe weapon without passing the energy through to your ribs. The surface is scarred, dented, and still shows the ghost of an automotive paint job in faded blue. It works. That is all it needs to do.',
     type: 'armor',
     weight: 4,
     defense: 3,
     value: 20,
     tier: 2,
+    armorTraits: ['fortified'],
   },
 
   crafted_pipe_weapon_improved: {
     id: 'crafted_pipe_weapon_improved',
     name: 'Improved Pipe Weapon',
-    description: 'A salvaged firearm part grafted onto a reinforced scrap-metal chassis. Longer barrel, better grip. Not military hardware. Better than nothing.',
+    description: 'A salvaged firearm receiver -- the part that matters -- grafted onto a reinforced scrap-metal stock and barrel housing with machine screws and epoxy that has cured to a dull amber. The barrel is longer than a standard pipe weapon by four inches, threaded at the muzzle to reduce drift. The grip is wrapped in electrical tape over a shaped aluminum frame that actually fits a human hand. The trigger pull is still heavy and the action jams if you do not rack it cleanly between shots, but the grouping at fifteen meters has tightened from "somewhere over there" to "approximately where you aimed." Not military hardware. Not garbage either. Better than nothing, which out here is a category that keeps people alive.',
     type: 'weapon',
     weight: 3,
     damage: 6,
     value: 35,
     tier: 2,
+    weaponTraits: ['keen'],
   },
 
   crafted_incendiary_charge: {
     id: 'crafted_incendiary_charge',
     name: 'Incendiary Charge',
-    description: 'Basic chemicals in a scrap-metal casing with a short fuse. Throwable incendiary. Deals 10 damage and inflicts burning on impact.',
+    description: 'A fist-sized scrap-metal canister packed with a chemical accelerant -- basic industrial solvents oxidized with a catalyst that the Kindling developed and do not discuss. A strip of cloth serves as the fuse, soaked in the same accelerant so it catches instantly from a spark or match head. The casing fragments on impact and spreads burning chemical across a two-meter radius. The fire is oily and orange and sticks to surfaces. It burns for roughly thirty seconds, long enough to clear a doorway, deny a corridor, or convince something that was chasing you to reconsider. The Salters stockpile these. The Ferals love them. Everyone else respects the smell of the fuse being lit.',
     type: 'consumable',
     weight: 1,
     damage: 10,
     value: 40,
+    tier: 2,
     usable: true,
-    useText: 'You pull the fuse and throw. It goes off correctly. Something is on fire.',
+    useText: 'You strike the fuse. It catches with a hiss and a curl of acrid smoke. You throw. The canister hits, splits, and blooms -- oily orange fire spreading across the impact zone, sticking to everything it touches. The heat pushes against your face even from here.',
   },
 
   crafted_signal_booster: {
     id: 'crafted_signal_booster',
     name: 'Signal Booster',
-    description: 'A directional antenna array built from electronics salvage and wire coil. Pulls in faint broadcasts and triangulates transmission sources. Reveals map data when used in range of a signal.',
-    type: 'lore',
+    description: 'A directional antenna array assembled from electronics salvage -- capacitors, stripped circuit boards, a coil of copper wire wound tight around a plastic core and mounted on a swivel bracket made from a bent curtain rod. The whole assembly is held together with solder, zip ties, and a degree of optimism that borders on engineering. When powered by a battery pack wired to the base, the array pulls in signals that a standard receiver cannot detect: faint broadcast fragments, encrypted bursts, the low hum of MERIDIAN infrastructure that most people do not know is still transmitting. The Reclaimers build better versions of this. This version finds the signal. What you do with what you hear is your problem.',
+    type: 'key',
     weight: 1,
     value: 60,
+    tier: 2,
     usable: true,
-    useText: 'The antenna array hums. Signal detected. You note the direction.',
+    useText: 'You extend the antenna and rotate the array slowly. Static. More static. Then -- a carrier tone, faint but steady, buried under the noise floor. The signal booster locks on and the direction indicator settles. Southeast. Somewhere past the tree line. Something is broadcasting, and now you know where.',
+    loreText: 'The signal booster picks up a repeating transmission on a frequency that pre-Collapse emergency services reserved for automated distress beacons. But this is not automated. The cadence is irregular. Someone is keying a transmitter by hand, sending the same message over and over. The signal is weak but it is real.',
   },
 
   crafted_armor_patch: {
     id: 'crafted_armor_patch',
     name: 'Armor Patch',
-    description: 'A scrap metal backer bonded to a leather reinforcement — a field repair kit for damaged plate or leather armor. Keeps gear from getting worse.',
+    description: 'A field repair kit: a rectangle of scrap metal cut to size with tin snips, backed with a leather patch from a repair kit, bonded together with contact adhesive that smells like burning tires. You press it over the damaged section of your armor, hold it for sixty seconds while the adhesive cures, and the compromised area is reinforced again. Not a full restoration -- the original structure is still weakened underneath -- but it stops the damage from spreading and buys time until you can reach someone who knows metallurgy. Every scavenger carries a few of these. The ones who do not carry them do not come back.',
     type: 'consumable',
     weight: 0.5,
+    defense: 1,
     value: 18,
+    tier: 1,
     usable: true,
-    useText: 'You work the patch in. The crack is covered. Not perfect. Better.',
+    useText: 'You press the patch over the damaged section and hold. The adhesive grips, bites, cures. Sixty seconds of pressure and the metal is bonded to the leather is bonded to the armor plate beneath. Not perfect. Better. The crack is sealed. It will hold until the next hit, and maybe the one after that.',
   },
 
   crafted_chemical_light: {
     id: 'crafted_chemical_light',
     name: 'Chemical Light',
-    description: 'A repurposed container glowing blue-green from a luminescence reaction. Silent light source for approximately four hours. Doesn\'t attract Hollows the way fire does.',
+    description: 'A clean water container repurposed as a diffusion vessel for a chemical luminescence reaction -- bleach oxidation with a scavenged indicator compound that the Reclaimers identified in the first cycle. The liquid inside glows a steady blue-green, bright enough to read by, dim enough to avoid drawing attention from more than twenty meters. Completely silent. No heat signature. Does not attract Hollows the way fire does, because Hollows track warmth and sound, not light. Each vessel glows for approximately four hours before the reaction exhausts itself and the liquid fades to a cloudy gray-green. Crack the seal to activate. Do not drink the contents.',
     type: 'consumable',
     weight: 0.2,
     value: 8,
+    tier: 1,
     usable: true,
-    useText: 'You crack the seal. Blue-green light bleeds out from the container, steady and silent.',
+    useText: 'You crack the seal and shake once. The chemical reaction starts immediately -- blue-green light bleeding outward from the center of the liquid, steady and cold. The darkness pulls back. You can see the walls, the floor, the things that were standing in the dark watching you before you could see them. Silent light. Four hours. Use them well.',
   },
 
   crafted_lockpick_set: {
     id: 'crafted_lockpick_set',
     name: 'Improvised Lockpick Set',
-    description: 'Wire coil drawn and bent into tension wrenches and picks. Works on anything up to a Grade 3 deadbolt with patience. A tool for people who prefer not to announce their presence.',
-    type: 'junk',
+    description: 'A roll of oiled canvas containing six wire picks and two tension wrenches, each piece hand-drawn from salvaged wire coil and heat-bent using electronics salvage schematics as a reference guide for standard pre-Collapse lock pin dimensions. The picks are not elegant -- slightly uneven gauges, file marks visible on the shaping -- but they work on anything up to a Grade 3 deadbolt if you have patience and steady hands. Drifters carry these as standard equipment. Wraiths carry better ones but started with versions exactly like this. The canvas roll smells faintly of machine oil and the metallic tang of worked copper.',
+    type: 'key',
     weight: 0.2,
     value: 25,
+    tier: 2,
     usable: true,
-    useText: 'You work the pick set. It takes time. The lock gives.',
+    useText: 'You unroll the canvas and select the pick by touch -- the right gauge for the keyway, the tension wrench seated at the bottom of the cylinder. Rake, set, feel for the pins. One. Two. The third pin resists, then gives with a soft click. The lock turns. Patience is the only skill this requires, and patience is the one thing the wastes teach everyone eventually.',
   },
 
   crafted_antiviral_compound: {
     id: 'crafted_antiviral_compound',
     name: 'Antiviral Compound',
-    description: 'A synthesized antiretroviral formulation built on an antibiotics base. Does not cure CHARON-7. Extends the viable window before conversion and suppresses early neurological symptoms — long enough to act.',
+    description: 'A small glass vial containing a pale amber liquid -- a synthesized antiretroviral formulation built on a broad-spectrum antibiotics base, modified with molecular data from the R1 sequencing archive found in the Stacks. It does not cure CHARON-7 infection. Nothing cures CHARON-7. But it extends the viable window before neurological conversion by an estimated forty-eight to seventy-two hours and suppresses the early tremors, the light sensitivity, the creeping sense that your thoughts are not entirely your own. Long enough to reach a settlement. Long enough to say what needs to be said. Long enough, maybe, to do one more thing that matters. The Reclaimers have been trying to synthesize this for three cycles. You are holding what they could not build.',
     type: 'consumable',
     weight: 0.5,
+    healing: 25,
     value: 200,
+    tier: 4,
     usable: true,
-    useText: 'You administer the compound. The tremors recede. You have time. Use it.',
+    useText: 'You break the vial seal and drink. The taste is chemical and bitter, coating the back of your throat like cold metal. For ten seconds nothing happens. Then the tremors in your hands slow, stop, and the pressure behind your eyes -- the one you had stopped noticing because it had been there so long -- releases. The world sharpens. Your thoughts are your own again. You have time. Not much. Enough.',
   },
 
   crafted_emp_device: {
     id: 'crafted_emp_device',
     name: 'EMP Device',
-    description: 'An electromagnetic pulse device assembled from capacitor banks and a discharge casing. Single use. Kills electronics in a fifteen-meter radius. Deals 15 damage to mechanical targets.',
+    description: 'A heavy cylindrical device the size of a canteen, built from a capacitor bank stripped from electronics salvage, a salvaged firearm discharge mechanism repurposed as the trigger, and a scrap-metal housing wrapped in copper wire that serves as the broadcast antenna. Single use. When triggered, the capacitor bank dumps its stored charge through the antenna in a single electromagnetic pulse that kills every electronic system within a fifteen-meter radius instantly -- MERIDIAN security panels, Salter communications equipment, automated defense turrets, the kind of infrastructure that does not need to see you to end you. The Reclaimers designed this. They are careful about who receives the schematics. You received them.',
     type: 'consumable',
     weight: 2,
     damage: 15,
     value: 150,
+    tier: 4,
     usable: true,
-    useText: 'You trigger the device. The pulse expands outward. Electronics die in a radius around you.',
+    useText: 'You flip the safety cover and press the trigger. There is no sound. There is no flash. There is a sensation like the air being squeezed, a pressure wave that you feel in your fillings and behind your sternum, and then every light in the room dies at once. Screens go black. Servos wind down. The automated turret in the corner twitches once and stops. Silence, the kind that only exists when machines stop talking to each other.',
   },
 
   crafted_fortified_armor: {
     id: 'crafted_fortified_armor',
     name: 'Fortified Armor',
-    description: 'A kevlar vest reinforced with a crafted plate backing. The best of pre-Collapse manufacturing married to what the wastes forced survivors to build. Heavier. Stops more.',
+    description: 'A pre-Collapse kevlar vest -- ballistic panels intact, ceramic trauma plate present -- with a hand-crafted reinforced plate bolted to the back and chest, doubling the protection at the cost of doubling the weight. The rivets are visible. The plate edges have been filed but not polished, and they catch on fabric when you move. The shoulder straps have been replaced with wider nylon webbing to distribute the load, and someone has sewn padding from a sleeping bag into the collar to prevent the metal edge from cutting into your neck during long wear. This is the best armor that can be built from what the wastes provide: military-grade ballistic protection married to improvised steel plating, held together with engineering knowledge and the understanding that comfort is not the priority. Stopping power is the priority. Everything else is a luxury the dead cannot appreciate.',
     type: 'armor',
     weight: 6,
-    defense: 5,
+    defense: 6,
     value: 180,
     tier: 5,
-    armorTraits: ['fortified'],
+    armorTraits: ['fortified', 'reactive'],
   },
 
   // ----------------------------------------------------------

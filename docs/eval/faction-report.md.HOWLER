@@ -1,0 +1,140 @@
+# Faction Lockout Evaluation Report
+Howler D — Faction Lockout Simulation Convoy  
+Date: 2026-04-23
+
+---
+
+## 1. Summary
+
+**Can a full hard-lockout of the main arc occur? NO.**
+
+The Scar-entry design uses a dual-unlock pattern on every route: each rep-gated option has a quest-flag alternate path that bypasses the reputation requirement entirely. Additionally, the keycard route (Reclaimers) has no reputation gate at all — it is accessible purely via quest flags and skill checks (Lore DC 11 / Negotiation DC 12 / Intimidation DC 14). Even if a player antagonizes all four route-gating factions to -2 and never earns any quest flags, they can still enter MERIDIAN via the keycard route. A player with no reputation in any faction and no quest flags remains stuck at "get the flag or earn rep" — they cannot lose the ability to get a flag.
+
+---
+
+## 2. Per-faction Lockout Analysis
+
+| Faction | Scar Route | Rep Gate | Flag Alternate | Solo Lockout Risk |
+|---------|-----------|----------|----------------|-------------------|
+| reclaimers | keycard | **None** | found_r1_sequencing_data | None — no rep gate |
+| covenant_of_dusk | biometric | min: 1 | duskhollow_cistern_contamination_identified | Low — flag alternate exists |
+| kindling | tunnel | min: 1 | em_incinerator_radiation_investigated | Low — flag alternate exists |
+| lucid | utility | min: 1 | elder_lore_access (skill-based path) | Low — flag alternate exists |
+| accord | dialogue shortcuts | min: 1 | None (shortcut, not route gate) | Zero — no route gating |
+| salters | trade/info | min: 1-2 | None (shortcut, not route gate) | Zero — no route gating |
+| drifters | movement | min: 1 | None | Zero — no route gating |
+| ferals | none | none | none | Zero |
+| red_court | none | none | none | Zero |
+
+**Covenant of Dusk** deserves a note: antagonizing the Covenant also creates a secondary ripple to the Red Court (via `covenant_of_dusk_loss` giving Red Court +1). This does not affect routes but can complicate access to the Throne ending, which involves Red Court relationships.
+
+---
+
+## 3. Worst-Case Scenario
+
+**Setup:** Player antagonizes all four route-gating factions to -2 on death (and separately all nine factions).
+
+**On rebirth:**
+- All four route factions inherit -1 (from antagonized threshold <= -2)
+- Three rep-gated routes (biometric, tunnel, utility) have their rep shortcut branches blocked (-1 < required 1)
+- Keycard route: unaffected — no rep gate
+
+**Available content:**
+- Full keycard route to MERIDIAN
+- All four endings (cure/weapon/seal/throne) — these branch inside MERIDIAN, not at entry
+- All quest flags and skill-check paths remain achievable
+- All non-Scar zones and content (all 13 zones, all 18 NPCs, all 271 rooms)
+
+**Recoverability across rebirths:**
+- After one rebirth from -2: rep falls to -1
+- After second rebirth with no in-cycle damage: -1 is not antagonized (threshold is <= -2), so **no inheritance occurs**, and rep resets to 0 passively
+- Two cycles of passive play normalize any antagonized rep to 0
+- From 0, earning the required +1 rep requires only a single positive dialogue interaction
+
+**Verdict:** The worst case is a single-cycle rep delay on three of four routes, with the fourth always open. Full lockout is structurally impossible with current design.
+
+---
+
+## 4. Rebirth Dynamics
+
+The echoes system operates as a **damped two-step normalizer**:
+
+| Starting Rep | Cycle 1 (inherited) | Cycle 2 | Cycle 3+ |
+|---|---|---|---|
+| +3 | +1 | 0 | 0 |
+| +2 | +1 | 0 | 0 |
+| +1 | 0 | 0 | 0 |
+| 0 | 0 | 0 | 0 |
+| -1 | 0 | 0 | 0 |
+| -2 | -1 | 0 | 0 |
+| -3 | -1 | 0 | 0 |
+
+**Key behaviors:**
+- Any rep value normalizes to 0 within 2 passive cycles
+- Inheritance only fires at thresholds: `>= 2` (aligned) or `<= -2` (antagonized)
+- The ±1 band (`-1, 0, +1`) is a dead zone — no inheritance, no spiral possible without active in-cycle damage
+- No stuck-at-extreme states observed in 10-cycle simulation
+
+**Spiral lock condition (requires active player participation):**
+If a player takes -1 rep damage each cycle on a faction starting at -2:
+```
+Cycle 0: -2 (antagonized)
+Cycle 1: -1 (inherited) + (-1 in-cycle) = -2 (antagonized again)
+Cycle 2: repeats indefinitely
+```
+This spiral IS possible but is **active**, not passive. The player must keep taking faction-hostile actions each cycle. A player who simply ignores the antagonized faction will normalize within 2 cycles.
+
+---
+
+## 5. Decay System Status
+
+**Absent.** No `computeReputationDecay` function exists on main.
+
+Implications:
+- Reputation earned in a cycle persists fully until death — no erosion between actions
+- There is no mechanism for neutral rep to drift negative over time
+- A player who earns +2 Kindling rep in cycle 3 carries it forward to the snapshot
+- The lack of decay is arguably correct for a cycle-based game: each cycle is a discrete unit, and decay within a cycle would create hidden time pressure the player cannot react to meaningfully
+- If decay were added, the recommended period would be >= 200 actions (approximately one moderate play session) to avoid punishing slow players
+
+---
+
+## 6. Recommendations
+
+### Hard Lockout Prevention — Already Solved
+The dual-unlock pattern (flag OR rep) on biometric/tunnel/utility routes is the correct mitigation. No change needed.
+
+### Spiral Lock Mitigation — Low Priority
+The active spiral requires deliberate hostile behavior each cycle. One recommended safeguard:
+
+**Soft floor recommendation:** When computing inherited reputation on rebirth, if `inheritedRep < -1`, clamp to -1 instead. This is already the current behavior (antagonized always inherits exactly -1, not the full negative value). No change needed.
+
+However, the game could add an explicit `rebirthFloor` mechanic: any route-gating faction (reclaimers, covenant_of_dusk, kindling, lucid) that would inherit -1 instead inherits 0. This would break the active spiral at the cost of removing all cross-cycle consequence for antagonizing route factions. Recommend **not implementing** this — the consequences are intentional and the spiral requires active player effort.
+
+### Decay System — Evaluate for Cycle 2+
+Consider a passive decay for rep values outside [-1, +1] after a configurable action count (suggested: 150 actions). This would:
+- Create in-cycle pressure to maintain faction relationships
+- Prevent "bank rep then ignore" strategies
+- Require careful tuning to avoid frustrating players who naturally explore slowly
+
+This is a design decision, not a lockout risk mitigation.
+
+### Covenant of Dusk Ripple Clarity
+The `covenant_of_dusk_loss` ripple gives Red Court +1. If a player wants a Throne ending (Red Court-aligned), antagonizing Covenant of Dusk is actually helpful. This is unintuitive and could be documented in-world via NPC dialogue.
+
+---
+
+## 7. Severity-Ranked Backlog
+
+| # | Issue | Severity | Type | Recommendation |
+|---|-------|----------|------|----------------|
+| 1 | Active spiral lock possible if player takes -1 rep damage per cycle on antagonized faction | Medium | Design gap | Acceptable by design; document in player-facing hints |
+| 2 | Covenant of Dusk antagonization silently helps Red Court via ripple | Low | Design clarity | Add NPC dialogue hinting at this dynamic |
+| 3 | No decay system — players can ignore faction relationships after banking rep | Low | Design gap | Evaluate decay for cycle 2+ gameplay |
+| 4 | Ferals have no content gate and no grantRep paths — rep tracking is vestigial | Trivial | Dead code | Remove Ferals from `factionReputation` tracking or add content |
+| 5 | `requiresRep` min: 2 on one Salters branch (Briggs) — highest gate in the game | Trivial | Documentation | Already achievable; no change needed |
+| 6 | Lucid utility route: requiresRep lucid min: 1 is the only rep gate on an Elder who is primarily Sanguine, not Lucid | Trivial | Type clarity | Confirm Elder Sanguine faction assignment in game docs |
+
+---
+
+*Simulation conducted using real `createCycleSnapshot` and `computeInheritedReputation` from `lib/echoes.ts`. All 9 factions simulated across rep range [-5, +5] with 136 passing assertions. No crashes or unexpected states found.*

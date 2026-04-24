@@ -197,7 +197,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         discoverSkill: 'perception',
         discoverDc: 16,
         discoverMessage: 'You notice a section of the bookshelf that doesn\'t align with the wall behind it.',
-        questGate: 'vesper_trust_level_3',
+        questGate: 'vesper_shared_origin',
       },
     },
     items: [],
@@ -210,9 +210,9 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         spawnType: 'unique',
         quantity: { min: 1, max: 1, distribution: 'single' },
         activityPool: [
-          { desc: 'Vesper stands at the chalkboard, writing something in the lower margin of a notation that covers the board from edge to edge. They turn when you enter. "Sit down. I\'ve been thinking about you."', weight: 3 },
-          { desc: 'Vesper reads from a bioethics text with a pencil in hand, the margins being covered in careful commentary. They look up over the book. Something behind their eyes measures the distance.', weight: 2 },
-          { desc: 'Vesper is at the window, looking south toward the drive. Not watching anything specific. Thinking. "The blood tithe works," they say, not turning around. "The question I can\'t resolve is whether it should."', weight: 2 },
+          { desc: 'Vesper stands at the chalkboard, writing something in the lower margin of a notation that covers the board from edge to edge. She turns when you enter. "Sit down. I\'ve been thinking about you."', weight: 3 },
+          { desc: 'Vesper reads from a bioethics text with a pencil in hand, the margins being covered in careful commentary. She looks up over the book. Something behind her eyes measures the distance.', weight: 2 },
+          { desc: 'Vesper is at the window, looking south toward the drive. Not watching anything specific. Thinking. "The blood tithe works," she says, not turning around. "The question I can\'t resolve is whether it should."', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.4, neutral: 0.5, wary: 0.1 },
         dialogueTree: 'vesper_philosophy_main',
@@ -234,15 +234,19 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         questGate: 'vesper_trust_level_2',
       },
       {
+        keywords: ['rook', 'pens', 'red court', 'facility', 'castellan'],
+        description: 'You mention The Pens. Vesper sets down her pencil — the same deliberate gesture she uses when something requires her full philosophical attention. "I know what Rook has built," she says. "The efficiency of it. The clinical precision. The argument that it works." She is quiet for a moment. "The Red Court\'s approach treats the symptom and becomes the disease. They have taken the fact of what we need and built a machine around it, and the machine requires more fuel than the need ever did. Rook understands this. I have read what Rook writes when Rook is not performing the role of castellan." She looks at the bookshelf, at a specific gap between volumes. "The difference between the Covenant and The Pens is not the blood. It is whether the arrangement serves the people inside it or whether the people inside it serve the arrangement. Rook has allowed the question to answer itself, and the answer is institutional."',
+      },
+      {
         keywords: ['biometric', 'vesper', 'sanguine', 'access', 'scanner', 'meridian', 'physiology'],
-        description: 'You ask Vesper about MERIDIAN\'s biometric locks — the ones keyed to Sanguine physiology. Vesper sets down the pencil. The room gets quieter, which should not be possible in a room that was already quiet. "You know what you\'re asking," they say. Not a question. "The facility was built to accept us. The locks were designed for our biology. That means someone at MERIDIAN wanted us to be able to enter. Or wanted to make sure we couldn\'t leave." Vesper extends their hand, palm up. The veins beneath the pale skin pulse with something that is not quite the rhythm of a human heart. "I will give you what you need. My biometric signature, recorded on the equipment in the sub-basement, will open the scanner. But I want you to understand what it means that the door was built for us. We were always part of this. The question is whether we were the experiment or the experimenters." They press their thumb to a glass slide on the desk — the impression glows faintly blue-green for a moment before stabilizing. "Take it. The scanner will accept it. And when you\'re inside, remember that the people who built those locks knew exactly what we are."',
+        description: 'You ask Vesper about MERIDIAN\'s biometric locks — the ones keyed to Sanguine physiology. Vesper sets down the pencil. The room gets quieter, which should not be possible in a room that was already quiet. "You know what you\'re asking," she says. Not a question. "The facility was built to accept us. The locks were designed for our biology. That means someone at MERIDIAN wanted us to be able to enter. Or wanted to make sure we couldn\'t leave." Vesper extends her hand, palm up. The veins beneath the pale skin pulse with something that is not quite the rhythm of a human heart. "I will give you what you need. My biometric signature, recorded on the equipment in the sub-basement, will open the scanner. But I want you to understand what it means that the door was built for us. We were always part of this. The question is whether we were the experiment or the experimenters." She presses her thumb to a glass slide on the desk — the impression glows faintly blue-green for a moment before stabilizing. "Take it. The scanner will accept it. And when you\'re inside, remember that the people who built those locks knew exactly what we are."',
         questGate: 'duskhollow_cistern_contamination_identified',
-        skillCheck: { skill: 'negotiation', dc: 11, successAppend: 'Vesper watches you take the biometric slide and something shifts behind their eyes — not relief, not fear. Recognition. "You\'re the first person who\'s asked for this who I believe will come back to tell me what they found. Most people who go to MERIDIAN are looking for answers. You\'re looking for the right questions. That is the only reason I\'m helping you." The slide is warm in your hand. It should not be warm. It is.' },
+        skillCheck: { skill: 'negotiation', dc: 11, successAppend: 'Vesper watches you take the biometric slide and something shifts behind her eyes — not relief, not fear. Recognition. "You\'re the first person who\'s asked for this who I believe will come back to tell me what you found. Most people who go to MERIDIAN are looking for answers. You\'re looking for the right questions. That is the only reason I\'m helping you." The slide is warm in your hand. It should not be warm. It is.' },
         questFlagOnSuccess: { flag: 'sanguine_biometric_obtained', value: true },
         reputationGrant: { faction: 'covenant_of_dusk', delta: 1 },
       },
     ],
-    narrativeNotes: 'Vesper is the most intellectually complex NPC in the game. The blood tithe ethics debate is the heart of the Covenant quest chain. The hidden sub-basement access is either Perception 16 or Vesper\'s trust. The biometric quest requires covenant_of_dusk reputation >= 1.',
+    narrativeNotes: 'Vesper is the most intellectually complex NPC in the game. The blood tithe ethics debate is the heart of the Covenant quest chain. The hidden sub-basement access is either Perception 16 or Vesper\'s trust. The biometric quest requires covenant_of_dusk reputation >= 1. Vesper uses she/her pronouns.',
   },
 
   {
@@ -287,8 +291,31 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         dialogueTree: 'tithe_human_perspective',
         narrativeNotes: 'Appears during night and dusk hours',
       },
+      // --- [RIDER E: remnant-story-0329] Dory tithe witness scene ---
+      {
+        npcId: 'dory',
+        spawnChance: 0.90,
+        spawnType: 'event',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          {
+            desc: 'The sanctuary is different now. The candles have been arranged in a specific pattern — not decoration, protocol. A woman sits in a high-backed chair, her sleeves rolled to the elbow, her expression composed. Not afraid. Resigned in the way that someone who has made a calculation is resigned. A Sanguine kneels beside her. Their movements are careful, deliberate, almost tender. The woman closes her eyes. The Sanguine places their mouth against the inside of her wrist. There is no violence in it. That is somehow worse.',
+            weight: 3,
+            timeRestrict: ['dusk', 'night'],
+          },
+        ],
+        dispositionRoll: { neutral: 0.7, wary: 0.2, friendly: 0.1 },
+        narrativeNotes: 'Witness scene. Gate: covenant_of_dusk_invited. Exclude: witnessed_tithe_system. Sets witnessed_tithe_system via extras below.',
+      },
+      // --- [/RIDER E] ---
     ],
     extras: [
+      // --- [RIDER E] Tithe witness trigger ---
+      {
+        keywords: ['woman', 'dory', 'tithe', 'witness', 'scene'],
+        description: 'The arrangement here is formal in a way the chart and the chairs did not prepare you for. It is not a procedure. It is a covenant. The word lands with its full weight.',
+        questFlagOnSuccess: { flag: 'witnessed_tithe_system', value: true },
+      },
       {
         keywords: ['chart', 'names', 'schedule', 'record'],
         description: 'The chart tracks four people: MAYA (weekly, 400ml, GREEN). TORRES (biweekly, 350ml, GREEN). CHEN (weekly, 425ml, YELLOW). DALE (triweekly, 300ml, GREEN). The yellow indicator for Chen has a handwritten note: "Recommend reduction to biweekly pending iron recovery." Someone monitors health here. The concern is about supply continuity, but it\'s still concern.',
@@ -302,6 +329,23 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         keywords: ['anticoagulant', 'chemicals', 'supplies', 'storage'],
         description: 'The supplies are well-stocked and organized. A second inventory list is maintained separately: expiration dates, reorder points, current quantities. Someone keeps this room supplied. The supply chain for anticoagulants in a post-Collapse world is not trivial. The Covenant has relationships you don\'t fully see.',
       },
+      // --- [RIDER E] Post-tithe extras (gated on witnessed_tithe_system) ---
+      {
+        keywords: ['woman', 'wrist', 'marks', 'dory'],
+        description: 'She is still here, after. The compress on her wrist is clean and tight. She sees you looking. \'Everyone looks at the wrists,\' she says.',
+        questGate: 'witnessed_tithe_system',
+      },
+      {
+        keywords: ['why', 'chose', 'choice'],
+        description: '\'I chose this. That\'s the part people forget. My son needed medicine the Covenant provides. The math works out.\' She looks at the compress. \'The math has always worked out.\'',
+        questGate: 'witnessed_tithe_system',
+      },
+      {
+        keywords: ['hurt', 'pain', 'feel'],
+        description: '\'It doesn\'t hurt. Not the way you\'d think. It\'s like giving blood at a clinic. Except the clinic is a candlelit room and the nurse has been alive for two hundred years.\'',
+        questGate: 'witnessed_tithe_system',
+      },
+      // --- [/RIDER E] ---
     ],
     narrativeNotes: 'Central to the blood tithe questline. The chart with real names and health monitoring is the room\'s moral fulcrum — consent, care, exploitation, all present simultaneously. The human resident NPC perspective is critical.',
   },
@@ -347,7 +391,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
       },
       {
         keywords: ['staff', 'workers', 'people', 'human'],
-        description: 'The staff make eye contact but don\'t volunteer information until you ask. When asked directly about their arrangement with the Covenant, the cook considers the question carefully: "Safer here than anywhere else I know. Vesper keeps his word. The ones who want to leave can leave." Then, after a pause: "Nobody\'s left."',
+        description: 'The staff make eye contact but don\'t volunteer information until you ask. When asked directly about their arrangement with the Covenant, the cook considers the question carefully: "Safer here than anywhere else I know. Vesper keeps her word. The ones who want to leave can leave." Then, after a pause: "Nobody\'s left."',
       },
       {
         keywords: ['table', 'kitchen table', 'meals', 'eating'],
@@ -364,7 +408,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     act: 2,
     difficulty: 2,
     visited: false,
-    flags: { dark: true, scavengingZone: false },
+    flags: { dark: true, scavengingZone: false, combat_darkness: true },
     description: 'The cellar is stone-walled and cool, the kind of cool that comes from depth and mass rather than any mechanical intervention. Racks of bottles line every wall — actual wine in the near section, and in the back section, labeled differently: smaller bottles, darker glass, stoppered with wax. The bloodwine production process is visible: separation vessels, filtration equipment, blending trays. A handwritten recipe book on the counter, bound in leather, describes the process with the precision of a winemaker who takes the craft seriously regardless of the ingredient.',
     descriptionNight: 'The cellar at night has a staff member working the production stage — slow careful work, no rush. The Covenant doesn\'t rush. They have time.',
     shortDescription: 'The wine cellar. Bloodwine production. Alchemy.',
@@ -381,7 +425,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
       { entityId: 'scrap_metal', spawnChance: 0.5, quantity: { min: 1, max: 2, distribution: 'flat' } },
     ],
     hollowEncounter: {
-      baseChance: 0.35,
+      baseChance: 0.05, // Sanguine maintain their territory — high Hollow rates inside the manor are implausible
       timeModifier: { night: 1.5, dawn: 0.8, dusk: 1.2, day: 0.5 },
       threatPool: [
         { type: 'remnant', weight: 2, quantity: { min: 1, max: 1, distribution: 'flat' } },
@@ -421,11 +465,11 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     itemSpawns: [
-      { entityId: 'gallery_portrait_placard', spawnChance: 1.0, quantity: { min: 1, max: 1, distribution: 'flat' } },
+      { entityId: 'gallery_portrait_placard', spawnChance: 0.95, quantity: { min: 1, max: 1, distribution: 'flat' } }, // Bible hard cap: no spawn at 1.0
       { entityId: 'scrap_metal', spawnChance: 0.3, quantity: { min: 1, max: 1, distribution: 'flat' } },
     ],
     hollowEncounter: {
-      baseChance: 0.20,
+      baseChance: 0.03, // Lore room, not combat — Sanguine keep their gallery undisturbed
       timeModifier: { night: 1.6, dawn: 0.7, dusk: 1.3, day: 0.4 },
       threatPool: [
         { type: 'remnant', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
@@ -440,6 +484,16 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         keywords: ['dates', 'plates', 'brass', 'years'],
         description: 'The open-ended date ranges. You stand and count: fourteen subjects portrayed across the gallery\'s walls, and none of the end dates are filled in. They\'re all still alive. They\'ve been here for anywhere from sixty to two hundred years. This was an estate before the Collapse. This was an estate before industrialization.',
         skillCheck: { skill: 'lore', dc: 10, successAppend: 'If CHARON-7 only occurred in 2031, how are some of these portraits dated from the 1800s? The answer is either that the virus existed before MERIDIAN — or that MERIDIAN wasn\'t where it started.' },
+      },
+      {
+        keywords: ['canvas', 'paint', 'forgery', 'fabrication', 'materials', 'technique'],
+        description: 'The portraits are convincing. But convincing is a word that contains its own doubt.',
+        skillCheck: { skill: 'lore', dc: 14, successAppend: 'You examine the earliest portrait more carefully. The canvas aging is good — but canvas aging can be induced. The craquelure pattern is consistent with age, or with someone who understood how to accelerate it. The pigment chemistry would require laboratory analysis you can\'t perform here. What you can observe: the Covenant has every motivation to establish provenance that predates MERIDIAN. A history that stretches back centuries makes them original, not manufactured. It makes the Sanguine something ancient and enduring rather than a laboratory accident. You cannot determine from this gallery alone whether that history is real. You can determine that fabricating it would be well within the capabilities of beings who have had decades to practice the craft of being believed.' },
+      },
+      {
+        keywords: ['mou', 'sub-basement', 'document', 'memorandum', 'agreement', 'institutional'],
+        description: 'The portraits raise the question. The sub-basement may hold part of the answer.',
+        skillCheck: { skill: 'lore', dc: 14, successAppend: 'The Memorandum of Understanding in the sub-basement is harder to dismiss than painted canvas. Institutional formatting — the specific grammar of government documents, the cross-references to known MERIDIAN protocols, the procedural language that no forger would bother to get right because no one outside the bureaucracy would notice if it were wrong. Canvas can be aged. Oil can be cracked. But the MOU reads like a document written by people who expected it to be filed, not displayed. Whether that proves the Covenant\'s history or merely demonstrates the quality of a very thorough fabrication depends on what you are prepared to believe about beings who have had centuries to prepare their argument.' },
       },
     ],
     personalLossEchoes: {
@@ -556,10 +610,10 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     act: 2,
     difficulty: 3,
     visited: false,
-    flags: { hiddenRoom: true, dark: true, questHub: true },
-    description: 'Below the study, accessed through a bookshelf that swings on a counterweighted hinge, a room that wasn\'t in the original house plans. Stone walls, a single light, and a server rack that shouldn\'t exist — running, blinking, humming with the data of decades. The Covenant of Dusk maintains biometric records here: retinal scans, genetic sequences, physiological data on every Sanguine who has ever passed through Duskhollow. This data is what opens MERIDIAN\'s biometric locks. Vesper knows you\'re looking for it. The question Vesper is asking is: what will you do with it?',
-    descriptionNight: 'The sub-basement runs the same at night. The server\'s fans don\'t know what time it is. The data accumulates.',
-    shortDescription: 'Hidden sub-basement. Sanguine biometric data. MERIDIAN access.',
+    flags: { hiddenRoom: true, dark: true, questHub: true, combat_darkness: true, combat_narrow_passage: true },
+    description: 'Below the study, through a bookshelf on a counterweighted hinge, a room that wasn\'t in the original house plans. The walls are older than the rest of Duskhollow — dressed stone in a style that predates the Victorian architecture above, which means this sub-basement was here before the house was built around it. Someone built a cellar centuries ago, and the Covenant found it, and now it holds a server rack humming with decades of biometric data. The smell is cold stone and ozone and old damp that no ventilation system has quite solved. Retinal scans, genetic sequences, physiological data on every Sanguine who has ever passed through. This data is what opens MERIDIAN\'s biometric locks. Vesper knows you\'re looking for it. The question Vesper is asking is: what will you do with it?',
+    descriptionNight: 'The sub-basement runs the same at night. The server\'s fans don\'t know what time it is. The data accumulates. The stone walls are very old and the cold they hold is a different kind of cold from the surface.',
+    shortDescription: 'Hidden sub-basement. Stone older than the house. Sanguine biometric data. MERIDIAN access.',
     exits: { up: 'dh_04_vespers_study' },
     richExits: {
       up: { destination: 'dh_04_vespers_study', descriptionVerbose: 'back up through the bookshelf passage' },
@@ -575,12 +629,27 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
       },
       {
         keywords: ['history', 'records', 'old', 'years'],
-        description: 'The oldest records date from the late 1990s. The Covenant of Dusk was here before MERIDIAN. They were watching. Providing samples. One entry from 2025 is a research agreement: MERIDIAN FACILITY — DUSKHOLLOW COVENANT MEMORANDUM OF UNDERSTANDING. The Covenant participated in MERIDIAN\'s development willingly. They were partners.',
+        description: 'The oldest records date from the late 1990s. The Covenant of Dusk was here before MERIDIAN. They were watching. Providing samples. One entry from 2025 is a research agreement: MERIDIAN FACILITY — DUSKHOLLOW COVENANT MEMORANDUM OF UNDERSTANDING. The document\'s formatting matches known MERIDIAN protocols. Whether that proves authenticity or demonstrates the quality of the forgery depends on what you\'re prepared to believe. If genuine, the Covenant participated in MERIDIAN\'s development willingly. They were partners. If fabricated, someone understood MERIDIAN\'s institutional grammar well enough to reproduce it — and had reason to want this partnership on the record.',
         cycleGate: 2,
       },
+      {
+        keywords: ['walls', 'stone', 'old', 'construction', 'cellar', 'original'],
+        description: 'The stone is not the same stone as the house above. Up there: Victorian coursed masonry, nineteenth century, limestone cut to fit. Down here: rougher work, older, the mortar a different composition that has carbonated over centuries into something nearly as hard as the stone itself. Someone built this cellar before there was a house. Before there was a Duskhollow. The Covenant found it and understood what it was: a room that was already keeping secrets.',
+        skillCheck: { skill: 'lore', dc: 11, successAppend: 'The construction style matches Spanish colonial foundations from the seventeenth century — the region had significant colonial presence before American settlement. Someone was here three hundred years ago, building underground, building to last, building something they didn\'t want found. The Covenant of Dusk has been here longer than the house. Possibly longer than the country.' },
+      },
+      {
+        keywords: ['smell', 'air', 'cold', 'temperature', 'damp'],
+        description: 'The cold here is different from the surface cold — older, bone-deep, the temperature of earth that hasn\'t seen direct sunlight in three centuries. The damp smells of limestone and time. Whatever was stored here before the server rack, before the Covenant, before the house — whatever this room\'s first purpose was — the stone remembers the weight of it without telling you what it was.',
+      },
     ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The server fans are the only sound. The stone walls absorb everything else. You are aware of how far below the study you are, and how thick the stone is above you.', chance: 0.30, time: null },
+        { line: 'A drop of water falls from somewhere in the ceiling — the seam between old stone and new mortar, where three centuries of small compromises have accumulated. The drop hits the floor and is the loudest thing in the room.', chance: 0.20, time: null },
+      ],
+    },
     hollowEncounter: {
-      baseChance: 0.90,
+      baseChance: 0.63, // Reduced from 0.90: at night modifier 1.5, effective rate is 0.63 * 1.5 = 0.945, staying under the engine's 0.95 clamp ceiling
       timeModifier: { night: 1.5, dawn: 1.0, dusk: 1.2, day: 0.8 },
       threatPool: [
         { type: 'whisperer', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
@@ -726,7 +795,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     act: 2,
     difficulty: 3,
     visited: false,
-    flags: { dark: true, scavengingZone: true },
+    flags: { dark: true, scavengingZone: true, combat_darkness: true, combat_collapsing: true },
     description: 'The hollow\'s geography makes this edge unmistakable: the ground drops sharply here, and the tree line begins without transition — one step is scrub and packed earth, the next is the dark between old trunks that block the sky. The settlement uses this rim as a perimeter, but the patrols are irregular and everybody knows it. Boot marks in the dirt show where the patrol walks. The gaps between marks show where it doesn\'t. The tree line is quiet in the way that means something has learned to be quiet there. You stand at the edge and look in. The dark looks back.',
     descriptionNight: 'At night the rim is where the Hollow come from. The tree line goes completely black, and whatever is in there navigates by routes you cannot trace. The patrol marks in the dirt are from hours ago. Nobody has walked this in hours.',
     descriptionDawn: 'In the grey hour before light, the rim is the most dangerous place in Duskhollow. The Hollow that pushed in during darkness haven\'t yet retreated. The tree line holds them temporarily, the way a shore holds water before the tide turns.',
@@ -935,7 +1004,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     act: 2,
     difficulty: 3,
     visited: false,
-    flags: { waterSource: true, scavengingZone: true },
+    flags: { waterSource: true, scavengingZone: true, combat_darkness: true },
     description: 'The cistern is pre-Collapse construction — poured concrete, reinforced, sunk into the bedrock of the hollow where the water table is still accessible. A hand pump stands at the edge, well-maintained by necessity. The access hatch is heavy steel, counterweighted so one person can open it alone, and it shows use: the counterweight mechanism is worn smooth at the grip point, the hatch rim scraped by the same hands doing the same thing every day for years. The cistern is what Duskhollow runs on. Without it, there is no settlement. Someone knows this. Someone has been down here who shouldn\'t have been.',
     descriptionNight: 'At night the cistern area is quiet and poorly lit. The pump handle casts a long shadow. The access hatch is visible from the tithe house window but that window faces the other direction. Nobody watches the cistern at night.',
     shortDescription: 'The settlement\'s water supply. Pre-Collapse construction. Someone tampered with it.',
@@ -1061,6 +1130,18 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         dispositionRoll: { neutral: 0.6, wary: 0.3, friendly: 0.1 },
         dialogueTree: 'chapel_visitor_market',
       },
+      {
+        npcId: 'duskhollow_child',
+        spawnChance: 0.45,
+        spawnType: 'wanderer',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'A child moves through the market with the unhurried confidence of someone who has grown up among these blankets and these faces. They carry a small bundle — an errand, not play — and navigate the dim light without hesitation. The hollow\'s rhythms are the only rhythms they know: the late hours, the low voices, the particular quality of a life lived in candlelight and shadow. They are not afraid of the dark. The dark is where their world happens.', weight: 3, timeRestrict: ['night', 'dusk'] },
+          { desc: 'A child sits cross-legged beside a market blanket, sorting dried goods into neat piles with the focused seriousness of someone who has been given a real task and intends to do it well. They look up at you without the wariness adults here carry. Not trusting, exactly. Just not yet trained to distrust.', weight: 2, timeRestrict: ['night'] },
+        ],
+        dispositionRoll: { friendly: 0.4, neutral: 0.5, wary: 0.1 },
+        narrativeNotes: 'A child adapted to Duskhollow\'s unusual rhythms. They are awake when most children sleep, comfortable in near-darkness, integrated into the settlement\'s nocturnal economy. Their presence deepens the moral complexity — children are growing up inside this arrangement.',
+      },
     ],
     itemSpawns: [
       { entityId: 'boiled_rations', spawnChance: 0.75, quantity: { min: 1, max: 3, distribution: 'flat' }, timeModifier: { night: 1.5, dusk: 1.2 } },
@@ -1073,9 +1154,9 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     environmentalRolls: {
       ambientSoundPool: {
         night: [
-          { sound: 'Low voices, close, overlapping like water over stones.', weight: 3 },
+          { sound: 'Low voices carry from deeper in the market — close enough to be present, too low to make out words.', weight: 3 },
           { sound: 'The soft sound of goods being set down and picked up and set down again.', weight: 2 },
-          { sound: 'Someone laughing quietly — the specific laugh of someone who has remembered they can.', weight: 1 },
+          { sound: 'Laughter from somewhere in the hollow — quiet, brief, the sound of people who haven\'t forgotten how.', weight: 1 },
         ],
         dusk: [
           { sound: 'The market setting up: blankets unfolding, the dull sound of goods placed on cloth.', weight: 3 },

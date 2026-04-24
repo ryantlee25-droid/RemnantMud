@@ -24,7 +24,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       west: 'cr_01_approach',
       east: 'rr_02_bridge_ruins',
     },
-    items: ['scrap_vest'],
+    items: [],
     enemies: [],
     npcs: [],
     extras: [
@@ -57,6 +57,13 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       },
     ],
     itemSpawns: [
+      {
+        entityId: 'scrap_vest',
+        spawnChance: 0.60,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.3, max: 0.7 },
+        groundDescription: 'A scrap vest lies crumpled in the ditch, dropped or abandoned. The plates are dented but intact.',
+      },
       {
         entityId: 'empty_water_bottle',
         spawnChance: 0.30,
@@ -92,7 +99,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
           { sound: null, weight: 2 },
         ],
         night: [
-          { sound: 'The river sounds louder at night. Everything else has gone quiet.', weight: 3 },
+          { sound: 'The river sounds louder at night — the bank sounds, the insects, the distant road noise all gone. Just moving water, and whatever is moving with it.', weight: 3 },
           { sound: 'Something moves in the juniper to the south. Heavy. Slow. Probably an elk. Probably.', weight: 2 },
           { sound: 'Distant gunfire. Two shots, east. Then nothing.', weight: 1 },
           { sound: null, weight: 2 },
@@ -308,6 +315,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       south: 'rr_03_east_bank',
       north: 'rr_06_the_narrows',
       east: 'rr_14_riverbank_camp',
+      west: 'rr_19_old_highway_rest',
     },
     items: [],
     enemies: [],
@@ -403,6 +411,17 @@ export const RIVER_ROAD_ROOMS: Room[] = [
         ],
       },
     },
+    personalLossEchoes: {
+      child: 'The dog watches from the ditch, body low, tail still. Deciding. You have seen that look before — the calculation of trust, the weighing of whether this person is safe. Children do it too, with different eyes and the same math. The dog decides. The child decided too, once, long ago, and chose you. That decision is the thing you carry heavier than anything in your pack.',
+      partner: 'STILL ALIVE, scratched into the dust on a tailgate in shaky handwriting. The message was for someone specific — not you, not the world, but one person who might come this way and see it. You left messages like that. In the early days. On walls, on paper, on anything that held a mark. The messages stopped when you accepted that the person they were for wasn\'t coming to read them.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The river catches the light and throws it against the truck\'s spiderweb windshield. For a moment the fractures glow, a constellation of damage made briefly beautiful.', chance: 0.20, time: ['day', 'dawn'] },
+        { line: 'The dog\'s ears swivel toward something upstream. It holds the posture for five seconds, then relaxes. Whatever it heard has passed or wasn\'t real.', chance: 0.15, time: null },
+        { line: 'Weeds push through a seam in the asphalt with enough force to split the road surface. Seven years is enough for the land to start reclaiming what was taken from it.', chance: 0.15, time: null },
+      ],
+    },
     narrativeNotes:
       'This is the showcase room from the Room Display Spec. First real Hollow encounter zone. The dog spawn is critical — this is where the player\'s relationship with the game\'s most emotionally significant NPC potentially begins.',
   },
@@ -417,11 +436,11 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     visited: false,
     flags: { safeRest: false, waterSource: true },
     description:
-      'A mile south of the broken bridge, the Animas widens and shallows over a broad gravel bar. Ankle-deep at the edges, knee-deep at the center. Cart tracks mark the crossing on both banks — this is where heavy loads go. The water is cold and fast but manageable. Flat stones break the current into channels. Someone has placed stepping stones across the deepest section, not quite evenly spaced.',
+      'A mile south of the broken bridge, the Animas widens and shallows over a broad gravel bar. Ankle-deep at the edges, knee-deep at the center — the cold hits your shins like a physical argument. Cart tracks scar both banks where wheels have been hauled through the shallows, the ruts deep enough to hold water after the last crossing. Flat stones break the current into channels you can feel pushing sideways against your boots if you stop moving. Someone placed stepping stones across the deepest section: flat river slabs, not quite evenly spaced, settled at the angle the current pushed them to years ago. The water is clear down to gravel and the pale flash of trout. The far bank is thirty feet away and the current is faster than it looks.',
     descriptionNight:
-      'The ford is audible as a broad hiss of water over stone. In moonlight, the shallows are silver sheets. The stepping stones are dark humps in the current. Missing one would mean wet boots at best, a dunking at worst.',
+      'The ford is audible before it\'s visible — a broad hiss of water over stone that fills the valley. In moonlight, the shallows are silver sheets of moving light. The stepping stones are dark humps in the current, and the gaps between them require trust you don\'t fully have. The water is the same cold it is in daylight. It doesn\'t adjust for the dark.',
     shortDescription:
-      'A mile south of the broken bridge, the Animas widens and shallows over a broad gravel bar.',
+      'The Animas widens and shallows at the ford — knee-deep, cold, fast, and thirty feet to the other bank.',
     exits: {
       north: 'rr_02_bridge_ruins',
       east: 'rr_03_east_bank',
@@ -434,19 +453,32 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       {
         keywords: ['stepping stones', 'stones', 'crossing'],
         description:
-          'Flat stones, placed deliberately but not recently — they\'ve settled into the riverbed. The gaps between them are a long stride for a tall person, a jump for a short one. Whoever placed them wasn\'t thinking about children.',
+          'Flat stones, placed deliberately but not recently — they\'ve settled into the riverbed at current-pushed angles. The gaps between them are a long stride for a tall person, a jump for a short one. Whoever placed them wasn\'t thinking about children. They\'re deep enough that the water runs over them at the edges; you have to feel for the center of each stone through the current pressure on your boot.',
       },
       {
         keywords: ['cart tracks', 'tracks', 'banks'],
         description:
-          'Deep ruts on both banks where carts have been hauled through the shallows. The Drifters use this crossing for their trade caravans. It adds two hours versus the bridge, but a loaded cart can\'t cross on cable and plank.',
+          'Deep ruts on both banks where carts have been hauled through the shallows, the mud below the waterline preserved cold and dense. The Drifters use this crossing for their trade caravans. It adds two hours versus the bridge, but a loaded cart can\'t cross on cable and plank. The ruts are the Drifters\' signature on this land: regular, practical, unannounced.',
       },
       {
-        keywords: ['water', 'river', 'current'],
+        keywords: ['water', 'river', 'current', 'cold'],
         description:
-          'Cold. Mountain snowmelt cold. Your legs will ache after thirty seconds. But the water is clean and the footing is solid gravel. Worse crossings exist.',
+          'Mountain snowmelt cold — the kind that removes sensation from your lower legs in thirty seconds and starts on your knees by sixty. The current is stronger at mid-crossing than it looks from the bank: you can feel it as a constant lateral push that wants you downstream. The footing is solid gravel but the gravel shifts where the current has scoured it. You place each foot carefully. You take your time.',
+        skillCheck: { skill: 'survival', dc: 7, successAppend: 'You read the current before you commit to the line: the shallower channel runs north of the stepping stones, slightly longer but with less lateral force. The difference between this crossing and a dunking is which line you choose. You choose the shallow line.' },
+      },
+      {
+        keywords: ['depth', 'footing', 'balance', 'wade', 'wading'],
+        description:
+          'At the center of the crossing, knee-deep, with the current pushing and the cold working up your thighs, you understand why people use this ford instead of the bridge: this discomfort is honest. The cable bridge might be easier but the ford asks something of you and pays you in the knowledge that you did it. The water is so clear you can watch your own boots on the gravel bottom, picking their way forward.',
       },
     ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The river sounds like static here — broad and white-noise constant. After a moment it stops sounding like static and starts sounding like something speaking very fast in a language you almost know.', chance: 0.25, time: null },
+        { line: 'Halfway across, your boots find the gravel and the cold finds your knees and the current makes its case and you are exactly as committed as you are going to be.', chance: 0.20, time: null },
+        { line: 'A trout holds position in the current three feet to your right, perfectly still in the moving water, doing effortlessly what costs you everything.', chance: 0.15, time: ['day', 'dawn'] },
+      ],
+    },
     personalLossEchoes: {
       child: 'The stepping stones are spaced for a tall person\'s stride. You think about small legs and the math of it — the gap too wide, the water too fast, the hand you would have offered. The stones don\'t care who crosses them. You do.',
       partner: 'Cold water. You remember wading somewhere together, the shock of it, the laughter. The Animas doesn\'t care about your memory. It runs over the stones the same way it would have run over both of you, and you cross alone and your boots are wet and that\'s all.',
@@ -607,6 +639,11 @@ export const RIVER_ROAD_ROOMS: Room[] = [
         skillCheck: { skill: 'survival', dc: 12, successAppend: 'Game trail, overlaid on something older — a human path, abandoned. It leads west and up, toward the high ridges. If you had to guess, it connects to the mountain forest the locals call The Pine Sea.' },
         cycleGate: 2,
       },
+      {
+        keywords: ['broadcast', 'radio', 'signal', 'frequency'],
+        description:
+          'One of the scouts mentions it unprompted: "Signal\'s stronger here at night. Twelve words, repeating. Sparks at Crossroads has been logging it for weeks." He taps the side of his radio and shrugs. "Command says ignore it. Hard to ignore something that won\'t stop talking."',
+      },
     ],
     npcSpawns: [
       {
@@ -669,6 +706,11 @@ export const RIVER_ROAD_ROOMS: Room[] = [
         keywords: ['grass', 'yard', 'overgrown'],
         description:
           'Wild grass, waist-high. Could be hiding anything. You push through carefully. Your hand brushes something hard in the grass — a bicycle wheel, spokes bent, tire rotted. A child\'s bike.',
+      },
+      {
+        keywords: ['radio', 'static', 'rubble', 'receiver'],
+        description:
+          'Half-buried in the kitchen rubble, a shortwave receiver. The case is melted on one side, the dial fused at 7.245 MHz. You turn it over and the battery compartment is empty, but when you hold it to your ear out of habit, you hear — nothing. Or almost nothing. A hum in the casing, like the metal remembers the last signal it carried. 7.245 is the frequency Sparks has been tracking.',
       },
     ],
     personalLossEchoes: {
@@ -738,6 +780,13 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     difficulty: 1,
     visited: false,
     flags: { safeRest: true, campfireAllowed: true, waterSource: true },
+    personalLossEchoes: {
+      child: 'The birdsong. They would have stopped to listen. They would have asked you what kind and you would have made something up and they would have believed you because children believe their parents about birds. The cottonwoods don\'t care about your answer. The woodpecker keeps drumming.',
+      partner: 'Beautiful places were yours together. You collected them — a viewpoint, a quiet beach, a trail through trees exactly like this one. The collection belongs to no one now. The beauty is still here. The sharing of it is not.',
+      community: 'The cottonwoods have been here a hundred years, growing together, their root systems intertwined underground where you can\'t see it. A community of trees. You had a community of people. The trees are still standing.',
+      identity: 'You know cottonwood by the sound of its leaves. You know the smell of the river. You know these things and you don\'t know how, and in a place this beautiful the not-knowing feels less like a wound and more like a door you haven\'t found the key to.',
+      promise: 'For fifty yards you could forget what the world has become. You promised someone you would find a place like this — safe, quiet, beautiful. You found it. They\'re not here to see it. The promise echoes in the birdsong and doesn\'t resolve.',
+    },
     description:
       'The trail follows the river through a corridor of towering cottonwood trees, their canopy so dense the light filters down in green-gold shafts. The river runs beside you, wide and slow in this section, with deep pools where the current eddies against fallen logs. The air is cooler here, ten degrees below the open road. Birdsong. Actual birdsong. A woodpecker hammers somewhere upstream. For fifty yards, you could forget what the world has become.',
     descriptionNight:
@@ -809,7 +858,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     richExits: {
       down: {
         destination: 'rr_10b_bus_interior',
-        descriptionVerbose: 'climb into the bus through the emergency exit',
+        descriptionVerbose: 'the emergency exit hatch hangs open on the bus\'s underside — dark inside, and something moving',
         skillGate: { skill: 'vigor', dc: 8, failMessage: 'The sounds from inside the bus root you to the spot. You\'re not ready for this.' },
       },
     },
@@ -866,11 +915,17 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     description:
       'The bus is on its side, so the floor is the windows and the ceiling is the opposite row of seats. You crawl in through the emergency exit. The air is thick — decay, mold, and something sour. The seats are torn. Papers, backpacks, and lunch boxes form a layer of mulch on the \'floor.\' Shufflers turn toward you. They\'re small. They were children when this happened. They\'re not children now. They\'re not anything now. But they\'re the size of children, and your brain won\'t stop telling you that.',
     descriptionNight:
-      'Total darkness. The smell is worse. The sounds are closer. You can feel them moving before you see them.',
+      'The bus at night: the floor-windows are unreadable black, the row of seats above you a ceiling, the dark absolute past your light\'s reach. The smell is wet cloth and something sweet you\'d rather not identify. You hear them before you see them — not footsteps but weight shifting, a body adjusting against metal. They\'re already aware of you.',
     shortDescription:
       'The bus is on its side, so the floor is the windows and the ceiling is the opposite row of seats.',
     exits: {
       up: 'rr_10_overturned_bus',
+    },
+    richExits: {
+      up: {
+        destination: 'rr_10_overturned_bus',
+        descriptionVerbose: 'the emergency exit hatch above — daylight and open air, if you can get there',
+      },
     },
     items: [],
     enemies: [],
@@ -926,7 +981,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       'The road curves sharply around a rock outcrop, reducing visibility to about thirty feet in either direction.',
     exits: {
       south: 'rr_10_overturned_bus',
-      north: 'rr_12_covenant_outskirts',
+      north: 'rr_18_hanging_tree',
     },
     items: [],
     enemies: [],
@@ -943,6 +998,18 @@ export const RIVER_ROAD_ROOMS: Room[] = [
           'WATCH YOUR SIX in faded red spray paint. Below it, in different handwriting: RIP JACKSON. Below that: 4/17/35. Someone died here three years ago. The warning came after.',
       },
     ],
+    personalLossEchoes: {
+      child: 'WATCH YOUR SIX. RIP JACKSON. 4/17/35. Someone died here because they couldn\'t see what was coming. You think about the things you couldn\'t see coming — not around a blind corner in the road but around a blind corner in time, the future that was supposed to include them and didn\'t, the turn you couldn\'t have prepared for no matter how carefully you walked.',
+      partner: 'The river masks all sound. You can\'t hear what\'s behind you. There were conversations you had near water — the ocean, a lake, a kitchen sink running — where the sound covered the words and you had to stand close to hear each other. The closeness was the point. The water was the excuse. The bend offers no closeness. Just the inability to hear the thing that\'s coming.',
+      community: 'RIP JACKSON. 4/17/35. The warning came after. That\'s how community works sometimes — the lesson is paid for by someone who doesn\'t benefit from it. Jackson died and now everyone who passes this rock knows to watch their six. Your community paid for lessons too. Not everyone who paid was there to learn from them.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The river is loud here, loud enough that you stop and listen and cannot distinguish between water sound and something else. You move your hand to your weapon without deciding to.', chance: 0.25, time: null },
+        { line: 'A loose stone clatters down the rock face on the west side. Natural settling. Probably. The bushes on that shoulder are thick enough to hide anything up to human-sized.', chance: 0.20, time: null },
+        { line: 'Someone has scratched a tally of marks below the WATCH YOUR SIX graffiti. Eleven marks. Eleven people who read the warning and noted their passage. You are twelve.', chance: 0.15, time: ['day'] },
+      ],
+    },
     npcSpawns: [],
     itemSpawns: [],
     hollowEncounter: {
@@ -973,8 +1040,9 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     shortDescription:
       'The road widens as it approaches the first signs of Covenant.',
     exits: {
-      south: 'rr_11_the_bend',
+      south: 'rr_18_hanging_tree',
       north: 'cv_01_main_gate',
+      west: 'sc_01_outer_perimeter',
     },
     items: [],
     enemies: [],
@@ -1005,6 +1073,17 @@ export const RIVER_ROAD_ROOMS: Room[] = [
           { desc: 'A sentry on the wall raises a megaphone. \'Halt there. State your business and approach slowly.\'', weight: 3 },
           { desc: 'Two sentries watch from the towers. One tracks you with a scope. The other speaks into a radio.', weight: 2 },
         ],
+      },
+      {
+        npcId: 'covenant_wall_child',
+        spawnChance: 0.20,
+        spawnType: 'anchored',
+        activityPool: [
+          { desc: 'A child sits on the wall between the watchtowers, legs dangling, counting something on her fingers. She watches you approach with the flat assessment of someone who has learned to evaluate strangers by the way they walk. She holds up four fingers toward the sentry. Some kind of signal.', weight: 3 },
+          { desc: 'A boy of maybe nine leans over the wall, watching the buffer zone. He\'s sorting pebbles into piles on the parapet — by color, by size, by some system only he understands. He sees you and adds a pebble to one of the piles. You\'ve been categorized.', weight: 2 },
+          { desc: 'A child on the wall is drawing in a notebook, looking up at the road, looking down at the page. Recording. When you get closer, she turns the notebook away. "Sentry business," she says, with the gravity of someone who has been given a job and intends to keep it.', weight: 2 },
+        ],
+        narrativeNotes: 'Covenant raises its children pragmatic. This child is a lookout — unofficial, tolerated, effective. The counting/categorizing behavior shows adaptation: this is a kid who has found a way to be useful in a world that doesn\'t have room for uselessness.',
       },
     ],
     narrativeNotes:
@@ -1167,6 +1246,17 @@ export const RIVER_ROAD_ROOMS: Room[] = [
           'A trail cairn, Drifter-style. The side trail west is steep and unmarked beyond the cairn. It leads toward the breaks — the canyon country.',
       },
     ],
+    personalLossEchoes: {
+      child: 'The trail narrows and the boot prints thin out. Fewer people come this way. The terrain steepens and the water quickens and the easy part of the journey ends here without announcement. You carried them through terrain like this once — not literal terrain but the kind where the path narrows and the prints thin out and you had to be the one who knew the way even when you didn\'t.',
+      partner: 'The rapids are too fast to cross. The water tumbles over boulders in patterns that look chaotic but aren\'t — each current follows a path determined by the stone beneath it, the physics of flow around obstruction. Your grief moves the same way. Chaotic from outside. Determined by what\'s underneath.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'A fish leaps in the rapids — silver flash, a moment of weightless effort against the current, then gone. The river takes everything downstream eventually. Some things fight it longer than others.', chance: 0.20, time: ['day', 'dawn'] },
+        { line: 'The piñon pines here are stunted and twisted, their roots gripping exposed rock. They grow where nothing should grow, by deciding to grow there anyway.', chance: 0.15, time: null },
+        { line: 'The cairn at the junction has been recently maintained — someone added a stone to the top within the last week. The trail west is used. By whom is the question.', chance: 0.20, time: null },
+      ],
+    },
     npcSpawns: [],
     itemSpawns: [
       { entityId: 'smooth_river_stone', spawnChance: 0.6, quantity: { min: 1, max: 2, distribution: 'flat' } },
@@ -1440,13 +1530,22 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     exits: {
       east: 'rr_19_old_highway_rest',
       up: 'rr_22_motel_second_floor',
+      south: 'rr_21_motel_room7',
     },
     richExits: {
       east: {
+        destination: 'rr_19_old_highway_rest',
+        descriptionVerbose: 'east, back out to the highway rest',
+      },
+      south: {
         destination: 'rr_21_motel_room7',
         descriptionVerbose: 'Room 7 (locked — key required)',
         locked: true,
         lockedBy: 'room_key_motel',
+      },
+      up: {
+        destination: 'rr_22_motel_second_floor',
+        descriptionVerbose: 'a concrete stairwell at the building corner climbs to the second-floor walkway',
       },
     },
     items: [],
@@ -1537,7 +1636,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     shortDescription:
       'Room 7 was locked for a reason.',
     exits: {
-      west: 'rr_20_abandoned_motel',
+      north: 'rr_20_abandoned_motel',
     },
     items: [],
     enemies: [],
@@ -1597,6 +1696,12 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       'The second-floor walkway runs the length of the building, an exterior corridor with a rusted iron railing overlooking the parking lot.',
     exits: {
       down: 'rr_20_abandoned_motel',
+    },
+    richExits: {
+      down: {
+        destination: 'rr_20_abandoned_motel',
+        descriptionVerbose: 'the concrete stairwell at the building corner descends back to the parking lot below',
+      },
     },
     items: [],
     enemies: [],

@@ -1,0 +1,12 @@
+# Remnant MUD — Code Ownership
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything
+* @ryantlee25-droid
+
+# Critical paths — require explicit review
+lib/gameEngine.ts @ryantlee25-droid
+supabase/migrations/ @ryantlee25-droid
+lib/supabase.ts @ryantlee25-droid
+lib/supabaseMock.ts @ryantlee25-droid
+.env* @ryantlee25-droid

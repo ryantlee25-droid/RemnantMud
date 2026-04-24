@@ -108,6 +108,10 @@ export const COVENANT_ROOMS: Room[] = [
         keywords: ['marriage', 'announcement', 'congratulations'],
         description: 'The announcement reads: Dara Kellish and Tevan Morales are to be married at the Chapel on the 14th. All Covenant residents welcome. Bring nothing. Come anyway. Underneath, a dozen different hands have added their names.',
       },
+      {
+        keywords: ['denied', 'petition', 'intake', 'refugee', 'policy', 'limits'],
+        description: 'Pinned to the lower right corner of the notice board, half-covered by the marriage announcement: a printed form titled ACCORD REFUGEE INTAKE — PETITION FOR PROVISIONAL RESIDENCY. The boxes are filled in with careful handwriting — a family of four, arrived from the south corridor, two children under ten. Across the bottom, in red stamp ink: DENIED — INTAKE CAP REACHED — REVIEWED BY CIVIL COMMITTEE 14/3. Below the stamp, in smaller handwriting: Directed to temporary shelter outside eastern wall. Review period: 90 days. The form is dated eleven weeks ago. There is no follow-up form. The marriage announcement covers most of it, which may or may not be deliberate.',
+      },
     ],
     npcSpawns: [
       {
@@ -115,7 +119,7 @@ export const COVENANT_ROOMS: Room[] = [
         spawnChance: 0.85,
         spawnType: 'anchored',
         activityPool: [
-          { desc: 'A stout woman arranges canned goods on a table with the methodical precision of someone who counts inventory twice daily and trusts no one else to do it.', weight: 3 },
+          { desc: 'A stout woman arranges canned goods on a table by category, then by date stamp, rotating the older cans to the front. She does this without looking at them.', weight: 3 },
           { desc: 'A vendor calls prices in a steady singsong: "Water tabs, two pennies. Gauze, one penny. Come on, who needs gauze?"', weight: 2 },
         ],
         tradeInventory: ['purification_tabs', 'gauze', 'canned_food', 'salt_1kg'],
@@ -170,6 +174,7 @@ export const COVENANT_ROOMS: Room[] = [
       north: 'cv_04_courthouse',
       east: 'cv_08_riverside_district',
       west: 'cv_09_the_school',
+      up: 'cv_18_rooftop_garden',
     },
     richExits: {},
     items: [],
@@ -225,6 +230,7 @@ export const COVENANT_ROOMS: Room[] = [
       east: 'cv_13_granary',
       west: 'cv_10_the_chapel',
       up: 'cv_05_courthouse_upper',
+      down: 'cv_12_the_jail',
     },
     richExits: {
       up: {
@@ -251,7 +257,7 @@ export const COVENANT_ROOMS: Room[] = [
       },
       {
         keywords: ['clerk', 'standing desk', 'writing'],
-        description: 'The clerk is a young man, maybe twenty, who writes with the speed and legibility of someone who was genuinely good at school. He handles petitions, requests, and the enormous volume of paperwork that running eight hundred people apparently generates. He\'s been doing this for two years. He\'s getting better at knowing which questions the Marshal actually wants to hear.',
+        description: 'The clerk is a young man, maybe twenty, who writes fast and legibly — the handwriting of someone who took notes seriously and never stopped. He handles petitions, requests, and the enormous volume of paperwork that running eight hundred people apparently generates. He\'s been doing this for two years. He\'s getting better at knowing which questions the Marshal actually wants to hear.',
       },
       {
         keywords: ['bench', 'citizens', 'petition', 'waiting'],
@@ -264,9 +270,9 @@ export const COVENANT_ROOMS: Room[] = [
         spawnChance: 0.85,
         spawnType: 'anchored',
         activityPool: [
-          { desc: 'Marshal Cross sits at her desk reading a report, red pen in hand, marking something with the precise frustration of someone who has read this kind of bad news before.', weight: 3 },
+          { desc: 'Marshal Cross sits at her desk reading a report, red pen in hand. She marks a line, circles something, draws a hard underline under something else. She\'s been here before with bad news.', weight: 3 },
           { desc: 'Marshal Cross is standing at a wall map of the four-corners region, one hand tracing a route, lips moving slightly as she thinks out loud. She stops when she notices you.', weight: 2 },
-          { desc: 'Cross is in conversation with one of her lieutenants. Her voice is quiet but carries the cadence of someone who is being very precise about what she means.', weight: 2 },
+          { desc: 'Cross is in conversation with one of her lieutenants. Her voice is quiet but every word lands clearly — no filler, no hedging, no room for misinterpretation.', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.3, neutral: 0.5, wary: 0.2, hostile: 0.0 },
         dialogueTree: 'cv_marshal_cross_intro',
@@ -278,7 +284,7 @@ export const COVENANT_ROOMS: Room[] = [
         spawnChance: 0.90,
         spawnType: 'anchored',
         activityPool: [
-          { desc: 'The clerk writes without looking up, then glances at you with the polite, assessing expression of someone who has learned to categorize people quickly.', weight: 4 },
+          { desc: 'The clerk writes without looking up, then glances at you — one beat, a quick categorization — and returns to his ledger.', weight: 4 },
           { desc: 'The clerk is organizing a stack of papers into a filing system, murmuring to himself as he sorts. "Provisioning... provisioning... no, that\'s a grievance..."', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.4, neutral: 0.5, wary: 0.1, hostile: 0.0 },
@@ -305,8 +311,13 @@ export const COVENANT_ROOMS: Room[] = [
     exits: {
       down: 'cv_04_courthouse',
       north: 'cv_22_council_chamber',
+      east: 'cv_16_marshals_quarters',
     },
     richExits: {
+      down: {
+        destination: 'cv_04_courthouse',
+        descriptionVerbose: 'the stairs descend back to the courthouse main floor below',
+      },
       north: {
         destination: 'cv_22_council_chamber',
         reputationGate: { faction: 'accord', minLevel: 2 },
@@ -334,6 +345,10 @@ export const COVENANT_ROOMS: Room[] = [
         keywords: ['table', 'view', 'window', 'rooftops', 'mountain'],
         description: 'From the north window, Covenant\'s rooftops spread below — the patchwork of old buildings and new additions, chimneys sending up thin smoke, the tiny figures of people going about the enormous work of staying alive. Beyond the walls, the broken highway. Beyond that, the mountains. The view is the closest thing to perspective this building offers.',
       },
+      {
+        keywords: ['faction relations', 'salter', 'kindling', 'intelligence', 'report'],
+        description: 'The FACTION RELATIONS binder is open to the most recent page. A patrol summary dated this week reads: "Salter expansion vectors confirmed — three new observation posts along the south ridge, each within line-of-sight of our eastern supply route. Recommend diplomatic contact before they interpret our traffic as provocation. Briggs does not respond to diplomatic contact. Recommend contingency planning." Below it, clipped with a paper clip: a handwritten council note in Cross\'s pencil. "The Kindling have begun what they call \'purification experiments\' on volunteers at the cathedral settlement. Dr. Marsh believes the treatment involves controlled exposure to biological agents recovered from industrial sites. Mortality rate unknown but the Kindling are not reporting deaths. Request: intelligence-gathering mission to The Ember, voluntary basis only. Council vote: 4-3, approved with conditions."',
+      },
     ],
     npcSpawns: [
       {
@@ -341,7 +356,7 @@ export const COVENANT_ROOMS: Room[] = [
         spawnChance: 0.80,
         spawnType: 'anchored',
         activityPool: [
-          { desc: 'A lieutenant stands at the wall map with a marker in hand, updating a patrol route boundary with the methodical care of someone who knows this notation might save lives.', weight: 3 },
+          { desc: 'A lieutenant stands at the wall map with a marker, extending a patrol boundary line three centimeters east, then stepping back to look at it. She adds a second mark. Pauses. Leaves both.', weight: 3 },
           { desc: 'An officer sits at the long table, working through a binder page by page, occasionally making a note in the margin.', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.1, neutral: 0.5, wary: 0.4, hostile: 0.0 },
@@ -533,7 +548,7 @@ export const COVENANT_ROOMS: Room[] = [
         spawnChance: 0.75,
         spawnType: 'wanderer',
         activityPool: [
-          { desc: 'A woman tends her raised bed, pulling weeds with the focused attention of someone who finds this particular task genuinely satisfying.', weight: 3 },
+          { desc: 'A woman tends her raised bed, pulling weeds one-handed and shaking the roots clean before dropping them in a pile. She doesn\'t rush. This is the good part of the day.', weight: 3 },
           { desc: 'An older man sits on a stump at the river\'s edge, mending a shirt. He works without looking at his hands, watching the water.', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.5, neutral: 0.4, wary: 0.1, hostile: 0.0 },
@@ -786,8 +801,14 @@ export const COVENANT_ROOMS: Room[] = [
     exits: {
       up: 'cv_04_courthouse',
       east: 'cv_24_holding_cells',
+      down: 'cv_17_the_basement',
     },
-    richExits: {},
+    richExits: {
+      up: {
+        destination: 'cv_04_courthouse',
+        descriptionVerbose: 'a stairwell climbs back up to the courthouse main floor',
+      },
+    },
     items: [],
     enemies: [],
     npcs: [],
@@ -814,7 +835,7 @@ export const COVENANT_ROOMS: Room[] = [
     npcSpawns: [
       {
         npcId: 'prisoner_dell',
-        spawnChance: 1.0,
+        spawnChance: 0.95,
         spawnType: 'anchored',
         activityPool: [
           { desc: 'Dell sits on his cot, elbows on his knees, watching the door with the measured patience of someone who has decided that waiting is the correct strategy.', weight: 4 },
@@ -829,8 +850,8 @@ export const COVENANT_ROOMS: Room[] = [
         spawnChance: 0.95,
         spawnType: 'anchored',
         activityPool: [
-          { desc: 'The guard reads her paperback with the absorbed attention of someone who has found that the best way to be present is to look absent.', weight: 3 },
-          { desc: 'The guard sets down her book and gives you the polite, direct look of someone reminding you that she\'s been here the whole time.', weight: 2 },
+          { desc: 'The guard reads her paperback. Page turn. She marks her place with her thumbnail without looking up. She knows you\'re here.', weight: 3 },
+          { desc: 'The guard sets down her book and gives you a polite, direct look — not hostile, not welcoming. Just noting that she\'s been here the whole time.', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.1, neutral: 0.7, wary: 0.2, hostile: 0.0 },
       },
@@ -917,7 +938,7 @@ export const COVENANT_ROOMS: Room[] = [
     act: 1,
     difficulty: 2,
     visited: false,
-    flags: { noCombat: false },
+    flags: { noCombat: false, combat_high_ground: true },
     description: 'The north wall is Covenant\'s strongest — reinforced with salvaged steel panels and maintained with a care that approaches ritual. From the patrol walkway you can see the mountains, a clear day\'s worth of distance to the north, the San Juans in their gray bulk against the sky. MERIDIAN is up there somewhere, though nobody says so on the wall. What the patrol sees, daily: the approach roads, the tree line three hundred yards out where the forest begins, the shape of a former farmhouse that burned two seasons ago and never got cleared. And always, at some point in a night patrol, movement in the tree line that may be deer and may not be.',
     descriptionNight: 'The north wall at night is a different kind of vigilance. The mountains are black shapes against a sky that is surprisingly full of stars when you stop being afraid of the dark long enough to look. The patrol moves quietly, listening as much as watching. Movement in the tree line at night is not deer.',
     shortDescription: 'The north wall\'s patrol post — the mountains ahead, the tree line at distance, and the question of what moves in it.',
@@ -993,7 +1014,7 @@ export const COVENANT_ROOMS: Room[] = [
     act: 1,
     difficulty: 2,
     visited: false,
-    flags: { noCombat: false, questHub: true },
+    flags: { noCombat: false, questHub: true, combat_high_ground: true },
     description: 'The east wall is the weakest section — where a flood two winters ago undercut a portion of the foundation and the repair was done fast rather than well. You can see it if you know what to look for: a slight lean to one panel, fresh-poured concrete that doesn\'t quite match the color of the old, a crack running along the base that someone has marked with a chalk line to track its growth. Marshal Cross knows about it. Her engineer has told her three times. The materials to fix it properly are on a list with forty other things Covenant needs and doesn\'t have. The river runs close here — you can see it, maybe thirty yards from the wall base, the sound of it constant.',
     descriptionNight: 'At night the east wall\'s weakness is louder in the mind than it is in the structure. The sentries here are briefed about the panel. They check it first on every circuit. The crack is the same. The lean is the same. It\'s been the same for four months. That should be reassuring. It isn\'t.',
     shortDescription: 'The east wall — beautiful view of the river, one compromised panel, and a chalk line someone draws fresh every week.',
@@ -1103,7 +1124,7 @@ export const COVENANT_ROOMS: Room[] = [
     ],
     npcSpawns: [],
     itemSpawns: [
-      { entityId: 'cross_personal_journal_page', spawnChance: 1.0, quantity: { min: 1, max: 1, distribution: 'flat' } },
+      { entityId: 'cross_personal_journal_page', spawnChance: 0.95, quantity: { min: 1, max: 1, distribution: 'flat' } },
       { entityId: 'ammo_22lr', spawnChance: 0.7, quantity: { min: 5, max: 15, distribution: 'flat' } },
       { entityId: 'field_surgery_kit', spawnChance: 0.5, quantity: { min: 1, max: 1, distribution: 'flat' } },
     ],
@@ -1119,7 +1140,7 @@ export const COVENANT_ROOMS: Room[] = [
     act: 2,
     difficulty: 2,
     visited: false,
-    flags: {},
+    flags: { combat_darkness: true, combat_narrow_passage: true },
     cycleGate: 2,
     description: 'The courthouse basement is a records room that smells of damp concrete and very old paper. Filing cabinets run the length of the walls — county records from before the Collapse, the kind of administrative infrastructure that seems pointless until you need to know who owned the land you\'re defending, or whether the building you\'re using has documented structural issues. Cross had it organized in the first year by her most detail-oriented lieutenant. There is, in the back left corner, a cabinet that is locked with a secondary padlock that wasn\'t original to the building. The lock is recent. The cabinet has no file label. Behind it, barely visible if you\'re looking from the right angle, is the back edge of a manila folder with government classification markings.',
     descriptionNight: 'The basement at night is the darkest room in Covenant. The single overhead bulb failed three months ago and wasn\'t replaced. People come down with lamps. The cabinet in the corner looks the same in lamplight. The shadows around it don\'t help.',
@@ -1133,7 +1154,7 @@ export const COVENANT_ROOMS: Room[] = [
         destination: 'cv_04_courthouse',
         reputationGate: { faction: 'accord', minLevel: 2 },
         cycleGate: 2,
-        descriptionVerbose: 'access to the basement — Trusted Accord standing and Cycle 2+ required',
+        descriptionVerbose: 'the stairs climb back up to the courthouse main floor — restricted access',
       },
       south: {
         destination: 'cv_20_underground_archive',
@@ -1168,8 +1189,10 @@ export const COVENANT_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.95,
+      // Quest-gated encounter: activate via quest flag
+      baseChance: 0.0,
       timeModifier: { night: 1.0, dawn: 1.0, dusk: 1.0, day: 1.0 },
+      questGate: 'cv_basement_hive_mother_active',
       threatPool: [
         { type: 'hive_mother', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
         { type: 'shuffler', weight: 2, quantity: { min: 2, max: 4, distribution: 'flat' } },
@@ -1205,12 +1228,12 @@ export const COVENANT_ROOMS: Room[] = [
     descriptionDawn: 'Dawn on the rooftop arrives before it arrives anywhere else. The eastern sky goes amber and the herbs catch the first light and the view of the mountains in that transitional color is something that people climb up here specifically to see. The rosebush is deepest red at dawn.',
     shortDescription: 'The rooftop garden — flowers because someone decided to plant them, and the whole world visible below.',
     exits: {
-      down: 'cv_18_rooftop_garden',
+      down: 'cv_03_main_street',
     },
     richExits: {
       down: {
         destination: 'cv_03_main_street',
-        descriptionVerbose: 'the access hatch back down to Main Street',
+        descriptionVerbose: 'a metal access hatch with a ladder leads back down through the building to Main Street',
       },
     },
     items: [],
@@ -1346,7 +1369,7 @@ export const COVENANT_ROOMS: Room[] = [
     act: 2,
     difficulty: 3,
     visited: false,
-    flags: { hiddenRoom: true, scavengingZone: true },
+    flags: { hiddenRoom: true, scavengingZone: true, combat_darkness: true, combat_narrow_passage: true },
     cycleGate: 2,
     description: 'The air changes the moment you push the door open — drier than the basement, with the particular stillness of a sealed space. The archive is a former utility room, its original purpose long overwritten. Metal shelving units line three walls, each loaded with labeled binders and sealed archival boxes. The labels are in government-standard font: MERIDIAN FACILITY — COHORT RECORDS. CHARON-7 — PHASE II PROTOCOLS. ACCORD INTERNAL — GOVERNANCE HISTORY. The last category is the largest and the most disturbing — not because it is classified, but because the governance history of the Accord, as documented here, does not match the governance history the Accord tells about itself. Discrepancies accumulate as you read the spines. By the fourth shelf, you understand why this room is locked.',
     descriptionNight: 'The archive has no windows. Night does not exist here — only the lamplight and the documents and the gradual weight of what the Accord knows and has chosen not to share.',
@@ -1449,10 +1472,10 @@ export const COVENANT_ROOMS: Room[] = [
         spawnType: 'wanderer',
         quantity: { min: 2, max: 4, distribution: 'weighted_low' },
         activityPool: [
-          { desc: 'An off-duty militiaman cleans her rifle at the bench with the automatic focus of someone whose hands know the procedure without instruction.', weight: 4 },
+          { desc: 'An off-duty militiaman cleans her rifle at the bench, hands moving through the steps without pause — bolt, barrel, spring, reassemble.', weight: 4 },
           { desc: 'Two soldiers sit across from each other on their bunks, speaking in low voices about something specific and quiet. They stop when you enter, then resume when they\'ve assessed you.', weight: 3 },
-          { desc: 'A young militia member oils and re-oils the same piece of her gear, a tell of someone who is anxious and working it out with her hands.', weight: 2 },
-          { desc: 'An older soldier sleeps in his bunk with the practiced depth of someone who sleeps whenever the opportunity presents, regardless of time or noise.', weight: 2 },
+          { desc: 'A young militia member oils and re-oils the same piece of her gear. It doesn\'t need it anymore. Her hands need something to do.', weight: 2 },
+          { desc: 'An older soldier sleeps in his bunk — flat on his back, arms at his sides, out cold — the bunk noise and the ambient light irrelevant to him.', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.2, neutral: 0.6, wary: 0.2, hostile: 0.0 },
         dialogueTree: 'cv_militia_barracks',
@@ -1640,6 +1663,12 @@ export const COVENANT_ROOMS: Room[] = [
       },
     ],
     itemSpawns: [],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The corridor smells of lime wash — recent application. The cells are maintained. The maintenance is not comfort; it is procedure.', chance: 0.25, time: null },
+        { line: 'From behind one of the steel doors: nothing. The nothing is deliberate. Someone in there has learned not to make sounds that don\'t accomplish anything.', chance: 0.20, time: null },
+      ],
+    },
     narrativeNotes: 'Tonal counterpoint to the Accord\'s official justice rhetoric. Not a corruption reveal — the system is doing what bureaucratic systems do under pressure. The injustice is structural, not personal, which is harder to resolve.',
   },
 
@@ -1653,7 +1682,7 @@ export const COVENANT_ROOMS: Room[] = [
     act: 1,
     difficulty: 2,
     visited: false,
-    flags: { noCombat: false },
+    flags: { noCombat: false, combat_high_ground: true },
     description: 'The south wall overlooks the road out — the highway south, the approach from river country, the direction that strangers come from. From the patrol walkway you can see the gate below and to the east, and beyond it the road stretching south until it bends around the low ridge and disappears. The exposure here is different from the north wall: the north watches for threat; the south watches for arrival. Every shape on that road resolves eventually into something — a person, a vehicle, a group. The sentries here have gotten good at reading silhouettes at distance. The question they are always answering: what kind of thing is coming, and how many of them, and are they bringing something we need or something we should close the gate against.',
     descriptionNight: 'The south wall at night is where you learn what the approaches look like in the dark. The sentries here use lamplight sparingly — light gives away position as much as it provides vision. They have learned to read the road by starlight and moonlight, which takes time but produces a patience that daytime watchers don\'t always have.',
     shortDescription: 'The south wall — overlooking the approach road, watching for what comes up from river country, asking the same question all border posts ask.',
@@ -1706,6 +1735,12 @@ export const COVENANT_ROOMS: Room[] = [
       },
     ],
     itemSpawns: [],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The wind comes up from the south, carrying road dust and the faint smell of whatever is burning two miles out. The sentry notes the direction without looking away from the scope.', chance: 0.25, time: ['day', 'dusk'] },
+        { line: 'A shape on the road at distance. It resolves into a person, alone, moving at walking pace. The sentry picks up the radio. Then puts it back down. Continues watching.', chance: 0.20, time: ['day'] },
+      ],
+    },
   },
 
   // ----------------------------------------------------------
@@ -1759,6 +1794,12 @@ export const COVENANT_ROOMS: Room[] = [
       },
     ],
     itemSpawns: [],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The DEFERRED stamp hits the ledger with a sound that is not loud but carries. The person at the front of the queue takes the ledger back and looks at it. They knew what it would say.', chance: 0.30, time: ['day'] },
+        { line: 'A child in the queue is asleep, standing, weight distributed between the two adults on either side. The adults don\'t shift or adjust. They have done this before.', chance: 0.20, time: null },
+      ],
+    },
     narrativeNotes: 'The Accord\'s intake system shown from the outside. The moral tension here is structural — Covenant can\'t absorb unlimited refugees and the intake system is a real solution to a real problem, but that doesn\'t make the people in the queue less real. Quest hooks: vouching for specific refugees, investigating the long-deferred cases, learning the council\'s actual review process.',
   },
 
@@ -1835,6 +1876,12 @@ export const COVENANT_ROOMS: Room[] = [
         depletion: { cooldownMinutes: { min: 180, max: 360 }, respawnChance: 0.35 },
       },
     ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The shelves are silent. The ledger is open. The system is running. You can feel the precision of it as a kind of presence — someone\'s will, imposed on disorder, still holding.', chance: 0.25, time: null },
+        { line: 'Okafor initiates the transfer receipt with a single precise stroke. The runner has already left by the time the pen lifts. This is how supply logistics works at speed.', chance: 0.20, time: ['day'] },
+      ],
+    },
     narrativeNotes: 'Logistics hub adjacent to granary. Okafor is a key NPC for the supply investigation quest. The ledger discrepancy here is a clue that can either exonerate or implicate her — designed to be ambiguous until Act II resolution.',
   },
 
@@ -1848,7 +1895,7 @@ export const COVENANT_ROOMS: Room[] = [
     act: 2,
     difficulty: 2,
     visited: false,
-    flags: { noCombat: false, dark: false },
+    flags: { noCombat: false, dark: false, combat_narrow_passage: true },
     description: 'A reinforced enclosure bolted to the inner face of the north wall houses the Accord\'s communications relay — the most technically sophisticated thing in Covenant, which is both an achievement and a measure of how far the world has fallen. A salvaged military radio transceiver, its casing cracked and repaired twice, shares the enclosure with a hand-built signal amplifier that the Accord\'s engineer spent three months constructing from salvaged electronics and documented best guesses. The antenna array on the wall\'s exterior — visible from outside as a cluster of aluminum rods at awkward angles — is functional despite its appearance. On a good day, with favorable atmospheric conditions, the relay can reach forty miles. The log beside the equipment is a record of transmissions sent and received, each entry timed and initialed. Most of them are routine: supply request acknowledgments, patrol coordination with outlying posts, the twice-weekly contact window with the river road junction. One entry, three weeks ago, is different. It is logged only as INCOMING / UNKNOWN SOURCE / FREQ: [REDACTED]. Below it, in a different hand: cross notified.',
     descriptionNight: 'The signal post at night has a different quality of work — atmospheric conditions are often better after dark, the operator says, something to do with the ionosphere, he\'s not sure of the mechanism but the results are consistent. He listens more at night and talks less. He has heard things at night that he has not logged.',
     shortDescription: 'The Accord\'s communications relay — forty-mile range, a log of routine transmissions, and one entry three weeks ago from an unknown source that got Cross on the radio immediately.',
@@ -1904,6 +1951,12 @@ export const COVENANT_ROOMS: Room[] = [
         depletion: { cooldownMinutes: { min: 99999, max: 99999 }, respawnChance: 0.0 },
       },
     ],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The equipment hum is continuous — a frequency just below conversation level that you stop noticing after two minutes and start noticing again after ten.', chance: 0.25, time: null },
+        { line: 'Static. Then something that might be words, might be pattern. The operator writes nothing. Continues listening.', chance: 0.20, time: ['night'] },
+      ],
+    },
     narrativeNotes: 'Act II signal mystery node. Connects the MERIDIAN radio signal thread (established in earlier lore items) to Covenant\'s active intelligence capability. The operator\'s edited log entry is a significant detail for players tracking the MERIDIAN arc. Signal post connects south to cv_14_wall_north, sitting on the north wall infrastructure.',
   },
 ]

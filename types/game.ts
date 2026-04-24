@@ -45,7 +45,7 @@ export type LegacyZoneType =
 
 export type ItemType = 'weapon' | 'armor' | 'consumable' | 'key' | 'junk' | 'lore' | 'currency'
 
-export type MessageType = 'narrative' | 'combat' | 'system' | 'error' | 'echo'
+export type MessageType = 'narrative' | 'combat' | 'system' | 'error' | 'echo' | 'death' | 'ending' | 'creation'
 
 export type ContractTerm = '1' | '3' | '5' | 'perpetual'
 
@@ -156,6 +156,9 @@ export interface RoomExtra {
   cycleGate?: number
   questGate?: string
   reputationGrant?: { faction: FactionType; delta: number }
+  conditionalDescription?: { flag: string; description: string }
+  narrativeKeyOnExamine?: string  // grants this narrative key on successful examine (or successful skill check if one is set)
+  narrativeKeyOnDeduction?: { keyId: string; requires: string[] }  // grants the key only if ALL prereq quest flags are set; used for multi-piece deductions
 }
 
 // ------------------------------------------------------------
@@ -180,6 +183,7 @@ export interface HollowEncounter {
   awarenessRoll?: { unaware: number; awarePassive: number; awareAggressive: number }
   activityPool?: Partial<Record<HollowType, HollowActivityEntry[]>>
   noiseModifier?: number
+  questGate?: string
 }
 
 // ------------------------------------------------------------
@@ -207,6 +211,7 @@ export interface RoomExit {
   hidden?: boolean
   locked?: boolean
   lockedBy?: string               // item_id of key
+  unlockFlags?: string[]          // any quest flag in this list bypasses `locked` (alt-route unlock)
   skillGate?: SkillGate
   reputationGate?: ReputationGate
   questGate?: string
@@ -252,7 +257,7 @@ export interface NpcActivityEntry {
 export interface NpcSpawnEntry {
   npcId: string
   spawnChance: number
-  spawnType?: 'anchored' | 'patrol' | 'wanderer' | 'event' | 'unique'
+  spawnType?: 'anchored' | 'patrol' | 'wanderer' | 'event' | 'unique' | 'ambient'
   quantity?: QuantityConfig
   activityPool?: NpcActivityEntry[]
   dispositionRoll?: { friendly?: number; neutral?: number; wary?: number; hostile?: number }
@@ -260,6 +265,9 @@ export interface NpcSpawnEntry {
   questGiver?: string[]
   tradeInventory?: string[]
   narrativeNotes?: string
+  cycleGate?: number
+  questGate?: string
+  questFlagOnSpawn?: { flag: string; value: string | boolean | number }
 }
 
 // ------------------------------------------------------------
@@ -443,6 +451,11 @@ export interface NPC {
   dialogue: string
   faction?: FactionType
   isNamed?: boolean      // key story NPC
+  // Vendor fields — optional; only set on NPCs with tradeInventory
+  vendorGreeting?: string                          // shown when player opens trade
+  vendorFarewell?: string                          // shown when player closes trade
+  vendorBudget?: number                            // NPC's .22LR available for purchases; if absent, don't display
+  vendorComments?: Record<string, string[]>        // itemId -> random comment pool for that item
 }
 
 // ------------------------------------------------------------
@@ -533,6 +546,19 @@ export interface Player {
   factionReputation?: Partial<Record<FactionType, number>>
   // Quest flags: stored as JSON in DB
   questFlags?: Record<string, string | boolean | number>
+  // --------------------------------------------------------
+  // Narrative Overhaul fields (convoy remnant-narrative-0329)
+  // Optional with defaults to preserve backwards-compatibility
+  // with existing saves and test helpers that predate this convoy.
+  // Rider H initializes these on new characters and loads them
+  // from narrative_progress JSON column on loadPlayer.
+  // --------------------------------------------------------
+  /** Dread / tension meter. 0 = quiet, 10 = swarm trigger. Defaults to 0. */
+  hollowPressure?: number
+  /** Narrative keys learned by the player (discovery system). Defaults to []. */
+  narrativeKeys?: string[]
+  /** Active companion NPC, if any. */
+  currentCompanion?: import('@/types/convoy-contracts').Companion
 }
 
 // ------------------------------------------------------------
@@ -666,6 +692,22 @@ export interface GameMessage {
 // Game State (held in React context during a session)
 // ------------------------------------------------------------
 
+// ------------------------------------------------------------
+// Exploration Progress — journal / cartography tracking
+// ------------------------------------------------------------
+
+export interface ExplorationProgress {
+  roomsVisited: number
+  totalRooms: number
+  zoneProgress: Partial<Record<ZoneType, { visited: number; total: number }>>
+  narrativeKeysFound: number
+  totalNarrativeKeys: number
+}
+
+// ------------------------------------------------------------
+// Ending / Buffs / Game State
+// ------------------------------------------------------------
+
 export type EndingChoice = 'cure' | 'weapon' | 'seal' | 'throne'
 
 export interface ActiveBuff {
@@ -692,11 +734,13 @@ export interface GameState {
   cycleHistory?: CycleSnapshot[]
   pendingStatIncrease?: boolean  // true when player needs to choose a stat to boost
   weather?: 'clear' | 'overcast' | 'rain' | 'dust_storm' | 'fog'
+  lastInitiativeAction?: number  // action count when NPC initiative last fired
   activeDialogue?: {
     npcId: string
     treeId: string
     currentNodeId: string
   }
+  explorationProgress?: ExplorationProgress
 }
 
 // ------------------------------------------------------------
@@ -713,6 +757,7 @@ export interface DialogueNode {
     grantItem?: string[]
     grantRep?: { faction: FactionType; delta: number }
     removeItem?: string[]
+    grantNarrativeKey?: string  // grants this narrative key when the node is entered
   }
 }
 

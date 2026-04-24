@@ -45,9 +45,17 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return unsub
   }, [engine])
 
+  const isDispatching = useRef(false)
+
   const dispatch = useCallback(
     async (action: Action) => {
-      await engine.executeAction(action)
+      if (isDispatching.current) return
+      isDispatching.current = true
+      try {
+        await engine.executeAction(action)
+      } finally {
+        isDispatching.current = false
+      }
     },
     [engine],
   )

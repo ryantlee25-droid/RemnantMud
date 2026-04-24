@@ -54,7 +54,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       ambientSoundPool: {
         day: [
           { sound: 'A Clark\'s nutcracker works a pine cone somewhere above you.', weight: 3 },
-          { sound: 'Wind moves through the high branches with a sound like the ocean.', weight: 3 },
+          { sound: 'Wind moves through the high branches with a sound like breathing, slow and vast.', weight: 3 },
           { sound: null, weight: 2 },
         ],
         night: [
@@ -125,6 +125,13 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
         { line: 'The bull elk raises his head and looks directly at you for three seconds, then returns to grazing.', chance: 0.30, time: null },
         { line: 'Steam rises from the ground where a spring seep meets cold air.', chance: 0.20, time: ['dawn'] },
       ],
+    },
+    personalLossEchoes: {
+      child: 'The calf stays close to its mother. The specific geometry of small-thing-near-big-thing, the way they orbit — you know this shape. You knew it with your whole body once, the weight of a small hand in yours, the way they pressed against your leg when something was new or large or strange. The meadow is full of that shape. It is the most natural thing in the world. It is the thing you lost.',
+      partner: 'The beauty of it hits you the way beauty does when there\'s no one to turn to and say look at this. The elk, the meadow, the light. You would have turned. They would have looked. The moment would have been held between you like a shared breath. You\'re holding it alone now and it doesn\'t weigh less. It weighs differently.',
+      community: 'This is what you were protecting. Not this meadow specifically, but this — the ordinary continuation of life doing what it does, unhurried, unafraid. The elk graze because grazing is what elk do. Your community did what communities do, until it didn\'t. The meadow is still here. The elk are still here. The thing you were part of is not.',
+      identity: 'The elk don\'t need names. They know what they are by what they do — graze, watch, protect the calves, move with the seasons. The simplicity of an identity that never had to be remembered because it was never lost. You watch them and you feel vertigo: you don\'t know what you do anymore, because the person who did the doing is missing.',
+      promise: 'Nothing is wrong with this scene. Nothing at all. You had forgotten that was possible. And standing at the edge of something undamaged, you remember the promise — to protect, to rebuild, to leave things better. The meadow doesn\'t need you. It is better without you. The promise was for the places that aren\'t this.',
     },
     narrativeNotes: 'Beauty room and emotional respite. The elk herd is a signal that the world still contains things worth protecting. The hunting mechanic is available here for food.',
   },
@@ -282,10 +289,18 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       ],
       awarenessRoll: { unaware: 0.5, awarePassive: 0.3, awareAggressive: 0.2 },
     },
+    personalLossEchoes: {
+      child: 'The Scar valley below. A crater, a facility, the chemical haze of something that should not still be running. You look at it and think about the world they were born into — not this world, the one before, when the facility was a secret and the haze was contained and the valley was just a valley. You brought them into a world that was already broken. You didn\'t know it was broken. Nobody did.',
+      partner: 'The wind is cold enough to matter and the view is large enough to diminish you. You stand at the ridge and look at the thing that ended the world and you think about the person who stood beside you when it ended — the way their hand found yours, the way fear compressed two people into one decision. The ridge is wide enough for two. You are one.',
+      community: 'The dark structure in the crater — large, intact, waiting. MERIDIAN. The place that made the thing that unmade your community. From the ridge you can see the geography of responsibility: the facility, the crater, the haze, the valley that used to be normal. Your community is in this view somewhere — not visible, but implied, the way every community destroyed by CHARON-7 is implied by the structure that produced it.',
+      identity: 'The chemical haze above the crater is faintly greenish in certain lights. You look at it and feel something that is not memory but is adjacent to memory — a recognition that precedes knowledge, as if your body has been in proximity to this chemistry before and retained the information while your mind lost it. The wind brings the smell. Your body responds before you can stop it.',
+      promise: 'MERIDIAN is not rubble. MERIDIAN is a facility. The bombing narrative was a cover story. You stand at the ridge with the full weight of this knowledge and you feel your promise shift beneath you like the ground during a quake — not breaking, not fulfilled, just reorganizing itself around a truth that changes what the promise means.',
+    },
     environmentalRolls: {
       flavorLines: [
         { line: 'The wind shifts and for a moment you catch the faint chemical smell of the Scar valley below.', chance: 0.20, time: null },
         { line: 'A hawk rides the ridge updraft, level with your face, close enough to see its eye.', chance: 0.15, time: ['day'] },
+        { line: 'The exposed rock at the ridge crest is warm from the sun despite the wind. Your hand on it is the warmest thing about this elevation.', chance: 0.15, time: ['day'] },
       ],
     },
     narrativeNotes: 'The ridge is the first clear visual on MERIDIAN as an intact structure. The perception check revealing the rooftop and antenna is a major confirmation that the bombing narrative was false.',
@@ -400,6 +415,18 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       ],
       awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
     },
+    personalLossEchoes: {
+      child: 'The Sanguine don\'t come here. This air belongs only to ordinary things. You stand in the one place in the Four Corners where the specific threat that ended the world cannot reach, and you think about the places you tried to build for them — safe places, clean places, high enough and cold enough that the bad things couldn\'t follow. This is what that would have looked like. Snow and thin air and the absolute quiet of elevation. They would have hated the cold. They would have been safe.',
+      partner: 'Each breath less satisfying than the last. The altitude takes something from you — not much, just the margin between comfortable and aware. You think about the last days with them, when the margin between comfortable and aware was the thing that disappeared first, when every breath became conscious, when the easy thing that breathing used to be became the difficult thing it was always capable of becoming.',
+      identity: 'Everything becomes sharper at altitude. Colors, sounds, the edges of things. You stand at the snow line and the clarity is physical, literal, the thin air stripping away the atmospheric buffer that softens the world at lower elevations. You see yourself the same way — sharper, more defined, the edges of whoever you are visible in a way they aren\'t when the air is thick with distraction. The person at the snow line is the essential person. You\'re not sure you like what you see.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'Your breath hangs in the air for three full seconds before the wind takes it. A ghost of yourself, lingering, then gone.', chance: 0.25, time: null },
+        { line: 'The surface crust breaks under your boot with a sound like porcelain. Beneath it: compressed snow, cold enough to burn bare skin on contact.', chance: 0.20, time: null },
+        { line: 'For a moment the wind stops completely and the silence at this altitude is a physical thing, pressing against your eardrums, the absence of sound so total that you hear the blood moving in your own head.', chance: 0.15, time: ['dawn', 'night'] },
+      ],
+    },
     narrativeNotes: 'Cold damage mechanic without gear. The Sanguine-free zone is unusual and therefore meaningful. The visible breath and altitude sensation ground the room in the body.',
   },
 
@@ -444,6 +471,11 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
         keywords: ['back', 'return', 'leave', 'choice'],
         description: 'You could go back. You\'ve done enough. You know enough. You could take what you know to any of the factions and let them decide what to do with it. The Scar is down there and it\'s been down there for seven years and it\'ll be down there longer. You don\'t have to be the one. You stand with that thought for a moment and learn something about yourself from how long you hold it before putting it down.',
       },
+      {
+        keywords: ['overlook', 'position', 'vantage', 'view'],
+        description: 'You are standing at the highest accessible point before the Scar. The facility is below you and the path down is in front of you. This is the last place you can see it without being in it.',
+        questFlagOnSuccess: { flag: 'scar_overlook_visited', value: true },
+      },
     ],
     hollowEncounter: {
       baseChance: 0.08,
@@ -480,7 +512,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
     richExits: {
       south: { destination: 'ps_06_shepherds_camp', descriptionVerbose: 'south, back toward the hermit\'s camp and familiar forest' },
       east: { destination: 'ps_11_bone_grove', descriptionVerbose: 'east, where the trees thin slightly around what looks like a clearing' },
-      west: { destination: 'ps_12_coastal_approach', descriptionVerbose: 'west, where the canopy begins to lighten and something on the air smells different — salt, or distance' },
+      west: { destination: 'ps_12_coastal_approach', descriptionVerbose: 'west, where the canopy begins to lighten and something on the air smells different — mineral salt, ancient and sharp' },
       north: {
         destination: 'ps_10_hermit_deep_camp',
         descriptionVerbose: 'north, but there is no trail — only a bearing and a gap between two root buttresses that might be deliberate',
@@ -506,7 +538,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
       {
         keywords: ['light', 'dark', 'canopy', 'shadow', 'twilight'],
-        description: 'The canopy closure is complete — the interlocked crowns of twelve adjacent trees create a continuous ceiling of needles and branch that reduces the light below to perhaps five percent of what falls above. Plants that survive here are specialists: deep-shade ferns, fungi, lichens that grow on the north faces of the buttress roots. The ecosystem is calibrated to the specific dark. You are a large diurnal mammal in a world that was built around your absence.',
+        description: 'The canopy closure is complete — the interlocked crowns of twelve adjacent trees create a continuous ceiling of needles and branch that reduces the light below to perhaps five percent of what falls above. Plants that survive here are specialists: deep-shade ferns, fungi, lichens that grow on the north faces of the buttress roots. The ecosystem is calibrated to this dark — close, muffled, permanent. You are a large diurnal mammal in a world that was built around your absence.',
       },
       {
         keywords: ['time', 'silence', 'quiet', 'feeling', 'presence'],
@@ -514,7 +546,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
       {
         keywords: ['hollow', 'shape', 'movement', 'dark'],
-        description: 'Something moves at the edge of where you can see — peripheral, slow, with the wrong quality of movement. Not shuffler-wrong: this is a different kind of wrong, the wrongness of something that has been in this specific dark for a very long time and absorbed something of its patience. It isn\'t moving toward you. It is moving around you. There is a difference.',
+        description: 'Something moves at the edge of where you can see — peripheral, slow, with the wrong quality of movement. Not shuffler-wrong: this is a different kind of wrong, the wrongness of something that has been in this dark for a very long time and absorbed something of its patience. It isn\'t moving toward you. It is moving around you. There is a difference.',
         skillCheck: { skill: 'perception', dc: 12, successAppend: 'There are two of them. They\'ve been here long enough that the duff has adapted — the forest floor around their usual paths is compressed and darkened. Years of movement. They\'re part of this place the way the fungi are part of this place. They could be aggressive. They are choosing not to be. The choosing is the strange part.' },
       },
     ],
@@ -542,7 +574,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
           { sound: null, weight: 2 },
         ],
         night: [
-          { sound: 'Total dark. Total quiet. Something breathing that is not you.', weight: 2 },
+          { sound: 'The grove has no animal sounds — no frogs, no insects at this altitude at this season. Just the trees. Then: breathing. Slow, nasal, eight feet to your left. Still.', weight: 2 },
           { sound: null, weight: 3 },
         ],
       },
@@ -591,7 +623,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       {
         keywords: ['maps', 'bark maps', 'wall', 'routes'],
         description: 'The bark map panels cover the north-facing wall of the shelter completely. Fitted together, they describe every route through the Pine Sea from the tree line to the coast — dozens of trails, hazard notations, seasonal variations. Some panels are old and dark, the scratch-lines faded. Some are fresh. The complete map is a life\'s work, or close to it. No copies. This is the only one.',
-        skillCheck: { skill: 'lore', dc: 10, successAppend: 'The oldest panels are dated. The hermit began mapping in Year 1 of the Collapse, within the first months. They\'ve been at this for seven years. The coastal sections are the most recent and the most detailed — the hermit has been spending more time there. One panel is blank except for a hand-drawn question mark at its center and a compass bearing: 285 degrees. Due west, roughly. Into the sea.' },
+        skillCheck: { skill: 'lore', dc: 10, successAppend: 'The oldest panels are dated. The hermit began mapping in Year 1 of the Collapse, within the first months. They\'ve been at this for seven years. The western sections are the most recent and the most detailed — the hermit has been spending more time there. One panel is blank except for a hand-drawn question mark at its center and a compass bearing: 285 degrees. Due west, roughly. Into the unknown.' },
       },
       {
         keywords: ['fire', 'hearth', 'decade', 'embers'],
@@ -617,7 +649,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
         { line: 'Wind moves somewhere far above in the canopy. Down here: nothing. The fire does not flicker.', chance: 0.20, time: null },
       ],
     },
-    narrativeNotes: 'Skill-gated hidden room rewarding tracking investment. The hermit here is more forthcoming — this is the lore unlock for the coastal approach and whatever is beyond the forest. The bark maps and decade-old fire are the room\'s visual anchors. The blank panel with a question mark is a planted mystery.',
+    narrativeNotes: 'Skill-gated hidden room rewarding tracking investment. The hermit here is more forthcoming — this is the lore unlock for the salt approach and whatever is beyond the forest. The bark maps and decade-old fire are the room\'s visual anchors. The blank panel with a question mark is a planted mystery.',
   },
 
   {
@@ -630,7 +662,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
     flags: { scavengingZone: false, noCombat: false },
     cycleGate: 3,
     description: 'The forest opens into a clearing that isn\'t meadow — there\'s no grass, only compressed earth and dry pine duff, and in the center of it: bones. Something enormous died here long ago. The skeleton is too large for any animal you can name: a ribcage that could shelter four people standing, vertebrae the size of wheel hubs, a skull with teeth that are wrong in ways that take a moment to categorize. Pre-Collapse megafauna, maybe, or something the Collapse made. The bones are bleached and old and undisturbed. The Hollow don\'t come here. You can tell from the absence of their sign — no compressed trails, no territorial markings, nothing. This place is avoided. The hermit leaves it alone for different reasons. Both reactions are probably correct.',
-    descriptionNight: 'At night the bones are pale against the dark clearing. They catch moonlight in a way the surrounding forest doesn\'t. The ribcage creates a skeletal architecture that is somehow more disturbing at night than in daylight — the gaps between the ribs frame pieces of sky. The clearing has a specific quality of emptiness that feels less like absence and more like something cleared deliberately.',
+    descriptionNight: 'At night the bones are pale against the dark clearing. They catch moonlight in a way the surrounding forest doesn\'t. The ribcage creates a skeletal architecture that is somehow more disturbing at night than in daylight — the gaps between the ribs frame pieces of sky. The clearing feels less like absence and more like something cleared deliberately.',
     descriptionDusk: 'Dusk in the bone grove arrives from the canopy down. The trees surrounding the clearing go dark first, the trunks becoming columns of shadow, and the clearing itself holds the last ambient light in a way that makes the bones more prominent — pale shapes on dark earth, catching what remains. The enormous ribcage throws long shadows that reach the tree line and merge with the forest dark. The skull faces west, and for a few minutes the orbital sockets hold the last light, two dim points that could be mistaken for something looking back at you. The wrongness of the teeth is less visible in this light. The wrongness of the clearing is more.',
     shortDescription: 'Pre-collapse bones. Something enormous died here. Hollow avoid it.',
     exits: { west: 'ps_09_old_growth_heart', east: 'ps_16_spore_field' },
@@ -682,17 +714,17 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
 
   {
     id: 'ps_12_coastal_approach',
-    name: 'The Coastal Approach',
+    name: 'The Salt Approach',
     zone: 'the_pine_sea',
     act: 3,
     difficulty: 3,
     visited: false,
     flags: { fastTravelWaypoint: false, scavengingZone: true },
     cycleGate: 3,
-    description: 'The forest thins here. Not meadow-thins — the trees don\'t stop, they just get smaller and farther apart, the understory opening, light returning in quantities you\'d forgotten about. And on the air: salt. Real salt, ocean salt, the specific compound of spray and distance that means sea is close. The Pacific is somewhere west of here — you\'re not sure how far — but the smell says closer than any map suggests. The last survey document here is pinned to a tree with a rusted nail: a USDA Forest Service coastal boundary marker from 2019, its printed text mostly legible. The world was mapped once. The maps were correct once. This is the edge of where they stopped.',
-    descriptionNight: 'At night the coastal approach shows the sky in a way the rest of the Pine Sea doesn\'t — more open, stars visible in larger patches. The sound of the sea is clearer at night, when the wind from the west brings it unobstructed. You haven\'t heard ocean since before the Collapse. You had forgotten what you were forgetting.',
-    descriptionDawn: 'At dawn the coastal approach catches the first light from the east and sends it back — the thin trees are illuminated, the trunks pale in the horizontal light. The sea smell is strongest at dawn, when the temperature differential drives an onshore breeze. If you stand still and let the light and the smell arrive together, it is briefly the most alive you\'ve felt since the Collapse.',
-    shortDescription: 'Forest thins. Salt air. Edge of the mapped world.',
+    description: 'The forest thins here. Not meadow-thins — the trees don\'t stop, they just get smaller and farther apart, the understory opening, light returning in quantities you\'d forgotten about. And on the air: salt. Real salt — mineral salt, not ocean salt but something older, deposits from a sea that covered this land seventy million years ago, pushed skyward when the mountains rose. The Cretaceous seabed is up here at eight thousand feet, exposed in the outcrops where the tree roots have split the caprock, and the wind pulls the taste of it into the air. The last survey document here is pinned to a tree with a rusted nail: a USDA Forest Service boundary marker from 2019, its printed text mostly legible. The world was mapped once. The maps were correct once. This is the edge of where they stopped.',
+    descriptionNight: 'At night the salt approach shows the sky in a way the rest of the Pine Sea doesn\'t — more open, stars visible in larger patches. The mineral smell is sharper at night, when the cold concentrates whatever the wind lifts from the exposed salt deposits. The taste on your tongue is ancient — not brine but something drier, the ghost chemistry of a shallow sea that evaporated before the first mammal.',
+    descriptionDawn: 'At dawn the salt approach catches the first light from the east and sends it back — the thin trees are illuminated, the trunks pale in the horizontal light. The mineral salt smell is strongest at dawn, when the temperature shift pulls moisture from the exposed caprock and the air carries the taste of deep geology. If you stand still and let the light and the smell arrive together, it is briefly the most alive you\'ve felt since the Collapse.',
+    shortDescription: 'Forest thins. Ancient salt on the air. Edge of the mapped world.',
     exits: { east: 'ps_09_old_growth_heart', south: 'ps_19_windbreak_ruin' },
     richExits: {
       east: { destination: 'ps_09_old_growth_heart', descriptionVerbose: 'east, back into the deep old growth' },
@@ -703,22 +735,22 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
     npcs: [],
     extras: [
       {
-        keywords: ['salt', 'smell', 'sea', 'ocean', 'air'],
-        description: 'The salt in the air is real — not the mineral salt of dry lowland dust but marine salt, the compound of ocean spray carried on prevailing westerlies across however many miles of forest and terrain. You breathe it deliberately, the way you\'ve learned to breathe good things deliberately, because good things end. The smell says the sea is closer than any surviving map indicates. The maps were made before and the coast has its own timeline.',
+        keywords: ['salt', 'smell', 'mineral', 'air'],
+        description: 'The salt in the air is real — not the alkaline dust of the lowlands but mineral salt, the specific compound of ancient marine deposits exposed at altitude. Seventy million years ago a shallow sea covered this entire region, and when the Rockies rose they carried its sediment skyward. The salt you taste is Cretaceous. You breathe it deliberately, the way you\'ve learned to breathe good things deliberately, because good things end. The geology doesn\'t care about your timeline. It has its own.',
       },
       {
         keywords: ['survey', 'document', 'usda', 'boundary', 'marker'],
-        description: 'The USDA Forest Service document pinned to the tree is a coastal boundary marker — the administrative edge of the San Juan National Forest, circa 2019. The printed text details what\'s outside the boundary: "unincorporated coastal parcels, private land, coastal highway right-of-way." Private land. Coastal highway. Those categories no longer have legal content. What they describe still exists, presumably, in some physical form. What form is the question.',
-        skillCheck: { skill: 'lore', dc: 9, successAppend: 'The boundary coordinates on the marker locate you precisely — you\'re approximately two miles from the coast road, which by now is either impassable, reclaimed by vegetation, or both. If any pre-Collapse coastal infrastructure survived — roads, structures, habitation — it would be off every post-Collapse map because no one has come this far to check. No faction has territory this far west. The coast is genuinely unknown.' },
+        description: 'The USDA Forest Service document pinned to the tree is a wilderness boundary marker — the administrative edge of the San Juan National Forest, circa 2019. The printed text details what\'s outside the boundary: "unincorporated parcels, private land, county road right-of-way." Private land. County road. Those categories no longer have legal content. What they describe still exists, presumably, in some physical form. What form is the question.',
+        skillCheck: { skill: 'lore', dc: 9, successAppend: 'The boundary coordinates on the marker locate you precisely — you\'re at the western edge of the San Juan range, where the forest gives way to exposed geology and the terrain becomes something no faction has bothered to map. If any pre-Collapse infrastructure survived out here — roads, structures, abandoned mining claims — it would be off every post-Collapse map because no one has come this far to check. No faction has territory this far west. The beyond is genuinely unknown.' },
       },
       {
         keywords: ['trees', 'thin', 'open', 'light', 'edge'],
-        description: 'The transition from old growth to coastal scrub happens over about three hundred yards — a gradient, not a line. The trees get younger as you move west: the old growth runs out of whatever condition it needs and gives way to smaller, more recent growth. Second-growth, maybe, or post-fire regrowth from before the Collapse. The undergrowth is denser here, low shrubs you don\'t recognize from the alpine zone. New plants for a new elevation. The ecosystem is doing what it does.',
+        description: 'The transition from old growth to exposed ridge scrub happens over about three hundred yards — a gradient, not a line. The trees get younger as you move west: the old growth runs out of whatever condition it needs and gives way to smaller, more recent growth. Second-growth, maybe, or post-fire regrowth from before the Collapse. The undergrowth is denser here, low shrubs adapted to the mineral-rich soil where the salt deposits leach into the topsoil. New plants for a new chemistry. The ecosystem is doing what it does.',
       },
       {
-        keywords: ['beyond', 'coast', 'west', 'unknown', 'question'],
-        description: 'The question that brings lore-seekers to the Pine Sea: what\'s past the forest? The hermit has been to the forest edge and back. They didn\'t say what they saw there. The survey document ends at the administrative boundary. Your own knowledge ends here, at the tree line, with the salt in the air and the light in the west. Every faction has a story about the coast — the Drifters say there are boats, the Kindling say there\'s a signal station, the Reclaimers say there\'s infrastructure worth salvaging. The stories contradict each other. None of them come from someone who\'s actually been.',
-        skillCheck: { skill: 'lore', dc: 11, successAppend: 'There is one consistent thread in all the coastal stories: the people who went looking didn\'t come back in a way that ended the question. They came back changed, or they sent word back, or they simply dropped out of the Drifter networks — not dead, just gone west. Seven years of the Collapse rearranges where people want to be. The coast may simply be where some people went when they decided that everything east of it was something they were done with.' },
+        keywords: ['beyond', 'west', 'unknown', 'question'],
+        description: 'The question that brings lore-seekers to the Pine Sea: what\'s past the forest? The hermit has been to the forest edge and back. They didn\'t say what they saw there. The survey document ends at the administrative boundary. Your own knowledge ends here, at the tree line, with the ancient salt in the air and the light in the west. Every faction has a story about what\'s beyond — the Drifters say there are settlements, the Kindling say there\'s a signal station, the Reclaimers say there\'s infrastructure worth salvaging. The stories contradict each other. None of them come from someone who\'s actually been.',
+        skillCheck: { skill: 'lore', dc: 11, successAppend: 'There is one consistent thread in all the stories about what\'s past the forest: the people who went looking didn\'t come back in a way that ended the question. They came back changed, or they sent word back, or they simply dropped out of the Drifter networks — not dead, just gone west. Seven years of the Collapse rearranges where people want to be. The beyond may simply be where some people went when they decided that everything east of it was something they were done with.' },
       },
     ],
     hollowEncounter: {
@@ -744,26 +776,26 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
     environmentalRolls: {
       ambientSoundPool: {
         day: [
-          { sound: 'The wind from the west carries the salt smell in pulses — present, then absent, then present again.', weight: 3 },
-          { sound: 'A gull, somewhere west, calling once. Then nothing.', weight: 2 },
+          { sound: 'The wind from the west carries the mineral salt smell in pulses — present, then absent, then present again, lifted from deposits older than the mountains.', weight: 3 },
+          { sound: 'Something moves in the scrub to the west — a rustle, deliberate, then nothing.', weight: 2 },
           { sound: null, weight: 2 },
         ],
         night: [
-          { sound: 'The sea sound is clearer at night. You can hear it if you listen. You listen.', weight: 3 },
+          { sound: 'The wind through the thinning canopy at night has a sound like something vast and patient, the open terrain beyond the trees amplifying every gust into something almost tidal.', weight: 3 },
           { sound: null, weight: 2 },
         ],
         dawn: [
-          { sound: 'The onshore breeze at dawn is the strongest wind you\'ve felt since the mountains. It smells like the world is larger than you\'ve been living in.', weight: 4 },
+          { sound: 'The dawn breeze from the west is the strongest wind you\'ve felt since the mountains. It carries the mineral tang of exposed geology and smells like the world is larger than you\'ve been living in.', weight: 4 },
           { sound: null, weight: 1 },
         ],
       },
       ambientCount: { min: 1, max: 2, distribution: 'flat' },
       flavorLines: [
-        { line: 'The salt smell is stronger now. The coast is close enough to pull at you.', chance: 0.30, time: null },
+        { line: 'The salt smell is stronger now. The ancient seabed is close to the surface here, close enough to taste.', chance: 0.30, time: null },
         { line: 'You think about the Drifter stories. You think about the people who went west and didn\'t come back east.', chance: 0.20, time: null },
       ],
     },
-    narrativeNotes: 'The liminal edge room — the literal boundary of the known world. The west exit to coast_01_sea_cliff is Cycle 4 and skill-gated to control pacing into the next zone. The lore items and extras plant seeds for coastal zone content. The tone is wonder tinged with vertigo: this is as far as anyone has been, and what\'s past it is genuinely open.',
+    narrativeNotes: 'The liminal edge room — the literal boundary of the known world. The salt is geological, not oceanic (Cretaceous seabed uplifted with the Rockies). The lore items and extras plant seeds for whatever lies beyond the forest. The tone is wonder tinged with vertigo: this is as far as anyone has been, and what\'s past it is genuinely open.',
   },
 
   // ============================================================
@@ -1228,7 +1260,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
     shortDescription: 'Ruined ranger station. Windbreak. Safe rest.',
     exits: { north: 'ps_12_coastal_approach', east: 'ps_20_hollow_nest' },
     richExits: {
-      north: { destination: 'ps_12_coastal_approach', descriptionVerbose: 'north, toward the thinning forest and the salt air' },
+      north: { destination: 'ps_12_coastal_approach', descriptionVerbose: 'north, toward the thinning forest and the mineral salt air' },
       east: {
         destination: 'ps_20_hollow_nest',
         descriptionVerbose: 'east, into the deep forest where the trees grow wrong and the ground hums',
@@ -1301,7 +1333,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       ambientCount: { min: 1, max: 2, distribution: 'flat' },
       flavorLines: [
         { line: 'The coals glow against the stone wall and the warmth reaches you in waves.', chance: 0.30, time: ['night', 'dusk'] },
-        { line: 'The salt wind from the coast carries through the open section. The sea is close.', chance: 0.20, time: null },
+        { line: 'The salt wind from the exposed deposits carries through the open section. The ancient seabed is close to the surface here.', chance: 0.20, time: null },
       ],
     },
     narrativeNotes: 'Safe rest location on the western Pine Sea circuit. The military boot print connects to the quarantine camp narrative — someone from an organized faction is investigating the contamination zone. The windbreak shares the logger\'s cabin\'s backcountry reciprocity ethic. Lower difficulty than surrounding rooms as a deliberate respite.',

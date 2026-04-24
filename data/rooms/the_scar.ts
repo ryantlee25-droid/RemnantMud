@@ -15,6 +15,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       hazard_message: 'The greenish-brown haze at crater floor level is not just light — it tastes like battery acid, and your throat knows the difference between atmosphere and contamination. The CHARON-7 seeping through the cracks is doing something to your respiratory tissue. Cumulatively significant.',
       hazard_mitigated_by: 'hazmat_suit',
       hazard_mitigation_message: 'Your suit\'s filtration layer catches the worst of the chemical byproduct. You breathe measured air instead of crater floor.',
+      combat_high_ground: true,
     },
     cycleGate: 3,
     description: 'The crater rim is a broken circle of upthrown stone and chemical residue — the bombing\'s actual footprint, seven years old and unchanged, as permanent as the geography it modified. Inside the crater: the haze is real up close, a greenish-brown shimmer at ground level that tastes like battery acid and old fire. The facility below is fully visible now — a squat four-story structure occupying most of the crater floor, its concrete poured to military spec, its roof undamaged. The bombing cracked the perimeter. The facility is intact. Everything you were told was a lie, and you are standing in the evidence.',
@@ -41,6 +42,8 @@ export const THE_SCAR_ROOMS: Room[] = [
       {
         keywords: ['facility', 'building', 'structure', 'concrete'],
         description: 'Military construction specification: two-foot-thick reinforced concrete walls, rated for blast overpressure, chemical contamination, seismic events. The bombing was a standard thermobaric strike — calibrated to destroy the surface, not the hardened underground facility. Whoever ordered the strike knew exactly what they were bombing and exactly what would survive.',
+        questFlagOnSuccess: { flag: 'scar_blast_pattern_analyzed', value: true },
+        narrativeKeyOnDeduction: { keyId: 'scar_bombing_truth', requires: ['scar_blast_pattern_analyzed', 'scar_bombing_intent_understood', 'meridian_bombing_orders_found'] },
       },
       {
         keywords: ['haze', 'chemical', 'smell', 'air', 'contamination'],
@@ -49,8 +52,16 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
       {
         keywords: ['bombing', 'lie', 'military', 'history'],
-        description: 'The standard narrative: MERIDIAN was a bioweapons lab, the Collapse was an accident, the military bombed the facility to prevent further spread. You\'re standing in the bombing\'s aftermath, looking at an intact facility with working power and a radio signal that has been broadcasting for seven years. The lie required specific knowledge of what would survive. The bombers knew what they were preserving.',
-        skillCheck: { skill: 'lore', dc: 9, successAppend: 'Warlord Briggs was MERIDIAN perimeter security. Salt Creek Stronghold knows something about this. Someone in the military chain knew the facility would survive. Someone chose not to pursue the follow-up. That decision is a person. That person has been living with it for seven years.' },
+        description: 'The standard narrative: MERIDIAN was a bioweapons lab, the Collapse was an accident, the military bombed the facility to prevent further spread. You\'re standing in the bombing\'s aftermath, looking at an intact facility with working power and a radio signal that has been broadcasting for nearly seven years. The lie required specific knowledge of what would survive. The bombers knew what they were preserving.',
+        skillCheck: { skill: 'lore', dc: 9, successAppend: 'Warlord Briggs was MERIDIAN perimeter security. Salt Creek Stronghold knows something about this. Someone in the military chain knew the facility would survive. Someone chose not to pursue the follow-up. That decision is a person. That person has been living with it for nearly seven years.' },
+        questFlagOnSuccess: { flag: 'scar_bombing_intent_understood', value: true },
+        narrativeKeyOnDeduction: { keyId: 'scar_bombing_truth', requires: ['scar_blast_pattern_analyzed', 'scar_bombing_intent_understood', 'meridian_bombing_orders_found'] },
+      },
+      {
+        keywords: ['terminal', 'log', 'broadcast log', 'signal log', 'history'],
+        description: 'A log terminal near the crater rim comm relay shows broadcast history. First transmission date: six months after the Collapse. The signal didn\'t start the moment MERIDIAN went dark — it started after Vane completed facility lockdown and confirmed the automated systems were stable enough to begin broadcasting.',
+        skillCheck: { skill: 'electronics', dc: 9, successAppend: 'The gap between Collapse and first broadcast: 187 days. Nearly six months of silence while one person secured a facility alone. The signal has been running for six and a half years, not seven. The distinction matters — it means Vane wasn\'t broadcasting from day one. There was a period of preparation, of decision.' },
+        questFlagOnSuccess: { flag: 'meridian_timeline_clarified', value: true },
       },
       {
         keywords: ['cracks', 'floor', 'glow', 'blue'],
@@ -72,6 +83,16 @@ export const THE_SCAR_ROOMS: Room[] = [
       ],
       awarenessRoll: { unaware: 0.2, awarePassive: 0.35, awareAggressive: 0.45 },
     },
+    itemSpawns: [
+      {
+        entityId: 'bombing_site_notes',
+        spawnChance: 0.80,
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        conditionRoll: { min: 0.4, max: 0.8 },
+        groundDescription: 'A water-damaged field notebook lies near a shattered perimeter marker, the pages stiff with crater residue and years of chemical exposure.',
+        depletion: { cooldownMinutes: { min: 99999, max: 99999 }, respawnChance: 0.0 },
+      },
+    ],
     narrativeNotes: 'Act III entry. The Crater Rim is where the lie is made visually obvious. Five extras because this room carries enormous narrative weight. The chemical exposure timer establishes urgency without an artificial countdown.',
   },
 
@@ -95,6 +116,7 @@ export const THE_SCAR_ROOMS: Room[] = [
         descriptionVerbose: 'through the blast door',
         locked: true,
         lockedBy: 'meridian_keycard',
+        unlockFlags: ['sanguine_biometric_obtained', 'kindling_tunnel_access'],
       },
     },
     items: [],
@@ -172,6 +194,7 @@ export const THE_SCAR_ROOMS: Room[] = [
         { type: 'remnant', weight: 2, quantity: { min: 1, max: 2, distribution: 'flat' } },
         { type: 'shuffler', weight: 3, quantity: { min: 1, max: 3, distribution: 'flat' } },
       ],
+      awarenessRoll: { unaware: 0.4, awarePassive: 0.35, awareAggressive: 0.25 },
     },
     extras: [
       {
@@ -188,8 +211,13 @@ export const THE_SCAR_ROOMS: Room[] = [
         description: 'Personnel count: 1 (prior to your entry). Someone has been in this facility continuously since lockdown. Not an automated system. PERSONNEL COUNT tracks biological signatures, not electronic ones. This is a person. This is the broadcaster. This is who has been calling you here for years.',
         skillCheck: { skill: 'electronics', dc: 8, successAppend: 'The count changed when you entered: 2. For the first time in seven years, this facility has two living people inside it. The broadcaster knows you\'ve arrived. The facility told them the moment the decon system activated.' },
       },
+      {
+        keywords: ['panel', 'maintenance panel', 'diagnostic', 'automation', 'systems'],
+        description: 'A wall-mounted maintenance panel beside the decontamination station. The display shows a rotating diagnostic summary: AUTOMATED SYSTEMS NOMINAL. DAYS SINCE LAST MANUAL MAINTENANCE CYCLE: 2,387. The facility was designed to run without regular human intervention — military redundancy specs, deep battery backups, self-correcting subroutines. One person doesn\'t have to maintain all of it. One person has to maintain almost none of it.',
+        skillCheck: { skill: 'electronics', dc: 8, successAppend: 'The system architecture confirms it: the facility was built for a skeleton crew in a worst-case scenario. Life support, decontamination, power management — all automated to function indefinitely with minimal input. The broadcaster isn\'t an engineer keeping systems alive. They\'re a passenger in a machine that was designed to outlast its purpose.' },
+      },
     ],
-    narrativeNotes: 'Eerie functionality establishes the MERIDIAN atmosphere. The personnel count (1, then 2) is a critical revelation — the broadcaster is definitively alive and knows you\'re here. The Reclaimers-as-MERIDIAN-mirror note deepens Lev\'s backstory.',
+    narrativeNotes: 'Eerie functionality establishes the MERIDIAN atmosphere. The personnel count (1, then 2) is a critical revelation — the broadcaster is definitively alive and knows you\'re here. The Reclaimers-as-MERIDIAN-mirror note deepens Lev\'s backstory. The maintenance panel (Electronics DC 8) confirms facility automation — clarifies how one person survives here.',
   },
 
   {
@@ -199,7 +227,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     act: 3,
     difficulty: 3,
     visited: false,
-    flags: { dark: false },
+    flags: { dark: false, combat_narrow_passage: true },
     cycleGate: 3,
     description: 'Office spaces, evacuated. Seven years of silence that is not quite silence — the ventilation system runs, the lighting runs (emergency red, not full-spectrum), and somewhere far below, something generates heat and movement that transmits as a subsonic hum. The offices were cleared in a hurry: file drawers pulled and emptied, computers left but hard drives removed, personal items still on desks. A coffee mug on one desk has grown a seven-year culture that has evolved into something that would interest a microbiologist. The hallway stretches east-west. BIOCONTAINMENT B2 points east. DIRECTOR\'S SUITE points west. Both arrows are covered in a thin layer of dust undisturbed for seven years.',
     descriptionNight: 'The emergency lighting is always red. There is no other light source here. The corridor looks the same at midnight as at noon.',
@@ -260,6 +288,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       hazard_message: 'The biological safety cabinets are sealed but the air in the lab wing carries something — a faint ionized quality that registers at the back of your throat as wrong. Seven years of trace exposure from the CHARON-7 culture chambers has saturated the ventilation. Your body is logging this visit.',
       hazard_mitigated_by: 'hazmat_suit',
       hazard_mitigation_message: 'Your suit\'s sealed air supply keeps the contaminated ventilation out. You work in the lab on borrowed clean air.',
+      combat_narrow_passage: true,
     },
     cycleGate: 3,
     description: 'This is where CHARON-7 was developed. The lab equipment is still present, powered down but intact — the biological safety cabinets, the PCR machines, the sequencing instruments, the culture chambers. Data terminals line the east wall, still connected to the facility\'s network, accessible. The whiteboards are covered in notation that takes time to read and changes everything once you do. R-1 and R-8. Both strains. The intended outcome and the failure state. The intended outcome is the Sanguine. The failure state is the Hollow. This wasn\'t an accident. This was a research program.',
@@ -314,7 +343,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     act: 3,
     difficulty: 4,
     visited: false,
-    flags: { dark: true },
+    flags: { dark: true, combat_darkness: true, combat_narrow_passage: true },
     cycleGate: 3,
     description: 'Twelve cells in two rows, steel doors with sliding food ports, small window grilles. All cells are empty now. The doors are open — unlocked from inside, in the final days. The cells were occupied during the trial period: death row inmates, fourteen of them, transferred under the legal grey area the lab wing documents describe. The cell walls tell their story in the way cell walls always do: scratch marks counting days, writing in whatever medium was available. Letters never sent, addressed to specific people, written to be left in the walls.',
     descriptionNight: 'Emergency lighting in the cell block is minimal — barely enough to read the wall writing, which may be merciful.',
@@ -324,7 +353,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       north: { destination: 'scar_04_level1_corridor', descriptionVerbose: 'north back to the corridor' },
     },
     items: ['letter_meridian_cell_7', 'letter_meridian_cell_11'],
-    enemies: [],
+    enemies: ['elder_sanguine_deep', 'sanguine_feral'],
     npcs: [],
     extras: [
       {
@@ -346,11 +375,12 @@ export const THE_SCAR_ROOMS: Room[] = [
       baseChance: 0.85,
       timeModifier: { night: 1.2, dawn: 0.9, dusk: 1.1, day: 0.8 },
       threatPool: [
-        { type: 'elder_sanguine', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
-        { type: 'sanguine_feral', weight: 2, quantity: { min: 1, max: 2, distribution: 'flat' } },
+        { type: 'shuffler', weight: 3, quantity: { min: 1, max: 3, distribution: 'flat' } },
+        { type: 'remnant', weight: 2, quantity: { min: 1, max: 2, distribution: 'flat' } },
       ],
+      awarenessRoll: { unaware: 0.4, awarePassive: 0.35, awareAggressive: 0.25 },
     },
-    narrativeNotes: 'Letters collectible in this room. Cell 7 subject\'s writing is the most developed — the final entry is ambiguous about whether they became Sanguine or Hollow. The door-unlocking detail (Vane giving them codes) is crucial to the Director\'s character. Elder Sanguine boss encounter — Act III climax.',
+    narrativeNotes: 'Letters collectible in this room. Cell 7 subject\'s writing is the most developed — the final entry is ambiguous about whether they became Sanguine or Hollow. The door-unlocking detail (Vane giving them codes) is crucial to the Director\'s character. Elder Sanguine + Sanguine Feral in enemies array (not hollowEncounter — Sanguine types use a different encounter system).',
   },
 
   {
@@ -362,9 +392,9 @@ export const THE_SCAR_ROOMS: Room[] = [
     visited: false,
     flags: { questHub: true },
     cycleGate: 3,
-    description: 'The facility\'s cold storage vault is the MacGuffin room. Viable CHARON-7 samples, both strains, maintained at four degrees Celsius by a dedicated power circuit that has been running without interruption since installation. R-1 in blue-capped vials. R-8 in red-capped vials. The quantities are significant: enough for mass distribution, enough for a targeted release, enough for analysis and development. The choice you will make in the Core lab will determine what happens to this material. Right now it\'s just cold, and fluorescent, and patient.',
+    description: 'The cold storage vault hums at four degrees Celsius, maintained by a dedicated power circuit that has been running without interruption since installation. Rack after rack of sealed vials, two colors: blue-capped and red-capped, labeled in the same precise stencil as everything else in this facility. R-1 in blue. R-8 in red. The quantities are significant — enough for mass distribution, enough for a targeted release, enough for analysis and development. The vault is clean, cold, and fluorescent. The samples do not care what you decide to do with them. They are patient in the way that biology is patient: they will wait.',
     descriptionNight: 'The cold storage hum is constant. The blue-green glow from the vials lights the vault from within.',
-    shortDescription: 'Cold storage vault. Both strains. The MacGuffin.',
+    shortDescription: 'Cold storage vault. CHARON-7 samples — both strains — in temperature-controlled racks.',
     exits: { north: 'scar_05_lab_wing' },
     richExits: {
       north: { destination: 'scar_05_lab_wing', descriptionVerbose: 'north to the lab wing' },
@@ -402,7 +432,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     act: 3,
     difficulty: 4,
     visited: false,
-    flags: { scavengingZone: true },
+    flags: { scavengingZone: true, combat_narrow_passage: true },
     cycleGate: 3,
     description: 'The security center is the only room in MERIDIAN where something might still kill you without involving the Hollow. Automated defense systems: motion sensors, two turret-style deterrent units that are still armed, a locked armory with military-grade equipment. The motion sensors have a calibration that distinguishes between sizes — designed, you eventually work out, to let Sanguine-sized signatures pass without triggering and flag human-sized ones. The automated defense was built to protect against human intruders, not Sanguine ones.',
     descriptionNight: 'The turrets track in the dark. Their IR targeting doesn\'t care about the time.',
@@ -498,7 +528,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     act: 3,
     difficulty: 4,
     visited: false,
-    flags: { dark: true },
+    flags: { dark: true, combat_darkness: true, combat_collapsing: true },
     cycleGate: 3,
     description: 'The stairwell to Level 2. Power fluctuations — the emergency lighting on this staircase flickers on an irregular cycle, the fluorescent tubes running at 60% capacity due to load variation from something on Level 2. The something is alive. The hum gets louder as you descend. At the bottom, the air temperature rises by fifteen degrees. The heat source is real and it\'s below and there is a biological signature in the thermal variation that isn\'t mechanical. Alive. Something alive is generating this much heat.',
     descriptionNight: 'The fluorescent flicker is the same at night. The heat from below doesn\'t know what time it is.',
@@ -624,7 +654,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     extras: [
       {
         keywords: ['journal', 'logs', 'diary', 'handwritten'],
-        description: 'The journal covers two distinct periods. Before: the program\'s design, the funding pressure, the decision points where Vane made choices he knew were wrong, the incremental compromises that led to the live trials. The writing is precise and self-aware and full of the specific anguish of someone who understood exactly what they were doing and did it anyway. After: seven years of living with what happened. The after entries are calmer. The before entries are not.',
+        description: 'The journal covers two distinct periods. Before: the program\'s design, the funding pressure, the decision points where Vane made choices he knew were wrong, the incremental compromises that led to the live trials. The writing is precise and self-aware and full of the anguish of someone who understood exactly what they were doing and did it anyway — each compromise named, each wrong turn documented, a record built not to excuse but to not forget. After: seven years of living with what happened. The after entries are calmer. The before entries are not.',
         skillCheck: { skill: 'lore', dc: 9, successAppend: 'The final journal entry was written recently — the ink is relatively fresh. It reads: "Someone is in decon. The count is 2 for the first time. I left the door open. I built the dead man\'s switch. I gave them the codes. I called for seven years. Someone came. I don\'t know what they\'ll choose and I\'ve stopped trying to know. I just needed someone else to know the truth. The rest is theirs."' },
       },
       {
@@ -635,6 +665,14 @@ export const THE_SCAR_ROOMS: Room[] = [
         keywords: ['authorization', 'who knew', 'conspiracy', 'trials'],
         description: 'The journal names names. The Congressional committee members. The pharmaceutical board representatives. The general who authorized MERIDIAN\'s escalation. And one name that appears in the journal eight times in the final period — a name you\'ve heard before, in settlements, in faction structures. Someone who survived the Collapse in a leadership role. Someone whose institutional knowledge of MERIDIAN has been informing their post-Collapse decisions all along.',
         skillCheck: { skill: 'lore', dc: 13, successAppend: 'The name is one you recognize from your travels. What you do with this information is yours. The journal doesn\'t tell you. It just names them.' },
+      },
+      {
+        keywords: ['cabinet', 'filing cabinet', 'classified', 'strike order', 'authorization order'],
+        description: 'A steel filing cabinet against the north wall, marked CLASSIFIED in a stencil that has been deliberately left visible rather than papered over. The top drawer holds the paperwork that should not exist — the strike order, signed, dated, authorized. The language is calibrated by people who knew exactly what they were writing: "surface sterilization protocols" not "facility elimination," "contamination suppression measures" not "outbreak response." Every word chosen to read one way to civilians and another way to the officers executing the order. The lie is in the vocabulary. The truth is in the precision of the vocabulary.',
+        skillCheck: { skill: 'lore', dc: 11, successAppend: 'The signature block at the bottom has three names. One is the general Vane\'s journal names. The other two are civilians — not military. Both names appear in post-Collapse faction leadership. The strike order was a joint authorization between the military and parties who are still alive and still making decisions about the world you\'re living in.' },
+        questFlagOnSuccess: { flag: 'meridian_bombing_orders_found', value: true },
+        narrativeKeyOnExamine: 'meridian_bombing_orders',
+        narrativeKeyOnDeduction: { keyId: 'scar_bombing_truth', requires: ['scar_blast_pattern_analyzed', 'scar_bombing_intent_understood', 'meridian_bombing_orders_found'] },
       },
     ],
     hollowEncounter: {
@@ -682,7 +720,8 @@ export const THE_SCAR_ROOMS: Room[] = [
         dispositionRoll: { friendly: 0.5, neutral: 0.4, wary: 0.1 },
         dialogueTree: 'vane_broadcast_room_main',
         questGiver: ['the_choice', 'meridian_full_truth'],
-        narrativeNotes: 'The broadcaster\'s identity varies based on player evidence path — Dr. Vane (most common), the Vivarium Sanguine (if contact was made), or an AI system (if the player completed the electronics path without finding the journal). Each version of the broadcaster has the same functional information but delivers it differently.',
+        questFlagOnSpawn: { flag: 'met_broadcaster', value: true },
+        narrativeNotes: 'The broadcaster\'s identity varies based on player evidence path — Dr. Vane (most common), the Vivarium Sanguine (if contact was made), or an AI system (if the player completed the electronics path without finding the journal). Each version of the broadcaster has the same functional information but delivers it differently. Sets met_broadcaster flag on spawn for scar_26 conditional.',
       },
     ],
     extras: [
@@ -746,7 +785,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
       {
         keywords: ['seal', 'terminal c', 'destroy', 'close'],
-        description: 'THE SEAL: Trigger MERIDIAN\'s built-in self-destruct. The data, the samples, the facility, and everything in it becomes rubble. No cure. No weapon. No future research. The world stays exactly as broken as it is, and must find its own way from here. The broadcaster called this option "the wisest and the quietest." They didn\'t say which one they recommend.',
+        description: 'THE SEAL: Trigger MERIDIAN\'s built-in self-destruct. The data, the samples, the facility, and everything in it becomes rubble. No cure. No weapon. No future research. The world stays exactly as broken as it is, and must find its own way from here. The broadcaster called this option "the quietest." They didn\'t say which one they recommend.',
         skillCheck: {
           skill: 'lore',
           dc: 4,
@@ -797,6 +836,21 @@ export const THE_SCAR_ROOMS: Room[] = [
     items: [],
     enemies: [],
     npcs: [],
+    npcSpawns: [
+      {
+        npcId: 'the_dog',
+        spawnChance: 0.90,
+        spawnType: 'unique',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        questGate: 'dog_kindness',
+        activityPool: [
+          { desc: 'The dog is here. It was here before you. It is sitting at the top of the exit staircase with its ears forward and its eyes on the door, waiting for you to come through it the way it has waited for everything else you\'ve done: patiently, without understanding, without needing to understand. You are the person it chose. That is the whole story.', weight: 4 },
+          { desc: 'The dog stands when it sees you. Its tail moves. It does not run to you. It waits for you to come to it, because that is how this has always worked between the two of you — it waits, you come, and the distance closes because you both decided it should. It is the last living thing you see before the sky.', weight: 3 },
+        ],
+        dispositionRoll: { friendly: 1.0 },
+        narrativeNotes: 'The Dog at the exit is the game\'s final emotional beat before the ending text. It was here before you. The payoff for every small kindness across three cycles.',
+      },
+    ],
     extras: [
       {
         keywords: ['choice', 'made', 'did', 'done'],
@@ -833,7 +887,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     act: 3,
     difficulty: 4,
     visited: false,
-    flags: {},
+    flags: { combat_narrow_passage: true },
     cycleGate: 3,
     description: 'A secondary decontamination corridor, longer than the main airlock — personnel coming from the lab wings passed through here before accessing shared areas. The sprayers are empty, the reservoirs depleted years ago, but the nozzles remain in their ceiling mounts, still angled for the bodies that used to walk under them. Personnel badge slots line the east wall, one per staff member, a physical check-in record for who was where. The last shifts are still in the slots. Nobody came back to clock out.',
     descriptionNight: 'The badge slots hold their ghosts at night too. The corridor feels narrower in the dark. You know it isn\'t.',
@@ -1074,7 +1128,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     visited: false,
     flags: {},
     description: 'The augmentation chambers are arranged in a semicircle — eight stations, each a reclining chair with an integrated medical array. The chairs have the specific design language of something that was never meant to be uncomfortable: padded, articulated, with a headrest designed for long-term occupation. This is where the R-1 integration happened. The medical equipment adjacent to each chair has no civilian analogue — precision infusion arrays, continuous neural monitoring, cellular regeneration tracking systems. The personnel files on the adjacent desk show eleven subjects. Nine successful outcomes. First names only. You have met at least two of them.',
-    descriptionNight: 'The augmentation chambers at night. Empty chairs, the IV stands still positioned beside them. The medical monitoring equipment reads zero on all panels. Something is missing from this room and its absence has the specific shape of the people who sat in these chairs.',
+    descriptionNight: 'The augmentation chambers at night. Empty chairs, the IV stands still positioned beside them. The medical monitoring equipment reads zero on all panels. The chairs are still oriented the way the subjects left them — slightly reclined, facing the monitoring desk. Something is missing from this room and the empty chairs are its exact shape.',
     shortDescription: 'The augmentation chambers. This is where Sanguine were made. First-names-only files. You know two of them.',
     exits: { west: 'scar_19_lab_wing_b_entrance' },
     richExits: {
@@ -1228,7 +1282,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     visited: false,
     flags: {},
     description: 'The medical ward is not a place for sick people — it\'s a place for someone managing their own maintenance over years. The examination table has been adjusted to self-examination configuration. The surgical suite has been modified for single-operator procedures. The pharmaceutical storage is systematically depleted, the remaining inventory specifically curated: things that a Sanguine physiology needs for long-term self-maintenance, nothing that a human-normal physiology would require. The evidence is unambiguous. Whoever has been living here has Sanguine physiology. They\'ve been healing faster than human-normal. And they\'ve been managing that for seven years with the clinical precision of someone who knows exactly what they are.',
-    descriptionNight: 'The medical bay at night, the equipment clean and idle. The empty pharmaceutical slots are a specific shape — the shape of everything that\'s already been used.',
+    descriptionNight: 'The medical bay at night, the equipment clean and idle. The empty pharmaceutical slots form a pattern — the curated gaps of someone who used exactly what they needed and nothing more, seven years of deliberate self-maintenance accounted for in the absences.',
     shortDescription: 'Facility medical bay. Single-operator setup. Sanguine physiology confirmed. Self-maintenance for seven years.',
     exits: { west: 'scar_22_cafeteria', north: 'scar_24_security_wing' },
     richExits: {
@@ -1257,6 +1311,16 @@ export const THE_SCAR_ROOMS: Room[] = [
         keywords: ['healing', 'faster', 'Sanguine', 'physiology'],
         description: 'The logs on the medical terminal cover every health event for one patient over seven years. The healing rate data matches the Alpha Series projections from Wing B — faster every year, the regeneration curve still climbing. The patient\'s notes at intervals: \'Healing rate: 14x baseline and increasing.\' \'Healing rate: 19x baseline.\' \'Healing rate: estimate only, too fast to track accurately.\' The most recent note: \'I stopped measuring. It doesn\'t matter anymore. What matters is that I\'m still here.\'',
       },
+      {
+        keywords: ['injection', 'log', 'self-administered', 'R-1', 'vane', 'dosage', 'journal'],
+        description: 'Behind the pharmaceutical cabinet, wedged between the unit and the wall: a leather-bound injection log. The handwriting is precise, clinical, a researcher\'s hand. The first page is dated six months after the Collapse. The entries are a dosage schedule.',
+        skillCheck: {
+          skill: 'field_medicine',
+          dc: 13,
+          successAppend: 'The log reads like a clinical trial with a sample size of one. Day 1: Administered R-1 compound. 0.3cc subcutaneous. The alternative was starvation within the month — immune system failing, no viable food source without surface access, facility sealed. Day 14: Integration proceeding. Healing rate increasing. Appetite stabilizing. I am becoming what I made. Day 47: Dosage adjusted to 0.15cc. Integration plateau. Side effects: altered circadian rhythm, heightened auditory sensitivity, persistent low-grade fever (38.2C, stable). Day 180: Reduced to 0.05cc maintenance dose. The compound is no longer supplemental — my physiology produces it endogenously. The transition is complete. I am the last human to take R-1 voluntarily and the first to do it with full knowledge of what it does. Day 365: One year. The maintenance dose is a formality. I continue it because the act of injection is the last clinical behavior I perform, and without it I am not a researcher managing a condition. I am just the condition. Year 3: Dosage discontinued. Unnecessary. Cellular regeneration self-sustaining. I eat what the facility grows. I heal what breaks. I maintain what I built. I wait for someone to follow the signal. Year 7: The log ends here because there is nothing left to record. I am what R-1 makes. I have been what R-1 makes for longer than any subject in the trial data. The trial data is me now. I am my own longest-running experiment, and the results are: I am still here. That is the only result that matters.',
+        },
+        questFlagOnSuccess: { flag: 'discovered_vane_self_administered_r1', value: true },
+      },
     ],
     hollowEncounter: {
       baseChance: 0.08,
@@ -1278,7 +1342,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     act: 3,
     difficulty: 4,
     visited: false,
-    flags: { scavengingZone: true },
+    flags: { scavengingZone: true, combat_narrow_passage: true },
     description: 'The secondary security operations center, distinct from the main security room upstairs. Where the main center controls automated defenses, this wing manages the facility\'s surveillance network. Forty-two cameras, all active, all feeding to this room\'s monitors. The monitors show the facility in real time — every corridor, every lab, every junction. Including the room you are standing in, and yourself in it. Someone is watching these monitors. The access logs on the terminal beside the door show seven years of daily check-ins. And one pattern that doesn\'t break: they never check camera 14-C. The camera covering scar_14. The Core. They have not looked at the Core in seven years.',
     descriptionNight: 'The security monitors glow in the dark. Forty-two feeds, all live. The camera covering the Core is the only one in the room that shows an empty, undisturbed space. Everything else shows evidence of habitation. The Core doesn\'t.',
     shortDescription: 'Surveillance operations. Forty-two live cameras. Seven years of logs. They never look at the Core.',
@@ -1333,7 +1397,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     visited: false,
     flags: { scavengingZone: true },
     description: 'The emergency power system is three units — two primary generators and one tertiary backup — all maintained in operational condition. The maintenance logs cover seven years: oil changes, filter replacements, fuel management, load balancing across the facility\'s systems. The entries are dated and signed with the same initials throughout: E.V. Every two weeks, without exception, for 2,555 days. E.V. kept the lights on. E.V. kept the broadcast transmitting. E.V. kept the cold storage running. The work required to maintain three industrial generators across seven years, alone, is not small work. They did it anyway.',
-    descriptionNight: 'The generators run. They always run. The sound in here at night is constant and low and the specific quality of something that refuses to stop.',
+    descriptionNight: 'The generators run. They always run. The sound in here at night is constant and low — a frequency that settles into your chest after a few minutes, the sound of something that has been running for seven years and has no intention of stopping.',
     shortDescription: 'Emergency generators. Seven years of maintenance logs, signed E.V. Someone kept the lights on.',
     exits: { east: 'scar_24_security_wing', north: 'scar_26_signal_origin' },
     richExits: {
@@ -1408,6 +1472,10 @@ export const THE_SCAR_ROOMS: Room[] = [
       {
         keywords: ['absent', 'stepped away', 'not here', 'gone'],
         description: 'They\'re not here. The equipment is running. The broadcast is transmitting. But the chair is empty and the door to the east is ajar. They knew from the security cameras the moment you arrived. They have been watching your progress through the facility. And at some point before you reached this room, they got up and left. They didn\'t wait. They prepared this for you and then got out of the way. The space they left behind is shaped exactly like a person who has done everything they could do and left the rest to someone else.',
+        conditionalDescription: {
+          flag: 'met_broadcaster',
+          description: 'You\'ve been here before, in a sense — the broadcaster you met in the broadcast room built this signal, sat in this chair, revised these scripts. Standing in the origin after meeting the person makes the room smaller and larger at the same time. Smaller because the mystery is a person now. Larger because a person did all of this alone.',
+        },
       },
       {
         keywords: ['signal', 'broadcast', 'script', 'message'],
@@ -1454,7 +1522,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
       {
         keywords: ['second chair', 'empty', 'facing', 'two chairs'],
-        description: 'Two chairs: one where you would sit to use the recording device, one facing it. The broadcaster placed the second chair facing the first and then chose not to sit in it. The choice is visible in the arrangement — this wasn\'t always one chair. They brought the second chair in, positioned it, and then left. They wanted to be here. They decided not to be. The empty chair is the decision. It faces you like an absence that has the specific shape of restraint.',
+        description: 'Two chairs: one where you would sit to use the recording device, one facing it. The broadcaster placed the second chair facing the first and then chose not to sit in it. The choice is visible in the arrangement — this wasn\'t always one chair. They brought the second chair in, positioned it, and then left. They wanted to be here. They decided not to be. The empty chair is the decision. It faces you: the shape of someone who came this far and chose not to stay.',
       },
       {
         keywords: ['clean', 'prepared', 'deliberate', 'ready'],

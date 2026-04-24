@@ -30,11 +30,11 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="min-h-screen bg-black flex items-center justify-center p-8">
           <div className="max-w-lg text-center font-mono">
-            <h1 className="text-amber-400 text-2xl mb-4">SYSTEM MALFUNCTION</h1>
-            <p className="text-amber-600 mb-4">
+            <h1 className="text-red-500 text-2xl mb-4">SYSTEM MALFUNCTION</h1>
+            <p className="text-gray-400 mb-4">
               Something went wrong. The wasteland glitched.
             </p>
-            <p className="text-amber-700 text-sm mb-6">
+            <p className="text-gray-500 text-sm mb-6">
               {this.state.error?.message}
             </p>
             <button
@@ -42,7 +42,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 this.setState({ hasError: false, error: null })
                 window.location.reload()
               }}
-              className="px-6 py-2 border border-amber-600 text-amber-400 hover:bg-amber-900/30 transition-colors"
+              className="px-6 py-2 border border-gray-600 text-cyan-400"
             >
               REBOOT SYSTEM
             </button>

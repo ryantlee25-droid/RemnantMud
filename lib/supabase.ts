@@ -6,6 +6,13 @@ import { createMockSupabaseClient, isDevMode } from '@/lib/supabaseMock'
 // and tests may need fresh instances each time.
 let _cachedBrowserClient: ReturnType<typeof createBrowserClient> | null = null
 
+// NOTE: world_state has RLS enabled with no user-facing policy (see migration 20260329000001_rls_world_state.sql).
+// Access is restricted to service_role only (which bypasses RLS by default).
+// The anon client created here will receive silent empty results from world_state — this is intentional.
+// world_state is currently unused and reserved for a future admin/multiplayer path.
+// If server-side admin operations are ever needed, instantiate a separate service_role client
+// using SUPABASE_SERVICE_ROLE_KEY (a non-NEXT_PUBLIC_ server-only env var).
+
 // Browser client — used in React components and client-side lib
 // In dev mode, returns an in-memory mock (no Supabase account needed)
 export function createSupabaseBrowserClient() {

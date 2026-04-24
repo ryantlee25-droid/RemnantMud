@@ -83,7 +83,7 @@ const levTree: DialogueTree = {
     lev_echo_distrusted: {
       id: 'lev_echo_distrusted',
       speaker: 'Lev',
-      text: `${rt.npc('Lev')}'s expression hardens — the clinical detachment sharpening into something with edges. "You again." They don't open the drawer. "Last time you took the keycard and I received nothing. No data. No samples. No professional courtesy." They adjust the tablet, not looking at you. "The keycard costs trust you haven't earned. Twice." A deliberate silence. "The field station east of the Stacks. There were sequencing records there — R-8 integration data. If any survived, bring me what you find. Not a promise. Physical evidence. Then we discuss access."`,
+      text: `${rt.npc('Lev')}'s expression hardens — the clinical detachment sharpening into something with edges. "You again." They don't open the drawer. "Last time you took the keycard and I received nothing. No data. No samples. No professional courtesy." They adjust the tablet, not looking at you. "The keycard costs trust you haven't earned. Twice." A deliberate silence. "The field station east of the Stacks — two kilometers past the reading room exit, follow the old access road through the industrial district. There were sequencing records there — R-8 integration data. If any survived, bring me what you find. Not a promise. Physical evidence. Then we discuss access."`,
       onEnter: {
         setFlag: 'lev_echo_acknowledged',
       },
@@ -122,6 +122,28 @@ const levTree: DialogueTree = {
       id: 'lev_charon_strains',
       speaker: 'Lev',
       text: `${rt.npc('Lev')}'s hands go still. "R-1 was the intended product — controlled augmentation. The ${rt.keyword('Sanguine')} expression. R-8 was the accident. It emerged during unauthorized trials. The integration looks cleaner under a microscope, but cleaner degradation is still degradation. The ${rt.keyword('Hollow')} were never supposed to exist." A breath. "The data is what it is. I don't editorialize."`,
+      onEnter: {
+        setFlag: { found_sanguine_origin: true, found_hollow_origin: true },
+      },
+      branches: [
+        {
+          label: `"Who authorized the unauthorized trials?"`,
+          targetNode: 'lev_charon_authority',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'lev_start',
+        },
+      ],
+    },
+
+    lev_charon_authority: {
+      id: 'lev_charon_authority',
+      speaker: 'Lev',
+      text: `${rt.npc('Lev')} looks at you for a measured moment. "Above Director Vane. That's what the document chain says when you read the redactions against the unredacted margins. The committee that signed off on live trials used a specific government redaction tool that doesn't cover the authorization codes. The codes route to a small number of people — pre-Collapse oversight — and several of those people are still alive in faction leadership positions." A flat glance. "I am not going to name them. You will find the same data in the Director's Office journal if you reach it. I prefer you reach that conclusion on documents, not on my say-so."`,
+      onEnter: {
+        setFlag: { meridian_authority_implied: true },
+      },
       branches: [
         {
           label: 'Back to other topics.',
@@ -380,9 +402,10 @@ const sparksTree: DialogueTree = {
     sparks_signal: {
       id: 'sparks_signal',
       speaker: 'Sparks',
-      text: `"Shortwave, repeating loop, been running for — I don't know, years? Everyone thinks it's automated." ${rt.npc('Sparks')} pulls a notebook from under a pile of capacitors. "I've decoded maybe forty percent. The modulation shifts. Automated systems don't shift." She taps the notebook hard enough to dent the page. "Someone is down there. In the ${rt.keyword('Scar')}. Broadcasting."`,
+      text: `"Shortwave, repeating loop, been running for — I don't know, years? Everyone thinks it's automated." ${rt.npc('Sparks')} pulls a notebook from under a pile of capacitors. "I've decoded maybe forty percent. The modulation shifts. Automated systems don't shift." She taps the notebook hard enough to dent the page. "Someone is down there. In the ${rt.keyword('Scar')}. Broadcasting." She slides the notebook toward you. "Frequency's 4.127 megahertz. Interval variance keyed to a scaled twelve-tone. If you find a terminal that wants authentication, try that."`,
       onEnter: {
         setFlag: 'sparks_shared_decode',
+        grantNarrativeKey: 'crossroads_signal_source',
       },
       branches: [
         {
@@ -508,6 +531,122 @@ const sparksTree: DialogueTree = {
       id: 'sparks_leave',
       speaker: 'Sparks',
       text: `${rt.npc('Sparks')} is already back to her equipment before you finish speaking. The soldering iron hums. A burst of static cuts through the radio and she lunges for the dial, adjusting, listening, writing. You are no longer in the room as far as she's concerned.`,
+    },
+  },
+}
+
+// ------------------------------------------------------------
+// SPARKS — Signal Quest (Crossroads)
+// dialogueTree ID: 'cr_sparks_signal_quest'
+// NOTE: section owned by Rider A (quest-spine)
+// Activated after player has sparks_shared_decode flag
+// ------------------------------------------------------------
+
+const sparksSignalQuestTree: DialogueTree = {
+  npcId: 'sparks_radio',
+  startNode: 'sparks_quest_start',
+  nodes: {
+    sparks_quest_start: {
+      id: 'sparks_quest_start',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} grabs your arm the moment you're close enough. "Listen. The signal changed again last night. The cadence — it's faster. Whoever's broadcasting knows someone is listening now." She pulls you to the workbench, where a frequency chart is covered in fresh annotations, red ink still wet. "I can triangulate the source. I know I can. But my equipment can't reach past the interference field around the ${rt.keyword('Scar')}." She meets your eyes. The desperation is controlled but visible. "I need a ${rt.item('Signal Booster')}. ${rt.item('Electronics Salvage')} and a ${rt.item('Wire Coil')} — build one and bring it to me. With a booster in the chain I can cut through the interference and pin the broadcast to a hundred-meter radius." Her voice drops. "Someone has been calling for help for seven years. Seven years, alone, underground. I am not going to let that signal die because I couldn't get the right parts."`,
+      branches: [
+        {
+          label: `"I'll build the ${rt.item('Signal Booster')}. What exactly do I need?"`,
+          targetNode: 'sparks_quest_details',
+        },
+        {
+          label: '"Why does this matter so much to you?"',
+          targetNode: 'sparks_quest_why',
+        },
+        {
+          label: '"Seven years? How is that possible?"',
+          targetNode: 'sparks_quest_seven_years',
+        },
+      ],
+    },
+
+    sparks_quest_details: {
+      id: 'sparks_quest_details',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} is already sketching a diagram on the back of a frequency chart. "${rt.item('Electronics Salvage')} — capacitors, resistors, anything with clean copper trace. And a ${rt.item('Wire Coil')} for the antenna amplification loop." She taps the diagram. "Any workbench with basic tools can assemble it. The ${rt.keyword('crafting')} isn't hard — it's finding clean components that's the challenge." She tears the diagram free and presses it into your hand. "Bring me the finished ${rt.item('Signal Booster')} and I'll have the triangulation running within the hour. We'll know exactly where in the Scar the signal originates. Exactly where they are."`,
+      onEnter: {
+        setFlag: { sparks_quest_accepted: true, quest_signal_booster_active: true },
+      },
+      branches: [
+        {
+          label: '"I\'ll get it done."',
+          targetNode: 'sparks_quest_closure',
+        },
+        {
+          label: '"Why does this matter so much to you?"',
+          targetNode: 'sparks_quest_why',
+        },
+      ],
+    },
+
+    sparks_quest_why: {
+      id: 'sparks_quest_why',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} is quiet for three seconds. For her, that's an eternity. "Because I heard it on the worst night of my life. Three weeks after the Collapse. I'd lost — everyone. I was sitting in the dark with a radio I'd pulled from a wrecked car, scanning frequencies for anything human. Anything." She adjusts a dial that doesn't need adjusting. "And there it was. Twelve words. Repeating. Someone else was alive and trying to reach someone. Anyone." She looks at the radio. "I never stopped listening. And they never stopped broadcasting. That means something. That has to mean something."`,
+      branches: [
+        {
+          label: `"Tell me what I need to build the ${rt.item('Signal Booster')}."`,
+          targetNode: 'sparks_quest_details',
+        },
+        {
+          label: '"It means something. I\'ll find out what."',
+          targetNode: 'sparks_quest_closure',
+        },
+      ],
+    },
+
+    sparks_quest_seven_years: {
+      id: 'sparks_quest_seven_years',
+      speaker: 'Sparks',
+      text: `"That's the question that keeps me up." ${rt.npc('Sparks')} pulls the frequency chart closer, finger tracing a line of decoded text. "The ${rt.keyword('MERIDIAN')} facility was sealed during the bombing. Underground. Self-contained. If the backup generators held — and the signal proves they did — someone could survive down there. Alone. For years." She swallows. "The modulation shifts prove it's manual adjustment. Not automated. A person is doing this. A person who has been trapped underground since the world ended, broadcasting the same twelve words, waiting for someone to answer." Her jaw tightens. "We're going to answer."`,
+      branches: [
+        {
+          label: `"What do I need to build the ${rt.item('Signal Booster')}?"`,
+          targetNode: 'sparks_quest_details',
+        },
+        {
+          label: '"We will. I promise."',
+          targetNode: 'sparks_quest_closure',
+        },
+      ],
+    },
+
+    // ---- Return with booster ----
+    sparks_quest_booster_return: {
+      id: 'sparks_quest_booster_return',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} sees the ${rt.item('Signal Booster')} in your hands and her whole body changes — shoulders drop, hands stop moving, the constant nervous energy goes still for the first time since you've known her. "You built it." She takes it with both hands, reverent. "Give me — don't talk. Don't talk." She's already wiring it into the antenna array, fingers fast and precise. The radio hums louder. Static shifts. And then — for a half-second — a voice. Clear. Human. Desperate. Gone. ${rt.npc('Sparks')} looks at you with tears running down her face and the most terrified smile you've ever seen. "South-southeast. Point four kilometers from the crater rim. That's where they are. That's where we go."`,
+      onEnter: {
+        setFlag: { sparks_booster_delivered: true, quest_signal_booster_complete: true, signal_triangulated: true },
+        removeItem: ['crafted_signal_booster'],
+      },
+      branches: [
+        {
+          label: '"We\'ll get them out."',
+          targetNode: 'sparks_quest_final',
+        },
+      ],
+    },
+
+    sparks_quest_final: {
+      id: 'sparks_quest_final',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} wipes her face with the back of her hand, already scribbling coordinates. "The ${rt.keyword('Scar')}. Southern approach. There should be a maintenance access — the old facility maps show service tunnels." She hands you the coordinates, hand steady now. "Find them. Find whoever has been down there for seven years, alone, broadcasting into the dark, hoping someone would hear." She grips your shoulder once, hard. "You heard."`,
+      onEnter: {
+        setFlag: 'sparks_gave_coordinates',
+      },
+    },
+
+    sparks_quest_closure: {
+      id: 'sparks_quest_closure',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} nods once — sharp, decisive. "Good. The signal won't wait forever. Whoever's down there, they've held on this long, but —" She doesn't finish. She doesn't need to. The soldering iron is already in her hand, the radio humming, the frequency chart open. She'll be here when you get back. She's always here.`,
     },
   },
 }
@@ -702,8 +841,78 @@ const crossTree: DialogueTree = {
           targetNode: 'cross_start',
         },
         {
+          label: `"${rt.npc('Briggs')} told me the same thing. Salt Creek knew. So did you."`,
+          targetNode: 'cross_bombing_crossref',
+          requiresFlag: 'briggs_confessed_bombing',
+        },
+        {
           label: '"I need to get in there."',
           targetNode: 'cross_expedition_gate',
+        },
+      ],
+    },
+
+    cross_bombing_crossref: {
+      id: 'cross_bombing_crossref',
+      speaker: 'Marshal Cross',
+      text: `${rt.npc('Cross')} sets her pen down. Carefully. The small act carries the weight of a larger one elsewhere. "Briggs." The name as a fact, not a question. "He was perimeter. Of course he knew. Of course." She looks at the wall. At nothing on the wall. "Seven years. Both of us. Neither of us said a word. He had reasons. I had reasons." Her voice drops. "His reasons are honest. A soldier's compartmentalization. He was trained not to share." She looks back at you. "Mine are not that honest. I chose. I chose to let the Accord believe something so I could govern the belief. I told myself it would destabilize the faction if the people knew their Marshal had been lied to. I told myself a lot of things that sounded responsible." A pause. "I would like to know what you plan to do with this."`,
+      onEnter: {
+        setFlag: { bombing_cover_confirmed: true },
+      },
+      branches: [
+        {
+          label: `"You chose silence. That's yours to carry."`,
+          targetNode: 'cross_bombing_crossref_chose',
+        },
+        {
+          label: '"You were following orders. Cold War habits."',
+          targetNode: 'cross_bombing_crossref_orders',
+        },
+        {
+          label: `"I don't know yet. That's the honest answer."`,
+          targetNode: 'cross_bombing_crossref_undecided',
+        },
+      ],
+    },
+
+    cross_bombing_crossref_chose: {
+      id: 'cross_bombing_crossref_chose',
+      speaker: 'Marshal Cross',
+      text: `${rt.npc('Cross')} nods once. She does not look relieved. "Yes. I chose. Calling it orders would be easier. It would be the comfortable lie." Her hands flatten on the desk. "Whatever you do with this, do it as someone who knows I was the one who kept it quiet. Not the pre-Collapse command. Not the Accord. Me."`,
+      onEnter: {
+        setFlag: { cross_concealed_truth: true },
+      },
+      branches: [
+        {
+          label: `"I hear you, ${rt.npc('Cross')}."`,
+          targetNode: 'cross_start',
+        },
+      ],
+    },
+
+    cross_bombing_crossref_orders: {
+      id: 'cross_bombing_crossref_orders',
+      speaker: 'Marshal Cross',
+      text: `${rt.npc('Cross')} tilts her head slightly — considering it, letting the frame settle. "There were orders. I received them. I could have disobeyed. I did not. The order gave me cover; the decision was mine." She does not smile. "Call it what you want. It reads the same in either language. It reads as silence."`,
+      onEnter: {
+        setFlag: { cross_followed_orders: true },
+      },
+      branches: [
+        {
+          label: `"Understood."`,
+          targetNode: 'cross_start',
+        },
+      ],
+    },
+
+    cross_bombing_crossref_undecided: {
+      id: 'cross_bombing_crossref_undecided',
+      speaker: 'Marshal Cross',
+      text: `"Honest is better than clever, right now." ${rt.npc('Cross')} leans back. "Decide before you act. Then act. The Accord is fragile. The Salters are proud. Whatever you choose to do with what you know, do it deliberately. Sloppy is worse than either option."`,
+      branches: [
+        {
+          label: `"I will."`,
+          targetNode: 'cross_start',
         },
       ],
     },
@@ -895,6 +1104,13 @@ const briggsTree: DialogueTree = {
           targetNode: 'briggs_military_support',
           requiresRep: { faction: 'salters', min: 2 },
         },
+        // === CONVOY remnant-story-0329 Rider D ===
+        {
+          label: '"Cross is demanding you answer for the bombing. There\'s a runner."',
+          targetNode: 'briggs_bombing_crisis',
+          requiresFlag: 'bombing_revealed',
+        },
+        // === END CONVOY remnant-story-0329 Rider D ===
         {
           label: '"Nothing. Leaving."',
           targetNode: 'briggs_leave',
@@ -1040,6 +1256,57 @@ const briggsTree: DialogueTree = {
           label: '"This changes things, Briggs."',
           targetNode: 'briggs_leave',
         },
+        {
+          label: `"${rt.npc('Cross')} knew. The Accord knew. Seven years, and nobody told anyone."`,
+          targetNode: 'briggs_bombing_crossref',
+          requiresFlag: 'cross_admitted_bombing_theater',
+        },
+      ],
+    },
+
+    briggs_bombing_crossref: {
+      id: 'briggs_bombing_crossref',
+      speaker: 'Warlord Briggs',
+      text: `${rt.npc('Briggs')}'s jaw works. The words take longer to arrive than they should. "Cross." He says her name the way soldiers say the names of people they outrank but respect and people they rank equal to and resent — both registers at once. "She had it from command too. Different channel. Same order. Keep the people settled. Keep the story clean." He picks up the sidearm from the table, not to threaten, just to have something to hold. "I figured she didn't know. I was wrong. We were both carrying the same secret on opposite sides of the river and neither of us ever thought to ask." A long breath. "That's what the pre-Collapse was good at. Compartmentalization. We kept the habit because nobody told us to stop." He looks at you. "What do you do with this?"`,
+      onEnter: {
+        setFlag: { bombing_cover_confirmed: true },
+      },
+      branches: [
+        {
+          label: `"I tell ${rt.npc('Cross')} you said that. You deserve to be in the same room with her when this stops being a secret."`,
+          targetNode: 'briggs_bombing_crossref_meet',
+        },
+        {
+          label: `"I hold it. For now. Until I see the facility for myself."`,
+          targetNode: 'briggs_bombing_crossref_hold',
+        },
+      ],
+    },
+
+    briggs_bombing_crossref_meet: {
+      id: 'briggs_bombing_crossref_meet',
+      speaker: 'Warlord Briggs',
+      text: `${rt.npc('Briggs')} sets the sidearm down with the care of a man putting down a weight. "Good. Tell her. Tell her exactly what I said." A flicker of something — grief, or its older cousin. "I've been carrying this alone. If she's been carrying it alone on her side of the river, then the carrying ends now. We go to the same place with the same cargo and we decide together what comes next."`,
+      onEnter: {
+        setFlag: { briggs_wants_joint_reckoning: true },
+      },
+      branches: [
+        {
+          label: `"I'll go straight to her."`,
+          targetNode: 'briggs_leave',
+        },
+      ],
+    },
+
+    briggs_bombing_crossref_hold: {
+      id: 'briggs_bombing_crossref_hold',
+      speaker: 'Warlord Briggs',
+      text: `${rt.npc('Briggs')} grunts. "Smart. See the ground before you move on it. I've been wrong before about what I thought I knew, and I spent five years not correcting. Don't do what I did." He nods you toward the door. "When you've seen the facility — if you come back — we'll talk about what to do with what we both know."`,
+      branches: [
+        {
+          label: `"Understood, Warlord."`,
+          targetNode: 'briggs_leave',
+        },
       ],
     },
 
@@ -1120,6 +1387,57 @@ const briggsTree: DialogueTree = {
       speaker: 'Warlord Briggs',
       text: `"Dismissed." He doesn't watch you go. The cloth resumes its slow circuit of the barrel.`,
     },
+
+    // === CONVOY remnant-story-0329 Rider D: Bombing Diplomatic Crisis ===
+    briggs_bombing_crisis: {
+      id: 'briggs_bombing_crisis',
+      speaker: 'Warlord Briggs',
+      text: `${rt.npc('Briggs')} sets the cloth down slowly. "A runner." He says it flat, the way soldiers say things when they are managing what the saying costs. "Cross moves fast." He looks at the map wall, not at you. "I offered a tribunal. After the eastern perimeter is secure. That\'s the correct order of operations." A pause. "She disagrees about the order."`,
+      onEnter: {
+        setFlag: 'bombing_diplomatic_crisis',
+      },
+      branches: [
+        {
+          label: '"Help delay the tribunal. The perimeter comes first."',
+          targetNode: 'briggs_delay_tribunal',
+        },
+        {
+          label: '"Support Cross\'s demand. The tribunal happens now."',
+          targetNode: 'briggs_support_tribunal',
+        },
+      ],
+    },
+
+    briggs_delay_tribunal: {
+      id: 'briggs_delay_tribunal',
+      speaker: 'Warlord Briggs',
+      text: `"Salters don't abandon post to answer questions from people who weren't there." He straightens — not gratitude, but something that recognizes an ally. "Tell Cross the timeline is the eastern perimeter. I'll come to the tribunal when my people are safe, not before. She wants answers? She can wait for the siege to end." He picks up the cleaning cloth again. The conversation is over, and you are on a side now.`,
+      onEnter: {
+        grantRep: { faction: 'salters', delta: 2 },
+      },
+      branches: [
+        {
+          label: '"Understood. I\'ll tell her."',
+          targetNode: 'briggs_leave',
+        },
+      ],
+    },
+
+    briggs_support_tribunal: {
+      id: 'briggs_support_tribunal',
+      speaker: 'Warlord Briggs',
+      text: `Something crosses his face — not anger. Something quieter. "You're right." He says it like it costs. "Cross is right. The siege is a reason, not an excuse." He folds the cloth once, precisely. "Tell her I'll come when she sends the formal summons. I won't make her chase me." He looks at you for a moment. "I still think the order is wrong. But I'm aware that what I think about the order is not the most important thing."`,
+      onEnter: {
+        grantRep: { faction: 'accord', delta: 2 },
+      },
+      branches: [
+        {
+          label: '"I\'ll tell Cross."',
+          targetNode: 'briggs_leave',
+        },
+      ],
+    },
+    // === END CONVOY remnant-story-0329 Rider D ===
   },
 }
 
@@ -1135,7 +1453,7 @@ const patchTree: DialogueTree = {
     patch_start: {
       id: 'patch_start',
       speaker: 'Patch',
-      text: `${rt.npc('Patch')} doesn't look up from the suture kit. "You're here. Good. I've got questions. You've got questions. One of us has something the other wants. Let's find out who goes first."`,
+      text: `${rt.npc('Patch')} doesn't look up from the suture kit. "Before anything else — have you heard the ${rt.keyword('signal')}? Everyone hears it eventually. Shortwave, repeating. ${rt.npc('Sparks')} at the north market is the only one who's made sense of it." The needle pushes through. "If you want to understand this world, start there."`,
       branches: [
         // ---- Echo branches (cycle 2+) ----
         {
@@ -1143,6 +1461,11 @@ const patchTree: DialogueTree = {
           targetNode: 'patch_echo_return',
           requiresCycleMin: 2,
           requiresPreviousQuest: 'patch_mentioned_scar',
+        },
+        // ---- Signal hook (first-visit priority) ----
+        {
+          label: `"What ${rt.keyword('signal')}? Tell me more."`,
+          targetNode: 'patch_signal_hook',
         },
         // ---- Standard branches ----
         {
@@ -1152,6 +1475,30 @@ const patchTree: DialogueTree = {
         {
           label: 'What do you know about the factions out here?',
           targetNode: 'patch_faction_talk',
+        },
+      ],
+    },
+
+    // ---- Signal Hook: directs player to Sparks ----
+    patch_signal_hook: {
+      id: 'patch_signal_hook',
+      speaker: 'Patch',
+      text: `${rt.npc('Patch')} sets the suture kit down. "Shortwave broadcast. Repeating loop — been running for years. Most people think it's automated. Dead tower, broken equipment, ghost in the wires." One finger taps the desk. "Sparks doesn't think that. Sparks thinks someone is alive in the ${rt.keyword('Scar')}, forty meters underground, adjusting the signal by hand. And Sparks is the smartest person in this market." The finger stops. "North end. Look for the radio bench. You'll hear her before you see her."`,
+      onEnter: {
+        setFlag: 'patch_mentioned_signal',
+      },
+      branches: [
+        {
+          label: 'I have something to trade for information.',
+          targetNode: 'patch_trade_intel',
+        },
+        {
+          label: 'What do you know about the factions out here?',
+          targetNode: 'patch_faction_talk',
+        },
+        {
+          label: '"I\'ll find Sparks."',
+          targetNode: 'patch_closure',
         },
       ],
     },
@@ -1307,7 +1654,27 @@ const howardTree: DialogueTree = {
       text: `"Don't know. Don't want to." ${rt.npc('Howard')} looks north. "I've been on this bridge since '32. I know what normal movement looks like. This isn't that. Small groups, no torches, moving fast. Something's pulling them toward the pine country."`,
       branches: [
         {
+          label: "You've been watching this river a long time. It must drop things.",
+          targetNode: 'howard_cache_hint',
+          requiresFlag: 'howard_waived_fee',
+        },
+        {
           label: 'I appreciate the warning.',
+          targetNode: 'howard_closure',
+        },
+      ],
+    },
+
+    howard_cache_hint: {
+      id: 'howard_cache_hint',
+      speaker: 'Howard',
+      text: `${rt.npc('Howard')} watches the water for a while before he answers. "Current eats everything eventually. Drops what it eats at the bends. There's a bend three hundred yards south of the narrows, where a big basalt shelf kinks the flow. Drifter caravans used to stash supplies upstream of it, seal them in waxed tins, let the current take them down to the shelf. The tins wedge under the rock. They're still there. Ammunition, mostly. Sealed well enough to last another twenty years." He looks at you. "You pulled me out of a hard month last time we talked. I wouldn't tell most people. Don't make me regret it."`,
+      onEnter: {
+        grantNarrativeKey: 'river_road_submerged_cache',
+      },
+      branches: [
+        {
+          label: "I won't. Thank you.",
           targetNode: 'howard_closure',
         },
       ],
@@ -1428,7 +1795,27 @@ const martaTree: DialogueTree = {
       text: `"The Kindling believe in purification. Transformation. They think CHARON-7 is a gift and the rest of us just aren't ready for it." She shakes her head. "They're not wrong about everything. They're just wrong about the fire part."`,
       branches: [
         {
+          label: "You've been here a long time, haven't you?",
+          targetNode: 'marta_cellar_memory',
+          requiresFlag: 'marta_fed_player',
+        },
+        {
           label: 'I appreciate you telling me.',
+          targetNode: 'marta_closure',
+        },
+      ],
+    },
+
+    marta_cellar_memory: {
+      id: 'marta_cellar_memory',
+      speaker: 'Marta',
+      text: `${rt.npc('Marta')} looks at you for a long moment. Weighing. Then she leans close enough that her voice doesn't carry past the cookstove. "Longer than the Crossroads has been Crossroads. My mother ran caravans through here when it was just a waystation — before the stalls, before the wall. The Drifters buried things in the ground here, for seasons when the going was bad." She glances down at the packed dirt between the stalls. "Second stall from the end, near the leather shop. The floor sounds different if you step on it right. My mother showed me where to press. I haven't opened it since she died. I'm telling you because you've eaten my stew and you haven't lied to me yet. That's rare."`,
+      onEnter: {
+        grantNarrativeKey: 'crossroads_hidden_cellar',
+      },
+      branches: [
+        {
+          label: "Thank you for trusting me.",
           targetNode: 'marta_closure',
         },
       ],
@@ -2293,7 +2680,43 @@ const averyTree: DialogueTree = {
           targetNode: 'avery_doubt',
         },
         {
+          label: `"The Hollow are a genotype failure. Harrow's preparation changes nothing."`,
+          targetNode: 'avery_kindling_theater',
+          requiresFlag: 'found_hollow_origin',
+        },
+        {
           label: '"I should go."',
+          targetNode: 'avery_leave',
+        },
+      ],
+    },
+
+    avery_kindling_theater: {
+      id: 'avery_kindling_theater',
+      speaker: 'Avery',
+      text: `${rt.npc('Avery')} does not look surprised. That is the first thing you notice. The second thing is that he does not look at the stairs to check for listeners — he wanted you to say this in a voice that carried. "Yes. It is a genotype. Harrow knows. We all know, actually. The preparation isn't about changing the virus. It is about changing how you meet it." A pause that contains six months of conversation with himself. "I do not think Harrow is a liar. I think he is a grief counselor who realized he was leading a church. The purification ritual does not stop the transformation. It gives the person about to transform a frame for what is happening to them. That is not nothing. But it is also not what the theology claims, and I have stopped being able to say the theology without the distinction mattering."`,
+      onEnter: {
+        setFlag: { harrow_doctrine_examined: true, avery_shared_kindling_intel: true },
+      },
+      branches: [
+        {
+          label: `"Does Harrow know you know?"`,
+          targetNode: 'avery_kindling_theater_harrow',
+        },
+        {
+          label: `"Thank you for being straight with me."`,
+          targetNode: 'avery_leave',
+        },
+      ],
+    },
+
+    avery_kindling_theater_harrow: {
+      id: 'avery_kindling_theater_harrow',
+      speaker: 'Avery',
+      text: `${rt.npc('Avery')} smiles without any of the usual affect. "He knows I know. He pretends he doesn't, because pretending is how you hold a congregation together when half of them suspect the doctrine and the other half need it. I pretend back. It is a small courtesy. It is also the reason I am leaving, eventually. I do not want to make a career of pretending."`,
+      branches: [
+        {
+          label: `"When you leave, I'll help if I can."`,
           targetNode: 'avery_leave',
         },
       ],
@@ -2845,6 +3268,11 @@ const elderSanguineTree: DialogueTree = {
           targetNode: 'elder_lore_tier_1',
         },
         {
+          label: `"MERIDIAN designed two strains — R-1 and R-8. You are neither. What are the Lucid, really?"`,
+          targetNode: 'elder_r2_confrontation',
+          requiresFlag: 'found_sanguine_origin',
+        },
+        {
           label: `"I need access to the ${rt.keyword('utility passage')}."`,
           targetNode: 'elder_utility_gate',
         },
@@ -2855,6 +3283,49 @@ const elderSanguineTree: DialogueTree = {
         {
           label: '"I should go."',
           targetNode: 'elder_leave',
+        },
+      ],
+    },
+
+    elder_r2_confrontation: {
+      id: 'elder_r2_confrontation',
+      speaker: 'The Elder',
+      text: `${rt.npc('The Elder')} does not look surprised. The stillness deepens in the way still water darkens when a larger thing swims beneath it. "Ah. You have read enough to ask the right question. Good." A slow blink. "There was a third strain. R-2. Intelligence-preservation protocol. It never completed authorized trials — the program was cancelled for being insufficiently weaponizable, which is the word the funding committee used. But a small number of samples survived the cancellation, in the way small numbers of things always survive." The eyes — which have been patient — become briefly specific. "We are what R-2 made, in the bodies of people who were willing to carry it. MERIDIAN does not know we exist in this form. The file you will find in the Director's Office mentions R-2 as archived. It was not archived. It was carried."`,
+      onEnter: {
+        setFlag: { found_lucid_origin: true, elder_revealed_r2: true },
+      },
+      branches: [
+        {
+          label: `"Carried by whom?"`,
+          targetNode: 'elder_r2_carried',
+        },
+        {
+          label: `"Does Vesper know this?"`,
+          targetNode: 'elder_r2_vesper',
+        },
+      ],
+    },
+
+    elder_r2_carried: {
+      id: 'elder_r2_carried',
+      speaker: 'The Elder',
+      text: `"A researcher who believed the program was being cancelled for the wrong reason." ${rt.npc('The Elder')} tilts their head fractionally. "Her name is not preserved in the files. She chose that. She distributed the samples to volunteers before the cancellation was enforced. Most of the volunteers did not survive integration. Some did. The Lucid are those descendants — the second and third generation of an experiment that was not supposed to have a first." A pause. "I was one of the original volunteers. I am here because I did survive. That is all the authority my voice should carry."`,
+      branches: [
+        {
+          label: `"Back to other topics."`,
+          targetNode: 'elder_start',
+        },
+      ],
+    },
+
+    elder_r2_vesper: {
+      id: 'elder_r2_vesper',
+      speaker: 'The Elder',
+      text: `"No. ${rt.npc('Vesper')} believes she is a variant of R-1. She is not wrong — her transformation was R-1, she was an authorized subject. But she believes the Lucid are another R-1 outcome, a philosophical variant rather than a genetic one. We have not corrected her. Correction would require her to reframe three decades of internal work." A small motion of the hand, graceful and final. "When she is ready to ask the question, we will answer it. That is our arrangement. It was not negotiated; it is what respect looks like between two Sanguine philosophies that do not quite match."`,
+      branches: [
+        {
+          label: `"Back to other topics."`,
+          targetNode: 'elder_start',
         },
       ],
     },
@@ -3127,7 +3598,91 @@ const vesperTree: DialogueTree = {
           targetNode: 'vesper_rook',
         },
         {
+          label: `"${rt.npc('Vex')} showed me the manifest. The Accord buys Red Court blood. So does the Covenant."`,
+          targetNode: 'vesper_supply_confrontation',
+          requiresFlag: 'pens_covenant_arrangement',
+        },
+        {
+          label: `"Your condition was engineered. R-1 was the intended product. You were never an accident."`,
+          targetNode: 'vesper_engineered_admission',
+          requiresFlag: 'found_sanguine_origin',
+        },
+        {
           label: '"I should go."',
+          targetNode: 'vesper_leave',
+        },
+      ],
+    },
+
+    vesper_engineered_admission: {
+      id: 'vesper_engineered_admission',
+      speaker: 'Vesper',
+      text: `${rt.npc('Vesper')} closes the book on her lap. Not angrily — with the care of someone putting down a thing she has been holding for a long time. "I have known this. Not in the clinical terms you are using. But I have known. When I walked out of my office that first night, what I chose was not to feed. What I did not choose was to be capable of feeding. Someone designed me to be capable. Someone else could have run the trial and produced a different Vesper, one who ate her graduate students and called it breakfast. I am an outcome. The outcome had a specification." A breath that is almost a laugh, with no pleasure in it. "My ethics are the part I added. The rest is catalog."`,
+      onEnter: {
+        setFlag: { vesper_admitted_engineered: true },
+      },
+      branches: [
+        {
+          label: `"That doesn't make your ethics smaller. It makes them more yours."`,
+          targetNode: 'vesper_engineered_response_affirm',
+        },
+        {
+          label: `"It does make your authority on Sanguine identity narrower."`,
+          targetNode: 'vesper_engineered_response_challenge',
+        },
+      ],
+    },
+
+    vesper_engineered_response_affirm: {
+      id: 'vesper_engineered_response_affirm',
+      speaker: 'Vesper',
+      text: `A long pause. "Perhaps. I will sit with that." ${rt.npc('Vesper')} opens the book again, not to read but to have somewhere to put her hands. "Thank you for saying so. It is a kindness I was not looking for."`,
+      branches: [
+        {
+          label: `"Be well, Vesper."`,
+          targetNode: 'vesper_leave',
+        },
+      ],
+    },
+
+    vesper_engineered_response_challenge: {
+      id: 'vesper_engineered_response_challenge',
+      speaker: 'Vesper',
+      text: `${rt.npc('Vesper')} accepts the blow without flinching. "Yes. It does. I have been speaking about Sanguine experience as though my testimony were complete. It is not. It is one product of one specification. The others — the ${rt.keyword('Red Court')}, the ${rt.keyword('Lucid')} — are not distortions of my truth. They are parallel truths. I have been mistaken about the shape of the subject."`,
+      branches: [
+        {
+          label: `"That's an honest revision."`,
+          targetNode: 'vesper_leave',
+        },
+      ],
+    },
+
+    vesper_supply_confrontation: {
+      id: 'vesper_supply_confrontation',
+      speaker: 'Vesper',
+      text: `${rt.npc('Vesper')} does not look away. That is the first thing you notice. If she had looked away, there would still be some philosophical distance to preserve. She does not. "Yes. Twelve percent of the Covenant's transfusion supply is Red Court yield. I arrange the transfer. I sign the ledger. I have told myself for four years that twelve percent is small enough to be complicated rather than damning." A small pause. "I was wrong. It is damning. It has been damning. The complication is my comfort, not the truth." She places both hands flat on the arms of the chair. "Thank you for saying the number back to me. Philosophical constructs deteriorate when they meet inventory."`,
+      onEnter: {
+        setFlag: { vesper_admitted_supply: true, covenant_accord_secret_exposed: true },
+      },
+      branches: [
+        {
+          label: `"So what do you do with that admission?"`,
+          targetNode: 'vesper_supply_reckoning',
+        },
+        {
+          label: `"Keep signing the ledger, and stop pretending it's ethics."`,
+          targetNode: 'vesper_leave',
+        },
+      ],
+    },
+
+    vesper_supply_reckoning: {
+      id: 'vesper_supply_reckoning',
+      speaker: 'Vesper',
+      text: `"I do not know. That is the honest answer and it is unsatisfying. Telling the Covenant would destabilize a feeding system that keeps people alive. Not telling them is the arrangement you have just named." ${rt.npc('Vesper')} looks at the floor between you — the first time in this conversation she has not held your gaze. "If you want a better Vesper, I can perform one. I have the vocabulary. It would be a lie. What I can offer instead is this: I will not pretend with you. You came here carrying a number. I am going to carry it too, now. Neither of us gets to put it down."`,
+      branches: [
+        {
+          label: `"That's more than nothing."`,
           targetNode: 'vesper_leave',
         },
       ],
@@ -3628,6 +4183,1002 @@ const rookTree: DialogueTree = {
 // Registry — keyed by dialogue tree ID (referenced in npcSpawns)
 // ------------------------------------------------------------
 
+// ============================================================
+// === CONVOY remnant-story-0329 Rider A: Echo ===
+// ============================================================
+
+// --- PART 1: echoTree ---
+// Insert this const before the DIALOGUE_TREES export object
+
+const echoTree: DialogueTree = {
+  npcId: 'echo_hollow',
+  startNode: 'echo_start',
+  nodes: {
+    echo_start: {
+      id: 'echo_start',
+      speaker: 'Echo',
+      text: `The figure\'s head turns toward you. The mouth opens. "H...home. Was... home. Before the..." The words trail off into something that is almost a sound and almost not. The finger movements stop. The eyes are looking at you with a quality that is not quite recognition and not quite its absence.`,
+      branches: [
+        {
+          label: '"Do you remember your name?"',
+          targetNode: 'echo_name',
+        },
+        {
+          label: '"What happened to you?"',
+          targetNode: 'echo_happened',
+        },
+        {
+          label: '"I\'ve seen you here before."',
+          targetNode: 'echo_recognition',
+          requiresCycleMin: 2,
+        },
+        {
+          label: 'Back away slowly.',
+          targetNode: 'echo_leave',
+        },
+      ],
+    },
+
+    echo_name: {
+      id: 'echo_name',
+      speaker: 'Echo',
+      text: `The finger movements resume against the concrete. E. C. H. O. E. C. H. O. "E...cho. Echo." The word comes out with the quality of a person testing whether a thing they\'ve been told is true. "That\'s what... they called. They called. What they called." The eyes refocus on you. "You know. You know what I... called."`,
+      onEnter: {
+        setFlag: { echo_encountered: true },
+      },
+      branches: [
+        {
+          label: '"Your name is Echo."',
+          targetNode: 'echo_name_confirmed',
+        },
+        {
+          label: '"I don\'t know. Can you remember?"',
+          targetNode: 'echo_name_unknown',
+        },
+        {
+          label: '[Presence 3+ or Wits 3+] "You wrote it on the wall. You\'ve been writing it for days."',
+          targetNode: 'echo_wall_recognition',
+          skillCheck: { skill: 'presence', dc: 3 },
+          failNode: 'echo_name_unknown',
+        },
+      ],
+    },
+
+    echo_name_confirmed: {
+      id: 'echo_name_confirmed',
+      speaker: 'Echo',
+      text: `Something moves in the figure\'s expression — not relief exactly, but a reorientation. Like a compass finding north. "Echo." Said more firmly. "Echo. Echo." Then, quieter: "The fire. Before the fire, what... I was. I was..." The sentence doesn\'t finish. The word \'fire\' hangs there, specific and significant.`,
+      onEnter: {
+        setFlag: { player_showed_hollow_mercy: true },
+        grantRep: { faction: 'covenant_of_dusk', delta: 1 },
+      },
+      branches: [
+        {
+          label: '"What fire? What do you remember?"',
+          targetNode: 'echo_fire',
+        },
+        {
+          label: 'Stay present with Echo. Don\'t push.',
+          targetNode: 'echo_presence',
+          requiresCycleMin: 3,
+        },
+      ],
+    },
+
+    echo_name_unknown: {
+      id: 'echo_name_unknown',
+      speaker: 'Echo',
+      text: `The head tilts. The fingers resume. E. C. H. O. "Remember. Remember the..." A pause that goes on long enough that you think the sentence is done. Then: "Water. Remember the water. The river. Before." The eyes are somewhere else now, somewhere that might be a specific place, might be a category of place, might be both.`,
+      branches: [
+        {
+          label: '"The river? Where?"',
+          targetNode: 'echo_river',
+        },
+        {
+          label: 'Leave Echo to it.',
+          targetNode: 'echo_leave',
+        },
+      ],
+    },
+
+    echo_wall_recognition: {
+      id: 'echo_wall_recognition',
+      speaker: 'Echo',
+      text: `The figure looks at the wall. At the scratches. At you. At the wall again. Something resolves. "Days. Days and... days. Writing because. Because it goes. Everything goes." A breath that is almost a sigh. "But not. Not this. I can make it. Not go. If I keep. Keep writing." The eyes come back to yours. "You... came back. You... different. Come back. Come... back before."`,
+      onEnter: {
+        setFlag: { echo_encountered: true },
+      },
+      branches: [
+        {
+          label: '"Yes. I\'ve come back before."',
+          targetNode: 'echo_recognition_affirm',
+          requiresCycleMin: 2,
+        },
+        {
+          label: '"This is the first time."',
+          targetNode: 'echo_recognition_deny',
+        },
+      ],
+    },
+
+    echo_recognition: {
+      id: 'echo_recognition',
+      speaker: 'Echo',
+      text: `The figure stops. Completely. The fingers freeze mid-letter. The eyes find yours and there is a moment where something crosses the distance between you — not quite memory, but the shape memory leaves when it has been asked to leave. "Before. Before you. You... were here. Here before." The voice rises, almost urgent. "The. The way you stand. I... I know. I know the. The way you stand." A tremor runs through the body. The fingers resume, but the letters are different now — not E C H O. Something older. "You. You come. Come back. Again."`,
+      onEnter: {
+        setFlag: { echo_encountered: true },
+      },
+      branches: [
+        {
+          label: '"Yes. I\'ve come back before."',
+          targetNode: 'echo_recognition_affirm',
+        },
+        {
+          label: '"I\'m not sure. Maybe."',
+          targetNode: 'echo_recognition_deny',
+        },
+      ],
+    },
+
+    echo_recognition_affirm: {
+      id: 'echo_recognition_affirm',
+      speaker: 'Echo',
+      text: `"Again. You... again. I... remember." The word has weight, coming from something that seems to be losing the capacity for it. "Remember the... fire. The fire." The finger movements change — not the name anymore. Something else. Something that might be a date, or a location, or a word in a language that used to mean something. "You. You are. Different kind. Not like. The others."`,
+      onEnter: {
+        setFlag: { echo_recognized_player: true },
+      },
+      branches: [
+        {
+          label: '"What others?"',
+          targetNode: 'echo_others',
+        },
+        {
+          label: '"The fire — what happened?"',
+          targetNode: 'echo_fire',
+        },
+      ],
+    },
+
+    echo_recognition_deny: {
+      id: 'echo_recognition_deny',
+      speaker: 'Echo',
+      text: `The figure considers this. The consideration takes longer than it should. "First. But. You feel. Feel like. Not first." The eyes track you with an attention that is doing its best to mean something. "My head. Makes things. Wrong order. Before after. After before." A pause. "Sorry. Sorry." The word is careful, deliberate. Someone taught Echo how to apologize and Echo still uses it.`,
+      onEnter: {
+        setFlag: { player_showed_hollow_mercy: true },
+      },
+      branches: [
+        {
+          label: '"You don\'t need to apologize."',
+          targetNode: 'echo_name_confirmed',
+        },
+        {
+          label: 'Give Echo space.',
+          targetNode: 'echo_leave',
+        },
+      ],
+    },
+
+    echo_happened: {
+      id: 'echo_happened',
+      speaker: 'Echo',
+      text: `The figure\'s mouth works. "Happened. Happened when. When the. When the..." The fingers press hard against the concrete, hard enough to leave a mark. "I was. There was a building. There was. People I knew. And then the. The thing that comes. When something comes. From the outside and the inside at. The same. At the same time." The eyes find yours. "You know. You look like you know."`,
+      branches: [
+        {
+          label: '"CHARON-7. The virus."',
+          targetNode: 'echo_charon',
+        },
+        {
+          label: '"I don\'t know. Tell me."',
+          targetNode: 'echo_happened_more',
+        },
+        {
+          label: '[Deny] "You\'re a Hollow. You don\'t have a history anymore."',
+          targetNode: 'echo_deny_agency',
+        },
+      ],
+    },
+
+    echo_deny_agency: {
+      id: 'echo_deny_agency',
+      speaker: 'Echo',
+      text: `The head turns away. The finger movements stop. A long silence, longer than the previous silences. When Echo speaks again, the voice is quieter and has lost some of its searching quality. "Had. Had history. Had. Before." The word \'before\' lands like something being set down and not picked up again. "Still. Still have. The scratches." The fingers resume, but slower.`,
+      onEnter: {
+        setFlag: { player_denied_hollow_agency: true },
+        grantRep: { faction: 'covenant_of_dusk', delta: -1 },
+      },
+      branches: [
+        {
+          label: 'Leave Echo alone.',
+          targetNode: 'echo_leave',
+        },
+        {
+          label: '"I was wrong. You do have a history."',
+          targetNode: 'echo_recant',
+        },
+      ],
+    },
+
+    echo_recant: {
+      id: 'echo_recant',
+      speaker: 'Echo',
+      text: `The head turns back. The eyes find yours again with an effort that is visible. "Said wrong." Echo says it for you, carefully. "Said wrong. Is okay. People. Say wrong." A pause. "I. Sometimes. Say wrong too. When the. When the words. Get scrambled." Something like acceptance in the voice, which is different from forgiveness and also not the same as indifference.`,
+      onEnter: {
+        setFlag: { player_showed_hollow_mercy: true },
+      },
+      branches: [
+        {
+          label: '"Tell me about the fire."',
+          targetNode: 'echo_fire',
+        },
+      ],
+    },
+
+    echo_charon: {
+      id: 'echo_charon',
+      speaker: 'Echo',
+      text: `"Cha... ron." The word sounds like Echo has heard it and is repeating it from hearing, not from understanding. "Seven. Seven. CHARON-7." A long pause. "I knew. I knew what. Before I. Before it. Became." The finger movements stop. "I worked. With the. The things that make you sick. Make you better. Before." Something surfaces briefly. "Before I couldn\'t."`,
+      branches: [
+        {
+          label: '"You worked with CHARON-7? You were there?"',
+          targetNode: 'echo_witness',
+        },
+        {
+          label: '"Where did you work?"',
+          targetNode: 'echo_location',
+        },
+      ],
+    },
+
+    echo_witness: {
+      id: 'echo_witness',
+      speaker: 'Echo',
+      text: `"There. Was there. We... we built it. We thought. We thought we were." A stillness. "We thought." Echo looks down at its hands. "The building with the lights. The deep place. We thought the lights meant. Meant it was. Working." The head comes back up. "The lights were. The lights were something else. We didn\'t know. I didn\'t." A breath. "I didn\'t know."`,
+      onEnter: {
+        setFlag: { echo_meridian_witness: true },
+      },
+      branches: [
+        {
+          label: '"The Scar? The MERIDIAN facility?"',
+          targetNode: 'echo_scar',
+        },
+        {
+          label: 'Stay quiet. Let Echo find the words.',
+          targetNode: 'echo_presence',
+          requiresCycleMin: 3,
+        },
+      ],
+    },
+
+    echo_scar: {
+      id: 'echo_scar',
+      speaker: 'Echo',
+      text: `"Scar." The word is immediate. "Yes. Scar. We called it. Something else. Before. But Scar is right. Is accurate." A sound that might be a laugh with all the warmth removed. "I had. A badge. A badge with. My name. Not Echo. Different name. The badge is gone. The name... the name got. Scrambled." The finger movements start again. E. C. H. O. "This one. Stayed."`,
+      branches: [
+        {
+          label: 'Leave Echo with this.',
+          targetNode: 'echo_leave_gentle',
+        },
+      ],
+    },
+
+    echo_fire: {
+      id: 'echo_fire',
+      speaker: 'Echo',
+      text: `"The fire. The fire in the. In the place. The building where we." Echo stops. Starts again. "Not. Not fire-fire. The kind that. The kind that comes from inside. From the blood." A pause. "Everyone. Everyone started. Changing. Some fast. Some slow. I was. I was slow." The eyes are very clear suddenly, very present. "I watched. I remember watching. Before I couldn\'t. Watch anymore."`,
+      branches: [
+        {
+          label: '"You remember becoming a Hollow."',
+          targetNode: 'echo_becoming',
+        },
+        {
+          label: 'Say nothing. Just be here.',
+          targetNode: 'echo_presence',
+          requiresCycleMin: 3,
+        },
+      ],
+    },
+
+    echo_becoming: {
+      id: 'echo_becoming',
+      speaker: 'Echo',
+      text: `"Remember. Some of it." A pause between each sentence now, the sentences arriving one at a time. "The last thing I. I knew I was losing. I wrote my name. Somewhere. Kept writing." The head tilts. "Found this place. Kept writing. Thought if I. Kept writing maybe. Maybe it would. Stay." The eyes are completely present. This is Echo at its most lucid. "You. You came back. You keep. You are. Different kind."`,
+      branches: [
+        {
+          label: '"What kind do you think I am?"',
+          targetNode: 'echo_revenant_recognition',
+          requiresCycleMin: 2,
+        },
+        {
+          label: '"I\'ll come back again."',
+          targetNode: 'echo_promise',
+        },
+      ],
+    },
+
+    echo_revenant_recognition: {
+      id: 'echo_revenant_recognition',
+      speaker: 'Echo',
+      text: `"You. Come back. Come back after. Dying?" It isn\'t entirely a question. "I saw. People die. In the building. They stayed dead. You. You don\'t." The finger movements stop entirely. "What does it. What does it feel like. To come back?" The question is asked with the quality of someone asking about a place they can no longer visit.`,
+      branches: [
+        {
+          label: '"Like remembering something that happened to someone else."',
+          targetNode: 'echo_revenant_response_loss',
+        },
+        {
+          label: '"Like being remade. But not quite right."',
+          targetNode: 'echo_revenant_response_change',
+        },
+      ],
+    },
+
+    echo_revenant_response_loss: {
+      id: 'echo_revenant_response_loss',
+      speaker: 'Echo',
+      text: `"Yes." Said with sudden conviction. "Yes. Remembered. Like that. Now. For me." The head tilts. "Maybe. Maybe we are. Not. So different." Echo looks back at the scratched name on the wall. "I keep. Writing. Because it feels like. Remembering. Even when it. Doesn\'t."`,
+      onEnter: {
+        setFlag: { player_showed_hollow_mercy: true, echo_connection_made: true },
+        grantRep: { faction: 'covenant_of_dusk', delta: 1 },
+      },
+      branches: [
+        {
+          label: '"I\'ll come back. I want to hear more."',
+          targetNode: 'echo_promise',
+        },
+      ],
+    },
+
+    echo_revenant_response_change: {
+      id: 'echo_revenant_response_change',
+      speaker: 'Echo',
+      text: `"Not quite right." The voice is very quiet. "I understand. Not quite. Right." The fingers move again. "I was. Right once. Before. I think." A pause. "Maybe. Rightness. Takes. Practice."`,
+      onEnter: {
+        setFlag: { player_showed_hollow_mercy: true, echo_connection_made: true },
+        grantRep: { faction: 'covenant_of_dusk', delta: 1 },
+      },
+      branches: [
+        {
+          label: '"I\'ll come back."',
+          targetNode: 'echo_promise',
+        },
+      ],
+    },
+
+    echo_others: {
+      id: 'echo_others',
+      speaker: 'Echo',
+      text: `"The ones who. Don\'t stop. Don\'t write. Don\'t try." Echo\'s voice is matter-of-fact. "They go. The ones who stop. Trying to. Remember. They go somewhere else. Inside." A pause. "I don\'t want. To go. There." The finger movements are slower now, more deliberate. E. C. H. O. "You help. Talking helps. The talking. Makes the words stay longer."`,
+      branches: [
+        {
+          label: '"Then I\'ll keep talking to you."',
+          targetNode: 'echo_promise',
+        },
+      ],
+    },
+
+    echo_river: {
+      id: 'echo_river',
+      speaker: 'Echo',
+      text: `"The river. South of. South of the. Building. We used to. Lunch. We used to eat lunch." The word \'lunch\' is so specific, so ordinary, that it lands with disproportionate weight. "There was a. A place by the water. Rocks. Flat rocks. Good for. Sitting." The eyes are elsewhere. "I wonder if. The rocks. Are still there."`,
+      branches: [
+        {
+          label: '"I\'ll look for them."',
+          targetNode: 'echo_leave_gentle',
+        },
+        {
+          label: '"Tell me more about the building."',
+          targetNode: 'echo_charon',
+        },
+      ],
+    },
+
+    echo_happened_more: {
+      id: 'echo_happened_more',
+      speaker: 'Echo',
+      text: `"It came from. From the water. Or the air. We never. Knew which." The hands press flat against the concrete. "One day it was. One day it wasn\'t. In between there was. Something you could feel in your. Your blood. Your blood getting. Different." The eyes refocus. "You wouldn\'t know. Unless you. Were there. Unless it happened to. You."`,
+      branches: [
+        {
+          label: '"It happened to me too, in a way."',
+          targetNode: 'echo_revenant_recognition',
+          requiresCycleMin: 2,
+        },
+        {
+          label: '"What happened after?"',
+          targetNode: 'echo_fire',
+        },
+      ],
+    },
+
+    echo_location: {
+      id: 'echo_location',
+      speaker: 'Echo',
+      text: `"The place with. The big sign. The sign that said. Meridian something. Something Systems." The word \'systems\' comes out careful and complete, a word Echo has retained fully. "There were. Many rooms. Many levels. Down and down and. The deepest level had. Had the lights. The blue lights." The head tilts. "The lights didn\'t. Help."`,
+      onEnter: {
+        setFlag: { echo_meridian_witness: true },
+      },
+      branches: [
+        {
+          label: '"I\'ve been there. I\'ve seen the facility."',
+          targetNode: 'echo_scar',
+        },
+        {
+          label: '"The Scar. That\'s what people call it now."',
+          targetNode: 'echo_scar',
+        },
+      ],
+    },
+
+    echo_presence: {
+      id: 'echo_presence',
+      speaker: 'Echo',
+      text: `You stay. Echo notices. The finger movements slow, then still. The silence between you has a different quality from the usual silences in this place — not empty but occupied by two beings who are both, in their different ways, keeping company with what they\'ve lost. After a while, Echo says: "Good. Good that you. Stay." A pause. "Come back. Come back again."`,
+      onEnter: {
+        setFlag: { player_showed_hollow_mercy: true, echo_trust_built: true },
+        grantRep: { faction: 'covenant_of_dusk', delta: 1 },
+      },
+      branches: [
+        {
+          label: '"I will."',
+          targetNode: 'echo_promise',
+        },
+      ],
+    },
+
+    echo_promise: {
+      id: 'echo_promise',
+      speaker: 'Echo',
+      text: `Echo looks at you for a moment with an expression that is doing its best to mean something. "Come. Back." The phrase has the quality of a request that has been made before and is being made again because the previous times it worked, or at least seemed to. The finger movements resume as you leave. E. C. H. O. E. C. H. O.`,
+    },
+
+    echo_leave: {
+      id: 'echo_leave',
+      speaker: 'Echo',
+      text: `The head turns as you leave, tracking your movement until you\'re out of sight. The finger movements continue. The name. E. C. H. O. There is a quality to the repetition that might be stubbornness or might be something that used to be hope and has become habit.`,
+    },
+
+    echo_leave_gentle: {
+      id: 'echo_leave_gentle',
+      speaker: 'Echo',
+      text: `As you leave, Echo watches. Not with alarm or need — just the attention of something that has learned that people come and go, and that the coming matters more than the going. The finger movements have stopped. The wall bears the record of all the times Echo has remembered to try.`,
+      onEnter: {
+        setFlag: { echo_gentle_parting: true },
+      },
+    },
+  },
+}
+
+// ============================================================
+// Act 1 Climax Tree
+// CONTRACT §7: triggers when echo_encountered set + 3+ faction contacts
+// Sets act1_complete; player commits to one faction
+// ============================================================
+
+const act1ClimaxTree: DialogueTree = {
+  npcId: 'faction_representatives',
+  startNode: 'climax_start',
+  nodes: {
+    climax_start: {
+      id: 'climax_start',
+      speaker: 'Narrator',
+      text: `You arrive at the Crossroads to find it changed. Two figures are waiting with the specific quality of people who have agreed in advance not to leave until this conversation happens. ${rt.npc('Marshal Cross')} stands with her arms at her sides and the weight of eight hundred people behind her posture. Across from her, someone you\'ve come to know from one of the factions watches with an expression that contains both urgency and the careful control of urgency. The market has gone quiet. This is the moment you\'ve been moving toward since you first woke up in this world. All the conversations, all the choices — they\'ve been pointing here. The time for being neutral is over.`,
+      branches: [
+        {
+          label: 'Listen to what they have to say.',
+          targetNode: 'climax_demands',
+        },
+      ],
+    },
+
+    climax_demands: {
+      id: 'climax_demands',
+      speaker: 'Marshal Cross',
+      text: `${rt.npc('Marshal Cross')} speaks first. "The Four Corners is fracturing. Every week the lines get clearer. Every week it becomes harder to remain unaligned without being perceived as opposed to everyone." She doesn\'t raise her voice. She doesn\'t need to. "The Accord needs to know where you stand. Not tomorrow. Now." The second figure steps forward. "She\'s right about the timing, if nothing else. The world is asking the question. We need your answer."`,
+      branches: [
+        {
+          label: 'Commit to the Accord.',
+          targetNode: 'climax_accord',
+        },
+        {
+          label: 'Commit to the Salters.',
+          targetNode: 'climax_salters',
+          requiresFlag: 'salters_contact',
+        },
+        {
+          label: 'Commit to the Kindling.',
+          targetNode: 'climax_kindling',
+          requiresFlag: 'kindling_contact',
+        },
+        {
+          label: 'Commit to the Drifters.',
+          targetNode: 'climax_drifters',
+          requiresFlag: 'drifters_contact',
+        },
+        {
+          label: 'Commit to the Red Court.',
+          targetNode: 'climax_red_court',
+          requiresFlag: 'red_court_contact',
+        },
+        {
+          label: '"I don\'t commit to anyone."',
+          targetNode: 'climax_refuse',
+        },
+      ],
+    },
+
+    climax_accord: {
+      id: 'climax_accord',
+      speaker: 'Marshal Cross',
+      text: `Something shifts in ${rt.npc('Marshal Cross')}\'s expression — not surprise, but recognition. She extends her hand. "Then we build together." The handshake is brief and formal and somehow, in this moment, carries the full weight of everything that comes after. "Welcome to the Accord. Not the wall, not the rules — the people who decided the wall and the rules were worth maintaining. That\'s the thing you\'re joining." She holds your gaze. "Don\'t make me regret this." It\'s not a threat. It\'s a promise that she believes in the decision she\'s just made.`,
+      onEnter: {
+        setFlag: { act1_complete: true, faction_committed_accord: true, player_alignment_accord: true },
+        grantRep: { faction: 'accord', delta: 2 },
+      },
+      branches: [
+        {
+          label: '"I won\'t."',
+          targetNode: 'climax_end',
+        },
+      ],
+    },
+
+    climax_salters: {
+      id: 'climax_salters',
+      speaker: 'Narrator',
+      text: `You tell them where you stand. The Accord representative absorbs it with the professional composure of someone who has heard disappointing information before and knows how to continue being professional afterward. Somewhere, a Salter receives word that you\'ve committed — and the response is practical: a nod, a place on a roster, a welcome that is really a deployment. ${rt.npc('Warlord Briggs')} deals in utility. You\'ve just declared yourself useful. The transaction is complete.`,
+      onEnter: {
+        setFlag: { act1_complete: true, faction_committed_salters: true, player_alignment_salters: true },
+        grantRep: { faction: 'salters', delta: 2 },
+      },
+      branches: [
+        {
+          label: 'Accept the deployment.',
+          targetNode: 'climax_end',
+        },
+      ],
+    },
+
+    climax_kindling: {
+      id: 'climax_kindling',
+      speaker: 'Narrator',
+      text: `You say the word and something in the air changes. Not drama — something quieter. The Kindling representative closes their eyes for a moment with the quality of someone receiving confirmation of a prayer they had kept private. "The fire found you," they say. They mean it literally. Whether you believe them or not, the welcome is genuine and the community is real and there is warmth on the other side of the commitment. ${rt.npc('Deacon Harrow')} will hear about this. The Kindling will know you by name.`,
+      onEnter: {
+        setFlag: { act1_complete: true, faction_committed_kindling: true, player_alignment_kindling: true },
+        grantRep: { faction: 'kindling', delta: 2 },
+      },
+      branches: [
+        {
+          label: 'Accept the welcome.',
+          targetNode: 'climax_end',
+        },
+      ],
+    },
+
+    climax_drifters: {
+      id: 'climax_drifters',
+      speaker: 'Narrator',
+      text: `The Drifter response is characteristically minimal: a nod, a slight relaxation, a willingness to be slightly more candid than before. "Nobody owns the road," they say. "That\'s still the point. But the road needs tending. You\'re one of the people who tenders it now." It\'s not ceremony. Drifters don\'t do ceremony. It\'s an acknowledgment that you\'re part of the network — the informal, persistent, stubborn network of people who keep moving because staying still is how things die.`,
+      onEnter: {
+        setFlag: { act1_complete: true, faction_committed_drifters: true, player_alignment_drifters: true },
+        grantRep: { faction: 'drifters', delta: 2 },
+      },
+      branches: [
+        {
+          label: 'Accept the nod.',
+          targetNode: 'climax_end',
+        },
+      ],
+    },
+
+    climax_red_court: {
+      id: 'climax_red_court',
+      speaker: 'Narrator',
+      text: `You say it clearly. The Accord representative goes still in the way that people go still when they\'re deciding whether to pursue something or let it go. They let it go — for now. The Red Court response comes through channels you\'re already starting to understand: a message, a meeting time, an address. ${rt.npc('Castellan Rook')} will want to formalize the arrangement personally. A deal isn\'t trust. A deal is math. You\'ve just entered the equation.`,
+      onEnter: {
+        setFlag: { act1_complete: true, faction_committed_red_court: true, player_alignment_red_court: true },
+        grantRep: { faction: 'red_court', delta: 2 },
+      },
+      branches: [
+        {
+          label: 'Prepare for the meeting.',
+          targetNode: 'climax_end',
+        },
+      ],
+    },
+
+    climax_refuse: {
+      id: 'climax_refuse',
+      speaker: 'Marshal Cross',
+      text: `${rt.npc('Marshal Cross')} looks at you for a long moment. "Then you\'ve chosen neutrality." A pause. "Neutrality is a position. I want you to understand that. In a fracturing world, being neutral is being opposed to everyone who has committed. It protects you from nothing and obligates you to no one. The road you\'re choosing is lonelier than you think." She turns to leave. The second representative lingers. "The offer stands. When you\'re ready." They follow the marshal. The Crossroads exhales.`,
+      onEnter: {
+        setFlag: { act1_complete: true, faction_committed_none: true },
+      },
+      branches: [
+        {
+          label: 'Watch them leave.',
+          targetNode: 'climax_end',
+        },
+      ],
+    },
+
+    climax_end: {
+      id: 'climax_end',
+      speaker: 'Narrator',
+      text: `The Crossroads resumes its noise. The market restarts. People move. The moment that just happened will shape everything that comes after it — the doors that open, the ones that close, the people who now regard you as one of theirs and the people who register you as something other. Act One is complete. The map of the Four Corners has clarified. You know where you stand. What remains is to stand there.`,
+    },
+  },
+}
+
+// ============================================================
+// === Red Court Arc: Kade / Vex / Lyris (Phase 3) ===
+// ============================================================
+
+const kadeTree: DialogueTree = {
+  npcId: 'kade_red_court',
+  startNode: 'kade_start',
+  nodes: {
+    kade_start: {
+      id: 'kade_start',
+      speaker: 'Kade',
+      text: `${rt.npc('Kade')} closes the journal over his thumb. He looks at you for a long moment before he speaks — not assessment, just genuine interest. "The first year was the loudest. Everyone was deciding what they were — Covenant, Red Court, Hollow, or something that hadn't been named yet. I made my decision early. I've been thinking about it ever since. Not regretting. Thinking. There's a difference."`,
+      branches: [
+        {
+          label: `"Why the Red Court, specifically?"`,
+          targetNode: 'kade_why_court',
+        },
+        {
+          label: `"How do you live with what happens in this building?"`,
+          targetNode: 'kade_the_arrangement',
+        },
+        {
+          label: `"I need to ask you about ${rt.npc('Lyris')}."`,
+          targetNode: 'kade_on_lyris',
+          requiresFlag: 'lyris_doubter_revealed',
+        },
+        {
+          label: `"I'll leave you to your work."`,
+          targetNode: 'kade_leave',
+        },
+      ],
+    },
+
+    kade_why_court: {
+      id: 'kade_why_court',
+      speaker: 'Kade',
+      text: `"The Covenant calls what it does regrettable. They are right. Regret is a sign of moral clarity. But regret is not the same as stopping." ${rt.npc('Kade')} opens the journal to a marked page and taps it twice. "I listened to Vesper's arguments and found them honest. She had not answered them. She had arranged them beautifully, and then she had gone on feeding. Red Court is what you get when you stop arranging. It is not kinder. It is simply less polite about what it is."`,
+      onEnter: {
+        setFlag: { red_court_philosophy_encountered: true },
+      },
+      branches: [
+        {
+          label: `"That's a rationalization."`,
+          targetNode: 'kade_the_arrangement',
+        },
+        {
+          label: `"Thank you for being direct about it."`,
+          targetNode: 'kade_leave',
+        },
+      ],
+    },
+
+    kade_the_arrangement: {
+      id: 'kade_the_arrangement',
+      speaker: 'Kade',
+      text: `"Rationalization. The word is not inaccurate." ${rt.npc('Kade')} nods, as if you have said something he agrees with entirely. "Everything we do after we name what we are is rationalization. The question isn't whether we are rationalizing. The question is what we are rationalizing for. I have chosen sustainability over pretense. Vesper has chosen pretense over dissolution. Neither of us is innocent. One of us has stopped trying to sound innocent." He sets the pen down. "You have walked through ${rt.npc('Ward A')}. You have seen the wristbands. What bothered you — the practice, or the fact that the practice has a schedule?"`,
+      branches: [
+        {
+          label: `"The schedule. The bureaucracy of it."`,
+          targetNode: 'kade_bureaucracy',
+        },
+        {
+          label: `"The practice. The fact that it exists at all."`,
+          targetNode: 'kade_leave',
+        },
+      ],
+    },
+
+    kade_bureaucracy: {
+      id: 'kade_bureaucracy',
+      speaker: 'Kade',
+      text: `"Yes. That's the honest answer." A small sound — not a laugh, but the shape a laugh would take if it were permitted here. "Horror that is organized is harder to unsee than horror that is chaotic. Chaos you can grieve. Organization you have to argue with. Which is what I wanted, when I chose this. An argument I could keep having. I was tired of grieving." He closes the journal. "If you come back, we can continue. If you go to ${rt.npc('Cross')} tomorrow with what you've learned here, I will understand that too."`,
+      branches: [
+        {
+          label: `"I accept the argument. I understand the Red Court."`,
+          targetNode: 'kade_accept',
+        },
+        {
+          label: `"I'll think about it."`,
+          targetNode: 'kade_leave',
+        },
+      ],
+    },
+
+    kade_accept: {
+      id: 'kade_accept',
+      speaker: 'Kade',
+      text: `${rt.npc('Kade')} regards you with something close to recognition — not warmth, but the specific attention of one rationalizer acknowledging another. "Then you understand that conflict within the system is how the system proves it is reasonable. Whatever you choose to do, choose deliberately. The Red Court will remember the choice either way."`,
+      onEnter: {
+        setFlag: { join_kade_philosophy: true, red_court_arc_complete: true },
+        grantRep: { faction: 'red_court', delta: 1 },
+      },
+      branches: [
+        {
+          label: `"I'll remember it too."`,
+          targetNode: 'kade_leave',
+        },
+      ],
+    },
+
+    kade_on_lyris: {
+      id: 'kade_on_lyris',
+      speaker: 'Kade',
+      text: `A pause. He does not pretend not to know what you mean. "She was conflicted when we turned her. She is still conflicted. I was conflicted once." ${rt.npc('Kade')} glances toward the door as if she might walk through it. "The question is whether conflict is the beginning of change or just a luxury we allow ourselves when we are comfortable enough to afford it. I do not know her answer yet. I am not sure she does either. What you do with her is yours. What I do is to keep being someone she can ask, if she ever decides to ask."`,
+      onEnter: {
+        setFlag: { kade_awareness_of_lyris: true },
+      },
+      branches: [
+        {
+          label: `"That's all you have to say about it?"`,
+          targetNode: 'kade_leave',
+        },
+      ],
+    },
+
+    kade_leave: {
+      id: 'kade_leave',
+      speaker: 'Kade',
+      text: `${rt.npc('Kade')} opens the journal again. "Come back. Or don't. Either is a form of honesty."`,
+      branches: [],
+    },
+  },
+}
+
+const vexTree: DialogueTree = {
+  npcId: 'vex_red_court',
+  startNode: 'vex_start',
+  nodes: {
+    vex_start: {
+      id: 'vex_start',
+      speaker: 'Vex',
+      text: `${rt.npc('Vex')} does not stop writing when you enter. The pen moves at a steady rate; the eyes flick up and return to the ledger without losing place. "Supply chain. Territory management. Resource allocation. What I do isn't complicated — it just sounds worse once you know what the supply is. What do you need?"`,
+      branches: [
+        {
+          label: `"Walk me through the manifest."`,
+          targetNode: 'vex_manifest',
+        },
+        {
+          label: `"Your numbers don't match ${rt.npc('Rook')}'s private ledger."`,
+          targetNode: 'vex_discrepancy',
+          requiresFlag: 'pens_yield_discrepancy_found',
+        },
+        {
+          label: `"Some of your supplies are going missing."`,
+          targetNode: 'vex_theft',
+        },
+        {
+          label: `"Nothing. Leaving."`,
+          targetNode: 'vex_leave',
+        },
+      ],
+    },
+
+    vex_manifest: {
+      id: 'vex_manifest',
+      speaker: 'Vex',
+      text: `The pen continues. Vex speaks to the ledger, not to you. "Intake is thirty-four percent voluntary, twenty-eight percent involuntary, thirty-eight percent contract-unclear. Distribution: sixty percent goes to the ${rt.keyword('Accord')} on their monthly purchase order. Twelve percent to the ${rt.keyword('Covenant of Dusk')} — that transfer is arranged through Vesper's people, not ours. Eighteen percent internal use. Ten percent research protocol, cold-stored for Transit Point 4." Vex finally looks up. "You want me to pretend I don't know what contract-unclear means. I will not. It means not-voluntary and not-involuntary. It means someone signed a form under pressure that the form did not acknowledge. The ratios have been shifting. The shift is not a problem. It is something we have optimized."`,
+      onEnter: {
+        setFlag: { pens_covenant_arrangement: true, vex_manifest_shared: true },
+      },
+      branches: [
+        {
+          label: `"The Accord is BUYING from the Red Court?"`,
+          targetNode: 'vex_accord_buying',
+        },
+        {
+          label: `"What is Transit Point 4?"`,
+          targetNode: 'vex_transit_point',
+        },
+        {
+          label: `"That's enough. Leaving."`,
+          targetNode: 'vex_leave',
+        },
+      ],
+    },
+
+    vex_accord_buying: {
+      id: 'vex_accord_buying',
+      speaker: 'Vex',
+      text: `"Yes." No hedge. No softening. "The Accord has been purchasing Red Court yield for four years. Their own citizens believe the supply is voluntary Covenant tithe only. It is not. The tithe accounts for roughly a third. The rest is ours. ${rt.npc('Cross')} knows. Vesper knows. The citizens of ${rt.keyword('Covenant')} who receive transfusions do not. This is the arrangement. The arrangement is stable because nobody wants to say what the arrangement is."`,
+      branches: [
+        {
+          label: `"That's Vesper's philosophy with extra steps."`,
+          targetNode: 'vex_leave',
+        },
+        {
+          label: `"Does ${rt.npc('Vesper')} know exactly how much?"`,
+          targetNode: 'vex_leave',
+        },
+      ],
+    },
+
+    vex_transit_point: {
+      id: 'vex_transit_point',
+      speaker: 'Vex',
+      text: `Vex's pen pauses for the first time. Resumes. "Above my clearance. Research protocol material goes northwest on a schedule. The destination is not on the manifest. ${rt.npc('Rook')} authorizes the shipment; I arrange the cold chain. Who receives it is not my question." A very small look. "It has become your question, perhaps. That's Rook's problem."`,
+      branches: [
+        {
+          label: `"Back to other topics."`,
+          targetNode: 'vex_start',
+        },
+      ],
+    },
+
+    vex_discrepancy: {
+      id: 'vex_discrepancy',
+      speaker: 'Vex',
+      text: `"Rook runs a private variance. Three point two percent, consistent, over eighteen months." The pen moves again without pause. "I see the discrepancy every time I reconcile. I have not reported it. The total remains within sustainable capacity; the allocation simply differs from the ledger. Rook is entitled to a variance budget. The Council does not need to know every allocation. That is management."`,
+      branches: [
+        {
+          label: `"You're covering for Rook."`,
+          targetNode: 'vex_leave',
+        },
+        {
+          label: `"Where is the three percent going?"`,
+          targetNode: 'vex_leave',
+        },
+      ],
+    },
+
+    vex_theft: {
+      id: 'vex_theft',
+      speaker: 'Vex',
+      text: `"Theft is a variance." Flat. Unbothered. "The system can absorb variance within zero point three percent. At zero point eight, the variance becomes reportable. At one point two, it becomes a security matter. We are currently at zero point two percent." Vex looks at you directly for the first time. "The system is still within tolerance. I know who takes the supplies. I have not stopped her. The math says the loss is negligible. That is all the system requires of me."`,
+      onEnter: {
+        setFlag: { vex_silent_tolerance_revealed: true },
+      },
+      branches: [
+        {
+          label: `"You're letting ${rt.npc('Lyris')} do this."`,
+          targetNode: 'vex_leave',
+        },
+        {
+          label: `"Mathematics as mercy. That's cold."`,
+          targetNode: 'vex_leave',
+        },
+      ],
+    },
+
+    vex_leave: {
+      id: 'vex_leave',
+      speaker: 'Vex',
+      text: `The pen resumes. The eyes return to the ledger. "Close the door on the way out."`,
+      branches: [],
+    },
+  },
+}
+
+const lyrisTree: DialogueTree = {
+  npcId: 'lyris_red_court',
+  startNode: 'lyris_start',
+  nodes: {
+    lyris_start: {
+      id: 'lyris_start',
+      speaker: 'Lyris',
+      text: `${rt.npc('Lyris')} straightens the way someone does when they've been caught thinking about something. "Six months. I know it doesn't show on the outside but it does on the inside — there's a version of me that's still figuring out the rules. Not the Red Court rules. The other rules. The ones for being what I am now."`,
+      branches: [
+        {
+          label: `"Are you sure this is what you want?"`,
+          targetNode: 'lyris_conflict',
+        },
+        {
+          label: `"I saw you in the quarantine wing with a white-banded donor."`,
+          targetNode: 'lyris_caught',
+          requiresFlag: 'pens_covenant_arrangement',
+        },
+        {
+          label: `"Keep the rounds. Good luck with the rules."`,
+          targetNode: 'lyris_leave',
+        },
+      ],
+    },
+
+    lyris_conflict: {
+      id: 'lyris_conflict',
+      speaker: 'Lyris',
+      text: `A pause. She looks at her hands — a thing she's been doing for months now, the inventory of a body that is no longer the body she grew up in. "Six months ago I didn't know enough to question this. Three months ago I knew enough to question it. Now —" She stops. Starts again. "Now I know enough to do something, and I'm doing the minimum thing I can do that still means something. I don't know what that makes me. I don't think Kade's argument fits me. I don't think I fit the argument."`,
+      onEnter: {
+        setFlag: { lyris_doubter_revealed: true },
+      },
+      branches: [
+        {
+          label: `"What's the minimum thing?"`,
+          targetNode: 'lyris_caught',
+        },
+        {
+          label: `"Talk to ${rt.npc('Kade')}. Don't let him answer for you."`,
+          targetNode: 'lyris_leave',
+        },
+      ],
+    },
+
+    lyris_caught: {
+      id: 'lyris_caught',
+      speaker: 'Lyris',
+      text: `${rt.npc('Lyris')} goes very still. When she speaks, the control in her voice is the control of someone who has rehearsed the admission for weeks. "The AB-negative donor. She was white-banded for research protocol — Transit Point 4 is not research. I've been stealing a field surgery kit together. I'm going to move her through the transit tunnel tonight. Not free — delayed. There is no version of this where I get everyone out. I am buying one person a different ending than the one Rook authorized." A breath. "${rt.npc('Rook')} knows. ${rt.npc('Vex')} knows. They're letting me. The math says the loss is small. It's not mercy. It's tolerance. I'll take it. But I need someone on my side of the door who isn't one of them."`,
+      onEnter: {
+        setFlag: { lyris_extraction_planned: true },
+      },
+      branches: [
+        {
+          label: `"I'll help you move her out."`,
+          targetNode: 'lyris_aid',
+        },
+        {
+          label: `"I'm going to the ${rt.keyword('Accord')} with all of this."`,
+          targetNode: 'lyris_expose',
+        },
+        {
+          label: `"This is your problem. I'm not making it mine."`,
+          targetNode: 'lyris_refuse',
+        },
+      ],
+    },
+
+    lyris_aid: {
+      id: 'lyris_aid',
+      speaker: 'Lyris',
+      text: `The relief on her face is brief — she does not let it settle — but it was there. "Good. Thank you. Be at the transit tunnel at shift change." She pulls something from an inner pocket: a thin translucent slide, cold to the touch, threaded on a simple cord. "My biometric. If you end up at the ${rt.keyword('Scar')} and you need Sanguine authentication and you don't want to owe ${rt.npc('Vesper')} for it — use mine. I gave it. I gave it knowing what you might do with it. That's not a small thing where I come from." She closes your hand around it. "Don't tell ${rt.npc('Kade')} I said thank you. He'd write it down."`,
+      onEnter: {
+        setFlag: { aid_lyris_extraction: true, sanguine_biometric_obtained: true, red_court_arc_complete: true },
+        grantRep: { faction: 'red_court', delta: -1 },
+      },
+      branches: [
+        {
+          label: `"Tonight. Transit tunnel."`,
+          targetNode: 'lyris_leave',
+        },
+      ],
+    },
+
+    lyris_expose: {
+      id: 'lyris_expose',
+      speaker: 'Lyris',
+      text: `${rt.npc('Lyris')} takes a step back. Her face does not change — the face has been trained by six months of Sanguine discipline — but the distance is the statement. "Then we don't have anything else to say. The donor goes to Transit Point 4 tonight. The kit stays here. You will have done the bigger right thing and the smaller wrong one. I hope it's worth it to you. It won't be to her."`,
+      onEnter: {
+        setFlag: { disrupt_vex_system: true, red_court_arc_complete: true },
+      },
+      branches: [
+        {
+          label: `[ leave ]`,
+          targetNode: 'lyris_leave',
+        },
+      ],
+    },
+
+    lyris_refuse: {
+      id: 'lyris_refuse',
+      speaker: 'Lyris',
+      text: `"Fair." She does not sound disappointed. She sounds like someone updating a mental ledger. "You saw. You decided the seeing was enough. That's a position. It's not mine, but it's a position." She turns back toward her patrol route. "If you change your mind, I'm at the tunnel at shift change. Otherwise — walk good, traveler."`,
+      onEnter: {
+        setFlag: { passive_observer: true, red_court_arc_complete: true },
+      },
+      branches: [
+        {
+          label: `[ leave ]`,
+          targetNode: 'lyris_leave',
+        },
+      ],
+    },
+
+    lyris_leave: {
+      id: 'lyris_leave',
+      speaker: 'Lyris',
+      text: `${rt.npc('Lyris')} resumes her patrol. The measured gait of someone still thinking about the steps.`,
+      branches: [],
+    },
+  },
+}
+
+// ============================================================
+
 export const DIALOGUE_TREES: Record<string, DialogueTree> = {
   // Lev has two spawn points referencing different tree IDs,
   // but both use the same tree content.
@@ -3636,6 +5187,7 @@ export const DIALOGUE_TREES: Record<string, DialogueTree> = {
 
   // Sparks at Crossroads
   cr_sparks_intro: sparksTree,
+  cr_sparks_signal_quest: sparksSignalQuestTree,
 
   // Marshal Cross at Covenant courthouse
   cv_marshal_cross_intro: crossTree,
@@ -3645,6 +5197,7 @@ export const DIALOGUE_TREES: Record<string, DialogueTree> = {
 
   // Patch at Crossroads
   cr_patch_intro: patchTree,
+  cr_patch_main: patchTree, // alias — crossroads.ts references this ID
 
   // Howard at River Road bridge
   rr_howard_bridge: howardTree,
@@ -3685,4 +5238,14 @@ export const DIALOGUE_TREES: Record<string, DialogueTree> = {
 
   // Elder Sanguine (Lucid Elder) at The Deep sanctum
   dp_elder_sanguine_sanctum: elderSanguineTree,
+
+  // --- [RIDER A: remnant-story-0329] Echo + Act 1 Climax ---
+  echo_tree: echoTree,
+  act1_climax_encounter: act1ClimaxTree,
+  // --- [/RIDER A] ---
+
+  // --- Red Court Arc (Phase 3) ---
+  pens_kade_philosophy: kadeTree,
+  pens_vex_manifest: vexTree,
+  pens_lyris_conflict: lyrisTree,
 }

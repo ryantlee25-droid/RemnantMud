@@ -1,0 +1,182 @@
+# 7 Pillars Implementation Audit
+**Date:** 2026-04-23
+**Auditor:** Howler E
+**Worktree baseline:** `169f231` (convoy/remnant-infra-0329 — infra cleanup)
+**Main HEAD at audit time:** `d5e5607`
+
+---
+
+## 1. Summary Table
+
+| # | Pillar | Lib File | Data File(s) | Dispatch (gameEngine.ts) | Tests | Verdict |
+|---|--------|----------|--------------|--------------------------|-------|---------|
+| 1 | World Events | `lib/worldEvents.ts` | `data/worldEvents/act{1,2,3}_events.ts` | Yes — `_runNarrativePipeline` §a | `lib/worldEvents.test.ts` | **✅ Wired** |
+| 2 | Hollow Pressure | `lib/hollowPressure.ts` + `lib/npcInitiative.ts` | none (logic internal) | Yes — `_runNarrativePipeline` §b | `lib/hollowPressure.test.ts` | **✅ Wired** |
+| 3 | Companions | `lib/companionSystem.ts` | none (data internal to module) | Yes — `_runNarrativePipeline` §c | `tests/integration/faction-companion.test.ts` | **✅ Wired** |
+| 4 | Consequences / Faction Web | `lib/factionWeb.ts` | `data/convergenceEvents.ts` | Yes — `adjustReputation` → `_applyFactionRipple`; delayed in `_runNarrativePipeline` §e | `tests/integration/faction-companion.test.ts` | **✅ Wired** |
+| 5 | Narrative Keys | `lib/narrativeKeys.ts` | `data/narrativeKeys/keys_by_zone.ts` | **Partial** — module exists, state fields saved/loaded, but `learnKey` / `checkNarrativeGate` never called from any action handler or gameEngine dispatch path | `tests/integration/narrative-world.test.ts` | **⚠️ Partial** |
+| 6 | Player Monologue | `lib/playerMonologue.ts` | `data/playerMonologues/class_*.ts` (7 files) | Yes — `_runNarrativePipeline` §d (15% trigger via `shouldTriggerMonologue`) | `tests/integration/monologue-narrator.test.ts` | **✅ Wired** |
+| 7 | Narrator Voice | `lib/narratorVoice.ts` | `data/narratorVoices.ts` | Yes — `_runNarrativePipeline` §d (5% trigger via `shouldNarratorSpeak`, 2× at high pressure) | `tests/integration/monologue-narrator.test.ts` | **✅ Wired** |
+
+**Totals: 6 ✅ Wired, 1 ⚠️ Partial, 0 ❌ Design-only**
+
+---
+
+## 2. Critical Contextual Finding
+
+**The preliminary scan's premise was correct about the worktree but wrong about main.**
+
+This worktree is branched from commit `169f231` — the infra-0329 convoy baseline — which predates the narrative convoy by several commits. The narrative convoy (`remnant-narrative-0329`) merged all 7 pillars into `main` via commits `ab16a74` through `887e45e` on 2026-03-29, and `main` currently carries the full implementation. All 6 wired pillars are in `main:lib/gameEngine.ts` (1888 lines vs this worktree's 1412 lines).
+
+The worktree used for this audit simply does not contain the narrative convoy code. All findings below reflect `main`'s state, verified by `git show main:<path>`.
+
+---
+
+## 3. Per-Pillar Deep Dives
+
+### Pillar 1 — World Events
+
+**Expected:** Ambient events fire every 30–50 actions, gated on act/faction/quest flags.
+
+**Actual (main):** `lib/worldEvents.ts` exists. `data/worldEvents/act1_events.ts`, `act2_events.ts`, `act3_events.ts` all exist. In `main:lib/gameEngine.ts:1396–1403`:
+```
+const scheduled = getScheduledEvents(actionCount, currentAct, player)
+for (const event of scheduled) {
+  narrativeMessages.push(...executeWorldEvent(event, player))
+}
+```
+Called from `_runNarrativePipeline` (line 1375), which is called at `main:lib/gameEngine.ts:1875`. The unit test `lib/worldEvents.test.ts` covers scheduling and execution.
+
+**Delta:** None. Fully wired.
+**Severity:** None.
+
+---
+
+### Pillar 2 — Hollow Pressure
+
+**Expected:** `player.hollowPressure: 0–10` integer, increments per action, decrements on rest, influences narration.
+
+**Actual (main):** `lib/hollowPressure.ts` exists. `Player` interface in `main:types/game.ts` includes `hollowPressure?: number`. Saved/loaded via `narrative_progress` JSONB (note: this column has no migration in this worktree — it was added as part of the infra convoy, visible in `20260328000002_save_fix.sql`).
+
+Dispatch in `_runNarrativePipeline` §b (`main:lib/gameEngine.ts:1406–1430`): `computeHollowPressure()` called every action, pressure narration injected on room entry via `getPressureNarration()`, mundane horror via `getMundaneHorrorNarration()`, NPC initiative triggered at pressure ≥ 6 via `checkInitiativeTriggers()` from `lib/npcInitiative.ts`.
+
+**Clarification:** The `pressureLevel` in `PlayerLedger` and `computePressure()` in `lib/spawn.ts` are the *world danger cycle-scale pressure* (1–5, used for enemy spawn rates). The `hollowPressure` on `Player` is the *per-run narrative pressure meter* (0–10). These are two distinct systems.
+
+Unit test `lib/hollowPressure.test.ts` covers both the pressure compute logic and NPC initiative.
+
+**Delta:** None. Fully wired.
+**Severity:** None.
+
+---
+
+### Pillar 3 — Companions
+
+**Expected:** Optional companion (the Dog, now the Squirrel), ~20% spawn chance, narrative commentary.
+
+**Actual (main):** `lib/companionSystem.ts` exists. The companion is a mutant squirrel — `player_ledger` has `squirrel_alive`, `squirrel_trust`, `squirrel_cycles_known`, `squirrel_name` columns (migrations `20260326000005_narrative.sql` and `20260326000006_squirrel.sql`). `Player` type has `currentCompanion?: ...` field.
+
+Companion commentary dispatch in `_runNarrativePipeline` §c (`main:lib/gameEngine.ts:1452–1468`): `getCompanionCommentary()` and `getPersonalMoment()` called on room entry. Companion join/leave lifecycle handled in `lib/companionSystem.ts` via `addCompanion()` / `removeCompanion()`.
+
+Integration test `tests/integration/faction-companion.test.ts` covers companion eligibility, commentary, and personal moments.
+
+**Delta:** None. Fully wired.
+**Severity:** None.
+
+---
+
+### Pillar 4 — Consequences / Faction Web
+
+**Expected:** Pre-mapped secondary rep effects (Accord→Kindling ripple) with action-count delays.
+
+**Actual (main):** `lib/factionWeb.ts` (669 lines) and `data/convergenceEvents.ts` (391 lines) both exist. Two-stage dispatch:
+1. Immediate: `adjustReputation()` (`main:lib/gameEngine.ts:1116`) calls `_applyFactionRipple()` (line 1139), which calls `getFactionRipple()` from `factionWeb.ts` and enqueues delayed effects in `narrativeSession.pendingRipples`.
+2. Delayed: `_runNarrativePipeline` §e (lines 1574–1586) drains `pendingRipples`, calling `getDelayedRippleNarration()` to fire when the action-count delay elapses.
+
+Integration test `tests/integration/faction-companion.test.ts` covers ripple effects and standing transitions.
+
+**Delta:** None. Fully wired.
+**Severity:** None.
+
+---
+
+### Pillar 5 — Narrative Keys
+
+**Expected:** Knowledge gates — learn from dialogue/examination, unlock rooms/options narratively (not items).
+
+**Actual (main):** `lib/narrativeKeys.ts` (578 lines) exists. `data/narrativeKeys/keys_by_zone.ts` exists. `Player` type carries `narrativeKeys: string[]`. Keys are saved/loaded via `narrative_progress` JSONB. `ROOM_EXIT_GATES` defines narrative gate requirements. `learnKey()`, `checkNarrativeGate()`, `checkNarrativeUnlock()` are all exported.
+
+**Critical gap:** No call site to `learnKey()` exists anywhere outside the module itself and its tests. A `git grep` across all `main` branch `.ts` files finds `learnKey` only in `lib/narrativeKeys.ts` (definition) and `tests/integration/narrative-world.test.ts` (tests). Likewise, `checkNarrativeGate` and `checkNarrativeUnlock` are never called from `gameEngine.ts`, any action handler (`lib/actions/examine.ts`, `lib/actions/social.ts`, `lib/actions/movement.ts`), or dialogue processing.
+
+The state infrastructure is there (save/load, the `Player.narrativeKeys` array), and the library functions are correct (tests pass). But no in-game action — not `examine`, not `talk`, not `look` — ever calls `learnKey()` to grant a key, and no movement or room check calls `checkNarrativeGate()` to enforce one.
+
+**Delta:** Missing: (a) call sites in action handlers to award keys on examine/dialogue/search; (b) call sites in `handleMove` to gate exits via `ROOM_EXIT_GATES`.
+**Severity:** Major — the module is a tested no-op in the actual game loop. Players cannot acquire or use narrative keys.
+
+---
+
+### Pillar 6 — Player Monologue
+
+**Expected:** ~15% trigger contextual text injection.
+
+**Actual (main):** `lib/playerMonologue.ts` exists. `data/playerMonologues/class_broker.ts`, `class_enforcer.ts`, `class_reclaimer.ts`, `class_scout.ts`, `class_shepherd.ts`, `class_warden.ts`, `class_wraith.ts` — all 7 class pools exist. Dispatch in `_runNarrativePipeline` §d (`main:lib/gameEngine.ts:1519–1544`): `shouldTriggerMonologue()` (15% rate enforced inside function), then `generateMonologue()` called with class + personal loss context. Contract §4.4 invariant: monologue and narrator voice are mutually exclusive per action (one fires per action, not both).
+
+Integration test `tests/integration/monologue-narrator.test.ts` covers all 7 class pools plus trigger logic.
+
+**Delta:** None. Fully wired.
+**Severity:** None.
+
+---
+
+### Pillar 7 — Narrator Voice
+
+**Expected:** ~5% trigger, doubles at high pressure.
+
+**Actual (main):** `lib/narratorVoice.ts` exists. `data/narratorVoices.ts` exists (80+ whisper lines). Dispatch in `_runNarrativePipeline` §d (`main:lib/gameEngine.ts:1547–1567`): `shouldNarratorSpeak()` checks a 5% base rate (`NARRATOR_CONFIG`), doubled when pressure ≥ 6 (per convoy spec). Fires only when monologue did not fire this action (§4.4 invariant). Session tracking via `narrativeSession.lastNarratorAction` prevents rapid repeat.
+
+Integration test `tests/integration/monologue-narrator.test.ts` covers narrator triggers, act transitions, and high-pressure doubling.
+
+**Delta:** None. Fully wired.
+**Severity:** None.
+
+---
+
+## 4. Cross-Cutting Concern: `_runNarrativePipeline()`
+
+`_runNarrativePipeline()` exists in `main:lib/gameEngine.ts` at line 1375 (private async method). It is called at line 1875, which is the end of the per-action dispatch in `performAction()`. The call site is gated on `TIME_ADVANCING_VERBS` — matching the intent of "once per meaningful player action."
+
+Six pillars plug into it:
+- §a: World Events (always-on, action-count gated)
+- §b: Hollow Pressure (tick on action count, narration on room entry)
+- §c: Companions (room entry only)
+- §d: Monologue / Narrator Voice (every action outside combat, mutually exclusive)
+- §e: Delayed Faction Ripple (every action, drains pending queue)
+
+Narrative Keys (Pillar 5) does **not** plug into `_runNarrativePipeline` and is not called from any other dispatch point.
+
+---
+
+## 5. Reconciliation with Memory
+
+Memory records the 03-29 convoy as **COMPLETE** with "433 tests passing and 10 Inspector blockers fixed." This audit finds a more nuanced truth:
+
+- The convoy did ship 6 of 7 pillars fully implemented and wired into the game loop.
+- Pillar 5 (Narrative Keys) is the exception: the module, data, tests, and save/load infrastructure are all present, but no call sites exist to actually award keys or enforce gates during gameplay.
+- The 1,120 tests on main (not 433 — coverage increased substantially after the convoy with subsequent harness work) pass because the narrative-world test exercises `learnKey()` directly, not via any game action.
+
+Memory's "COMPLETE" flag is inaccurate for Pillar 5. The other 6 pillars genuinely shipped.
+
+The preliminary scan's claim that "at least 3 of 7 are design-only — no dispatch in lib/gameEngine.ts" was based on scanning **this worktree** (`169f231`), which is the pre-narrative baseline. In `main`, only 1 of 7 is a gap.
+
+---
+
+## 6. Fix Backlog
+
+| # | Pillar | Status | Required Work | Effort |
+|---|--------|--------|---------------|--------|
+| 5 | Narrative Keys | Partial | (1) In `lib/actions/examine.ts`: call `learnKey()` when `extra.narrativeKeyId` present on the extra being examined. (2) In `lib/actions/social.ts`: call `learnKey()` when dialogue node grants a key (add `grantsKey?: string` to dialogue node type). (3) In `lib/actions/movement.ts` / `handleMove`: check `ROOM_EXIT_GATES[targetRoomId]` with `checkNarrativeGate()` before allowing move; emit hint on failure via `getNarrativeKeyHint()`. (4) Update ~5 room extras in `data/rooms/` with `narrativeKeyId` fields to wire specific keys to discovery. | M |
+
+Pillars 1, 2, 3, 4, 6, 7: no work required.
+
+---
+
+*Audit complete. All citations verified against `git show main:<path>` output. This worktree carries only the infra convoy baseline and does not contain the narrative implementations examined above.*

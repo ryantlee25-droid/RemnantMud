@@ -18,4 +18,5 @@ export interface EngineCore {
   _checkLevelUp(): void
   adjustReputation(faction: FactionType, delta: number): Promise<void>
   setQuestFlag(flag: string, value: string | boolean | number): Promise<void>
+  grantNarrativeKey(keyId: string, source: 'dialogue' | 'examination' | 'deduction'): Promise<void>
 }

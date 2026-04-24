@@ -1,7 +1,7 @@
 # THE REMNANT — MASTER GAME BIBLE
 ## Version 1.0 — Complete Reference for Implementation
 
-> This is the single canonical document for building The Remnant. It consolidates world lore, narrative structure, game mechanics, room display format, randomization systems, death/regeneration, and references the 250-room dungeon script. Feed this document and the accompanying room files to Claude Code.
+> This is the single canonical document for building The Remnant. It consolidates world lore, narrative structure, game mechanics, room display format, randomization systems, death/regeneration, and references the 267-room dungeon script. Feed this document and the accompanying room files to Claude Code.
 
 ---
 
@@ -35,6 +35,8 @@ The infected masses. CHARON-7 rewired their limbic system into permanent predato
 | Whisperer | Rare. Retains partial speech. Mimics phrases to lure prey. | Very High (psychological) | Mimics random phrases. | Holds conversations. Begs. Asks for help. Leads you into ambushes. |
 | Hive Mother | Extremely rare. Pheromonal control over nearby Hollow. | Extreme | N/A (Pressure 4+ only) | Coordinates 15-25 Hollow in formation. |
 
+> **Note:** "Stalker" was previously used in some room data and has been consolidated under Remnant.
+
 ### The Sanguine (Playable — Advanced)
 1 in 10,000 infected didn't become Hollow — CHARON-7 restructured their brains into apex predators. Enhanced senses, inhuman speed, blood dependency. They are not supernatural. They are the virus's masterpiece.
 
@@ -67,7 +69,7 @@ The horror: you are the virus's project, and you don't know what it's making.
 | Faction | Philosophy | Territory | Notes |
 |---------|-----------|-----------|-------|
 | Covenant of Dusk | Coexist via blood tithes | Duskhollow Manor | The "civilized" option. Memory Rate: 0.55 |
-| The Red Court | Humans are livestock | The Pens | Ruthless, hierarchical. Memory Rate: 0.40 |
+| The Red Court | Humans are livestock | The Pens (Mercy General Extended Care — repurposed hospital) | Ruthless, hierarchical. Bureaucratic horror. Memory Rate: 0.40 |
 | The Ferals | Reject structure. Hunt. Feed. Move. | Nomadic | Closest to pure predator. |
 | The Lucid | Retain human identity. Seek a cure. | Hidden | Tragic figures. Constantly hungry. |
 
@@ -75,24 +77,24 @@ The horror: you are the virus's project, and you don't know what it's making.
 
 Set in the **Four Corners region** — where Colorado, New Mexico, Utah, and Arizona meet. Real geography: San Juan Mountains, Animas River, Mesa Verde, Shiprock.
 
-### The 13 Zones (250 rooms total)
+### The 13 Zones (267 rooms total)
 
 | Zone | Rooms | Act | Gate | Theme |
 |------|-------|-----|------|-------|
-| Crossroads | 18 | I | None (start) | Commerce, orientation |
+| Crossroads | 15 | I | None (start) | Commerce, orientation |
 | River Road | 22 | I | None | Travel, first Hollow encounters |
 | Covenant | 28 | I-II | None (inner areas locked) | Civilization, law |
 | Salt Creek Stronghold | 20 | I-II | Reputation (Salters ≥ Recognized) | Military, authority |
-| The Ember | 16 | I-II | Quest gate | Faith, fire, zealotry |
-| The Breaks | 22 | I-II | Skill (Survival ≥ 5) | Canyons, isolation |
+| The Ember | 20 | I-II | Quest gate | Faith, fire, zealotry |
+| The Breaks | 20 | I-II | Skill (Survival ≥ 5) | Canyons, isolation |
 | The Dust | 18 | II | Skill (Survival ≥ 8) | Desolation, ruin |
-| The Stacks | 14 | II | Reputation (Reclaimers ≥ Recognized) | Technology, knowledge |
+| The Stacks | 20 | II | Reputation (Reclaimers ≥ Recognized) | Technology, knowledge |
 | Duskhollow Manor | 18 | II | Faction quest | Vampiric politics |
-| The Pens | 14 | II-III | Multi-gate (quest + combat skill) | Horror, rescue |
+| The Pens | 18 | II-III | Multi-gate (quest + combat skill) | Horror, rescue |
 | The Deep | 20 | II-III | Skill (Survival ≥ 10 + combat ≥ 8) | Underground horror |
-| The Pine Sea | 12 | II-III | Knowledge gate (Cycle 2+) | Mountain beauty, respite |
+| The Pine Sea | 20 | II-III | Knowledge gate (Cycle 2+) | Mountain beauty, respite |
 | The Scar / MERIDIAN | 28 | III | Multi-gate (Cycle 3+) | Truth, choice |
-| **TOTAL** | **250** | | | |
+| **TOTAL** | **267** | | | |
 
 ---
 
@@ -121,7 +123,7 @@ Theme: Survival and belonging. Learn factions, first Hollow encounter, first San
 **Act II — Allegiance (Cycles 2-3, ~180 rooms accessible)**
 Theme: Power, compromise, cost of safety. Deep faction questlines, moral dilemmas, MERIDIAN evidence gathering. Climax: Factions split on the Scar question. Player chooses who to walk with.
 
-**Act III — The Scar (Cycle 3+, all 250 rooms)**
+**Act III — The Scar (Cycle 3+, all 267 rooms)**
 Theme: Truth, and what you do with it. Journey through MERIDIAN. Revelations about CHARON-7. The broadcaster. The choice.
 
 ## 2.3 — The Central Mystery (Layered Revelation)
@@ -131,6 +133,10 @@ Theme: Truth, and what you do with it. Journey through MERIDIAN. Revelations abo
 **Layer 2:** The military didn't bomb MERIDIAN to sterilize it. They bombed it to bury evidence. The facility is intact underground. The radio signal comes from inside.
 
 **Layer 3:** Someone survived inside MERIDIAN for seven years. The broadcaster's identity varies based on which evidence the player finds. Possible identities: Dr. Elias Vane (lead virologist), an AI system, a trapped Sanguine elder, or a group of sealed-in survivors.
+
+> **Note — Pre-MERIDIAN Sanguine:** The Duskhollow gallery contains portraits with pre-MERIDIAN dates and a 2025 MERIDIAN-Covenant MOU. This is DELIBERATELY AMBIGUOUS — evidence exists for both authentic pre-MERIDIAN Sanguine and Covenant fabrication. The game does not resolve this question; the player decides what they believe.
+
+> **Note — Dr. Vane and R-1:** Dr. Elias Vane self-administered R-1 augmentation to survive seven years alone in MERIDIAN. This is canonical and discoverable through medical bay evidence in The Scar (scar_23). The self-injection explains the broadcaster's Sanguine physiology while preserving Vane's identity as the original human virologist.
 
 ## 2.4 — The Four Endings
 
@@ -160,8 +166,8 @@ Theme: Truth, and what you do with it. Journey through MERIDIAN. Revelations abo
 | Marshal Adeline Cross | Accord leader | The Accord | Covenant | Iron-willed, fair, exhausted. Holds it together through character. |
 | Warlord Briggs | Salter commander | The Salters | Salt Creek | Ex-Marine. Was MERIDIAN perimeter security. Knows more than he admits. |
 | Vesper | Covenant of Dusk elder | Covenant of Dusk | Duskhollow | Former philosophy professor. Genuinely believes in coexistence. |
-| Castellan Rook | Red Court enforcer | Red Court | The Pens | Views humans as cattle. Not cruel — unsentimental. |
-| Deacon Harrow | Kindling high priest | The Kindling | The Ember | Charismatic, possibly mad. Purification rituals getting extreme. |
+| Castellan Rook | Castellan (facility commander) | Red Court | The Pens | Runs the entire Pens operation. Not cruel — unsentimental. Administrative precision applied to horror. |
+| Deacon Harrow | Kindling high priest | The Kindling | The Ember | Charismatic, possibly mad. Purification rituals getting extreme. Pre-Collapse identity deliberately ambiguous. Connected to HARLOW, T. — a MERIDIAN maintenance technician whose journal is found in The Ember's hidden chapel. Harlow and Harrow are the same person (canonical, but player-discovered through quest progression). |
 | Patch | Information broker / medic | Drifters | Crossroads | Knows everyone, owes no one. Trades medical care for secrets. |
 | Dr. Ama Osei | Virologist | The Lucid | Hidden lab | Sanguine. Refuses to accept it. Brilliant, desperate. |
 | Lev | Head researcher | Reclaimers | The Stacks | Studies Revenants. Has files on you. |
@@ -209,6 +215,8 @@ Theme: Truth, and what you do with it. Journey through MERIDIAN. Revelations abo
 | Blood Sense | Sanguine only | 50-60% |
 | Daystalking | Sanguine only | 50-60% |
 | Mesmerize | Sanguine only | 50-60% |
+
+> **Note:** Perception checks use the Wits attribute for sensory observation or the Tracking skill for environmental sign-reading. There is no separate Perception skill; room data referencing "perception" checks should be resolved as Wits (attribute check) or Tracking (skill check) depending on context.
 
 ## 3.3 — Reputation System
 
@@ -515,21 +523,21 @@ All modifiers multiplicative: `final = base * time * weather * noise * reputatio
 ```
                               [THE SCAR / MERIDIAN] (28 rooms)
                                     |
-                              [THE PINE SEA] (12 rooms)
+                              [THE PINE SEA] (20 rooms)
                                   /    \
                      [THE STACKS]       [THE DEEP] (20 rooms)
-                      (14 rooms)  \       |
+                      (20 rooms)  \       |
                           |        \      |
               [COVENANT] --- [RIVER ROAD] --- [SALT CREEK]
               (28 rooms)     (22 rooms)       (20 rooms)
                   |              |                 |
              [THE EMBER]    [CROSSROADS]      [THE DUST]
-             (16 rooms)     (18 rooms)        (18 rooms)
+             (20 rooms)     (15 rooms)        (18 rooms)
                                 |
-                           [THE BREAKS] (22 rooms)
+                           [THE BREAKS] (20 rooms)
                               /    \
                    [DUSKHOLLOW]     [THE PENS]
-                   (18 rooms)      (14 rooms)
+                   (18 rooms)      (18 rooms)
 ```
 
 ### Cycle Access Matrix
@@ -541,7 +549,7 @@ All modifiers multiplicative: `final = base * time * weather * noise * reputatio
 | Covenant | Outer 18/28 | 24/28 | FULL |
 | Salt Creek | Gate: Rep | Inner opens | FULL |
 | The Ember | Gate: Quest | Deep opens | FULL |
-| The Breaks | Outer 12/22 | 18/22 | FULL |
+| The Breaks | Outer 12/20 | 18/20 | FULL |
 | The Dust | LOCKED | FULL | FULL |
 | The Stacks | LOCKED | FULL | FULL |
 | Duskhollow | LOCKED | FULL | FULL |
@@ -628,6 +636,6 @@ All modifiers multiplicative: `final = base * time * weather * noise * reputatio
 
 ---
 
-*This master bible is complete. The accompanying room files (Parts A through M) contain the full 250-room dungeon script. Together they are the complete implementation blueprint for The Remnant.*
+*This master bible is complete. The accompanying room files (Parts A through M) contain the full 267-room dungeon script. Together they are the complete implementation blueprint for The Remnant.*
 
 *What's left is what matters.*

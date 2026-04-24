@@ -20,11 +20,17 @@ interface DispositionRoll {
   hostile: number
 }
 
+interface DeathCondition {
+  trigger: string                // quest flag that causes this NPC's death
+  description: string            // narrative description of the death
+}
+
 interface RichNPC extends NPC {
   activityPool: ActivityEntry[]
   dispositionRoll: DispositionRoll
   spawnChance: number
   zone: ZoneType
+  deathCondition?: DeathCondition
 }
 
 export const NPCS: Record<string, RichNPC> = {
@@ -46,6 +52,27 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'crossroads',
     spawnChance: 0.85,
     dispositionRoll: { friendly: 0.30, neutral: 0.50, wary: 0.15, hostile: 0.05 },
+    vendorGreeting: "You're buying bandages. That's either optimism or planning. Which one are you?",
+    vendorFarewell: "Try not to need me again. But you will.",
+    vendorBudget: 40,
+    vendorComments: {
+      antibiotics_01: [
+        "These are broad-spectrum. Don't use them unless you're sure it's bacterial. The world doesn't need more resistant strains.",
+        "Take the full course. Half a course is worse than none.",
+      ],
+      bandages: [
+        "You're buying bandages. That's either optimism or planning.",
+        "Clean wound first. Bandage second. In that order. Always.",
+      ],
+      quiet_drops: [
+        "Sedative. Calibrated dose. Not for recreational use — the math is tight.",
+        "Those are for pain management or extraction scenarios. You'll know which one when you need them.",
+      ],
+      stim_shot: [
+        "Stimulant. It works. It also costs you later. Factor that in.",
+        "One use. The crash hits in four hours. Plan around it.",
+      ],
+    },
     activityPool: [
       {
         activity: 'is cataloguing medical supplies with a worn clipboard, making small marks in a cramped shorthand only they can read',
@@ -165,11 +192,15 @@ export const NPCS: Record<string, RichNPC> = {
       'She sits with the stillness of someone who no longer needs to fidget. The photosensitivity is apparent — she has positioned herself precisely in the deepest shadow of the room, equidistant from every light source. She was a philosophy professor once. You can hear it in the precision of her sentences. She believes in what she has built here. That may be the most dangerous thing about her.',
     dialogue:
       "The blood tithe is not exploitation. The blood tithe is acknowledgment. We are predators and you are prey and the Covenant is the formal agreement that both parties have chosen something else. You find that transactional? Good. Transactions are civilized. The alternative is the Red Court. I have been clear about which I prefer.",
-    faction: 'lucid',
+    faction: 'covenant_of_dusk',
     isNamed: true,
     zone: 'duskhollow',
     spawnChance: 0.80,
     dispositionRoll: { friendly: 0.20, neutral: 0.50, wary: 0.25, hostile: 0.05 },
+    deathCondition: {
+      trigger: 'player_betrayal_red_court_alliance',
+      description: 'Vesper is found in her reading alcove, unmoving. The Red Court did not send a message. They sent a lesson. Her fountain pen is still in her hand. The notebook is open to a page about the categorical imperative.',
+    },
     activityPool: [
       {
         activity: 'is reading in the deep shadow of an alcove, turning pages with a deliberateness that suggests she has read this before and is finding something new in it',
@@ -205,7 +236,7 @@ export const NPCS: Record<string, RichNPC> = {
     description:
       'Young for the authority they carry, with the kind of driven-thin look that comes from thinking too much and sleeping too little. Their workspace is organized in a system only they understand, which is efficient, which is the point. They know about you. The way they looked up when you entered was not surprise — it was confirmation.',
     dialogue:
-      "I've been tracking the Revenant phenomenon since Cycle 2. The skill retention curves, the death-specific memory degradation, the way the scars accumulate. You're not the only one. You are, however, the most interesting one. I'm not saying that to flatter you. I'm saying it because you should know that whatever CHARON-7 is doing to you, it has a goal. I just haven't proven what it is yet. Sit down. I have questions.",
+      "I've been tracking the Revenant phenomenon since Cycle 2. The skill retention curves, the death-specific memory degradation, the way the scars accumulate. You're not the only one. You are, however, the most interesting one. I'm not saying that to flatter you. I'm saying it because you should know that whatever CHARON-7 is doing to you, it has a goal. I just haven't proven what it is yet. Sit down. I have questions. And if you've heard the signal — the shortwave broadcast from the Scar — I need to know that too. The frequency matches MERIDIAN's emergency protocol. Someone in that facility is still alive. That changes everything about what we thought we knew.",
     faction: 'reclaimers',
     isNamed: true,
     zone: 'the_stacks',
@@ -311,6 +342,11 @@ export const NPCS: Record<string, RichNPC> = {
         weight: 2,
         timeRestrict: ['night'],
       },
+      {
+        activity: 'is adjusting a small radio on the bridge rail, scanning frequencies. He stops on a burst of static that almost sounds like words. "There it is again. Every night. Sparks at Crossroads thinks someone is alive in the Scar. I think she might be right."',
+        weight: 1,
+        timeRestrict: ['night'],
+      },
     ],
   },
 
@@ -368,6 +404,22 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'crossroads',
     spawnChance: 0.90,
     dispositionRoll: { friendly: 0.60, neutral: 0.30, wary: 0.08, hostile: 0.02 },
+    vendorGreeting: "You look thin. Take the jerky. Don't argue.",
+    vendorFarewell: "You come back when you're hungry. That's all I ask.",
+    vendorBudget: 30,
+    vendorComments: {
+      elk_jerky: [
+        "I dried that myself. Don't tell me it's too salty — it's supposed to be salty. Salt keeps you alive.",
+        "Good for three weeks in a dry pack. Longer if you're careful.",
+      ],
+      boiled_rations: [
+        "Hot food. Eat it while it's hot. Don't let it get cold — it's worse cold.",
+        "I know what's in it. It's good. Trust me.",
+      ],
+      purification_tabs: [
+        "Take the tabs. I don't care if you think the water looks clean. Take the tabs.",
+      ],
+    },
     activityPool: [
       {
         activity: 'is ladling something hot from a large pot into bowls, moving with the practiced efficiency of someone who has done this ten thousand times',
@@ -442,6 +494,10 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'the_breaks',
     spawnChance: 0.55,
     dispositionRoll: { friendly: 0.30, neutral: 0.50, wary: 0.15, hostile: 0.05 },
+    deathCondition: {
+      trigger: 'red_court_expansion_player_inaction',
+      description: 'Dr. Osei\'s lab is empty. The equipment is intact. The research journal is open to the last entry: a single line of data followed by a note in her handwriting — "The hunger won. I was two samples short." The vials on the counter are arranged in perfect order. She did not leave in a hurry.',
+    },
     activityPool: [
       {
         activity: 'is working at a salvaged lab bench with focused intensity, pipetting something between vials with steady, careful hands',
@@ -482,6 +538,10 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'the_breaks',
     spawnChance: 0.45,
     dispositionRoll: { friendly: 0.05, neutral: 0.30, wary: 0.45, hostile: 0.20 },
+    deathCondition: {
+      trigger: 'lucid_intelligence_leak',
+      description: 'The Wren is gone. His knife is embedded in the passage wall at head height — left there, not dropped. The Red Court found out what he was feeding to the Lucid. They did not send a hunter. They sent three. He got one of them first.',
+    },
     activityPool: [
       {
         activity: 'is standing in the shadow beside the passage entrance, perfectly still, so well-placed that you registered him as part of the wall',
@@ -552,7 +612,7 @@ export const NPCS: Record<string, RichNPC> = {
       "You are here because the Red Court finds you useful, currently. That is the full extent of the situation. I am not your enemy in the way enemies are usually understood — I don't have the investment in you required for enmity. I have a function and you have a value, and for now those two things align. When they don't, the conversation will be different. Is that clear enough?",
     faction: 'red_court',
     isNamed: true,
-    zone: 'duskhollow',
+    zone: 'the_pens',
     spawnChance: 0.55,
     dispositionRoll: { friendly: 0.00, neutral: 0.40, wary: 0.40, hostile: 0.20 },
     activityPool: [
@@ -583,8 +643,8 @@ export const NPCS: Record<string, RichNPC> = {
 
   crossroads_gate_guard: {
     id: 'crossroads_gate_guard',
-    name: 'Gate Guard',
-    description: 'A settlement guard at the Crossroads entrance, leaning on a rifle that has seen serious use. Their eyes do a threat-assessment sweep before anything else.',
+    name: 'Doyle',
+    description: "A former county sheriff's deputy who applied his old procedures to the new world because they still mostly work. He leans on a rifle that has seen serious use and his eyes complete a threat-assessment sweep before he registers your face. He's not unfriendly. He just finished friendly a long time ago and arrived somewhere more durable.",
     dialogue: "Eyes up. Arms out. Everyone gets checked. Nothing personal, and if you've got nothing to hide, it'll take thirty seconds.",
     zone: 'crossroads',
     spawnChance: 0.95,
@@ -598,8 +658,8 @@ export const NPCS: Record<string, RichNPC> = {
 
   checkpoint_arbiter: {
     id: 'checkpoint_arbiter',
-    name: 'Checkpoint Arbiter',
-    description: 'An Accord official managing traffic at a settlement checkpoint, clipboard in hand, expression neutral and professional.',
+    name: 'Sable',
+    description: "An ex-paralegal who treats the checkpoint like a deposition. Clipboard in hand, expression neutral and permanent — not cold, not warm, just precise. She has heard every reason why someone's situation is an exception and has processed each one the same way. Exhausted by people who think the rules are optional for them specifically. Still here. Still asking.",
     dialogue: "Purpose of entry? How long are you staying? Any biological exposure in the last seventy-two hours? Standard questions. Answer them straight and we'll have you through in five minutes.",
     faction: 'accord',
     zone: 'covenant',
@@ -614,8 +674,8 @@ export const NPCS: Record<string, RichNPC> = {
 
   food_vendor_generic: {
     id: 'food_vendor_generic',
-    name: 'Food Vendor',
-    description: 'A vendor operating a food stall, their setup simple but well-maintained. Hot food is a luxury that buys more goodwill than most weapons.',
+    name: 'Solis',
+    description: "A former line cook who operates a stall adjacent to Marta's — quieter, more particular. He has strong opinions about what he will and won't prepare given available ingredients, and treats this precision as a form of integrity. He will not combine things that shouldn't be combined. He explains this, briefly, to anyone who asks for something he won't make.",
     dialogue: "Hot rations, two pennies. Clean water, two pennies. If you've got jerky or clean protein to trade, I'll make you a better deal.",
     zone: 'crossroads',
     spawnChance: 0.80,
@@ -635,6 +695,25 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'crossroads',
     spawnChance: 0.75,
     dispositionRoll: { friendly: 0.20, neutral: 0.60, wary: 0.15, hostile: 0.05 },
+    vendorGreeting: "Rounds up front. I don't run credit.",
+    vendorFarewell: "Keep it clean. Keep it loaded. Don't point it at anything you don't intend to drop.",
+    vendorBudget: 80,
+    vendorComments: {
+      '22_rifle': [
+        "Twenty-two LR platform. Accurate past fifty meters if you know what you're doing. Light round, but it works.",
+        "Best trade value on the table. What you lose in stopping power you make up in ammo availability.",
+      ],
+      '9mm_pistol': [
+        "Nine-millimeter. Standard platform. Spare parts everywhere. Good choice if you want something you can maintain.",
+        "Fifteen in the magazine. Keep two on you. At minimum.",
+      ],
+      ammo_9mm: [
+        "Nine-mil. Stockpile if you're running that platform. It goes fast.",
+      ],
+      ammo_shotgun_shell: [
+        "Short-range solution. Inside twenty meters it's decisive. Past that, you're wasting shells.",
+      ],
+    },
     activityPool: [
       { activity: 'is running an oiled cloth along a rifle barrel, not looking up', weight: 3, timeRestrict: ['day'] },
       { activity: 'is negotiating with a trader over a firearm laid between them, the price clearly not yet settled', weight: 2 },
@@ -644,13 +723,25 @@ export const NPCS: Record<string, RichNPC> = {
 
   components_vendor: {
     id: 'components_vendor',
-    name: 'Components Vendor',
-    description: "A Reclaimer-affiliated trader dealing in electronics, tools, and mechanical parts. Their stall smells like solder and machine oil.",
+    name: 'Fuse',
+    description: "A Reclaimer technician who traded down to the market level because she found she could do more good getting tools into people's hands than keeping them in the Stacks. Her stall smells like solder and machine oil. She has strong opinions about salvage quality and will share them whether you ask or not.",
     dialogue: "Electronics, tools, components. If the Reclaimers want it, I probably have it or can find it. What are you building?",
     faction: 'reclaimers',
     zone: 'crossroads',
     spawnChance: 0.65,
     dispositionRoll: { friendly: 0.20, neutral: 0.60, wary: 0.15, hostile: 0.05 },
+    vendorGreeting: "Tell me what you're building and I'll tell you if I have what you need.",
+    vendorFarewell: "If it doesn't work, it's the assembly, not the component. Come back and we'll diagnose it.",
+    vendorBudget: 50,
+    vendorComments: {
+      electronics_salvage: [
+        "Pre-Collapse capacitors and boards. Test each one before you solder. Half of them are borderline.",
+        "Salvage quality. Functional but not certified. You get what that means.",
+      ],
+      crafting_components: [
+        "General fabrication stock. Reclaimers use this across three different build types.",
+      ],
+    },
     activityPool: [
       { activity: 'is sorting electronics salvage into categorized bins, occasionally holding a component up to the light', weight: 3 },
       { activity: 'is repairing something small and intricate on a work mat, tools laid out with precision', weight: 2, timeRestrict: ['day'] },
@@ -659,8 +750,8 @@ export const NPCS: Record<string, RichNPC> = {
 
   board_manager: {
     id: 'board_manager',
-    name: 'Board Manager',
-    description: "The person who manages the job board — postings, payments, verification of completed work. They know more about settlement needs than almost anyone.",
+    name: 'Nance',
+    description: "Has run this board through three settlement administrations and has the patience of someone who has heard every possible excuse for why a job was technically complete. Knows everyone's work history. Treats every new posting like it deserves the same fair shot, and every dispute like the answer was already in the paperwork if you'd just looked.",
     dialogue: "Board jobs pay on verified completion. No advance. No partial. If the person who posted it disputes your work, there's an arbitration process, and yes, it's annoying, and yes, you should still go through it.",
     zone: 'crossroads',
     spawnChance: 0.85,
@@ -674,8 +765,8 @@ export const NPCS: Record<string, RichNPC> = {
 
   campfire_storyteller: {
     id: 'campfire_storyteller',
-    name: 'Campfire Storyteller',
-    description: "An older Drifter who has traded stories for food and shelter since before the Crossroads was the Crossroads. They know the difference between what happened and what people needed to hear.",
+    name: 'Gavel',
+    description: "An older Drifter who has traded stories for food and shelter since before the Crossroads was the Crossroads. Has a reputation across three settlements — people travel here specifically to hear Gavel's account of the first month after the Collapse, which changes slightly each telling in ways nobody can prove are inaccurate. They know the difference between what happened and what people needed to hear.",
     dialogue: "You want news or stories? News costs a meal. Stories are free but you have to stay for the whole thing. What I know about the north pass is news. What I know about the MERIDIAN signal is something in between.",
     faction: 'drifters',
     zone: 'crossroads',
@@ -750,7 +841,7 @@ export const NPCS: Record<string, RichNPC> = {
     id: 'traveling_merchant',
     name: 'Traveling Merchant',
     description: "A Drifter merchant with a laden pack and the cheerful wariness of someone who has survived the roads by being careful about who they trust and fast about getting out.",
-    dialogue: "Three-day trade window. I've got textiles, dried goods, and a case of pre-Collapse canned protein I'm not going to ask you to verify the contents of. What are you looking to trade?",
+    dialogue: "Three-day trade window. I've got textiles, dried goods, and a case of pre-Collapse canned protein I'm not going to ask you to verify the contents of. What are you looking to trade? Also — you heard the broadcast yet? Shortwave, at night, when the atmospheric skip is right. Everybody on the River Road has heard it at least once. Something repeating from up in the mountains. Sparks at Crossroads is the one to ask about it.",
     faction: 'drifters',
     zone: 'river_road',
     spawnChance: 0.45,
@@ -759,6 +850,7 @@ export const NPCS: Record<string, RichNPC> = {
       { activity: 'is reorganizing their pack with the compressed efficiency of someone who knows exactly how many minutes they can afford', weight: 2 },
       { activity: 'is making a transaction with a local, the exchange quick and mutually professional', weight: 2, timeRestrict: ['day'] },
       { activity: 'is eating quickly at the edge of the trading area, pack within arm\'s reach', weight: 1 },
+      { activity: 'is holding a battered transistor radio to their ear, frowning at the static between stations. "There it is again. You hear that? Every night, same time, same words."', weight: 2, timeRestrict: ['night', 'dusk'] },
     ],
   },
 
@@ -782,7 +874,7 @@ export const NPCS: Record<string, RichNPC> = {
     id: 'salters_soldier',
     name: 'Salter Soldier',
     description: "A Salter in field kit — plate carrier, sidearm, the hardened bearing of someone who has been in the field continuously. Professional and territorial.",
-    dialogue: "Salt Creek perimeter. You need a reason to be here and you need to state it clearly. Salter territory isn't open access.",
+    dialogue: "Salt Creek perimeter. You need a reason to be here and you need to state it clearly. Salter territory isn't open access. And if you're here about that radio signal the Reclaimers keep going on about — we don't chase ghost broadcasts. Briggs says the Scar is sealed and dead. That's good enough for me.",
     faction: 'salters',
     zone: 'salt_creek',
     spawnChance: 0.85,
@@ -891,13 +983,14 @@ export const NPCS: Record<string, RichNPC> = {
     id: 'campfire_stranger',
     name: 'Campfire Stranger',
     description: "Someone at the fire who wasn't here last time. Quiet. Watching. Could be nothing. Could be something.",
-    dialogue: "Long road. Good to sit still for a while.",
+    dialogue: "Long road. Good to sit still for a while. You ever hear anything on the shortwave at night out here? Repeating loop. Same words. I thought it was interference the first time. Second time I started counting the words. Twelve. Always twelve. Someone at Crossroads is tracking it — Sparks, they call her. I keep meaning to go ask.",
     zone: 'river_road',
     spawnChance: 0.35,
     dispositionRoll: { friendly: 0.15, neutral: 0.40, wary: 0.35, hostile: 0.10 },
     activityPool: [
       { activity: 'sits at the fire with the carefully neutral posture of someone not inviting conversation', weight: 3, timeRestrict: ['night', 'dusk'] },
       { activity: 'is eating something they brought themselves, sharing nothing, watching everything', weight: 2 },
+      { activity: 'is staring north toward the mountains with a portable radio balanced on their knee, the dial turned low. Static. Then something that might be words. Then static again', weight: 2, timeRestrict: ['night'] },
     ],
   },
 
@@ -1092,6 +1185,22 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'covenant',
     spawnChance: 0.75,
     dispositionRoll: { friendly: 0.15, neutral: 0.65, wary: 0.15, hostile: 0.05 },
+    vendorGreeting: "Rounds up front. Registration papers checked at the gate — any discrepancy is your problem, not mine.",
+    vendorFarewell: "Inventory is logged. If you're carrying anything you didn't buy here, make sure it's registered.",
+    vendorBudget: 120,
+    vendorComments: {
+      ar_platform_rifle: [
+        "Accord-surplus. Full inspection log attached. This is not the cheapest thing on the table. It is the most reliable.",
+        "That platform takes standard 5.56. Parts are cross-compatible with most military surplus. Factor that in.",
+      ],
+      body_armor_military: [
+        "Level III plate. Pre-Collapse manufacture. The certification date is old but the steel is not.",
+        "That stops rifle rounds at standard ranges. It doesn't stop everything. Don't act like it does.",
+      ],
+      fragmentation_grenade: [
+        "Handle carefully. Safety pin, then throw. Do not throw and then pull the pin. I shouldn't have to say that.",
+      ],
+    },
     activityPool: [
       { activity: 'is field-stripping and inspecting a weapon at the workbench, the process systematic and thorough', weight: 3, timeRestrict: ['day'] },
       { activity: 'is reviewing the registration ledger, running a finger down the columns', weight: 2 },
@@ -1359,6 +1468,18 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'covenant',
     spawnChance: 0.70,
     dispositionRoll: { friendly: 0.35, neutral: 0.50, wary: 0.10, hostile: 0.05 },
+    vendorGreeting: "The Accord ensures fair pricing. Have a look at what I've got.",
+    vendorFarewell: "Safe travels. Come back if you need anything.",
+    vendorBudget: 25,
+    vendorComments: {
+      canned_food: [
+        "Locally canned. The dates on the labels are approximate — they're hand-stamped. Everything here is fresh from this season.",
+        "Covenant produce. You won't find better shelf-stable food this side of the creek.",
+      ],
+      purification_tabs: [
+        "Settlement-issue purification tabs. Standard Accord stock. These are the real ones.",
+      ],
+    },
     activityPool: [
       { activity: 'is arranging their stall inventory with a merchant\'s eye for display', weight: 3, timeRestrict: ['dawn', 'day'] },
       { activity: 'is completing a transaction, counting out the payment with careful precision', weight: 2, timeRestrict: ['day'] },
@@ -1375,6 +1496,21 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'covenant',
     spawnChance: 0.70,
     dispositionRoll: { friendly: 0.20, neutral: 0.60, wary: 0.15, hostile: 0.05 },
+    vendorGreeting: "The Accord ensures fair pricing. What are you looking for?",
+    vendorFarewell: "Transaction logged. Settlement thanks you for your contribution to the supply chain.",
+    vendorBudget: 90,
+    vendorComments: {
+      field_dressing: [
+        "Settlement-issue. Sterile. These are allocated against projected casualty rates. Use them appropriately.",
+        "Pack two. One for immediate application, one for follow-up. That's protocol.",
+      ],
+      bandages: [
+        "Basic wound management. Available because demand is consistent. Keep your stock current.",
+      ],
+      basic_repair_kit: [
+        "Standard kit. Covers field maintenance for most common equipment. The Accord distributes these at cost.",
+      ],
+    },
     activityPool: [
       { activity: 'is reviewing supply manifests at the depot table, making notations and calculations', weight: 3, timeRestrict: ['day'] },
       { activity: 'is supervising an incoming supply delivery, checking items against the manifest', weight: 2 },
@@ -1440,6 +1576,17 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'salt_creek',
     spawnChance: 0.65,
     dispositionRoll: { friendly: 0.10, neutral: 0.65, wary: 0.20, hostile: 0.05 },
+    vendorGreeting: "Make it quick.",
+    vendorFarewell: "That's it.",
+    vendorBudget: 40,
+    vendorComments: {
+      scrap_metal: [
+        "Grade-two salvage. Good for fabrication if you know what you're doing with it.",
+      ],
+      basic_repair_kit: [
+        "Field kit. Covers the basics. If your problem is more than basic, you need a bench and more time.",
+      ],
+    },
     activityPool: [
       { activity: 'is doing precision repair work on a mechanical component, tools arranged in exact order', weight: 4 },
       { activity: 'is reading a technical schematic, holding it at arm\'s length, referencing something in the vehicle beside them', weight: 2 },
@@ -1455,6 +1602,25 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'salt_creek',
     spawnChance: 0.70,
     dispositionRoll: { friendly: 0.30, neutral: 0.55, wary: 0.10, hostile: 0.05 },
+    vendorGreeting: "Limited stock. Tell me what you need and I'll tell you what I can actually give you.",
+    vendorFarewell: "Stay out of the line of fire if you can help it.",
+    vendorBudget: 35,
+    vendorComments: {
+      field_dressing: [
+        "Apply pressure first. Then the dressing. Dressing doesn't replace pressure, it supplements it.",
+        "These are Salter-issue. Sterile. Last I checked.",
+      ],
+      antiseptic: [
+        "It's going to hurt. That's how you know it's working. Apply to the wound, not around it.",
+        "Don't skimp on this. Infection out here is a death sentence on a slow timer.",
+      ],
+      pain_tabs: [
+        "One dose, four hours. Don't stack them. I mean that — the interaction is bad.",
+      ],
+      antibiotics_single_dose: [
+        "Single course. Start it the moment you think you need it. Waiting costs you.",
+      ],
+    },
     activityPool: [
       { activity: 'is inventorying medical supplies with careful attention, noting shortfalls', weight: 3 },
       { activity: 'is treating a minor wound on a soldier who is trying not to show it hurts', weight: 2, timeRestrict: ['day'] },
@@ -1736,6 +1902,25 @@ export const NPCS: Record<string, RichNPC> = {
     ],
   },
 
+  // --- [RIDER E: remnant-story-0329] Dory — Covenant blood tithe volunteer ---
+  dory: {
+    id: 'dory',
+    name: 'Dory',
+    description: "A woman in her late thirties with a compression bandage on her left wrist and the specific composure of someone who has run the numbers and made a decision they can live with. She isn't performing contentment or performing suffering. She's just here, which is its own kind of statement.",
+    dialogue: "The math works out. I know how that sounds. It sounds like something a person says when they've stopped thinking about it. But I haven't stopped thinking about it — I've just finished thinking about it, and the math still works out.",
+    faction: 'covenant_of_dusk',
+    isNamed: true,
+    zone: 'duskhollow',
+    spawnChance: 0.90,
+    dispositionRoll: { friendly: 0.40, neutral: 0.45, wary: 0.10, hostile: 0.05 },
+    activityPool: [
+      { activity: 'sits in one of the collection chairs with her sleeves rolled to the elbow, waiting with the matter-of-fact patience of someone at a clinic appointment', weight: 3, timeRestrict: ['dusk', 'night'] },
+      { activity: 'adjusts the compression bandage on her wrist with practiced efficiency, checking the tension', weight: 2, timeRestrict: ['dusk', 'night'] },
+      { activity: "is reading a folded piece of paper — a letter or a list, the kind of thing you carry when you need to remember why you're doing something", weight: 1, timeRestrict: ['dusk'] },
+    ],
+  },
+  // --- [/RIDER E] ---
+
   // ----------------------------------------------------------
   // THE EMBER / KINDLING zone NPCs
   // ----------------------------------------------------------
@@ -1839,36 +2024,8 @@ export const NPCS: Record<string, RichNPC> = {
   // CROSS-ZONE / GENERIC NPCs
   // ----------------------------------------------------------
 
-  food_vendor_marta: {
-    id: 'food_vendor_marta',
-    name: 'Marta',
-    description: "A broad-shouldered woman in a working apron who has been feeding people at this crossroads since before most of her customers arrived. She uses the food stall as an information exchange. She uses the information to take care of more people. This is her entire plan.",
-    dialogue: "Eat. Whatever else is happening, eat first. You think better. Everything else — the decisions, the routes, what you do next — wait until you've eaten. I've been watching people make bad decisions on empty stomachs since 2031 and I have opinions about it.",
-    faction: 'drifters',
-    zone: 'crossroads',
-    spawnChance: 0.85,
-    dispositionRoll: { friendly: 0.55, neutral: 0.35, wary: 0.08, hostile: 0.02 },
-    activityPool: [
-      { activity: 'is serving hot food from the stall with the practiced efficiency of someone who has done this ten thousand times', weight: 4, timeRestrict: ['dawn', 'day', 'dusk'] },
-      { activity: 'is listening to someone tell their story while working, her attention genuine', weight: 2 },
-    ],
-  },
-
-  lucid_sanguine_osei: {
-    id: 'lucid_sanguine_osei',
-    name: 'Dr. Osei',
-    description: "Dr. Ama Osei in a research context — focused, working, surrounded by the tools of a virologist who is racing something they can feel in their own biology. The urgency is controlled. The science is meticulous. The awareness that they are both researcher and subject is present in everything they do.",
-    dialogue: "The Lucid faction is not an organization in the formal sense. It's a choice, made individually, by Sanguine who have decided not to let the biology decide their ethics for them. I am here because I have the skills and because the alternative — the Red Court's approach — is not something I'm willing to become. Ask your questions. I will answer them accurately.",
-    faction: 'lucid',
-    zone: 'the_breaks',
-    spawnChance: 0.50,
-    dispositionRoll: { friendly: 0.30, neutral: 0.50, wary: 0.15, hostile: 0.05 },
-    activityPool: [
-      { activity: 'is conducting a research protocol at the lab bench, the steps methodical and documented', weight: 3 },
-      { activity: 'is reviewing data against a reference set, making annotations', weight: 2 },
-      { activity: 'sits still with her hands folded, managing something the stillness doesn\'t hide', weight: 2, timeRestrict: ['night'] },
-    ],
-  },
+  // food_vendor_marta removed — duplicate of marta_food_vendor (kept the more complete marta_food_vendor entry)
+  // lucid_sanguine_osei removed — duplicate of dr_ama_osei in same zone; use dr_ama_osei for all Osei interactions
 
   map_seller_reno: {
     id: 'map_seller_reno',
@@ -2026,6 +2183,22 @@ export const NPCS: Record<string, RichNPC> = {
     zone: 'crossroads',
     spawnChance: 0.70,
     dispositionRoll: { friendly: 0.15, neutral: 0.55, wary: 0.25, hostile: 0.05 },
+    vendorGreeting: "What do you need? I don't do custom orders without a deposit.",
+    vendorFarewell: "That'll hold. I put my name on it.",
+    vendorBudget: 45,
+    vendorComments: {
+      scrap_vest: [
+        "Steel plate between the layers. Won't stop a rifle round but it'll redirect a knife. That's the difference between a scar and a funeral.",
+        "I made that one last week. The stitching is double-reinforced at the stress points.",
+      ],
+      pistol_holster: [
+        "Draw from that holster twenty times before you need to do it for real. Muscle memory is the only kind that works under stress.",
+        "Adjusted for right-hand draw. Tell me if you're left-handed and I'll flip the retention loop.",
+      ],
+      runners_kit: [
+        "Light harness with attachment points. Built for people who move fast and can't afford to drop anything.",
+      ],
+    },
     activityPool: [
       {
         activity: 'drives an awl through a belt blank, his massive hands steady as a surgeon\'s. He doesn\'t look up.',
@@ -2066,6 +2239,213 @@ export const NPCS: Record<string, RichNPC> = {
       { activity: 'is checking the filtration system, examining the output, maintaining the equipment', weight: 2, timeRestrict: ['dusk'] },
     ],
   },
+
+  // === CONVOY remnant-story-0329 Rider C: Red Court ===
+
+  // kade_red_court — Red Court philosopher and historian. Articulates ideology, not violence.
+  kade_red_court: {
+    id: 'kade_red_court',
+    name: 'Kade',
+    description:
+      'An older Sanguine who carries the particular stillness of someone who has stopped trying to justify himself and started explaining. Gray at the temples, a face that has been expressive for a long time and still is. He watches you with the patience of a man who has had this conversation before and is genuinely curious how your version goes.',
+    dialogue:
+      'The first year was the loudest. Everyone was deciding what they were — Covenant, Red Court, Hollow, or something that hadn\'t been named yet. I made my decision early. I\'ve been thinking about it ever since. Not regretting. Thinking. There\'s a difference.',
+    faction: 'red_court',
+    isNamed: true,
+    zone: 'the_pens',
+    spawnChance: 0.70,
+    dispositionRoll: { friendly: 0.15, neutral: 0.55, wary: 0.25, hostile: 0.05 },
+    activityPool: [
+      { activity: 'is writing in a journal, the handwriting precise, unhurried — periodically he stops and looks at the wall as if it has said something worth considering', weight: 3 },
+      { activity: 'is seated at a table with a cup of something warm, reading a document with the focused attention of someone who has read it before and is checking their work', weight: 2, timeRestrict: ['day'] },
+      { activity: 'stands at the window and watches the facility grounds below with the expression of someone who has made peace with what they see', weight: 2, timeRestrict: ['dusk'] },
+    ],
+  },
+
+  // vex_red_court — Red Court logistics and supply. Makes the horror operational.
+  vex_red_court: {
+    id: 'vex_red_court',
+    name: 'Vex',
+    description:
+      'A precise, flat-voiced person behind a ledger of numbers that don\'t mean what numbers usually mean. No visible cruelty — visible efficiency, which is worse. Vex manages what the Red Court runs on, and what the Red Court runs on is people. The ledger is always open. The pen is always moving.',
+    dialogue:
+      'Supply chain. Territory management. Resource allocation. What I do isn\'t complicated — it just sounds worse once you know what the supply is. What do you need?',
+    faction: 'red_court',
+    isNamed: true,
+    zone: 'the_pens',
+    spawnChance: 0.75,
+    dispositionRoll: { friendly: 0.05, neutral: 0.65, wary: 0.25, hostile: 0.05 },
+    activityPool: [
+      { activity: 'is working through a ledger of figures, marking entries with a grease pencil, cross-referencing two columns without looking up', weight: 4 },
+      { activity: 'is speaking in low tones with a Red Court enforcer, the tone of someone issuing delivery instructions rather than orders', weight: 2, timeRestrict: ['dawn', 'day'] },
+      { activity: 'is counting collection bags against a clipboard manifest, ticking items with a businesslike speed', weight: 3, timeRestrict: ['dusk'] },
+    ],
+  },
+
+  // lyris_red_court — Red Court scout. Recently turned. The human perspective inside the Court.
+  lyris_red_court: {
+    id: 'lyris_red_court',
+    name: 'Lyris',
+    description:
+      'Young — the kind of young that is still visible in the face even when the face is no longer human in the old way. She moves through the facility with the self-conscious precision of someone who is still learning what her body can do and is not sure how to feel about the learning. Her eyes track more than they should. She notices when you notice.',
+    dialogue:
+      'Six months. I know it doesn\'t show on the outside but it does on the inside — there\'s a version of me that\'s still figuring out the rules. Not the Red Court rules. The other rules. The ones for being what I am now.',
+    faction: 'red_court',
+    isNamed: true,
+    zone: 'the_pens',
+    spawnChance: 0.60,
+    dispositionRoll: { friendly: 0.20, neutral: 0.55, wary: 0.20, hostile: 0.05 },
+    activityPool: [
+      { activity: 'is running a perimeter check along the facility corridor — measured, systematic, the way someone moves who was trained recently and is still thinking about the steps', weight: 3 },
+      { activity: 'is standing at a corner with arms crossed, watching the ward activity with the intensity of someone who is still surprised by things that are no longer supposed to surprise her', weight: 2, timeRestrict: ['day'] },
+      { activity: 'is sitting alone near the east gate, still, looking at her own hands with the focused expression of someone doing inventory', weight: 2, timeRestrict: ['dusk', 'night'] },
+    ],
+  },
+
+  // === END CONVOY remnant-story-0329 Rider C ===
+
+  // ----------------------------------------------------------
+  // STUB NPCs — Defined here to prevent spawn crashes.
+  // These IDs are referenced in room spawn tables but had no
+  // NPCS entry. Minimal definitions; expand when content is ready.
+  // ----------------------------------------------------------
+
+  salter_perimeter_worker: {
+    id: 'salter_perimeter_worker',
+    name: 'Perimeter Worker',
+    description: "A Salter camp worker on the outer perimeter — not a guard, not a soldier, just someone doing the maintenance work that keeps the fence standing and the drainage clear. They move with the unhurried competence of someone whose job is never technically done.",
+    dialogue: "Not my post. I'm maintenance, not security. You need a guard, they're up the line.",
+    faction: 'salters',
+    zone: 'salt_creek',
+    spawnChance: 0.60,
+    dispositionRoll: { friendly: 0.20, neutral: 0.65, wary: 0.10, hostile: 0.05 },
+    activityPool: [
+      { activity: 'is repairing a section of perimeter fencing, the work slow and methodical', weight: 3 },
+      { activity: 'is clearing drainage with a long-handled tool, working in the ditch without ceremony', weight: 2 },
+    ],
+  },
+
+  duskhollow_child: {
+    id: 'duskhollow_child',
+    name: 'Child',
+    description: "A child of the Duskhollow settlement — maybe eight or nine years old, born inside the blood tithe arrangement, which means they have never known a world where the terms were different. They watch you with the wary calculation of someone who learned early that strangers arrive with complicated purposes.",
+    dialogue: "You're not from here. The new ones always look at things too long.",
+    zone: 'duskhollow',
+    spawnChance: 0.50,
+    dispositionRoll: { friendly: 0.15, neutral: 0.55, wary: 0.25, hostile: 0.05 },
+    activityPool: [
+      { activity: 'is sitting on a step watching the settlement entrance with quiet, assessing attention', weight: 3 },
+      { activity: 'is playing alone near the building wall, close enough to the door to get inside quickly', weight: 2 },
+    ],
+  },
+
+  mess_hall_children: {
+    id: 'mess_hall_children',
+    name: 'Children',
+    description: "A cluster of Salter camp children in the mess hall — eating, arguing about something inconsequential, operating in the specific parallel world that children maintain inside adult systems they didn't design.",
+    dialogue: "We're not in your way.",
+    faction: 'salters',
+    zone: 'salt_creek',
+    spawnChance: 0.65,
+    dispositionRoll: { friendly: 0.35, neutral: 0.50, wary: 0.12, hostile: 0.03 },
+    activityPool: [
+      { activity: 'is eating from a tin tray at the end of the mess table, taking up minimal space and keeping the noise below the adults\' threshold', weight: 3, timeRestrict: ['dawn', 'day', 'dusk'] },
+      { activity: 'is engaged in a low-stakes argument that is clearly the continuation of something older', weight: 2 },
+    ],
+  },
+
+  south_wall_children: {
+    id: 'south_wall_children',
+    name: 'Children',
+    description: "A few Salter camp children near the south wall — the specific freedom of a location adults don't patrol closely enough to notice. They are doing something that is probably fine.",
+    dialogue: "We're allowed here.",
+    faction: 'salters',
+    zone: 'salt_creek',
+    spawnChance: 0.50,
+    dispositionRoll: { friendly: 0.30, neutral: 0.50, wary: 0.15, hostile: 0.05 },
+    activityPool: [
+      { activity: 'is clustered near the south wall doing something that pauses when you approach', weight: 3 },
+      { activity: 'is watching the perimeter activity with the interested attention of children who have decided soldiers are entertaining', weight: 2, timeRestrict: ['day'] },
+    ],
+  },
+
+  pens_gate_sentry: {
+    id: 'pens_gate_sentry',
+    name: 'Gate Sentry',
+    description: "A Red Court sentry at the Pens facility gate — not a soldier by any prior training, recruited into this role after the Court took the facility. They have learned the checkpoint procedure and apply it with the diligence of someone who knows what happens to people who don't.",
+    dialogue: "Access is by authorization only. State your business and wait.",
+    faction: 'red_court',
+    zone: 'the_pens',
+    spawnChance: 0.90,
+    dispositionRoll: { friendly: 0.05, neutral: 0.45, wary: 0.35, hostile: 0.15 },
+    activityPool: [
+      { activity: 'stands at the gate post with the tense stillness of someone who is always listening for the wrong sound', weight: 4 },
+      { activity: 'is checking a list against the face of someone waiting to enter, back and forth, not satisfied', weight: 2, timeRestrict: ['day'] },
+    ],
+  },
+
+  pens_intake_officer: {
+    id: 'pens_intake_officer',
+    name: 'Intake Officer',
+    description: "The Red Court administrator who processes arrivals at the Pens. They do not meet your eyes immediately. They look at the form first, then at you, then back at the form — as if confirming which version of you they've received.",
+    dialogue: "Name. Point of origin. Duration of stay, if voluntary. If not voluntary, someone else will fill that part in.",
+    faction: 'red_court',
+    zone: 'the_pens',
+    spawnChance: 0.80,
+    dispositionRoll: { friendly: 0.05, neutral: 0.55, wary: 0.25, hostile: 0.15 },
+    activityPool: [
+      { activity: 'is processing intake paperwork at a desk, the stack of forms never visibly smaller', weight: 3, timeRestrict: ['day'] },
+      { activity: 'is consulting a register against a new arrival, moving through the questions in order', weight: 2 },
+    ],
+  },
+
+  pens_cafeteria_cook: {
+    id: 'pens_cafeteria_cook',
+    name: 'Cafeteria Cook',
+    description: "The person feeding the Pens — a logistics problem, not a cooking one. They work with the specific efficiency of someone who has learned not to think too carefully about who is eating what they make or why those people are here.",
+    dialogue: "Meal service is at posted times. No exceptions. Take what's on the line.",
+    faction: 'red_court',
+    zone: 'the_pens',
+    spawnChance: 0.70,
+    dispositionRoll: { friendly: 0.10, neutral: 0.65, wary: 0.15, hostile: 0.10 },
+    activityPool: [
+      { activity: 'is working the cafeteria line, portioning food into trays without looking at the recipient', weight: 4, timeRestrict: ['dawn', 'day', 'dusk'] },
+      { activity: 'is cleaning the service area after a meal, moving through the task without expression', weight: 2, timeRestrict: ['night'] },
+    ],
+  },
+
+  pens_admin_clerk: {
+    id: 'pens_admin_clerk',
+    name: 'Administrative Clerk',
+    description: "A Red Court administrator keeping the Pens' records. The filing system is meticulous in the way that systems become meticulous when the people maintaining them are afraid of making mistakes. Every form is in order. Every record is complete. They would rather not discuss what the records are for.",
+    dialogue: "I handle records. If you need something authorized, the duty officer is down the corridor.",
+    faction: 'red_court',
+    zone: 'the_pens',
+    spawnChance: 0.75,
+    dispositionRoll: { friendly: 0.05, neutral: 0.60, wary: 0.25, hostile: 0.10 },
+    activityPool: [
+      { activity: 'is filing documents with careful, deliberate movements — every page in its designated place', weight: 3 },
+      { activity: 'is cross-referencing two ledgers, moving between them with the focused attention of someone who cannot afford discrepancies', weight: 2, timeRestrict: ['day'] },
+    ],
+  },
+
+  // --- [RIDER A: remnant-story-0329] Echo — Named Hollow ---
+  echo_hollow: {
+    id: 'echo_hollow',
+    name: 'Echo',
+    description: "A figure crouched near the wall. At first glance — human. Then you notice the stillness, the way the head tracks movement without the body following. The fingers move against the concrete in patterns that are almost letters.",
+    dialogue: "H...home. Was... home. Before the...",
+    zone: 'crossroads',
+    isNamed: true,
+    spawnChance: 0.30,
+    dispositionRoll: { friendly: 0.10, neutral: 0.60, wary: 0.25, hostile: 0.05 },
+    activityPool: [
+      { activity: 'is crouched near the wall, fingers moving against the concrete in slow, deliberate patterns — almost writing, almost not', weight: 3 },
+      { activity: 'turns its head toward the light as it shifts, tracking the movement with the attention of something that remembers what light meant', weight: 2, timeRestrict: ['dawn', 'dusk'] },
+      { activity: 'sits completely still against the back wall, head tilted at an angle slightly past what is comfortable, eyes open', weight: 2, timeRestrict: ['night'] },
+    ],
+  },
+  // --- [/RIDER A] ---
 }
 
 export function getNPC(id: string): RichNPC | undefined {
@@ -2134,15 +2514,15 @@ export const REVENANT_DIALOGUE: Record<string, Array<{ minCycle: number; text: s
   wren_shelter: [
     {
       minCycle: 2,
-      text: 'The Wren acknowledges your presence with a subtle tilt of her head. "Cycle two. You\'re beginning to understand what you are." Her fingers move across the loom with practiced precision.',
+      text: 'The Wren acknowledges your presence with a subtle tilt of his head. "Cycle two. You\'re beginning to understand what you are." His fingers move across the loom with practiced precision.',
     },
     {
       minCycle: 4,
-      text: 'The Wren looks at you for a long moment. "Cycle four. The patterns are becoming clearer. You\'re weaving something with every step, every choice." She continues her work without breaking rhythm.',
+      text: 'The Wren looks at you for a long moment. "Cycle four. The patterns are becoming clearer. You\'re weaving something with every step, every choice." He continues his work without breaking rhythm.',
     },
     {
       minCycle: 8,
-      text: 'The Wren sets down her shuttle. "Cycle eight. You are no longer simply revenant — you are becoming the pattern itself. Few reach this understanding." She returns to her weaving, as if the conversation never occurred.',
+      text: 'The Wren sets down his shuttle. "Cycle eight. You are no longer simply revenant — you are becoming the pattern itself. Few reach this understanding." He returns to his weaving, as if the conversation never occurred.',
     },
   ],
   wren_ruins: [
@@ -2152,7 +2532,7 @@ export const REVENANT_DIALOGUE: Record<string, Array<{ minCycle: number; text: s
     },
     {
       minCycle: 6,
-      text: 'The Wren studies the crumbling stones around her, then looks at you. "Cycle six. The ruins are rebuilding you as much as you rebuild them. You are the ghost in this machine now — both haunting and haunted."',
+      text: 'The Wren studies the crumbling stones around him, then looks at you. "Cycle six. The ruins are rebuilding you as much as you rebuild them. You are the ghost in this machine now — both haunting and haunted."',
     },
   ],
   old_mae: [

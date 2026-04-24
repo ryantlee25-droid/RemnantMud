@@ -1,7 +1,7 @@
 import type { Room } from '@/types/game'
 
 // ============================================================
-// SALT CREEK STRONGHOLD — 14 Rooms
+// SALT CREEK STRONGHOLD — 20 Rooms
 // The Salters' fortress. Militaristic, disciplined, aggressive. Act I–II.
 // ============================================================
 
@@ -19,7 +19,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     visited: false,
     flags: { noCombat: false, fastTravelWaypoint: true },
     description: 'The outer perimeter of Salt Creek Stronghold announces itself a hundred yards before you reach it: earthwork berms three meters high, topped with coils of razor wire that catch the sun like something alive and hostile. No artistry here, no attempt at welcome — the fortifications are functional, expensive in labor, and designed by someone who has thought carefully about what an attacking force would need to do and then made every one of those things worse. A guard post is visible at the crest of the berm, a silhouette with a long gun. They saw you before you saw them. The challenge when it comes is flat and procedural: "Halt. State your business. Hands where I can see them." There is no curiosity in the voice.',
-    descriptionNight: 'The perimeter at night is perimeter at night. No lights — light is a target. The sentries work by night-adapted vision and sound discipline. You know they\'re there because the challenge comes before you expect it, from a direction you weren\'t watching.',
+    descriptionNight: 'Dark berms in darker dark, the razor wire invisible until a cloud breaks. No lanterns — Briggs outlawed them in the third month after a sentry became a target. The sentries work by night-adapted vision and sound discipline. The challenge comes before you expect it, from a direction you weren\'t watching.',
     shortDescription: 'Earth berms topped with razor wire and sentries who saw you long before you saw them.',
     exits: {
       east: 'rr_12_covenant_outskirts',
@@ -43,7 +43,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     extras: [
       {
         keywords: ['berm', 'earthwork', 'dirt', 'fortification'],
-        description: 'The earthwork berms are hand-dug — the labor of hundreds of person-hours. The earth is packed and shaped by someone who knows soil engineering: the angle of repose correct, the drainage channels cut on the back face to prevent saturation. This wasn\'t improvised. Briggs had a plan and made people execute it, which is the Salter way, which is why Salt Creek is still standing.',
+        description: 'The earthwork berms are hand-dug — the labor of hundreds of person-hours. The angle of repose is correct, the drainage channels cut on the back face to prevent saturation. This wasn\'t improvised — it\'s a textbook earthwork defensive position, executed in soil instead of concrete. Briggs had a plan and made people execute it, which is the Salter way, which is why Salt Creek is still standing.',
       },
       {
         keywords: ['razor wire', 'wire', 'coils', 'glint'],
@@ -116,8 +116,37 @@ export const SALT_CREEK_ROOMS: Room[] = [
         keywords: ['stakes', 'warning', 'signs', 'markers'],
         description: 'At regular intervals, wooden stakes with red-painted tops mark distances from the inner wall — 80 meters, 60 meters, 40 meters, 20 meters. Range markers for the defenders. The numbers are large and legible. This is also intentional.',
       },
+      {
+        keywords: ['dead', 'bones', 'history', 'who', 'used', 'tested'],
+        description: 'The kill zone has been used. Not recently — Briggs established discipline early and the perimeter challenges have been mostly non-lethal since year two. But in year one, before the doctrine solidified, six people crossed this ground in ways that the sentries interpreted as hostile. Three of those interpretations were correct. Briggs addressed the other three instances in a closed meeting with the watch commanders. The policy changed. The distance markers date from afterward.',
+        skillCheck: { skill: 'lore', dc: 11, successAppend: 'The kill zone doctrine has a second function that Salters don\'t discuss with outsiders: it tests the will of people who want entry. Anyone who is sufficiently motivated to walk a hundred meters of completely exposed ground under rifle sights, at a pace, without running — that person wants in enough to be useful. Cowards and threats both fail the crossing for different reasons. Everyone who passed it with dignity got a second look from Briggs.' },
+      },
     ],
-    npcSpawns: [],
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'Your boots leave marks in the treated soil. No other marks are fresh. You are the only person who has crossed this ground today, which means you are the most interesting thing on this side of the wall.', chance: 0.30, time: ['day'] },
+        { line: 'Somewhere on the inner wall, a scope catches light. Not a threat. An assessment.', chance: 0.25, time: ['day', 'dawn', 'dusk'] },
+      ],
+    },
+    personalLossEchoes: {
+      child: 'A hundred meters of bare earth and the assumption of eyes. You cross it at a measured pace, the way Briggs designed it to be crossed, and you think about the spaces you walked to keep them safe — the distance between the door and their bed, the hallway you checked in the dark, the perimeter of a small life that you patrolled without calling it that. The kill zone is honest about what it is. Your patrols were too.',
+      partner: 'The range markers count down: eighty meters, sixty, forty, twenty. The distance decreasing. You crossed distances like this to reach them — the last stretch of a long day, the final block before the door, the closing gap between two people who wanted to be closer. Those distances got shorter. This one does too, but the feeling is inverted.',
+      identity: 'You walk the kill zone with deliberate pace, projecting composure you may or may not feel. The sentries assess you, file the assessment. You are performing the act of being someone who is not afraid, and you are aware that you are performing it, and you cannot remember if there was ever a time when you were the performance rather than the person watching yourself perform it.',
+    },
+    npcSpawns: [
+      {
+        npcId: 'salter_perimeter_worker',
+        spawnChance: 0.35,
+        spawnType: 'patrol',
+        quantity: { min: 1, max: 1, distribution: 'single' },
+        activityPool: [
+          { desc: 'A Salter walks the kill zone\'s edge with a salt spreader — a repurposed seed spreader loaded with coarse mineral salt. They work methodically, treating the sections where new growth has begun to show. They don\'t acknowledge you. The work continues whether you\'re here or not.', weight: 3 },
+          { desc: 'A Salter is at the range marker stakes, checking each one with a plumb line, adjusting the ones that have shifted. They measure the distance from the wall, mark it in a ledger, move on. Precision work. Briggs requires it.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.0, neutral: 0.6, wary: 0.3, hostile: 0.1 },
+        dialogueTree: 'sc_perimeter_worker',
+      },
+    ],
     itemSpawns: [],
   },
 
@@ -166,7 +195,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     npcSpawns: [
       {
         npcId: 'salter_inner_gate_sentry',
-        spawnChance: 1.0,
+        spawnChance: 0.95,
         spawnType: 'anchored',
         quantity: { min: 2, max: 2, distribution: 'single' },
         activityPool: [
@@ -199,6 +228,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
       north: 'sc_05_barracks',
       south: 'sc_09_the_pit',
       west: 'sc_06_mess_hall',
+      down: 'sc_11_motor_pool',
     },
     richExits: {},
     items: [],
@@ -272,7 +302,8 @@ export const SALT_CREEK_ROOMS: Room[] = [
     exits: {
       south: 'sc_04_the_yard',
       east: 'sc_07_warlords_command',
-      west: 'sc_20_mess_hall',
+      west: 'sc_06_mess_hall',
+      north: 'sc_20_mess_hall',
     },
     richExits: {},
     items: [],
@@ -361,6 +392,10 @@ export const SALT_CREEK_ROOMS: Room[] = [
         keywords: ['tables', 'benches', 'seating', 'long tables'],
         description: 'Six long tables, permanent-fixed to the concrete floor. The bench seats are worn smooth at the high-contact points. Every table has visible initials, drawings, and notched tallies — the cumulative graffiti of people with knives and time. One bench end has been signed by thirty-seven different hands, with ranks and dates. The oldest signature is Briggs\'s: Day 1.',
       },
+      {
+        keywords: ['rumor', 'fire cult', 'covenant', 'talk', 'gossip'],
+        description: 'At the far table, two Salters talk between bites with the low-voiced casualness of people discussing operational intelligence over lunch. "The fire cult\'s getting bigger. Three more families went east last month." "Covenant won\'t do anything about it. Covenant won\'t do anything about anything until it\'s on their doorstep." "Covenant has a six-month refugee backlog. They can\'t process the people they\'ve got." "That\'s what I\'m saying." The conversation moves on to patrol schedules. The intelligence has been exchanged. Neither of them wrote it down.',
+      },
     ],
     npcSpawns: [
       {
@@ -368,11 +403,23 @@ export const SALT_CREEK_ROOMS: Room[] = [
         spawnChance: 0.85,
         spawnType: 'anchored',
         activityPool: [
-          { desc: 'The cook works the serving line with the efficiency of someone who has timed each portion to three seconds and sees no reason to elaborate.', weight: 4 },
-          { desc: 'The cook is prepping the next meal in a large steel pot, working with the domestic focus of someone who finds large-scale feeding genuinely satisfying.', weight: 2 },
+          { desc: 'The cook works the serving line with three-second precision per portion — ladle, slide, next. No eye contact. Nothing elaborate.', weight: 4 },
+          { desc: 'The cook is prepping the next meal in a large steel pot, humming something low and tuneless, entirely absorbed in the work.', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.2, neutral: 0.6, wary: 0.2, hostile: 0.0 },
         dialogueTree: 'sc_mess_cook',
+      },
+      {
+        npcId: 'mess_hall_children',
+        spawnChance: 0.20,
+        spawnType: 'ambient',
+        quantity: { min: 2, max: 3, distribution: 'weighted_low' },
+        activityPool: [
+          { desc: 'Two children eat at the end of the nearest table with the focused efficiency of adults. They don\'t play with their food. They don\'t talk while they eat. They finish, stack their bowls, and leave. Someone taught them this. They learned.', weight: 3 },
+          { desc: 'A girl of maybe nine carries a tray of empty bowls to the wash station — arms level, no hesitation at the step. She stacks them by size without being told. She is part of the operation, not a visitor to it.', weight: 2 },
+          { desc: 'Three children sit together, eating in silence. The oldest — twelve, maybe — watches the door between bites with the same attentive scan the sentries use on the perimeter. Nobody told her to do this. She picked it up the way children pick things up: by being present while adults do them.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.2, neutral: 0.6, wary: 0.2, hostile: 0.0 },
       },
     ],
     itemSpawns: [
@@ -433,6 +480,12 @@ export const SALT_CREEK_ROOMS: Room[] = [
         skillCheck: { skill: 'electronics', dc: 12, successAppend: 'The unlabeled unit\'s frequency display is just visible from this angle. The frequency is not standard. It\'s close to, but not identical to, the MERIDIAN signal frequency that\'s been scattered in radio fragments across the Four Corners.' },
         cycleGate: 2,
       },
+      // === CONVOY remnant-story-0329 Rider D ===
+      {
+        keywords: ['east', 'expansion', 'projection', 'resource', 'plan'],
+        description: 'A secondary map panel on the east wall tracks resource projections: water sources marked by reliability, soil quality grades, Hollow migration corridors. Red arrows indicate expansion vectors — not arbitrary aggression but calculated access to fresh water and arable land. Numbers beside each arrow: population fed, months of runway gained. Briggs has drawn out the math of his strategy in the margins. The math is correct. The conclusions it supports are not wrong, only the things they require.',
+      },
+      // === END CONVOY remnant-story-0329 Rider D ===
     ],
     npcSpawns: [
       {
@@ -530,6 +583,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     exits: {
       north: 'sc_04_the_yard',
       up: 'sc_08_armory',
+      south: 'sc_12_the_brig',
     },
     richExits: {},
     items: [],
@@ -630,6 +684,19 @@ export const SALT_CREEK_ROOMS: Room[] = [
         description: 'The Animas cuts a silver line through the landscape to the east. From up here you can follow its path north toward Covenant territory and south toward the breaks. You can see, at the river\'s closest point to Salt Creek, a shallow ford — navigable in dry season. Briggs has the ford marked on his command maps with a red circle.',
       },
     ],
+    personalLossEchoes: {
+      child: 'From the tower you can see the Animas as a silver line, the Dust as a yellow haze, the road running south into distance that blurs geography into atmosphere. You have been looking from high places since you lost them, scanning every horizon for a shape you would recognize, a movement that could be small enough. The sniper scans the same way. He is looking for threats. You are looking for something else.',
+      partner: 'The sniper says, when you ask about the view: "I stopped looking at it. It makes the job harder." You understand this with the immediate comprehension of someone who has also stopped looking at something beautiful because the beauty made the other thing worse. The stars. A particular angle of light. The shape of a specific absence against a sky that doesn\'t care.',
+      community: 'The logbook entries: Day 1,847. Day 1,855. Two thousand days of someone watching the approaches, recording what they see, protecting the people inside the walls below. Your community had watchers too — people who checked on each other, who noticed when someone was missing, who kept the perimeter of belonging patrolled. The logbook format is different. The duty is the same.',
+      promise: 'Bearing 210. Unknown type. Observed compound for 22 minutes, withdrew. FLAGGED. The entry is Briggs\'s handwriting. Something watched Salt Creek for twenty-two minutes and then left. You have been watching your promise for longer than that. You have not withdrawn. You do not know if that makes you more like the sentry or more like the thing outside.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'The wind at tower height carries the particular cold of altitude gained by structure rather than geography — an industrial cold, the cold of steel and open air.', chance: 0.20, time: null },
+        { line: 'The Animas catches the light for a moment and flashes silver across its full visible length, a signal that means nothing to anyone but reaches you anyway.', chance: 0.15, time: ['day', 'dawn'] },
+        { line: 'The sniper shifts position by inches, the scope tracking something on the southern approach that you cannot see. He relaxes. Whatever it was decided not to come closer.', chance: 0.20, time: ['day', 'dusk'] },
+      ],
+    },
     npcSpawns: [
       {
         npcId: 'watchtower_sniper',
@@ -683,6 +750,18 @@ export const SALT_CREEK_ROOMS: Room[] = [
         description: 'The fuel situation is posted on a board: CURRENT RESERVE — 47 GALLONS. OPERATIONAL MINIMUM — 100 GALLONS. REQUIRED ACTION: FUEL RUN SOUTHWEST CACHE. Underneath, in Briggs\'s hand: CUTTER — GET THIS DONE. The date on the note is nine days ago. The fuel run requires personnel Briggs hasn\'t assigned yet, which is the situation Briggs resolves by making the need visible until someone takes it on.',
       },
     ],
+    personalLossEchoes: {
+      child: 'Cutter talks to the vehicles in a different register than he talks to people. You recognize the impulse — the specific tenderness reserved for things that need you, that depend on your attention to keep running. You talked to them that way once. Not to machines. To a person small enough to need everything you had.',
+      partner: 'The diesel pickup has been running since before the Collapse because someone loved it enough to keep it alive. Cutter treats it like a patient. You think about the maintenance of love — the daily attention, the small repairs, the constant work of keeping something running that the world is trying to break. You did that work once. The thing you maintained ran anyway.',
+      promise: 'CURRENT RESERVE — 47 GALLONS. OPERATIONAL MINIMUM — 100 GALLONS. The deficit posted on the board in plain numbers, the gap between what is and what needs to be. Your promise has a deficit too — the distance between where you are and where you swore you would get to, posted on no board, visible to no one but you, and the fuel run has not been assigned.',
+    },
+    environmentalRolls: {
+      flavorLines: [
+        { line: 'Cutter swears at something under the truck with the focused profanity of a person who has identified a specific problem and is addressing it in the only language the problem understands.', chance: 0.25, time: null },
+        { line: 'The diesel smell is strong today. Something is leaking, or Cutter is bleeding a line, or both. The motor pool always smells like the continuation of something that should have stopped working years ago.', chance: 0.20, time: null },
+        { line: 'A wrench hits concrete with the specific ring of dropped tools in enclosed spaces. A pause. Cutter\'s voice: "That was on purpose." It was not on purpose.', chance: 0.15, time: ['day'] },
+      ],
+    },
     npcSpawns: [
       {
         npcId: 'mechanic_cutter',
@@ -747,14 +826,19 @@ export const SALT_CREEK_ROOMS: Room[] = [
         keywords: ['guard', 'brig guard', 'posting'],
         description: '"This isn\'t my job," the guard says. "I\'m a patrol specialist. I don\'t do containment. I don\'t do philosophical questions about what to do with people who might be Accord or might be worse. I do patrols." He says this with the particular energy of someone who has been saying it and will continue saying it.',
       },
+      {
+        keywords: ['confiscated', 'raid', 'evidence', 'vials', 'blood', 'sanguine', 'crate'],
+        description: 'A wooden crate marked CONFISCATED — PATROL 7 — SOUTH SECTOR sits against the back wall of the brig. Inside: three glass vials of animal blood, stoppered with wax, each labeled in a hand that took care with the labeling. A leather satchel containing dried herbs and a field journal with entries about "feeding cycles" and "satiation thresholds" written in the clinical tone of someone conducting research, not hunting. A patrol report clipped to the crate lid reads: "Suspected Sanguine enclave, grid ref S-14. Four occupants. No hostile action observed. No human blood products found. Occupants detained per Standing Order 9." Below, in a different hand: "Occupants released to the Dust after 48h. Enclave cleared and burned per S.O. 9 paragraph 3." The vials are still here. Nobody has come back for them. Nobody is going to.',
+        skillCheck: { skill: 'field_medicine', dc: 10, successAppend: 'The blood in the vials is animal — goat or sheep, preserved with a salt-and-herb mixture that would keep it viable for weeks. This is a Lucid Sanguine\'s supply kit: someone managing their condition with animal blood, methodically, without harming anyone. The patrol burned their home anyway.' },
+      },
     ],
     npcSpawns: [
       {
         npcId: 'brig_prisoner_accord',
-        spawnChance: 1.0,
+        spawnChance: 0.95,
         spawnType: 'anchored',
         activityPool: [
-          { desc: 'The Accord scout sits against the cell wall with his knees up, watching the door with the transparent hope of someone who hasn\'t given up on being rescued.', weight: 4 },
+          { desc: 'The Accord scout sits against the cell wall with his knees up, watching the door. Every time something moves in the corridor he straightens slightly. He hasn\'t given up on being rescued.', weight: 4 },
           { desc: 'The scout is pacing — three steps, turn, three steps — the only exercise his cell allows. He stops when you approach.', weight: 2 },
         ],
         dispositionRoll: { friendly: 0.4, neutral: 0.4, wary: 0.2, hostile: 0.0 },
@@ -829,6 +913,14 @@ export const SALT_CREEK_ROOMS: Room[] = [
         description: 'The shelf: a unit citation from the Marine Corps, framed, the glass cracked. A photograph of a squad, twelve people in desert cammies squinting into the sun, the location unidentifiable. A folded piece of paper with a single equation on it — you\'d need a chemistry background to know what it represents. A small piece of dried plant material in a glass vial, labeled: CHARON-7 BLOOM — MERIDIAN PERIMETER — 2031. He kept it.',
         cycleGate: 2,
       },
+      // === CONVOY remnant-story-0329 Rider D ===
+      {
+        keywords: ['cairn', 'stones', 'memorial', 'marker'],
+        description: 'A stone cairn in the corner of the room: one upright stone, forty-seven smaller stones arranged around its base in a careful ring. The stones are clean. No dust. Briggs maintains this. Nobody else comes to this room, so nobody else has seen it, and nobody has asked him what it means. The smaller stones are all approximately the same size. Forty-seven of them.',
+        cycleGate: 2,
+        skillCheck: { skill: 'perception', dc: 11, successAppend: 'The theater bombing, as you know it, killed forty-seven people. The number was in the Accord\'s incident documentation. Briggs knows the number. He has never said it aloud to anyone. He has built it instead, in stone, where it cannot be avoided.' },
+      },
+      // === END CONVOY remnant-story-0329 Rider D ===
     ],
     personalLossEchoes: {
       child: 'The photograph of a squad on the shelf. Twelve people squinting into the sun. Some of them had children. Briggs has a locked box labeled PERSONAL — DNO. Do Not Open. You understand the instruction. Some things you keep locked because opening them means the grief gets air.',
@@ -914,6 +1006,18 @@ export const SALT_CREEK_ROOMS: Room[] = [
         dispositionRoll: { friendly: 0.1, neutral: 0.4, wary: 0.4, hostile: 0.1 },
         dialogueTree: 'sc_south_wall_defense',
         questGiver: ['sc_hollow_clearance'],
+      },
+      {
+        npcId: 'south_wall_children',
+        spawnChance: 0.25,
+        spawnType: 'ambient',
+        quantity: { min: 2, max: 4, distribution: 'weighted_low' },
+        activityPool: [
+          { desc: 'Three boys crouch at the base of the wall, passing a notched stick between them. Each time a sentry calls a sighting from the firing step, the boy holding the stick cuts a new mark. "Fourteen today," one says. "Yesterday was nineteen." They are keeping score of the Hollow the way other children once kept score of baseball games.', weight: 3 },
+          { desc: 'A pair of boys watch the patrol change from behind a supply crate, whispering counts to each other. One has a stick with so many notch marks the wood is more gap than grain. He holds it like a trophy.', weight: 2 },
+          { desc: 'A boy sits alone at the base of the wall, carving tallies into a length of broomstick with a pocket knife. He doesn\'t look up. The counting is its own kind of duty.', weight: 2 },
+        ],
+        dispositionRoll: { friendly: 0.3, neutral: 0.5, wary: 0.2, hostile: 0.0 },
       },
     ],
     itemSpawns: [

@@ -6,6 +6,7 @@
 
 import React, { memo, useEffect, useMemo, useRef } from 'react'
 import type { GameMessage } from '@/types/game'
+import { TAG_COLOR, MESSAGE_COLOR } from '@/lib/ansiColors'
 
 // ------------------------------------------------------------
 // Rich-text tag parser — turns <item>...</item> etc. into
@@ -13,18 +14,6 @@ import type { GameMessage } from '@/types/game'
 // ------------------------------------------------------------
 
 const TAG_NAMES = ['item', 'npc', 'enemy', 'exit', 'keyword', 'currency', 'condition', 'trait'] as const
-type RichTag = (typeof TAG_NAMES)[number]
-
-const TAG_COLOR: Record<RichTag, string> = {
-  item:      'text-cyan-300',
-  npc:       'text-green-400',
-  enemy:     'text-red-400',
-  exit:      'text-yellow-300',
-  keyword:   'text-cyan-400',
-  currency:  'text-yellow-400',
-  condition: 'text-orange-400',
-  trait:     'text-purple-400',
-}
 
 const TAG_PATTERN = new RegExp(
   `<(${TAG_NAMES.join('|')})>(.*?)<\\/\\1>`,
@@ -45,7 +34,7 @@ function parseRichText(text: string): React.ReactNode {
       nodes.push(text.slice(lastIndex, match.index))
     }
 
-    const tag = match[1] as RichTag
+    const tag = match[1] as string
     const inner = match[2]
     nodes.push(
       <span key={key++} className={TAG_COLOR[tag]}>{inner}</span>,
@@ -74,14 +63,7 @@ interface TerminalProps {
 }
 
 function messageColor(type: GameMessage['type']): string {
-  switch (type) {
-    case 'narrative': return 'text-amber-400'
-    case 'combat':    return 'text-red-500'
-    case 'system':    return 'text-blue-400'
-    case 'error':     return 'text-red-400'
-    case 'echo':      return 'text-amber-600'
-    default:          return 'text-amber-400'
-  }
+  return MESSAGE_COLOR[type] ?? 'text-gray-300'
 }
 
 const MAX_VISIBLE_MESSAGES = 500
@@ -110,7 +92,7 @@ export default function Terminal({ messages }: TerminalProps) {
   )
 
   return (
-    <div className="flex-1 overflow-y-auto bg-black font-mono text-sm leading-relaxed px-3 sm:px-4 py-3 select-text" role="log" aria-live="polite" aria-label="Game messages">
+    <div className="flex-1 overflow-y-auto bg-black font-mono text-sm leading-snug px-2 sm:px-3 py-1 select-text" role="log" aria-live="polite" aria-label="Game messages">
       {visible.map((m) => (
         <MessageLine key={m.id} message={m} />
       ))}

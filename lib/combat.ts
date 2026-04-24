@@ -8,6 +8,7 @@ import type {
   HollowType,
   Item,
   CheckResult,
+  Room,
 } from '@/types/game'
 import type { ConditionId } from '@/types/traits'
 import { roll1d10, rollCheck, rollDamage, statModifier, DC } from '@/lib/dice'
@@ -17,6 +18,141 @@ import { resistWhisperer } from '@/lib/fear'
 import { resolveWeaponTraits, resolveArmorTraits } from '@/lib/traits'
 import { applyCondition, totalRollPenalty } from '@/lib/conditions'
 import { rt } from '@/lib/richText'
+
+// ------------------------------------------------------------
+// Environment Modifiers — NOTE: section owned by Rider G
+// ------------------------------------------------------------
+
+export type EnvironmentModifierType = 'combat_high_ground' | 'combat_narrow_passage' | 'combat_collapsing' | 'combat_darkness'
+
+export interface EnvironmentModifier {
+  playerAccuracy: number
+  playerDamage: number
+  playerDefense: number
+  enemyAccuracy: number
+  enemyDefense: number
+  specialEffect?: () => GameMessage[]
+}
+
+const MODIFIER_EFFECTS: Record<EnvironmentModifierType, (hasLight: boolean) => EnvironmentModifier> = {
+  combat_high_ground: () => ({
+    playerAccuracy: 1,
+    playerDamage: 1,
+    playerDefense: 0,
+    enemyAccuracy: 0,
+    enemyDefense: 0,
+  }),
+  combat_narrow_passage: () => ({
+    playerAccuracy: 0,
+    playerDamage: 0,
+    playerDefense: -1,
+    enemyAccuracy: 0,
+    enemyDefense: -1,
+  }),
+  combat_collapsing: () => ({
+    playerAccuracy: 0,
+    playerDamage: 0,
+    playerDefense: 0,
+    enemyAccuracy: 0,
+    enemyDefense: 0,
+    specialEffect: () => {
+      if (Math.random() < 0.20) {
+        const debrisDamage = rollDamage([1, 4])
+        return [
+          msg(`Debris crashes from the ceiling. Rocks strike everything below. [${debrisDamage} debris damage to both]`, 'combat'),
+        ]
+      }
+      return []
+    },
+  }),
+  combat_darkness: (hasLight: boolean) => ({
+    playerAccuracy: hasLight ? 0 : -2,
+    playerDamage: 0,
+    playerDefense: 0,
+    enemyAccuracy: -2,  // enemy always penalized in darkness
+    enemyDefense: 0,
+  }),
+}
+
+const MODIFIER_NARRATION: Record<EnvironmentModifierType, string> = {
+  combat_high_ground: 'You have the high ground. The advantage is yours.',
+  combat_narrow_passage: 'The passage is tight. Neither of you can move freely.',
+  combat_collapsing: 'The ceiling groans. Debris falls with every impact.',
+  combat_darkness: "You're fighting blind. Every swing is a guess.",
+}
+
+const MODIFIER_NARRATION_DARKNESS_LIT = 'Your chemical light cuts the darkness. The enemy squints against it.'
+
+/**
+ * Read room flags and return active environment modifiers for combat.
+ */
+export function getEnvironmentModifiers(room: Room): EnvironmentModifierType[] {
+  const modifiers: EnvironmentModifierType[] = []
+  const flags = room.flags
+  if (flags.combat_high_ground) modifiers.push('combat_high_ground')
+  if (flags.combat_narrow_passage) modifiers.push('combat_narrow_passage')
+  if (flags.combat_collapsing) modifiers.push('combat_collapsing')
+  if (flags.combat_darkness) modifiers.push('combat_darkness')
+  return modifiers
+}
+
+/**
+ * Build narration messages for active environment modifiers at combat start.
+ * @param hasLight Whether the player has a light source (crafted_chemical_light)
+ */
+export function getEnvironmentNarration(modifiers: EnvironmentModifierType[], hasLight: boolean): GameMessage[] {
+  const messages: GameMessage[] = []
+  for (const mod of modifiers) {
+    if (mod === 'combat_darkness') {
+      messages.push(msg(hasLight ? MODIFIER_NARRATION_DARKNESS_LIT : MODIFIER_NARRATION[mod], 'narrative'))
+    } else {
+      messages.push(msg(MODIFIER_NARRATION[mod], 'narrative'))
+    }
+  }
+  return messages
+}
+
+/**
+ * Compute combined environment modifier effects for the current room.
+ * @param hasLight Whether the player has a light source (crafted_chemical_light)
+ */
+export function computeEnvironmentEffects(
+  modifiers: EnvironmentModifierType[],
+  hasLight: boolean,
+): { combined: EnvironmentModifier; debrisMessages: GameMessage[]; debrisDamage: number } {
+  const combined: EnvironmentModifier = {
+    playerAccuracy: 0,
+    playerDamage: 0,
+    playerDefense: 0,
+    enemyAccuracy: 0,
+    enemyDefense: 0,
+  }
+  const debrisMessages: GameMessage[] = []
+  let debrisDamage = 0
+
+  for (const modType of modifiers) {
+    const effect = MODIFIER_EFFECTS[modType](hasLight)
+    combined.playerAccuracy += effect.playerAccuracy
+    combined.playerDamage += effect.playerDamage
+    combined.playerDefense += effect.playerDefense
+    combined.enemyAccuracy += effect.enemyAccuracy
+    combined.enemyDefense += effect.enemyDefense
+
+    if (effect.specialEffect) {
+      const specialMsgs = effect.specialEffect()
+      if (specialMsgs.length > 0) {
+        debrisMessages.push(...specialMsgs)
+        // Extract damage from the debris message (1d4 applied to both)
+        const match = specialMsgs[0]?.text.match(/\[(\d+) debris damage/)
+        if (match) {
+          debrisDamage = parseInt(match[1], 10)
+        }
+      }
+    }
+  }
+
+  return { combined, debrisMessages, debrisDamage }
+}
 
 // ------------------------------------------------------------
 // Helpers
@@ -98,6 +234,7 @@ export function playerAttack(
   state: CombatState,
   playerDamageRange: [number, number] = [1, 3],
   weapon?: Item,
+  envMod?: EnvironmentModifier,
 ): { result: CombatResult; newState: CombatState } {
   const { enemy } = state
   const messages: GameMessage[] = []
@@ -120,7 +257,9 @@ export function playerAttack(
   const debuffPenalty = (state.whispererDebuff ?? 0) > 0 ? state.whispererDebuff! : 0
   const fearPenalty = state.fearPenalty ?? 0
   const conditionPenalty = totalRollPenalty(state.playerConditions)
-  const effectiveVigor = player.vigor - debuffPenalty - fearPenalty - Math.abs(conditionPenalty)
+  // Environment accuracy bonus (high ground, darkness penalty, etc.)
+  const envAccuracy = envMod?.playerAccuracy ?? 0
+  const effectiveVigor = player.vigor - debuffPenalty - fearPenalty - Math.abs(conditionPenalty) + envAccuracy
 
   // Mark Target (Scout): accuracy bonus
   const markBonus = state.markTargetBonus ?? 0
@@ -129,9 +268,12 @@ export function playerAttack(
   const hasPrecise = weaponTraits.includes('precise')
   const baseDefense = hasPrecise ? Math.ceil(enemy.defense / 2) : enemy.defense
 
+  // Environment defense modifier (narrow passage reduces enemy defense)
+  const envEnemyDefense = envMod?.enemyDefense ?? 0
+
   // Add waiting bonus + mark target bonus to the attack roll
   const waitingBonus = state.waitingBonus ?? 0
-  const effectiveDefense = Math.max(1, baseDefense - waitingBonus - markBonus)
+  const effectiveDefense = Math.max(1, baseDefense - waitingBonus - markBonus + envEnemyDefense)
 
   // Overwhelm: skip the roll entirely — auto-hit
   const check = isOverwhelm
@@ -196,9 +338,10 @@ export function playerAttack(
     }
   }
 
-  // Hit — roll damage (weapon + vigor bonus)
+  // Hit — roll damage (weapon + vigor bonus + environment damage bonus)
   const vigorBonus = Math.max(0, statModifier(player.vigor))  // only positive bonus
-  let damage = rollDamage(playerDamageRange) + vigorBonus
+  const envDamageBonus = envMod?.playerDamage ?? 0
+  let damage = rollDamage(playerDamageRange) + vigorBonus + envDamageBonus
   if (check.critical) {
     damage = Math.ceil(damage * 1.5)
   }
@@ -444,6 +587,7 @@ export function enemyAttack(
   player: Player,
   state: CombatState,
   armor?: Item,
+  envMod?: EnvironmentModifier,
 ): { damage: number; messages: GameMessage[]; newState: CombatState } {
   const { enemy } = state
   const messages: GameMessage[] = []
@@ -456,7 +600,9 @@ export function enemyAttack(
   }
 
   const roll = roll1d10()
-  const total = roll + enemy.attack
+  // Environment accuracy modifier (darkness penalty, etc.)
+  const envEnemyAcc = envMod?.enemyAccuracy ?? 0
+  const total = roll + enemy.attack + envEnemyAcc
 
   if (roll === 1 || total < DC.MODERATE) {
     const flavor = pickFlavorText(enemy)
@@ -470,6 +616,10 @@ export function enemyAttack(
   }
 
   let damage = rollDamage(enemy.damage)
+
+  // Environment player defense modifier (narrow passage reduces player defense = more damage taken)
+  // Positive playerDefense = better defense; negative = worse. We don't modify damage here —
+  // the defense reduction is handled at the hit-check level via DC adjustments in the action layer.
 
   // Brute charge: first attack does double damage
   let isBruteCharge = false

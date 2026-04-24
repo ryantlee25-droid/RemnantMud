@@ -52,6 +52,13 @@ export default function GamePage() {
   // Retry callback for load-error phase — populated inside the init useEffect
   const retryLoadRef = useRef<(() => void) | null>(null)
 
+  // Guard flag for CONFIRM RESTART — must be true before the wipe executes.
+  // Set to true when handleRestart() warning is shown. Reset on any other input.
+  // Does not need to persist across reloads: if the save is wiped, the guard
+  // is irrelevant; if the page refreshes without a wipe, the player needs
+  // to type `restart` again to confirm intent.
+  const restartWarningShownRef = useRef(false)
+
   // ── Auth init ──────────────────────────────────────────────
 
   useEffect(() => {
@@ -234,7 +241,21 @@ export default function GamePage() {
     }])
 
     // ── Confirm restart — full save wipe (works in any phase) ──
+    //
+    // Bug #2 guard: CONFIRM RESTART requires that the player first saw the
+    // handleRestart() warning in this session (restartWarningShownRef.current).
+    // Without this guard a single keystroke could nuke a save.
     if (trimmed.toUpperCase() === 'CONFIRM RESTART') {
+      if (!restartWarningShownRef.current) {
+        engine._appendMessages([{
+          id: crypto.randomUUID(),
+          text: "You haven't been warned. Type `restart` first to see what will be deleted.",
+          type: 'system' as const,
+        }])
+        return
+      }
+      // Guard satisfied — execute the wipe
+      restartWarningShownRef.current = false
       const supabase = (await import('@/lib/supabase')).createSupabaseBrowserClient()
       const userId = state.player?.id
       if (userId) {
@@ -262,11 +283,20 @@ export default function GamePage() {
       return
     }
 
+    // Reset the restart warning flag for any input that isn't CONFIRM RESTART.
+    // This ensures the guard doesn't persist across unrelated commands.
+    restartWarningShownRef.current = false
+
     // ── Load-error phase — waiting for RETRY ───────────────
     if (authPhase === 'load-error') {
       const upper = trimmed.toUpperCase()
       if (upper === 'RETRY') {
         retryLoadRef.current?.()
+      } else if (upper === 'RESTART' || upper === 'NEWGAME' || upper === 'RESET') {
+        // Bug #1: restart recognized in load-error phase
+        const { handleRestart } = await import('@/lib/actions/system')
+        engine._appendMessages(handleRestart())
+        restartWarningShownRef.current = true
       } else {
         engine._appendMessages([{
           id: crypto.randomUUID(),
@@ -291,18 +321,55 @@ export default function GamePage() {
           engine._appendMessages(creationPrompt(cs))
           setAuthPhase('creating')
         }
+      } else if (upper === 'RESTART' || upper === 'NEWGAME' || upper === 'RESET') {
+        // Bug #1: restart recognized in prologue phase
+        const { handleRestart } = await import('@/lib/actions/system')
+        engine._appendMessages(handleRestart())
+        restartWarningShownRef.current = true
       } else {
-        engine._appendMessages([{
-          id: crypto.randomUUID(),
-          text: 'Type SKIP to bypass, or ENTER to continue.',
-          type: 'system' as const,
-        }])
+        // UX #15: detect real game verbs and give a helpful phase-specific error
+        const { parseCommand } = await import('@/lib/parser')
+        const parsed = parseCommand(trimmed)
+        if (parsed.verb !== 'unknown') {
+          engine._appendMessages([{
+            id: crypto.randomUUID(),
+            text: `You can't ${parsed.verb} right now — you're in the prologue. Type SKIP to continue.`,
+            type: 'system' as const,
+          }])
+        } else {
+          engine._appendMessages([{
+            id: crypto.randomUUID(),
+            text: 'Type SKIP to bypass, or ENTER to continue.',
+            type: 'system' as const,
+          }])
+        }
       }
       return
     }
 
     // ── Character creation phase ───────────────────────────
     if (authPhase === 'creating' && creationState) {
+      // Bug #1: restart recognized during character creation
+      const upperCreating = trimmed.toUpperCase()
+      if (upperCreating === 'RESTART' || upperCreating === 'NEWGAME' || upperCreating === 'RESET') {
+        const { handleRestart } = await import('@/lib/actions/system')
+        engine._appendMessages(handleRestart())
+        restartWarningShownRef.current = true
+        return
+      }
+
+      // UX #15: detect real game verbs during creation and give a helpful error
+      const { parseCommand: parseCmd } = await import('@/lib/parser')
+      const parsedCreating = parseCmd(trimmed)
+      if (parsedCreating.verb !== 'unknown') {
+        engine._appendMessages([{
+          id: crypto.randomUUID(),
+          text: `You can't ${parsedCreating.verb} right now — you're creating a character. Finish character creation first.`,
+          type: 'system' as const,
+        }])
+        return
+      }
+
       const result = handleCreationInput(creationState, trimmed)
       setCreationState(result.nextState)
       engine._appendMessages(result.messages)
@@ -358,6 +425,7 @@ export default function GamePage() {
       } else if (upper === 'RESTART' || upper === 'NEWGAME' || upper === 'RESET') {
         const { handleRestart } = await import('@/lib/actions/system')
         engine._appendMessages(handleRestart())
+        restartWarningShownRef.current = true
       } else {
         engine._appendMessages([{
           id: crypto.randomUUID(),
@@ -381,6 +449,7 @@ export default function GamePage() {
       } else if (upper === 'RESTART' || upper === 'NEWGAME' || upper === 'RESET') {
         const { handleRestart } = await import('@/lib/actions/system')
         engine._appendMessages(handleRestart())
+        restartWarningShownRef.current = true
       } else {
         engine._appendMessages([{
           id: crypto.randomUUID(),
@@ -395,40 +464,38 @@ export default function GamePage() {
     // (authPhase === 'creating' catches this)
 
     // ── Ending phase — waiting for BEGIN ────────────────────
+    //
+    // Bug #4: BEGIN now shows the same wipe-warning ceremony as RESTART.
+    //         Actual wipe only fires on CONFIRM RESTART (handled above).
+    // Bug #3: SKIP / QUIT / EXIT reload the page without wiping (escape hatch).
+    // Bug #1: RESTART / NEWGAME / RESET recognized here too.
     if (gameFlow === 'ending') {
       const upper = trimmed.toUpperCase()
-      if (upper === 'BEGIN') {
-        // Delete player data and restart
-        const supabase = (await import('@/lib/supabase')).createSupabaseBrowserClient()
-        const userId = state.player?.id
-        if (userId) {
-          try {
-            const r1 = await supabase.from('player_inventory').delete().eq('player_id', userId)
-            if (r1.error) throw r1.error
-            const r2 = await supabase.from('player_ledger').delete().eq('player_id', userId)
-            if (r2.error) throw r2.error
-            const r3 = await supabase.from('player_stash').delete().eq('player_id', userId)
-            if (r3.error) throw r3.error
-            const r4 = await supabase.from('generated_rooms').delete().eq('player_id', userId)
-            if (r4.error) throw r4.error
-            const r5 = await supabase.from('players').delete().eq('id', userId)
-            if (r5.error) throw r5.error
-          } catch {
-            engine._appendMessages([{
-              id: crypto.randomUUID(),
-              text: 'Reset failed — please try again.',
-              type: 'error' as const,
-            }])
-            return
-          }
-        }
+      if (upper === 'BEGIN' || upper === 'RESTART' || upper === 'NEWGAME' || upper === 'RESET') {
+        // Show warning ceremony — same as the main RESTART flow
+        const { handleRestart } = await import('@/lib/actions/system')
+        engine._appendMessages(handleRestart())
+        restartWarningShownRef.current = true
+      } else if (upper === 'SKIP' || upper === 'QUIT' || upper === 'EXIT') {
+        // Bug #3: escape hatches — reload without wiping
         window.location.reload()
       } else {
-        engine._appendMessages([{
-          id: crypto.randomUUID(),
-          text: 'Type BEGIN to initialize a new session.',
-          type: 'system' as const,
-        }])
+        // UX #15: detect real game verbs and give a helpful error
+        const { parseCommand } = await import('@/lib/parser')
+        const parsed = parseCommand(trimmed)
+        if (parsed.verb !== 'unknown') {
+          engine._appendMessages([{
+            id: crypto.randomUUID(),
+            text: `You can't ${parsed.verb} right now — you're at the ending screen. Type BEGIN to wipe and start a new session, or QUIT to exit.`,
+            type: 'system' as const,
+          }])
+        } else {
+          engine._appendMessages([{
+            id: crypto.randomUUID(),
+            text: 'Type BEGIN to wipe and start a new session, or QUIT to exit.',
+            type: 'system' as const,
+          }])
+        }
       }
       return
     }

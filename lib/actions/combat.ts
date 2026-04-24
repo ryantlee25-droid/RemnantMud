@@ -119,11 +119,18 @@ export async function handleAttack(engine: EngineCore, noun: string | undefined)
       return e && e.name.toLowerCase().includes(nounLower)
     })
   } else {
+    // Auto-select first enemy when no target is specified
     targetId = currentRoom.enemies[0]
   }
 
   if (!targetId) {
-    engine._appendMessages([errorMsg(`You don't see that enemy here.`)])
+    // Build a list of visible enemies to help the player
+    const visibleNames = currentRoom.enemies
+      .map((id) => getEnemy(id)?.name ?? id)
+      .join(', ')
+    engine._appendMessages([
+      errorMsg(`Specify a target: type \`attack [enemy]\`. Visible enemies: ${visibleNames}.`),
+    ])
     return
   }
 

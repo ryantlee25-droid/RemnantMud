@@ -18,7 +18,7 @@ import { createSupabaseBrowserClient } from '@/lib/supabase'
 import { rt } from '@/lib/richText'
 import { msg, systemMsg, errorMsg } from '@/lib/messages'
 import { ALL_ROOMS } from '@/data/rooms/index'
-import { ALL_NARRATIVE_KEYS } from '@/data/narrativeKeys/keys_by_zone'
+import { ALL_NARRATIVE_KEYS, NARRATIVE_KEY_INDEX } from '@/data/narrativeKeys/keys_by_zone'
 
 // ------------------------------------------------------------
 // Stash loader — reads player_stash rows and maps to StashItem[]
@@ -633,6 +633,29 @@ export async function handleJournal(engine: EngineCore): Promise<void> {
     ? Math.floor((progress.narrativeKeysFound / progress.totalNarrativeKeys) * 100)
     : 0
   lines.push(systemMsg(`  ${progress.narrativeKeysFound}/${progress.totalNarrativeKeys} knowledge keys discovered (${keyPct}%).`))
+
+  lines.push(systemMsg(''))
+
+  // --- Narrative keys (knowledge) section ---
+  lines.push(systemMsg('--- Knowledge ---'))
+
+  if (narrativeKeys.length === 0) {
+    lines.push(msg('No knowledge keys learned yet. Examine carefully and listen well.'))
+  } else {
+    lines.push(systemMsg(`You have learned ${narrativeKeys.length} knowledge key${narrativeKeys.length !== 1 ? 's' : ''}:`))
+    for (const keyId of narrativeKeys) {
+      const entry = NARRATIVE_KEY_INDEX[keyId]
+      if (entry) {
+        // Show a two-line summary: first line is a short version of the description
+        const summary = entry.description.length > 80
+          ? entry.description.slice(0, 80) + '...'
+          : entry.description
+        lines.push(systemMsg(`  - ${summary}`))
+      } else {
+        lines.push(systemMsg(`  - ${keyId}`))
+      }
+    }
+  }
 
   lines.push(systemMsg(''))
 

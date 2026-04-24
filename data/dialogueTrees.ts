@@ -1863,7 +1863,7 @@ const martaTree: DialogueTree = {
     marta_gossip: {
       id: 'marta_gossip',
       speaker: 'Marta',
-      text: `"Everyone eats. Which means I hear everything." ${rt.npc('Marta')} lowers her voice. "Accord's tightening patrols — Marshal Cross has people nervous. Salters are quieter than usual, which is worse than when they're loud. And the Kindling? Someone saw torches in the Pine Sea. Nobody goes to the Pine Sea."`,
+      text: `"Everyone eats. Which means I hear everything." ${rt.npc('Marta')} lowers her voice. "Accord's tightening patrols — Marshal Cross has people nervous. Salters are quieter than usual, which is worse than when they're loud. And the Kindling? Someone saw torches in the Pine Sea. Nobody goes to the Pine Sea." She pauses, then tilts her head toward the campground. "That stray that watches the campground? Patch tried to feed it once. Wouldn't take from her hands. Maybe it's choosy. Maybe it's just hungry."`,
       branches: [
         {
           label: 'Tell me more about the Kindling.',

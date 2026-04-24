@@ -8,6 +8,7 @@ import { msg, systemMsg, combatMsg } from '@/lib/messages'
 import type {
   Action,
   ActiveBuff,
+  CombatState,
   CycleSnapshot,
   EndingChoice,
   GameState,
@@ -251,6 +252,23 @@ export class GameEngine implements EngineCore {
   }
 
   // ----------------------------------------------------------
+  // Tutorial hint helper (Bug #5)
+  //
+  // attemptTutorialHint is a public method so action handlers and
+  // executeAction can fire one-time contextual hints without importing
+  // from system.ts. Internally it delegates to handleTutorialHint which
+  // owns the localStorage guard and the hint text registry.
+  //
+  // localStorage keys: remnant_tutorial_<context>
+  // Available contexts: first_room | first_item | first_weapon |
+  //                     first_enemy | first_npc | first_death
+  // ----------------------------------------------------------
+
+  async attemptTutorialHint(context: string): Promise<void> {
+    await handleTutorialHint(this, context)
+  }
+
+  // ----------------------------------------------------------
   // Runtime room population
   // ----------------------------------------------------------
 
@@ -407,6 +425,9 @@ export class GameEngine implements EngineCore {
       narrativeKeys: player.narrativeKeys ?? [],
     }
 
+    // Persist active dialogue and combat state so they survive a page refresh.
+    // Both fields map to JSONB columns added in migration 20260424000001.
+    // Cleared on death and rebirth (see _handlePlayerDeath / rebirthCharacter).
     const payload = {
       hp: player.hp,
       max_hp: player.maxHp,
@@ -425,6 +446,8 @@ export class GameEngine implements EngineCore {
       active_buffs: this.state.activeBuffs ?? [],
       pending_stat_increase: this.state.pendingStatIncrease ?? false,
       narrative_progress: narrativeProgress,
+      active_dialogue: this.state.activeDialogue ?? null,
+      combat_state: this.state.combatState ?? null,
     }
 
     const { error } = await supabase
@@ -492,14 +515,15 @@ export class GameEngine implements EngineCore {
     ])
 
     const updatedPlayer: Player = { ...player, hp: 0, isDead: true }
-    this._setState({ player: updatedPlayer, combatState: null, playerDead: true })
+    // Clear combat and dialogue state on death — these don't survive a cycle.
+    this._setState({ player: updatedPlayer, combatState: null, activeDialogue: undefined, playerDead: true })
 
     // Save cycle snapshot before wiping inventory
     const snapshot = createCycleSnapshot(player)
     const cycleHistory = [...(this.state.cycleHistory ?? []), snapshot]
     this._setState({ cycleHistory })
 
-    // Persist death + cycle history to DB
+    // Persist death + cycle history to DB; also null out the mid-session state columns.
     const supabase = createSupabaseBrowserClient()
     const { error: deathError } = await supabase
       .from('players')
@@ -507,6 +531,8 @@ export class GameEngine implements EngineCore {
         hp: 0,
         is_dead: true,
         total_deaths: (player.totalDeaths ?? 0) + 1,
+        active_dialogue: null,
+        combat_state: null,
       })
       .eq('id', player.id)
     if (deathError) console.error('Failed to persist death:', deathError.message)
@@ -519,6 +545,9 @@ export class GameEngine implements EngineCore {
       })
       .eq('player_id', player.id)
     if (ledgerError) console.error('Failed to persist cycle history:', ledgerError.message)
+
+    // first_death tutorial hint — fires once per player's lifetime
+    await this.attemptTutorialHint('first_death')
   }
 
   // ----------------------------------------------------------
@@ -781,6 +810,10 @@ export class GameEngine implements EngineCore {
       quest_flags: Record<string, boolean | number> | null
       active_buffs: unknown[] | null
       pending_stat_increase: boolean | null
+      // Columns added in migration 20260424000001_dialogue_combat_persistence.sql
+      // These columns may be null for saves that predate the migration.
+      active_dialogue: { npcId: string; treeId: string; currentNodeId: string } | null
+      combat_state: CombatState | null
     }
 
     // Parse narrative fields stored as JSON in player_progression
@@ -897,11 +930,30 @@ export class GameEngine implements EngineCore {
     const restoredBuffs = (row.active_buffs ?? []) as ActiveBuff[]
     const restoredPending = row.pending_stat_increase ?? false
 
+    // Restore dialogue and combat state (columns added in migration 20260424000001).
+    // Cast via unknown to satisfy the TypeScript constraint — the DB stores these as
+    // plain JSONB objects that match the interface shape.
+    const restoredDialogue = (row.active_dialogue ?? null) as GameState['activeDialogue'] ?? undefined
+    const restoredCombat = (row.combat_state ?? null) as CombatState | null
+
+    // Build restoration reminder messages for dialogue/combat (appended after setState).
+    const restorationMessages: GameMessage[] = []
+    if (restoredDialogue) {
+      restorationMessages.push(systemMsg(
+        `You were mid-conversation with ${restoredDialogue.npcId}. Type a number to choose a response, or 'leave' to step back.`
+      ))
+    }
+    if (restoredCombat?.active) {
+      restorationMessages.push(systemMsg(
+        `You were in combat with ${restoredCombat.enemy.name}. Type 'attack' to continue, or 'flee' to retreat.`
+      ))
+    }
+
     this._setState({
       player,
       currentRoom,
       inventory,
-      combatState: null,
+      combatState: restoredCombat,
       loading: false,
       initialized: true,
       ledger,
@@ -910,12 +962,14 @@ export class GameEngine implements EngineCore {
       cycleHistory: parsedCycleHistory,
       activeBuffs: restoredBuffs,
       pendingStatIncrease: restoredPending,
+      activeDialogue: restoredDialogue,
       log: [
         systemMsg(`Welcome back, ${player.name}.`),
         msg(currentRoom.visited ? currentRoom.shortDescription : this._getRoomDescriptionForTime(currentRoom, player.actionsTaken)),
         msg(exitsLine(currentRoom)),
         ...npcsLine(currentRoom) ? [msg(npcsLine(currentRoom))] : [],
         ...enemiesLine(currentRoom) ? [combatMsg(enemiesLine(currentRoom))] : [],
+        ...restorationMessages,
       ],
     })
 
@@ -972,7 +1026,7 @@ export class GameEngine implements EngineCore {
     const inheritedRep = lastSnapshot ? computeInheritedReputation(lastSnapshot) : {}
     const hasInheritedRep = Object.keys(inheritedRep).length > 0
 
-    // Reset player row
+    // Reset player row — clear dialogue/combat state on rebirth (they don't survive a cycle)
     await supabase
       .from('players')
       .update({
@@ -987,6 +1041,8 @@ export class GameEngine implements EngineCore {
         level: 1,
         actions_taken: 0,
         faction_reputation: inheritedRep,
+        active_dialogue: null,
+        combat_state: null,
       })
       .eq('id', player.id)
 
@@ -1082,6 +1138,7 @@ export class GameEngine implements EngineCore {
     const inheritedRep = lastSnapshot ? computeInheritedReputation(lastSnapshot) : {}
     const hasInheritedRep = Object.keys(inheritedRep).length > 0
 
+    // rebirthWithStats — clear dialogue/combat state on rebirth (they don't survive a cycle)
     await supabase
       .from('players')
       .update({
@@ -1100,6 +1157,8 @@ export class GameEngine implements EngineCore {
         personal_loss_type: personalLoss?.type ?? null,
         personal_loss_detail: personalLoss?.detail ?? null,
         faction_reputation: inheritedRep,
+        active_dialogue: null,
+        combat_state: null,
       })
       .eq('id', player.id)
 
@@ -1879,10 +1938,62 @@ export class GameEngine implements EngineCore {
       }
     }
 
+    // ----------------------------------------------------------
+    // Tutorial hint triggers (Bug #5)
+    //
+    // Post-action state comparison to fire one-time contextual hints.
+    // Each hint is gated by a localStorage flag inside attemptTutorialHint,
+    // so duplicate calls are safe and these checks are always cheap.
+    //
+    // first_room  — first movement that results in a new room AND the player
+    //               has only discovered one room so far (the starting room).
+    // first_item  — first time inventory goes from empty to non-empty.
+    // first_weapon — first time the player equips a weapon.
+    // first_enemy  — first time combatState.active becomes true.
+    // first_npc    — first time activeDialogue transitions from null to set.
+    // first_death  — triggered from _handlePlayerDeath directly.
+    // ----------------------------------------------------------
+    const MOVEMENT_VERBS = new Set(['go', 'climb', 'swim', 'sneak'])
+
+    // first_room: movement changed room AND discoveredRoomIds has exactly 1 entry
+    if (MOVEMENT_VERBS.has(action.verb) && this.state.currentRoom) {
+      const newRoomId = this.state.currentRoom.id
+      if (newRoomId && newRoomId !== prevRoomId) {
+        const discovered = this.state.ledger?.discoveredRoomIds ?? []
+        if (discovered.length === 1) {
+          await this.attemptTutorialHint('first_room')
+        }
+      }
+    }
+
+    // first_item: inventory went from empty to non-empty after a take/loot
+    if (action.verb === 'take' && this.state.inventory.length > 0) {
+      await this.attemptTutorialHint('first_item')
+    }
+
+    // first_weapon: equip verb + post-action equipped weapon exists
+    if (action.verb === 'equip') {
+      const hasEquippedWeapon = this.state.inventory.some(
+        (ii) => ii.equipped && ii.item.type === 'weapon'
+      )
+      if (hasEquippedWeapon) {
+        await this.attemptTutorialHint('first_weapon')
+      }
+    }
+
+    // first_enemy: combatState transitioned to active this action
+    if (!wasInCombat && this.state.combatState?.active) {
+      await this.attemptTutorialHint('first_enemy')
+    }
+
+    // first_npc: handleTalk succeeded — activeDialogue is now set after a 'talk' action
+    if (action.verb === 'talk' && this.state.activeDialogue) {
+      await this.attemptTutorialHint('first_npc')
+    }
+
     // Room-discovery persistence: if a movement verb changed the room, record it.
     // Fires after the handler so markVisited has already been called (by movement.ts).
     // _recordRoomDiscovery is idempotent — safe to call on revisits.
-    const MOVEMENT_VERBS = new Set(['go', 'climb', 'swim', 'sneak'])
     if (MOVEMENT_VERBS.has(action.verb) && this.state.currentRoom) {
       const newRoomId = this.state.currentRoom.id
       if (newRoomId && newRoomId !== prevRoomId) {

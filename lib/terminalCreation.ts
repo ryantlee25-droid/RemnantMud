@@ -6,6 +6,7 @@
 
 import type { CharacterClass, PersonalLossType, StatBlock, GameMessage, Stat } from '@/types/game'
 import { CLASS_DEFINITIONS } from '@/types/game'
+import { CLASS_ABILITIES } from '@/lib/abilities'
 
 // ── Constants ─────────────────────────────────────────────────
 
@@ -13,6 +14,17 @@ const BASE_STAT = 2
 const MAX_STAT = 8
 
 const STATS: readonly Stat[] = ['vigor', 'grit', 'reflex', 'wits', 'presence', 'shadow'] as const
+
+// Stat tooltips — shown during the stats allocation step only.
+// Skill names cross-referenced against lib/skillBonus.ts SKILL_TO_STAT.
+const STAT_TOOLTIPS: readonly string[] = [
+  'Vigor:    HP, melee damage       (Brawling, Survival, Climbing)',
+  'Grit:     HP, endurance          (Resilience, Field Medicine, Composure)',
+  'Reflex:   dodge, ranged accuracy  (Marksmanship, Bladework, Mechanics)',
+  'Wits:     lore, deduction         (Lore, Tracking, Electronics)',
+  'Presence: faction influence       (Negotiation, Intimidation, Mesmerize)',
+  'Shadow:   stealth, subtlety       (Stealth, Daystalking, Lockpicking)',
+] as const
 
 const STAT_ABBREV: Record<Stat, string[]> = {
   vigor:    ['vig', 'vigor'],
@@ -161,6 +173,9 @@ export function creationPrompt(state: CreationState): GameMessage[] {
         msg(`Current: ${formatStats(stats)}`),
         msg(`Points remaining: ${remaining}`),
         msg(''),
+        msg('Stat reference:'),
+        ...STAT_TOOLTIPS.map(tip => msg(`  ${tip}`)),
+        msg(''),
         msg('Type: ADD VIG (or ADD VIGOR) to increase.'),
         msg('Type: REM VIG (or REMOVE VIGOR) to decrease.'),
         msg('Type: DONE when finished.'),
@@ -266,10 +281,13 @@ export function handleCreationInput(
         stats,
         freePoints: def.freePoints,
       }
+      const ability = CLASS_ABILITIES[cls]
+      const abilityPreview = `Class Ability: ${ability.name} — ${ability.description}`
       return {
         nextState,
         messages: [
           msg(`Class: ${def.name} -- ${def.description}`),
+          msg(abilityPreview),
           ...creationPrompt(nextState),
         ],
       }

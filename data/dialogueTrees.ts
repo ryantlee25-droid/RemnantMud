@@ -819,8 +819,78 @@ const crossTree: DialogueTree = {
           targetNode: 'cross_start',
         },
         {
+          label: `"${rt.npc('Briggs')} told me the same thing. Salt Creek knew. So did you."`,
+          targetNode: 'cross_bombing_crossref',
+          requiresFlag: 'briggs_confessed_bombing',
+        },
+        {
           label: '"I need to get in there."',
           targetNode: 'cross_expedition_gate',
+        },
+      ],
+    },
+
+    cross_bombing_crossref: {
+      id: 'cross_bombing_crossref',
+      speaker: 'Marshal Cross',
+      text: `${rt.npc('Cross')} sets her pen down. Carefully. The small act carries the weight of a larger one elsewhere. "Briggs." The name as a fact, not a question. "He was perimeter. Of course he knew. Of course." She looks at the wall. At nothing on the wall. "Seven years. Both of us. Neither of us said a word. He had reasons. I had reasons." Her voice drops. "His reasons are honest. A soldier's compartmentalization. He was trained not to share." She looks back at you. "Mine are not that honest. I chose. I chose to let the Accord believe something so I could govern the belief. I told myself it would destabilize the faction if the people knew their Marshal had been lied to. I told myself a lot of things that sounded responsible." A pause. "I would like to know what you plan to do with this."`,
+      onEnter: {
+        setFlag: { bombing_cover_confirmed: true },
+      },
+      branches: [
+        {
+          label: `"You chose silence. That's yours to carry."`,
+          targetNode: 'cross_bombing_crossref_chose',
+        },
+        {
+          label: '"You were following orders. Cold War habits."',
+          targetNode: 'cross_bombing_crossref_orders',
+        },
+        {
+          label: `"I don't know yet. That's the honest answer."`,
+          targetNode: 'cross_bombing_crossref_undecided',
+        },
+      ],
+    },
+
+    cross_bombing_crossref_chose: {
+      id: 'cross_bombing_crossref_chose',
+      speaker: 'Marshal Cross',
+      text: `${rt.npc('Cross')} nods once. She does not look relieved. "Yes. I chose. Calling it orders would be easier. It would be the comfortable lie." Her hands flatten on the desk. "Whatever you do with this, do it as someone who knows I was the one who kept it quiet. Not the pre-Collapse command. Not the Accord. Me."`,
+      onEnter: {
+        setFlag: { cross_concealed_truth: true },
+      },
+      branches: [
+        {
+          label: `"I hear you, ${rt.npc('Cross')}."`,
+          targetNode: 'cross_start',
+        },
+      ],
+    },
+
+    cross_bombing_crossref_orders: {
+      id: 'cross_bombing_crossref_orders',
+      speaker: 'Marshal Cross',
+      text: `${rt.npc('Cross')} tilts her head slightly — considering it, letting the frame settle. "There were orders. I received them. I could have disobeyed. I did not. The order gave me cover; the decision was mine." She does not smile. "Call it what you want. It reads the same in either language. It reads as silence."`,
+      onEnter: {
+        setFlag: { cross_followed_orders: true },
+      },
+      branches: [
+        {
+          label: `"Understood."`,
+          targetNode: 'cross_start',
+        },
+      ],
+    },
+
+    cross_bombing_crossref_undecided: {
+      id: 'cross_bombing_crossref_undecided',
+      speaker: 'Marshal Cross',
+      text: `"Honest is better than clever, right now." ${rt.npc('Cross')} leans back. "Decide before you act. Then act. The Accord is fragile. The Salters are proud. Whatever you choose to do with what you know, do it deliberately. Sloppy is worse than either option."`,
+      branches: [
+        {
+          label: `"I will."`,
+          targetNode: 'cross_start',
         },
       ],
     },
@@ -1162,6 +1232,57 @@ const briggsTree: DialogueTree = {
       branches: [
         {
           label: '"This changes things, Briggs."',
+          targetNode: 'briggs_leave',
+        },
+        {
+          label: `"${rt.npc('Cross')} knew. The Accord knew. Seven years, and nobody told anyone."`,
+          targetNode: 'briggs_bombing_crossref',
+          requiresFlag: 'cross_admitted_bombing_theater',
+        },
+      ],
+    },
+
+    briggs_bombing_crossref: {
+      id: 'briggs_bombing_crossref',
+      speaker: 'Warlord Briggs',
+      text: `${rt.npc('Briggs')}'s jaw works. The words take longer to arrive than they should. "Cross." He says her name the way soldiers say the names of people they outrank but respect and people they rank equal to and resent — both registers at once. "She had it from command too. Different channel. Same order. Keep the people settled. Keep the story clean." He picks up the sidearm from the table, not to threaten, just to have something to hold. "I figured she didn't know. I was wrong. We were both carrying the same secret on opposite sides of the river and neither of us ever thought to ask." A long breath. "That's what the pre-Collapse was good at. Compartmentalization. We kept the habit because nobody told us to stop." He looks at you. "What do you do with this?"`,
+      onEnter: {
+        setFlag: { bombing_cover_confirmed: true },
+      },
+      branches: [
+        {
+          label: `"I tell ${rt.npc('Cross')} you said that. You deserve to be in the same room with her when this stops being a secret."`,
+          targetNode: 'briggs_bombing_crossref_meet',
+        },
+        {
+          label: `"I hold it. For now. Until I see the facility for myself."`,
+          targetNode: 'briggs_bombing_crossref_hold',
+        },
+      ],
+    },
+
+    briggs_bombing_crossref_meet: {
+      id: 'briggs_bombing_crossref_meet',
+      speaker: 'Warlord Briggs',
+      text: `${rt.npc('Briggs')} sets the sidearm down with the care of a man putting down a weight. "Good. Tell her. Tell her exactly what I said." A flicker of something — grief, or its older cousin. "I've been carrying this alone. If she's been carrying it alone on her side of the river, then the carrying ends now. We go to the same place with the same cargo and we decide together what comes next."`,
+      onEnter: {
+        setFlag: { briggs_wants_joint_reckoning: true },
+      },
+      branches: [
+        {
+          label: `"I'll go straight to her."`,
+          targetNode: 'briggs_leave',
+        },
+      ],
+    },
+
+    briggs_bombing_crossref_hold: {
+      id: 'briggs_bombing_crossref_hold',
+      speaker: 'Warlord Briggs',
+      text: `${rt.npc('Briggs')} grunts. "Smart. See the ground before you move on it. I've been wrong before about what I thought I knew, and I spent five years not correcting. Don't do what I did." He nods you toward the door. "When you've seen the facility — if you come back — we'll talk about what to do with what we both know."`,
+      branches: [
+        {
+          label: `"Understood, Warlord."`,
           targetNode: 'briggs_leave',
         },
       ],

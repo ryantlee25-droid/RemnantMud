@@ -64,9 +64,14 @@ export default function GamePage() {
         const found = await engine.loadPlayer(userId)
         if (!cancelled) {
           if (found) {
-            // Player exists — check if prologue should be shown
+            // Player exists — check if prologue should be shown.
+            // Returning players (cycle > 1) always skip the prologue, even on a new
+            // browser where localStorage has been cleared. Cycle-1 players still see
+            // it on first login unless they previously dismissed it.
+            const loadedCycle = engine.getState().player?.cycle ?? 1
             const sawPrologue =
               isDevMode() ||
+              loadedCycle > 1 ||
               (typeof window !== 'undefined' && localStorage.getItem(PROLOGUE_KEY))
             if (!sawPrologue) {
               setGameFlow('prologue')

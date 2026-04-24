@@ -1,416 +1,415 @@
-# PLAN.md — Narrative Quality Review & Fix
-## The Remnant MUD — Targeted Text Improvement
-
-> Blue (Sonnet) — 2026-03-31
-> Status: Awaiting Gold muster confirmation
+# Plan: Post-Tabs Followup — Color Convention, Map Bug, UX Polish, Dialogue Audit
+_Created: 2026-04-24 | Type: Bug Fix + Refactor + New Feature_
 
 ---
 
-## 1. Situation Assessment
+## Goal
 
-After reading all 13 zone files, `npcs.ts`, `npcTopics.ts`, `dialogueTrees.ts`, `narratorVoices.ts`,
-`items.ts`, `enemies.ts`, `worldEvents/`, and all 7 `playerMonologues/` files, the picture is more
-nuanced than the prompt assumed:
-
-**The named NPC layer (Patch, Marshal Cross, Warlord Briggs, Vesper, Lev, Howard, Sparks, Marta,
-Dr. Osei, The Wren, Deacon Harrow, Rook, Elder Kai Nez, Cole, Wren Calloway) is already strong.**
-These have voice, specificity, named vendor comments, personality-driven activity pools, and
-immersive dialogue trees. The problem the prompt describes — "the components vendor is weighing
-scrap metal" — is real but localized to the **generic NPC tier** and a subset of zone files.
-
-**The actual problem areas, in priority order:**
-
-### Critical — Generic NPCs with Role-Not-Name Descriptions
-
-These NPCs appear in rooms and ambient descriptions with role labels rather than personality:
-
-- `components_vendor` — name: "Components Vendor" — anonymous role label. Has no name. Referenced
-  in room ambient text as "the components vendor weighing scrap metal." This is the specific example
-  cited in the prompt.
-- `board_manager` — name: "Board Manager" — role label, no personality beyond functional
-- `food_vendor_generic` — name: "Food Vendor" — exists alongside named Marta; unclear when the
-  generic fires vs. the named NPC. Redundant and weaker.
-- `crossroads_gate_guard` — name: "Gate Guard" — sparse description, thin 3-entry activity pool
-- `checkpoint_arbiter` — name: "Checkpoint Arbiter" — functional but characterless
-- `campfire_storyteller` — name: "Campfire Storyteller" — role label; the dialogue is good but
-  the NPC has no name to anchor them
-- `mysterious_stranger` — name: "Stranger" — intentionally anonymous (possibly acceptable)
-- `salter_perimeter_guard` — referenced in salt_creek npcSpawns, not found in visible npcs.ts
-  export (possible missing definition)
-- `accord_gate_militiaman` — referenced in covenant npcSpawns, not found in visible npcs.ts export
-  (possible missing definition)
-
-### Significant — Ambient Activity Lines Using Role References
-
-Room `npcSpawns.activityPool` entries in some zones use generic labels — "the vendor," "a guard,"
-"a Drifter arbiter" — even for locations where a named NPC should be the specific anchor.
-
-Examples found in initial read:
-- `crossroads.ts` gate spawns: "A Drifter arbiter leans against the gate post" — no name, generic
-- `covenant.ts` gate spawns: "A militiaman in a stitched canvas vest stands at the gate bar" — flat
-- `the_pens.ts` pens_01 has `npcs: ['crossroads_gate_guard']` in a Red Court zone — likely a
-  copy-paste error assigning the wrong NPC to a room
-
-### Moderate — Room Descriptions That Are Underspecified
-
-The strongest zone files (the_dust, the_ember, the_breaks, the_pine_sea, the_scar, duskhollow)
-have excellent room prose with time-of-day variants, environmental detail, and specific sensory
-grounding. Weaker zones:
-
-- `river_road.ts` — RR-01's description ("cracked but walkable," "ruts from cart wheels") is thin
-  compared to the zone's character. Several river_road rooms likely share this gap.
-- `covenant.ts` — CV-01 main gate is strong; interior rooms (market square, housing districts,
-  administrative buildings) may drop in quality. CV-02 Gate Square description needs audit.
-- `salt_creek.ts` — SC-01 outer perimeter is solid; inner compound rooms likely vary.
-
-### Moderate — Items with Missing or Generic Descriptions
-
-Most weapon/armor items have specific, evocative descriptions. Consumables and crafting components
-are weaker — likely one-line functional entries that don't earn their place in the world.
-
-### Low Priority (Already Strong — Verify Only)
-- `playerMonologues/*.ts` — follows a consistent system with good class-specific voice
-- `narratorVoices.ts` — clear literary voice, deliberately-false flag pattern works
-- `worldEvents/act1_events.ts` — uses named NPCs (Harlan Voss), specific locations
-- `enemies.ts` — Hollow types avoid generic zombie tropes, have personality-appropriate flavor
-- `dialogueTrees.ts` — named NPCs throughout; Sparks and Lev trees are particularly strong
+Fix the `ledger: null` map-rendering bug, unify interactive-element colors across all surfaces
+(terminal, tabs, modal), apply the highest-impact UX audit items still outstanding, and bring
+the dialogue tree to full structural health with expanded test coverage.
 
 ---
 
-## 2. Problem Taxonomy
+## Situation
 
-| Category | Files | Priority |
-|---|---|---|
-| Generic NPC names + thin descriptions | `npcs.ts` (generic NPC section, ~line 640+) | P1 |
-| Missing NPC definitions (salter_perimeter_guard, accord_gate_militiaman) | `npcs.ts` | P1 |
-| Room npcSpawn activityPool role-references | `rooms/*.ts` (all 13 zone files) | P1 |
-| Copy-paste NPC assignment error (crossroads_gate_guard in the_pens) | `rooms/the_pens.ts` | P1 |
-| Weak room descriptions (river_road, covenant interior, others) | `rooms/river_road.ts`, `rooms/covenant.ts` | P2 |
-| Thin item descriptions (consumables, crafting components) | `items.ts` | P2 |
-| World events Act 2+3 audit | `worldEvents/act2_events.ts`, `worldEvents/act3_events.ts` | P3 |
-| Dialogue topics — remaining named NPCs topic coverage gaps | `npcTopics.ts` | P3 |
-| Companion narration + convergence events tone check | `companionNarration.ts`, `convergenceEvents.ts` | P3 |
+**1. Color convention (Howler 1)**
+`lib/ansiColors.ts` is the single source of truth for terminal tag colors. It already correctly
+assigns `text-cyan-400` to `npc` and `text-green-400` to `exit`. The problem is inconsistency
+between the terminal tags and the React tab surfaces. `StatsTab.tsx` renders the current room
+name and exits line in `text-green-400` — matching the terminal `exit` tag but diverging from
+any "interactive" convention. `WorldMapTab.tsx` modal renders NPC ids and item counts in raw
+`text-amber-400` (narration color), losing the distinction. No shared color constant is imported
+from `ansiColors.ts` into any tab component — they all inline `text-amber-*` strings. The
+chosen convention: **`text-cyan-400` for all interactive entities** (NPCs, exits, items as
+named objects) across terminal tags AND tab surfaces, with amber reserved for narration and UI
+chrome. `text-cyan-400` is already used for the command prompt (`CommandInput.tsx:97`) and
+`npc` tags, making it the natural anchor.
 
----
+**2. Map not rendering bug (Howler 2)**
+`lib/gameEngine.ts:728` (inside `createCharacter`) calls `this._setState({ ..., ledger: null })`
+even though `player_ledger` was upserted two lines earlier (line 668–675). `WorldMapTab.tsx:374`
+guards `if (!state.currentRoom || !state.ledger)` and returns "Loading world..." when either is
+null — so first-time players, including all dev-mode sessions, see only the loading stub forever.
+The fix is to construct a `PlayerLedger` object from the values written to the DB and pass it to
+`_setState`. `rebirthWithStats` (line 1165–1186) takes a different path — it calls `loadPlayer`
+at the end which populates `ledger` from the DB, so rebirth is not affected. A regression
+integration test must assert that after `createCharacter`, `state.ledger` is non-null with the
+expected shape.
 
-## 3. Howler Decomposition
+**3. UX polish (Howler 3)**
+The `docs/eval/UX-AUDIT-0424.md` lists 17 items. The prior branch addressed items from the tab
+refactor. Items still fully unaddressed and feasible without data model changes:
+- **#14 — Prologue exit prompt color**: the "Type SKIP" prompt is buried in 850 words of gray
+  text; wrapping in `<keyword>` tag makes it visually pop in the terminal (1-line fix).
+- **#11 — Dialogue choice numbering**: choices render as numbered list `1–9` but the UI never
+  teaches this; a one-line "[Type a number to choose]" hint in the dialogue render surface
+  (`app/page.tsx`) removes the discoverability cliff.
+- **#8 — Stat tooltips in character creation**: `CharacterCreation.tsx` shows stat names and
+  point allocators with no description of what Vigor/Grit/etc do; adding one short tooltip line
+  per stat is ~15 lines and directly addresses the E3 audit finding.
+- **Input refocus after tab click**: `CommandInput.tsx` focuses on mount only; clicking a sidebar
+  tab captures focus and never returns it to the input. Adding a `pointerdown` capture listener
+  on the terminal pane (or an exported `focus()` method) solves this without layout changes.
+- **Auto-save silent failure indicator**: `_savePlayer` already appends a system message on retry
+  failure but says nothing on initial failure; a brief "Saving..." → "Saved" indicator on the
+  terminal header or StatsTab would surface the auto-save cycle. Scope: add a `saving` boolean
+  to `GameState`, set it in `_savePlayer`, render a subtle indicator in `StatsTab`.
+Items deferred to a later run: restart flow safety (#1–4), tutorial hint wiring (#5), Phase E
+migration work (#6, #7), Phase D discoverability docs.
 
-Five audit Howlers run in parallel (H1–H5). Audit output is reviewed, then fix Howlers
-(FH-A through FH-H) are dropped — split by file ownership to prevent conflicts.
-
-**No fix Howler modifies a file owned by another fix Howler. No exceptions.**
-
----
-
-### H1 — Zone Audit: Crossroads + River Road + Salt Creek + Covenant
-
-**Scope (read-only)**: `data/rooms/crossroads.ts`, `data/rooms/river_road.ts`,
-`data/rooms/salt_creek.ts`, `data/rooms/covenant.ts`
-
-Audit for:
-1. npcSpawn activityPool entries using role labels ("the guard," "a vendor") instead of character
-   names or characterizing specifics
-2. Room descriptions that are thin, vague, or use "there is/there are" constructions
-3. Atmospheric text that tells ("quiet," "still") without grounding in specific detail
-4. shortDescription fields that merely truncate the main description rather than evoking
-5. Rooms beyond the first 1-2 in the zone that may have dropped prose quality
-6. Any NPC referenced in npcs[] or npcSpawns that doesn't match the zone's established NPCs
-
-Output: `AUDIT-H1.md` — every issue logged with file path, room ID, field name, issue type,
-severity (P1/P2/P3), and specific proposed fix direction (not the fix text itself).
-
----
-
-### H2 — Zone Audit: The Ember + Duskhollow + The Stacks + The Pens + The Deep
-
-**Scope (read-only)**: `data/rooms/the_ember.ts`, `data/rooms/duskhollow.ts`,
-`data/rooms/the_stacks.ts`, `data/rooms/the_pens.ts`, `data/rooms/the_deep.ts`
-
-Audit for the same criteria as H1, plus:
-- `the_pens.ts` pens_01: `npcs: ['crossroads_gate_guard']` — confirm this is a copy-paste error.
-  What NPC should actually be here? (Likely a Red Court checkpoint NPC.)
-- `the_stacks.ts` entry hall: room description says "Lev stands at the inner door" — this
-  hard-codes NPC placement in room prose. Flag as an issue: if Lev doesn't spawn, the description
-  is wrong. Is this intentional (Lev always spawns here) or a narrative mistake?
-- Duskhollow: are there anonymous Sanguine NPC templates? Do they have names and personality?
-
-Output: `AUDIT-H2.md`
-
----
-
-### H3 — Zone Audit: The Breaks + The Dust + The Pine Sea + The Scar
-
-**Scope (read-only)**: `data/rooms/the_breaks.ts`, `data/rooms/the_dust.ts`,
-`data/rooms/the_pine_sea.ts`, `data/rooms/the_scar.ts`
-
-From initial reads, these are the stronger wilderness zones. H3's job is confirmation and
-identification of weaker rooms within them:
-
-1. Do all rooms within each zone maintain the quality of the zone's opening room?
-2. Environmental roll flavorLines — are they zone-specific or could they appear in any zone?
-3. Act 3 rooms in `the_scar.ts` — do all rooms beyond scar_01_crater_rim have full prose or
-   are some stubs/placeholders?
-4. Check `personalLossEchoes` presence: the_ember has them; the_dust, the_pine_sea should too —
-   if missing, flag as P2
-
-Output: `AUDIT-H3.md`
+**4. Dialogue tree audit (Howler 4)**
+`data/dialogueTrees.ts` is 5711 lines with ~20 unique NPC trees (~20 `npcId` entries). The
+existing `tests/eval/dialogueHealth.test.ts` already covers 12 test categories: orphan
+targetNodes, unreachable nodes, terminal nodes, faction refs, skill refs, flag round-trip, smart
+quotes, NPC cross-reference, startNode existence, node id consistency, trapped failNodes, and
+aggregate stats. All 432 eval tests currently pass. What is NOT yet covered:
+- Cycle-gated branches (`requiresCycleMin`) that lack a non-cycle-1 fallback branch in the same
+  node — a cycle-1 player would see zero options and be silently stuck.
+- Faction-gated branches (`requiresRep`) without a fallback — same trapped-player risk.
+- `onEnter.grantItem` references that name item IDs not present in `data/items.ts`.
+- `onEnter.grantNarrativeKey` values that are never consumed by a `requiresNarrativeKey` gate
+  in rooms or dialogue (orphan keys — not a crash but signals drift).
+- Node text length audit: nodes with `text === ''` or text under 5 characters (structural
+  placeholder left in).
+The Howler will add these test categories and fix any failures found.
 
 ---
 
-### H4 — NPC Audit: npcs.ts + npcTopics.ts
+## Architecture Decisions
 
-**Scope (read-only)**: `data/npcs.ts`, `data/npcTopics.ts`
+**Color convention**: `text-cyan-400` = interactive (NPCs, exits, named items). The tag system
+in `lib/ansiColors.ts` already uses `text-cyan-400` for `npc`; we extend the convention to
+`exit` (currently `text-green-400`) and `item` (currently `text-yellow-400`) in the tag map,
+and mirror it in tab components that render the same entity types. `text-green-400` will be
+retired from interactive use (kept only for HP-bar "healthy" coloring, which is semantic, not
+entity-type). `text-yellow-400` will be retired from item tags (kept for currency, which is
+visually distinct by design). `lib/ansiColors.ts` is the single-file contract — tab components
+will import `TAG_COLOR` rather than inlining strings. NOTE: `text-green-400` in `StatsTab`
+room-name line is ambient location indicator, not interactive — change to `text-cyan-400` for
+convention consistency.
 
-This is the most important audit. Read npcs.ts in full.
+**Map fix**: Construct `PlayerLedger` inline from the upsert values in `createCharacter`; pass
+it to `_setState`. Use `user.id` for `playerId`, `seed` for `worldSeed`, and hardcode the
+cycle-1 defaults (`currentCycle: 1`, `pressureLevel: 1`, `totalDeaths: 0`,
+`discoveredRoomIds: []`, `discoveredEnemies: []`, `squirrelAlive: true`, `squirrelTrust: 0`,
+`squirrelCyclesKnown: 0`). No new DB query needed.
 
-1. List every NPC whose `name` field is a role label ("Gate Guard," "Food Vendor," etc.). For each,
-   propose a proper name consistent with zone and faction (see naming conventions below).
-2. Identify missing NPC definitions: `salter_perimeter_guard` and `accord_gate_militiaman` are
-   referenced in room npcSpawns. Do they exist in npcs.ts? If not, they need full definitions.
-3. Flag NPCs with thin activity pools (fewer than 3 entries or no time-restricted variety).
-4. Flag NPCs whose `description` field begins with "A [role]..." or uses generic construction.
-5. Flag `food_vendor_generic` — does it serve a purpose distinct from `marta_food_vendor`?
-   If not, recommend retirement and which rooms should reference Marta instead.
-6. `npcTopics.ts` — check every named NPC with a topic entry. Flag: fewer than 4 topics is thin.
-   Note which named NPCs have NO topic entry (missing entirely).
-7. Check `traveling_merchant` in river_road npcSpawns — is there a definition in npcs.ts?
+**UX items selected** (from the 17-item audit):
+1. #14 Prologue color (`app/page.tsx`) — trivial, unblocked, instant visible payoff
+2. #11 Dialogue hint (`app/page.tsx`) — 1 line, removes the biggest discoverability cliff
+3. #8 Stat tooltips (`components/CharacterCreation.tsx`) — small, addresses E3 audit directly
+4. Input refocus (`components/CommandInput.tsx`, `components/tabs/TabBar.tsx`) — small, UX parity
+5. Auto-save indicator (`lib/gameEngine.ts`, `components/tabs/StatsTab.tsx`) — small, surfaces
+   silent behavior
 
-Output: `AUDIT-H4.md` — section A: NPCs needing names, section B: missing definitions,
-section C: thin descriptions/activity pools, section D: npcTopics gaps
-
----
-
-### H5 — Items + Enemies + World Events + Companion Text Audit
-
-**Scope (read-only)**: `data/items.ts`, `data/enemies.ts`, `data/worldEvents/act2_events.ts`,
-`data/worldEvents/act3_events.ts`, `data/companionNarration.ts`, `data/convergenceEvents.ts`
-
-1. Items: read all items. Flag descriptions that are purely functional (no sensory detail, no
-   world context, no provenance). Consumables and crafting components are the expected weak spots.
-2. Enemies: read all flavor text pools. Flag lines that feel generic — could be in any game —
-   vs. lines that are specific to the Remnant's world and CHARON-7 mythology.
-3. World events Act 2 + Act 3: do they use named NPCs? Specific locations (named rooms, named
-   settlements)? Or generic faction labels ("a Drifter came through")?
-4. `companionNarration.ts`: tone check — consistent with the narrative bible's voice? Any lines
-   that break character?
-5. `convergenceEvents.ts`: same tone check. Are convergence events specific or atmospheric vague?
-
-Output: `AUDIT-H5.md`
+**Dialogue audit methodology**: The Howler runs `pnpm test:eval` as the baseline, then adds new
+`describe` blocks to `tests/eval/dialogueHealth.test.ts` for the uncovered categories, runs
+tests to find failures, fixes failures in `data/dialogueTrees.ts` (or adds missing items to
+`data/items.ts` allowlists in the test file if the item genuinely exists), then re-runs until
+green.
 
 ---
 
-## 4. Fix Howler Decomposition (Post-Audit)
+## Type Dependencies
 
-Fix Howlers are dropped after audit review. Each owns specific files and reads its audit report(s)
-before making changes. Every fix Howler must also read the Fix Standards in this PLAN.
-
-### FH-A — NPC Fixes
-**Owns**: `data/npcs.ts`, `data/npcTopics.ts`
-**Reads**: `AUDIT-H4.md`
-**Work**:
-- Give proper names to all generic NPCs flagged by H4
-- Add missing NPC definitions (salter_perimeter_guard, accord_gate_militiaman, traveling_merchant)
-  — full definitions matching the RichNPC interface: activityPool (4+ entries), dispositionRoll,
-  spawnChance, zone, description, dialogue
-- Rewrite thin descriptions to use specific physical detail and characterization
-- Expand thin activity pools to minimum 4 entries with time restrictions
-- Add missing npcTopics entries for named NPCs with gaps
-- Retire or repurpose food_vendor_generic per H4's recommendation
-- **CRITICAL**: Do not change any NPC's `id` field. Only name/description/dialogue/activityPool/
-  npcTopics fields may change. ID changes break room spawn references throughout all zone files.
-
-### FH-B — Room Fixes: Crossroads + River Road
-**Owns**: `data/rooms/crossroads.ts`, `data/rooms/river_road.ts`
-**Reads**: `AUDIT-H1.md`, `AUDIT-H4.md` (for NPC names assigned by FH-A)
-**Note**: FH-B must coordinate with FH-A on NPC names. FH-B should be dropped after FH-A
-completes or dropped with STABLE signal from FH-A once naming decisions are made (see §6).
-
-### FH-C — Room Fixes: Salt Creek + Covenant
-**Owns**: `data/rooms/salt_creek.ts`, `data/rooms/covenant.ts`
-**Reads**: `AUDIT-H1.md`, `AUDIT-H4.md`
-
-### FH-D — Room Fixes: The Ember + Duskhollow + The Stacks
-**Owns**: `data/rooms/the_ember.ts`, `data/rooms/duskhollow.ts`, `data/rooms/the_stacks.ts`
-**Reads**: `AUDIT-H2.md`, `AUDIT-H4.md`
-
-### FH-E — Room Fixes: The Pens + The Deep
-**Owns**: `data/rooms/the_pens.ts`, `data/rooms/the_deep.ts`
-**Reads**: `AUDIT-H2.md`, `AUDIT-H4.md`
-**Note**: Must fix the copy-paste NPC assignment error in pens_01. H2 will identify the correct
-NPC; FH-E applies the fix.
-
-### FH-F — Room Fixes: Wilderness Zones
-**Owns**: `data/rooms/the_breaks.ts`, `data/rooms/the_dust.ts`, `data/rooms/the_pine_sea.ts`,
-`data/rooms/the_scar.ts`
-**Reads**: `AUDIT-H3.md`
-
-### FH-G — Items + Enemies
-**Owns**: `data/items.ts`, `data/enemies.ts`
-**Reads**: `AUDIT-H5.md`
-**Work**: Rewrite flagged item descriptions. Strengthen generic enemy flavor text lines.
-
-### FH-H — World Events + Companion Text
-**Owns**: `data/worldEvents/act2_events.ts`, `data/worldEvents/act3_events.ts`,
-`data/companionNarration.ts`, `data/convergenceEvents.ts`
-**Reads**: `AUDIT-H5.md`
-**Work**: Revise world event messages using named NPCs and specific locations. Fix tone issues
-in companion narration and convergence events.
+- `PlayerLedger` in `types/game.ts:582` — Howler 2 constructs an instance; no change to the
+  interface itself. Shape must match the fields documented in `loadPlayer` (line 884–897).
+- `GameState` in `types/game.ts:728` — Howler 3 adds `saving?: boolean` for the auto-save
+  indicator. This field is optional so no other module breaks.
+- `TAG_COLOR` in `lib/ansiColors.ts` — Howler 1 modifies two entries (`item`, `exit`). Imported
+  by `components/Terminal.tsx`. All tab components that inline color strings will also import it.
 
 ---
 
-## 5. Execution Order and Dependencies
+## File Ownership Matrix
 
-```
-Phase 1 (parallel): H1, H2, H3, H4, H5
-                    ↓ (all complete)
-Phase 2: Gold reads audit reports, presents summary, human confirms fix scope
-                    ↓ (human approval)
-FH-A starts first (naming decisions must exist before room Howlers reference names)
-FH-A sends STABLE signal when naming decisions are committed to AUDIT-H4.md amendment
-                    ↓ (FH-A STABLE)
-FH-B, FH-C, FH-D, FH-E, FH-F, FH-G, FH-H — all parallel
-                    ↓ (all complete)
-Phase 4: White + tsc --noEmit + Gray
-```
+| Howler | Creates | Modifies |
+|--------|---------|----------|
+| H1 — Color convention | — | `lib/ansiColors.ts`, `components/tabs/StatsTab.tsx`, `components/tabs/WorldMapTab.tsx`, `components/tabs/InventoryTab.tsx`, `components/tabs/DataTab.tsx` |
+| H2 — Map bug | `tests/integration/createCharacterLedger.test.ts` | `lib/gameEngine.ts` |
+| H3 — UX polish | — | `app/page.tsx`, `components/CharacterCreation.tsx`, `components/CommandInput.tsx`, `components/tabs/StatsTab.tsx`, `types/game.ts` |
+| H4 — Dialogue audit | — | `tests/eval/dialogueHealth.test.ts`, `data/dialogueTrees.ts` |
 
-**Serial dependency**: FH-B through FH-F depend on FH-A's naming decisions (not FH-A completion).
-FH-A signals STABLE after producing an amendment to AUDIT-H4.md listing final name assignments.
-Room Howlers wait for this signal only, not FH-A's full completion.
+**Conflict check**: `components/tabs/StatsTab.tsx` appears in both H1 and H3. Resolution: H1
+owns all color changes to StatsTab (including any new `TAG_COLOR` imports); H3 adds the `saving`
+boolean indicator to StatsTab but does not touch color classes. Since these are distinct line
+ranges with no overlap, they can run in parallel — but H1 must freeze its StatsTab changes first
+so H3 can merge cleanly. In practice: H3 adds only new JSX at the bottom of the stats panel
+(the saving indicator block) and touches no lines H1 will modify. The Howler that runs second
+must rebase before opening its diff.
 
-FH-G and FH-H have no NPC name dependencies and can start concurrently with FH-A.
-
----
-
-## 6. Fix Standards (Contract Preview)
-
-Gold will reproduce these verbatim in CONTRACT.md. Every fix Howler follows these without exception.
-
-### NPC Fix Rules
-- Generic NPCs get actual names. Names fit zone and faction:
-  - Crossroads (Drifter/neutral): American Southwest worn-common names — Ardis, Delmar, Greta,
-    Cass, Ruben, Nell, Kit
-  - Covenant (Accord): Competent, slightly formal — Sable, Orin, Tamsin, Brecke, Vance
-  - Salt Creek (Salter): Military-adjacent, no-nonsense — Flynn, Harker, Stroud, Deeks, Mace
-  - Duskhollow (Covenant of Dusk): Deliberate, slightly archaic — Elara, Dorin, Sable, Nox
-- NPC description must NOT begin with "A [role] who..." — start with a specific physical detail,
-  action in progress, or observable characteristic. The role emerges from the specifics.
-- Named NPCs are referenced by name in room activityPool descriptions, not by role.
-  Wrong: "A Drifter arbiter leans against the gate post"
-  Right: "Ardis leans against the gate post, one hand resting on the guardrail bar, watching
-  the approach road like she's memorized every footfall that's ever come up it."
-
-### Room Description Fix Rules
-- Room descriptions reference named NPCs by name when that NPC is the primary fixture
-  (e.g., "Marta's stall" not "the food vendor's stall")
-- No atmospheric text is purely abstract: "quiet" must say what is quiet and why that quiet
-  has weight here. "Still" must say what the stillness is made of.
-- Time-of-day variants must include at least one sensory detail unique to that time — not just
-  lighting changes.
-- Avoid "there is/there are" constructions — start with the object or action.
-- Avoid "you can see" unless the visibility is itself notable ("through the smoke you can see
-  that the door is open" is fine; "you can see a gate" is not).
-- shortDescription should evoke, not just label. If the main description has a memorable image
-  or specific detail, distill that into the short version.
-
-### Item Description Fix Rules
-- Every item description earns the right to exist: tell something about the world through
-  the item's condition, provenance, use history, or scarcity.
-- Consumables: describe texture, smell, packaging material, pre-Collapse origin where relevant.
-  A bandage is not just cloth. It was cut from something specific.
-- Components: describe why they're scarce, what they were originally, what the Reclaimers want
-  them for. "Electronics salvage" is a category — make it specific to what was salvaged.
-- Post-Collapse world is ~7 years old. Nothing is new. Everything was once something else.
-
-### Voice Consistency Rules
-- No character refers to themselves by their role ("I'm the board manager").
-- Post-Collapse tone: exhausted competence. People do hard things without drama. The drama is
-  in the specific detail, not in exclamation.
-- Currency is .22 LR rounds ("pennies"). Item values exist in that frame.
-- The world has named factions, named NPCs, named places. Use them.
+**Cross-Howler coordination note**: H1 changes `TAG_COLOR.exit` from `text-green-400` to
+`text-cyan-400` in `lib/ansiColors.ts`. The `Terminal.tsx` component reads `TAG_COLOR` at
+render time — no other file needs updating for terminal output. Tab components that H1 also
+touches are fully owned by H1.
 
 ---
 
-## 7. Acceptance Criteria
+## Tasks
 
-### Audit Howlers (H1–H5)
-- [ ] Each produces a structured `AUDIT-Hx.md` with: file path, room/NPC ID, field, issue type,
-  severity, fix direction
-- [ ] No audit Howler modifies source files — read only
-- [ ] Missing NPC definitions are identified and listed
-- [ ] Copy-paste NPC assignment errors are identified with correct replacement noted
+### H1 — Interactive-element color convention
 
-### Fix Howlers (FH-A through FH-H)
-- [ ] All P1 issues from audit reports are resolved
-- [ ] All P2 issues are resolved or explicitly deferred with written rationale in HOOK.md
-- [ ] Every generic NPC that appears in any room text has an actual name
-- [ ] No room `npcSpawn.activityPool` entry uses "the [role]" pattern for a named NPC
-- [ ] No NPC `id` field was changed (only display name and text fields)
-- [ ] All fixed files pass `npx tsc --noEmit` with zero errors introduced
-- [ ] No room exit connections modified (out of scope)
-- [ ] No TypeScript interface changes (out of scope)
+**Scope**: Audit all uses of `text-green-400`, `text-yellow-400` (item tag), and `text-amber-*`
+on interactive entities in the four sidebar tab components and `lib/ansiColors.ts`. Apply the
+`text-cyan-400` = interactive convention. Do NOT change amber usage for UI chrome (borders,
+headers, section labels) or `text-yellow-400` for currency. Do NOT change `text-red-*` for
+enemies or `text-green-400` for HP bar healthy state.
 
-### Final Quality Gate
-- White review: zero blockers
-- `npx tsc --noEmit`: zero new errors
-- Gray: zero test regressions in NPC, room, or dialogue tests
+- Files:
+  - Modify: `lib/ansiColors.ts` — change `TAG_COLOR.item` to `'text-cyan-400'`, `TAG_COLOR.exit`
+    to `'text-cyan-400'` (npc is already `text-cyan-400`)
+  - Modify: `components/tabs/StatsTab.tsx` — import `TAG_COLOR` from `lib/ansiColors.ts`;
+    change room-name `text-green-400` to `text-cyan-400`, exits `text-green-400` to
+    `text-cyan-400`
+  - Modify: `components/tabs/WorldMapTab.tsx` — in the modal, change NPC ids render from
+    unstyled `text-amber-400` to `text-cyan-400`; change items count label from `text-amber-600`
+    to `text-cyan-400`; exits list to `text-cyan-400`
+  - Modify: `components/tabs/InventoryTab.tsx` — change item name `text-amber-300` to
+    `text-cyan-400` for item names (not for stats/values which stay amber)
+  - Modify: `components/tabs/DataTab.tsx` — quest flag names rendered as `text-amber-400`; these
+    are data labels not interactive entities — leave amber. No change needed here unless a
+    specific entity display is found.
 
----
+- Tests: `npx tsc --noEmit` passes. Visual: terminal exits/items/npcs are `text-cyan-400`;
+  StatsTab exits are `text-cyan-400`; WorldMapTab modal NPC/item/exit fields are `text-cyan-400`.
+  No amber on named interactive entities.
 
-## 8. File Ownership Matrix
+- Depends on: nothing
 
-| File | Phase 1 Reader | Phase 2 Owner |
-|---|---|---|
-| `data/npcs.ts` | H4 | FH-A |
-| `data/npcTopics.ts` | H4 | FH-A |
-| `data/rooms/crossroads.ts` | H1 | FH-B |
-| `data/rooms/river_road.ts` | H1 | FH-B |
-| `data/rooms/salt_creek.ts` | H1 | FH-C |
-| `data/rooms/covenant.ts` | H1 | FH-C |
-| `data/rooms/the_ember.ts` | H2 | FH-D |
-| `data/rooms/duskhollow.ts` | H2 | FH-D |
-| `data/rooms/the_stacks.ts` | H2 | FH-D |
-| `data/rooms/the_pens.ts` | H2 | FH-E |
-| `data/rooms/the_deep.ts` | H2 | FH-E |
-| `data/rooms/the_breaks.ts` | H3 | FH-F |
-| `data/rooms/the_dust.ts` | H3 | FH-F |
-| `data/rooms/the_pine_sea.ts` | H3 | FH-F |
-| `data/rooms/the_scar.ts` | H3 | FH-F |
-| `data/items.ts` | H5 | FH-G |
-| `data/enemies.ts` | H5 | FH-G |
-| `data/worldEvents/act2_events.ts` | H5 | FH-H |
-| `data/worldEvents/act3_events.ts` | H5 | FH-H |
-| `data/companionNarration.ts` | H5 | FH-H |
-| `data/convergenceEvents.ts` | H5 | FH-H |
+- Effort: S
 
-**Not in scope** (already strong or structural):
-`data/dialogueTrees.ts`, `data/playerMonologues/*.ts`, `data/narratorVoices.ts`,
-`data/rooms/index.ts`, `data/questDescriptions.ts`, `data/recipes.ts`,
-all files in `lib/`, `types/`, `tests/`
+- Pre-mortem: N/A (S task)
+
+- Notes: `TAG_COLOR` is already imported by `Terminal.tsx` via `parseRichText`. Tab components
+  currently inline strings — importing `TAG_COLOR` is preferred but not required if it adds
+  import complexity; consistent string values are acceptable.
 
 ---
 
-## 9. High-Risk Items for Gold
+### H2 — Map not rendering bug + regression test
 
-1. **NPC ID stability**: FH-A must not rename `id` fields. The game engine and every room file
-   reference NPCs by ID. A renamed ID = broken spawns across all zone files with no TypeScript
-   error to catch it. Gold should explicitly state this in the CONTRACT.md invariant.
+**Scope**: Fix `lib/gameEngine.ts:728` where `ledger: null` is hardcoded. Add integration test.
+Audit `rebirthWithStats` to confirm it does not share the bug (it calls `loadPlayer` at line
+1190 which populates ledger from DB — confirmed safe, no fix needed there).
 
-2. **The copy-paste NPC issue**: `the_pens.ts` pens_01 has `npcs: ['crossroads_gate_guard']` in a
-   Red Court zone. H2 must identify the correct NPC (likely a Red Court checkpoint NPC). FH-E
-   applies the fix, but Gold must verify before fix Howlers drop: does a correct Red Court
-   checkpoint NPC already exist in npcs.ts, or does FH-A need to create one?
+- Files:
+  - Modify: `lib/gameEngine.ts` — in `createCharacter`, after the `player_ledger` upsert (line
+    668–675), construct a `PlayerLedger` object and replace `ledger: null` with `ledger: <obj>`
+    in the `_setState` call at line 721–737. Import `PlayerLedger` type from `@/types/game`
+    (already imported via the broader types import at the top of the file — verify with grep).
+  - Create: `tests/integration/createCharacterLedger.test.ts` — integration test using the dev
+    mock (same pattern as existing integration tests in `tests/integration/`). Assertions:
+    after `engine.createCharacter(...)`, `engine.getState().ledger` is non-null,
+    `ledger.currentCycle === 1`, `ledger.pressureLevel === 1`, `ledger.totalDeaths === 0`,
+    `Array.isArray(ledger.discoveredRoomIds)`, `ledger.worldSeed` is a number.
 
-3. **Missing NPC definitions**: If `salter_perimeter_guard` and `accord_gate_militiaman` don't
-   exist in npcs.ts, the game currently references undefined NPC IDs. FH-A creates these. Room
-   Howlers (FH-C for salt_creek/covenant) must not assume the definitions exist until FH-A's
-   STABLE signal confirms them.
+- Tests: `pnpm test --run` (includes the new test file). `npx tsc --noEmit`.
 
-4. **food_vendor_generic vs. Marta**: Both are in the crossroads zone. Gold must decide — before
-   fix Howlers drop — whether `food_vendor_generic` should be: (a) retired entirely, with its
-   room references changed to Marta; (b) renamed and repurposed for non-Crossroads zones only;
-   (c) kept as a secondary vendor distinct from Marta. This decision affects FH-A and FH-B.
+- Depends on: nothing
 
-5. **The Stacks hard-coded NPC prose**: `st_02_entry_hall` says "Lev stands at the inner door"
-   in the room description. If Lev's spawnChance of 0.80 means 20% of visits Lev isn't there,
-   the description is wrong 20% of the time. H2 must flag; Gold decides whether FH-D softens
-   this to "Lev is typically at the inner door" or removes the hard-reference.
+- Effort: S
+
+- Pre-mortem: N/A (S task)
+
+- Notes: `squirrelAlive`, `squirrelTrust`, `squirrelCyclesKnown` must be included in the
+  constructed `PlayerLedger` — check `PlayerLedger` interface in `types/game.ts:582`. Default
+  values: `squirrelAlive: true`, `squirrelTrust: 0`, `squirrelCyclesKnown: 0`.
+
+---
+
+### H3 — UX polish (5 items from audit)
+
+**Scope**: Five targeted fixes from `docs/eval/UX-AUDIT-0424.md`, all feasible without data
+model migrations, all in the front-end layer.
+
+**Item A — #14 Prologue exit prompt color** (`app/page.tsx`): The prologue output string
+contains "Type SKIP to skip" (or similar). Wrap the `SKIP` keyword with `rt.keyword('SKIP')` so
+the terminal renders it in `text-white` (keyword tag). Locate the exact prologue text string and
+apply. ~2 lines.
+
+**Item B — #11 Dialogue choice numbering hint** (`app/page.tsx`): When `state.activeDialogue`
+is active and branches are rendered, append a dim instruction line "[1–9] to choose, 'leave' to
+exit" below the choices. ~5 lines in the dialogue display section.
+
+**Item C — #8 Stat tooltips** (`components/CharacterCreation.tsx`): In the stat allocation
+step, each stat row shows name + current value + +/- buttons. Add a one-line description
+beneath each stat name. Content: Vigor=HP scaling; Grit=echo retention; Reflex=initiative;
+Wits=skill checks; Presence=faction rep gains; Shadow=stealth/sneak. ~18 lines (6 stats × 3
+lines each). Check existing stat row JSX structure before writing.
+
+**Item D — Input refocus after tab click** (`components/CommandInput.tsx`): Add a
+`useEffect` dependency on some game state (e.g., message log length) so the input receives
+focus whenever a new message arrives — this means after dispatch completes, focus returns.
+Alternative: export a `focus()` imperative handle from `CommandInput` via `useImperativeHandle`
+and call it from `GameLayout` on terminal panel click. The simpler approach: add
+`maxLength={200}` (already present) and a `useEffect` that focuses the input whenever
+`state.log.length` changes. ~5 lines.
+
+**Item E — Auto-save indicator** (`lib/gameEngine.ts`, `types/game.ts`,
+`components/tabs/StatsTab.tsx`): Add `saving?: boolean` to `GameState`. In `_savePlayer`, set
+`_setState({ saving: true })` before the Supabase call and `_setState({ saving: false })` after
+(in both success and retry-fail paths). In `StatsTab.tsx`, render a dim `[saving...]` indicator
+in the cycle/location block when `state.saving === true`. ~12 lines total.
+
+- Files:
+  - Modify: `app/page.tsx`
+  - Modify: `components/CharacterCreation.tsx`
+  - Modify: `components/CommandInput.tsx`
+  - Modify: `types/game.ts` (add `saving?: boolean` to GameState)
+  - Modify: `lib/gameEngine.ts` (saving flag in `_savePlayer`)
+  - Modify: `components/tabs/StatsTab.tsx` (saving indicator display)
+
+- Tests: `pnpm test --run`. `npx tsc --noEmit`. Manual: (a) prologue SKIP keyword is white/bright
+  in terminal; (b) dialogue renders hint line; (c) stat tooltips appear; (d) after clicking MAP
+  tab, typing resumes in terminal input without manual click-back; (e) `[saving...]` appears
+  briefly during save.
+
+- Depends on: H1 (StatsTab lines must not conflict — H1 owns color changes, H3 adds new JSX
+  block only)
+
+- Effort: M (5 items, 6 files, small changes but spread across front-end and engine)
+
+- Pre-mortem: "If this task fails or takes 3× longer, it will be because: the prologue text
+  string is dynamically generated in `gameEngine.ts` rather than in `page.tsx`, making the
+  `rt.keyword` wrapping point hard to locate; or the auto-save indicator triggers a React
+  re-render loop."
+
+- Notes: For item D, prefer the `state.log.length` useEffect approach — it's pure React, no
+  imperative handles needed.
+
+---
+
+### H4 — Dialogue tree integrity — test expansion + fixes
+
+**Scope**: All 432 eval tests currently pass. Expand `tests/eval/dialogueHealth.test.ts` with
+five new test categories (described below), run to find failures, fix failures in
+`data/dialogueTrees.ts` or add to test-file allowlists where appropriate, then run until all
+pass.
+
+**New test category 13 — Cycle-gated branches have non-cycle-1 fallback**: For every node that
+contains at least one branch with `requiresCycleMin >= 2`, the same node must also contain at
+least one branch WITHOUT `requiresCycleMin` (or with `requiresCycleMin <= 1`). A node where ALL
+branches require cycle 2+ traps cycle-1 players silently (they see an empty branch list and
+the conversation stalls).
+
+**New test category 14 — Faction-gated branches have fallback**: For every node that has at
+least one branch with `requiresRep`, at least one branch in the same node must have no
+`requiresRep` gate (or the node must be a terminal). Same silent-trap pattern.
+
+**New test category 15 — onEnter.grantItem references valid item IDs**: Scan all `onEnter`
+blocks for `grantItem` fields; each item ID must exist in `data/items.ts`. Import `ITEMS` from
+`@/data/items` (check the export name first) and validate.
+
+**New test category 16 — No empty node text**: Every `node.text` must have `trim().length >= 5`.
+Structural placeholders left behind from authoring will fail this.
+
+**New test category 17 — Orphan narrative keys (informational)**: Collect all
+`onEnter.grantNarrativeKey` values across all trees; collect all `requiresNarrativeKey` values
+from room data (grep `data/rooms/` for `requiresNarrativeKey`). Log any keys granted but never
+consumed. This is informational (warn, don't fail) — orphan keys suggest authored content that
+was never hooked up to a gate.
+
+After adding tests, the Howler will run `pnpm test:eval` and fix any failures in
+`data/dialogueTrees.ts` — adding missing fallback branches, fixing grantItem IDs, filling empty
+node text. If a fix requires adding a new item to `data/items.ts`, scope it narrowly (name +
+type + description only, no stats required for quest-only items).
+
+- Files:
+  - Modify: `tests/eval/dialogueHealth.test.ts`
+  - Modify: `data/dialogueTrees.ts` (fixes for any failures)
+  - Possibly modify: `data/items.ts` (if grantItem references a missing item)
+
+- Tests: `pnpm test:eval` green (all categories including new 13–17). `npx tsc --noEmit`.
+
+- Depends on: nothing (reads its own test file, does not touch files owned by H1–H3)
+
+- Effort: M
+
+- Pre-mortem: "If this task fails or takes 3× longer, it will be because: the 5711-line
+  `dialogueTrees.ts` has many cycle-gated nodes where no cycle-1 fallback was authored —
+  adding fallback branches requires writing new NPC dialogue text that must be tonally
+  consistent with the existing character voice, which is time-consuming and requires judgment
+  calls. If >10 nodes need new fallback branches, split into H4a (tests + audit report) and
+  H4b (fixes)."
+
+- Notes: The `grantNarrativeKey` / `requiresNarrativeKey` test is informational only — do not
+  add hard assertions for orphan keys in this pass.
+
+---
+
+## Cross-Howler Coordination
+
+1. **H1 before H3 on StatsTab**: H1 changes color classes on lines 104 and 113 of
+   `StatsTab.tsx`. H3 adds a new JSX block (saving indicator) at the end of the stats panel —
+   no line overlap. H3 should rebase on top of H1's StatsTab changes before committing.
+
+2. **`lib/ansiColors.ts` is frozen after H1 merges**: H2, H3, H4 must not touch
+   `lib/ansiColors.ts`. H1 is the sole owner.
+
+3. **`data/dialogueTrees.ts` is frozen for H4**: No other Howler touches this file.
+
+4. **`types/game.ts` shared caution**: H3 adds `saving?: boolean` to `GameState`. H2 reads but
+   does not modify `types/game.ts` (uses `PlayerLedger` which already exists). No conflict.
+
+---
+
+## Out of Scope
+
+- UX audit Phase A (restart flow safety, `CONFIRM RESTART` guard) — requires changes to
+  `app/page.tsx` logic paths that are also touched by H3; defer to avoid page.tsx conflicts.
+- UX audit Phase B (tutorial hint wiring) — `handleTutorialHint` dead code fix requires
+  wiring into 4 action handlers; defer to its own session.
+- UX audit Phase D (README docs update, `help` command sync) — content work, not code; defer.
+- UX audit Phase E (dialogue/combat persistence column) — requires a Supabase migration;
+  defer (migration risk, needs own session).
+- DataTab quest flag rendering as human-readable strings — requires a flag→description lookup
+  table; data model change, defer.
+- New commands or verbs.
+- Any changes to Supabase schema.
+- Mobile viewport touch-first layout overhaul.
+- `CommandInput maxLength` increase (200 is adequate; not a reported bug).
+
+---
+
+## Risks
+
+1. **`TAG_COLOR` change breaks Terminal rendering**: Changing `exit` from `text-green-400` to
+   `text-cyan-400` in `lib/ansiColors.ts` immediately affects all terminal output. If players
+   have mentally mapped green=exits, this is a perceptible change. Risk is low (game is not
+   shipped to a broad audience yet) but the Howler should verify via `pnpm test --run` that all
+   terminal tests pass after the change.
+
+2. **`createCharacter` ledger construction drift**: The `PlayerLedger` fields hardcoded in the
+   fix must match the DB schema columns. If a migration has added a column that was not
+   backfilled into the `loadPlayer` mapper (lines 884–897), the manually constructed object will
+   be missing a field. H2 must cross-check `types/game.ts:PlayerLedger` against the `loadPlayer`
+   mapper before writing the fix.
+
+3. **Dialogue fallback branch authoring quality**: If H4 finds many cycle-gated nodes without
+   fallbacks and writes terse generic branches ("I have nothing more to say."), it risks
+   flattening NPC voice. The Howler must read the surrounding node text and match tone.
+   If the fix count exceeds 10 nodes, the Howler should surface a report and await author review
+   rather than auto-generating all fixes.
+
+4. **H3 auto-save indicator re-render loop**: Setting `saving: true` in `_setState` triggers a
+   React re-render; if `_savePlayer` is called inside a render-triggered effect, this could
+   cycle. H3 must verify `_savePlayer` is only called from explicit user actions or the
+   `executeAction` dispatch path — not from any `useEffect`.
+
+5. **StatsTab file conflict (H1 vs H3)**: Both Howlers modify `StatsTab.tsx`. If they run
+   simultaneously in worktrees and both land on main before a rebase, there will be a merge
+   conflict. Mitigation: H1 runs first and merges; H3 rebases before pushing.
+
+---
+
+## Definition of Done
+
+- [ ] Code written and self-reviewed by each Howler
+- [ ] `npx tsc --noEmit` passes (zero type errors) after all changes
+- [ ] `pnpm test --run` passes (integration + unit suite)
+- [ ] `pnpm test:eval` passes (all 432 + new H4 tests green)
+- [ ] Terminal exits/NPCs/items render in `text-cyan-400` in both terminal and tab surfaces
+- [ ] MAP tab shows the world map for a brand-new dev-mode character (no "Loading world...")
+- [ ] PR description notes: color change is a perceptible visual shift; any coverage gaps from
+  H4 fallback branches that needed manual dialogue authoring

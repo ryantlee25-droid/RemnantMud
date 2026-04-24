@@ -8,6 +8,8 @@
 import { describe, it, expect } from 'vitest'
 import { DIALOGUE_TREES } from '@/data/dialogueTrees'
 import { NPCS } from '@/data/npcs'
+import { ITEMS } from '@/data/items'
+import { ROOM_EXIT_GATES } from '@/lib/narrativeKeys'
 import type { DialogueTree, DialogueNode, FactionType, SkillType } from '@/types/game'
 
 // ============================================================
@@ -503,6 +505,221 @@ describe('Dialogue Tree Health — exhaustive static analysis', () => {
 
       expect(totalTrees).toBeGreaterThanOrEqual(15)
       expect(totalNodes).toBeGreaterThanOrEqual(150)
+    })
+  })
+
+  // ── 13. Cycle-gated branches have a non-cycle-1 fallback ──
+  //
+  // If a node has at least one branch with requiresCycleMin >= 2,
+  // at least one OTHER branch on that same node must have no
+  // requiresCycleMin OR requiresCycleMin <= 1.
+  //
+  // Exception: if every branch on the node is cycle-gated AND the
+  // node itself is only reachable from a parent that is also cycle-gated
+  // (meaning cycle-1 players can never reach it), the node passes.
+  // We detect this by checking whether every incoming edge in the tree
+  // carries requiresCycleMin >= 2.
+  describe('13. Cycle-gated branches have a non-cycle-1 fallback', () => {
+    for (const { key, tree } of uniqueTrees) {
+      it(`[${key}] every node with cycle-2+ branches also has a cycle-1 fallback (or is itself cycle-gated)`, () => {
+        // Build an incoming-edges map: nodeId -> list of branches pointing to it
+        const incomingEdges: Record<string, Array<{ fromNodeId: string; requiresCycleMin?: number }>> = {}
+        for (const node of Object.values(tree.nodes)) {
+          for (const branch of node.branches ?? []) {
+            if (!incomingEdges[branch.targetNode]) incomingEdges[branch.targetNode] = []
+            incomingEdges[branch.targetNode].push({
+              fromNodeId: node.id,
+              requiresCycleMin: branch.requiresCycleMin,
+            })
+          }
+        }
+
+        const violations: string[] = []
+
+        for (const node of Object.values(tree.nodes)) {
+          const branches = node.branches ?? []
+          if (branches.length === 0) continue
+
+          // Check if this node has any branch with requiresCycleMin >= 2
+          const hasCycleGatedBranch = branches.some(
+            (b) => b.requiresCycleMin !== undefined && b.requiresCycleMin >= 2
+          )
+          if (!hasCycleGatedBranch) continue
+
+          // Does it have at least one branch without a cycle gate (or cycle 1)?
+          const hasFallback = branches.some(
+            (b) => b.requiresCycleMin === undefined || b.requiresCycleMin <= 1
+          )
+          if (hasFallback) continue
+
+          // ALL branches are cycle-gated. Check if the node itself is only
+          // reachable from cycle-gated parents (so cycle-1 players never reach it).
+          const incoming = incomingEdges[node.id] ?? []
+          const isStartNode = node.id === tree.startNode
+          if (!isStartNode && incoming.length > 0) {
+            const allIncomingCycleGated = incoming.every(
+              (e) => e.requiresCycleMin !== undefined && e.requiresCycleMin >= 2
+            )
+            if (allIncomingCycleGated) continue // legitimate cycle-2+ only vignette
+          }
+
+          violations.push(
+            `node "${node.id}" has all branches requiring cycle 2+, and cycle-1 players can reach it`
+          )
+        }
+
+        expect(
+          violations,
+          `Cycle-trapped nodes in "${key}":\n${violations.join('\n')}`
+        ).toEqual([])
+      })
+    }
+  })
+
+  // ── 14. Faction-gated branches have a fallback ────────────
+  //
+  // If a node has at least one branch with requiresRep (faction rep gate),
+  // at least one OTHER branch on that same node must have no requiresRep
+  // so that players with low/no faction rep can still progress.
+  describe('14. Faction-gated branches have a rep-agnostic fallback', () => {
+    for (const { key, tree } of uniqueTrees) {
+      it(`[${key}] every node with requiresRep branches also has a branch without requiresRep`, () => {
+        const violations: string[] = []
+
+        for (const node of Object.values(tree.nodes)) {
+          const branches = node.branches ?? []
+          if (branches.length === 0) continue
+
+          const hasFactionGatedBranch = branches.some((b) => b.requiresRep !== undefined)
+          if (!hasFactionGatedBranch) continue
+
+          // Must have at least one branch without requiresRep
+          const hasFallback = branches.some((b) => b.requiresRep === undefined)
+          if (!hasFallback) {
+            violations.push(
+              `node "${node.id}" has all branches gated behind requiresRep — no fallback for low-rep players`
+            )
+          }
+        }
+
+        expect(
+          violations,
+          `Rep-trapped nodes in "${key}":\n${violations.join('\n')}`
+        ).toEqual([])
+      })
+    }
+  })
+
+  // ── 15. onEnter.grantItem references valid item IDs ───────
+  //
+  // Every item ID listed in onEnter.grantItem must exist as a
+  // key in ITEMS from data/items.ts. A missing item silently
+  // swallows the grant at runtime.
+  describe('15. onEnter.grantItem references valid item IDs', () => {
+    for (const { key, tree } of uniqueTrees) {
+      it(`[${key}] every grantItem id exists in ITEMS`, () => {
+        const invalidGrants: string[] = []
+
+        for (const node of Object.values(tree.nodes)) {
+          const grantItem = node.onEnter?.grantItem
+          if (!grantItem) continue
+          for (const itemId of grantItem) {
+            if (!ITEMS[itemId]) {
+              invalidGrants.push(
+                `node "${node.id}" onEnter.grantItem "${itemId}" — not found in ITEMS`
+              )
+            }
+          }
+        }
+
+        expect(
+          invalidGrants,
+          `Invalid grantItem refs in "${key}":\n${invalidGrants.join('\n')}`
+        ).toEqual([])
+      })
+    }
+  })
+
+  // ── 16. No empty or near-empty node text ──────────────────
+  //
+  // Every node's primary text field must trim() to at least 5
+  // characters. Placeholder nodes with '' or '...' indicate
+  // authoring left-behind and will display as blank in-game.
+  describe('16. Node text must be non-empty (>= 5 chars trimmed)', () => {
+    for (const { key, tree } of uniqueTrees) {
+      it(`[${key}] every node has meaningful text (trimmed length >= 5)`, () => {
+        const emptyNodes: string[] = []
+
+        for (const node of Object.values(tree.nodes)) {
+          const trimmed = (node.text ?? '').trim()
+          if (trimmed.length < 5) {
+            emptyNodes.push(
+              `node "${node.id}" text is too short (trimmed: "${trimmed}", length: ${trimmed.length})`
+            )
+          }
+        }
+
+        expect(
+          emptyNodes,
+          `Nodes with insufficient text in "${key}":\n${emptyNodes.join('\n')}`
+        ).toEqual([])
+      })
+    }
+  })
+
+  // ── 17. Orphan narrative keys (INFORMATIONAL — does not fail) ──
+  //
+  // Collects all grantNarrativeKey values across all trees.
+  // Checks which of those granted keys have no consumer
+  // (no entry in ROOM_EXIT_GATES, no requiresNarrativeKey in
+  // room extras, no dialogue branch gate using that key).
+  //
+  // This is informational only: we warn via console.warn but
+  // the test always passes. Orphaned keys = authored content
+  // never hooked up to any gate.
+  describe('17. Orphan narrative keys (informational)', () => {
+    it('warns about granted narrative keys with no known consumer (non-failing)', () => {
+      // Collect all keys granted by dialogue
+      const grantedKeys = new Set<string>()
+      for (const { tree } of uniqueTrees) {
+        for (const node of Object.values(tree.nodes)) {
+          if (node.onEnter?.grantNarrativeKey) {
+            grantedKeys.add(node.onEnter.grantNarrativeKey)
+          }
+        }
+      }
+
+      // Build set of consumed keys: keys that appear in ROOM_EXIT_GATES
+      const consumedKeys = new Set<string>()
+      for (const gate of Object.values(ROOM_EXIT_GATES)) {
+        consumedKeys.add(gate.keyId)
+        // Also check allOf arrays if present
+        if (gate.allOf) {
+          for (const k of gate.allOf) consumedKeys.add(k)
+        }
+      }
+
+      // Warn on any granted key that has no consumer
+      const orphans: string[] = []
+      for (const key of grantedKeys) {
+        if (!consumedKeys.has(key)) {
+          orphans.push(key)
+        }
+      }
+
+      if (orphans.length > 0) {
+        console.warn(
+          `\n=== Category 17: Orphan Narrative Keys ===\n` +
+          `The following keys are granted via grantNarrativeKey in dialogue\n` +
+          `but have no consumer in ROOM_EXIT_GATES:\n` +
+          orphans.map((k) => `  - ${k}`).join('\n') + '\n'
+        )
+      } else {
+        console.log('\n=== Category 17: No orphan narrative keys found ===')
+      }
+
+      // Always pass — informational only
+      expect(true).toBe(true)
     })
   })
 })

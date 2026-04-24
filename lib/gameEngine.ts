@@ -450,23 +450,28 @@ export class GameEngine implements EngineCore {
       combat_state: this.state.combatState ?? null,
     }
 
-    const { error } = await supabase
-      .from('players')
-      .update(payload)
-      .eq('id', player.id)
-    if (error) {
-      console.error('Save failed:', error.message, error.code, error.details, error.hint)
-      // Refresh session before retry — expired credentials are the most common cause
-      await supabase.auth.refreshSession()
-      // Retry once — transient auth/network failures are common
-      const { error: retryError } = await supabase
+    this._setState({ saving: true })
+    try {
+      const { error } = await supabase
         .from('players')
         .update(payload)
         .eq('id', player.id)
-      if (retryError) {
-        console.error('Save retry failed:', retryError.message)
-        this._appendMessages([systemMsg('⚠ Save failed. Your session may have expired — try reloading the page.')])
+      if (error) {
+        console.error('Save failed:', error.message, error.code, error.details, error.hint)
+        // Refresh session before retry — expired credentials are the most common cause
+        await supabase.auth.refreshSession()
+        // Retry once — transient auth/network failures are common
+        const { error: retryError } = await supabase
+          .from('players')
+          .update(payload)
+          .eq('id', player.id)
+        if (retryError) {
+          console.error('Save retry failed:', retryError.message)
+          this._appendMessages([systemMsg('⚠ Save failed. Your session may have expired — try reloading the page.')])
+        }
       }
+    } finally {
+      this._setState({ saving: false })
     }
   }
 
@@ -718,6 +723,26 @@ export class GameEngine implements EngineCore {
       broker: "Everyone here wants something. The question is who's most honest about it.",
     }
 
+    // Mirror the DB defaults from the ledger upsert above (player_ledger
+    // migration 20260327000001_cycle_system.sql defaults squirrel_alive to
+    // FALSE — the squirrel companion is acquired through gameplay, not at
+    // character creation). Keep these values aligned with loadPlayer's
+    // ledger construction so a refresh doesn't desync the in-memory state.
+    const newLedger: PlayerLedger = {
+      playerId: user.id,
+      worldSeed: seed,
+      currentCycle: 1,
+      totalDeaths: 0,
+      pressureLevel: 1,
+      discoveredRoomIds: [],
+      discoveredEnemies: [],
+      squirrelAlive: false,
+      squirrelTrust: 0,
+      squirrelCyclesKnown: 0,
+      squirrelName: undefined,
+      cycleHistory: [],
+    }
+
     this._setState({
       player,
       currentRoom: startRoom,
@@ -725,7 +750,7 @@ export class GameEngine implements EngineCore {
       combatState: null,
       loading: false,
       initialized: true,
-      ledger: null,
+      ledger: newLedger,
       stash: [],
       log: [
         systemMsg('Character created. The world stirs.'),

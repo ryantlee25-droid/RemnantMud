@@ -5,10 +5,10 @@
 
 // --- Semantic tag colors (used by Terminal.tsx parseRichText) ---
 export const TAG_COLOR: Record<string, string> = {
-  item:      'text-yellow-400',
+  item:      'text-cyan-400',
   npc:       'text-cyan-400',
   enemy:     'text-red-500',
-  exit:      'text-green-400',
+  exit:      'text-cyan-400',
   keyword:   'text-white',
   currency:  'text-yellow-300',
   condition: 'text-purple-400',

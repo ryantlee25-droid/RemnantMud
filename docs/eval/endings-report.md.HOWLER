@@ -1,0 +1,194 @@
+# Endings Reachability & Earning — Evaluation Report
+
+**Convoy:** ending-eval | **Howler:** B | **Date:** 2026-04-23  
+**Source commit:** worktree from main (1,120 tests passing)  
+**Test file:** `tests/integration/endingReachability.test.ts` — 72 tests, all pass
+
+---
+
+## 1. Summary
+
+| Ending | Reachable | Earn-gated | Stumble-in available |
+|--------|-----------|------------|----------------------|
+| Cure   | Yes       | No         | Yes                  |
+| Weapon | Yes       | No         | Yes                  |
+| Seal   | Yes       | No         | Yes                  |
+| Throne | Yes       | No         | Yes                  |
+
+**Key finding:** The DC 4 lore `skillCheck` on each terminal is flavor, not enforcement. The `questFlagOnSuccess` array fires regardless of whether the skill roll succeeds or fails (no `failNode` prevents flag-setting). All four endings are structurally reachable with zero quest investment once `cycleGate: 3` is satisfied.
+
+---
+
+## 2. Per-Ending Narrative Trace
+
+### Cure
+
+**Intended path:** Player investigates the R-1 sequencing data at The Stacks (Lev), learns CHARON-7 was deliberate, reaches the Scar via Reclaimers keycard. Thematic alignment: Reclaimers (science), Accord (stability), Shepherd class.
+
+**NPC chain:** Lev (Stacks) → MERIDIAN lab wing data terminals → broadcaster → Terminal A.
+
+**Load-bearing flag:** `reclaimers_meridian_keycard` (or any entry route) + `cycle >= 3`.
+
+**Code enforcement:** cycleGate(3) on room. No flag gate on the extra. Skill DC 4 is reachable by nearly any character. `questFlagOnSuccess` always fires.
+
+**Delta:** The cure's moral weight (Sanguine lose their enhancements without consent) is entirely in `description` text. No code enforces that the player has discovered the Sanguine-consent issue before deploying. A player can cure without knowing what they are undoing.
+
+---
+
+### Weapon
+
+**Intended path:** Player aligns with the Accord (Cross sanction, `cross_expedition_sanctioned`) and absorbs the military-logic framing of eliminating the infected. Thematic alignment: Accord, Salters. Entry via keycard or biometric.
+
+**NPC chain:** Cross (Crossroads) → MERIDIAN lab data → broadcaster → Terminal B.
+
+**Load-bearing flag:** Any Scar entry route + `cycle >= 3`.
+
+**Code enforcement:** Same as above. No faction alignment check gates the Weapon terminal.
+
+**Delta:** The weapon kills 60% of the human population (environmental carriers) per the description. No code prevents the "most peaceful" player from selecting it. The horror is entirely narrative.
+
+---
+
+### Seal
+
+**Intended path:** Player sides with the Kindling's doctrine of destruction, gains tunnel access from Harrow (`kindling_tunnel_access`), enters via maintenance hatch. Thematic alignment: Kindling. The Seal is the Kindling's preferred outcome — Harrow calls destruction "purification."
+
+**NPC chain:** Deacon Harrow (The Ember) → tunnel route → broadcaster → Terminal C.
+
+**Load-bearing flag:** `kindling_tunnel_access` (or any entry route) + `cycle >= 3`.
+
+**Code enforcement:** Same pattern. No Kindling-alignment check gates Terminal C.
+
+**Delta:** The broadcaster calls the Seal "the quietest" option without recommending it. No code tracks whether the player has spoken with Harrow about destruction as doctrine before choosing it.
+
+---
+
+### Throne
+
+**Intended path:** Player pursues power and information leverage, uses Elder's utility override (`deep_utility_access`) from The Deep (Lucid-adjacent route). Thematic alignment: Lucid, any faction the player wants to dominate. The Throne is the most solitary outcome.
+
+**NPC chain:** The Elder (The Deep) → utility passage → broadcaster → Terminal D.
+
+**Load-bearing flag:** `deep_utility_access` (or any entry route) + `cycle >= 3`.
+
+**Code enforcement:** Same pattern. No stat check for "ambition" or faction alignment gates Terminal D.
+
+**Delta:** The broadcaster's final line ("They knew someone would choose this") implies the player's choice was predictable from their behavior — but no flag in the codebase tracks the player's power-seeking tendencies across cycles to feed this line differently.
+
+---
+
+## 3. Scar Entry Routes
+
+### Route 1 — Keycard (Reclaimers/Lev)
+
+**Chain:** `found_r1_sequencing_data` → Lev dialogue (`lev_keycard_gate`) → `reclaimers_meridian_keycard` set → `scar_02_main_entrance` east exit unlocks (lockedBy: `meridian_keycard`).
+
+**Status:** Completable. Three skill paths (Lore DC 11, Negotiation DC 12, Intimidation DC 14) or the echo branch (cycle 2+, trusted relationship). No broken links.
+
+**Easiest route:** Lore DC 11 is the lowest non-echo DC and matches the Reclaimer/broker class archetype.
+
+**Notes:** Flag `lev_trusts_player` is set on the preferred branches; the intimidation path sets `lev_distrusts_player`. Neither affects Scar access — both set `reclaimers_meridian_keycard`.
+
+---
+
+### Route 2 — Biometric (Sanguine/Vesper)
+
+**Chain:** Vesper dialogue (`vesper_biometric_gate`) → one of three success branches (Negotiation, Presence DC, Red Court leverage) → `sanguine_biometric_obtained` set → biometric-gated extra in `scar_02_main_entrance` is unlocked.
+
+**Status:** Completable. Three paths. The Red Court leverage branch requires `pens_rook_met_in_office`, adding one more flag dependency that is itself reachable.
+
+**Notes:** `scar_02_main_entrance` east exit uses `lockedBy: meridian_keycard` not `sanguine_biometric_obtained`. This means the biometric slide does not directly unlock the east exit — the room extra with `questGate: sanguine_biometric_obtained` provides description/flavor, but the actual door logic uses the keycard field. **This is a potential UX gap** (see Fix Backlog), though the narrative description correctly handles all four access routes as opening `scar_03_decontamination`.
+
+---
+
+### Route 3 — Tunnel (Kindling/Harrow)
+
+**Chain:** `em_kindling_intro` → `harrow_mentioned_tunnels` → `harrow_tunnel_gate` node → one of: join (Presence DC 15), truth (Lore DC 14), or deception (Shadow DC 14) → `kindling_tunnel_access` set → `kindling_tunnel_access`-gated extra in `scar_02_main_entrance`.
+
+**Status:** Completable. The echo branch at cycle 2+ directly sets `kindling_tunnel_access` via `harrow_echo_truth` or `harrow_echo_faithful`. All standard paths set the flag.
+
+**Harrow chain intermediate:** `harrow_recognized_truth` completionFlag → `kindling_tunnel_access`. This is consistent — the questDescriptions entry for `harrow_recognized_truth` correctly points completion to `kindling_tunnel_access`.
+
+---
+
+### Route 4 — Utility (Elder/Lucid)
+
+**Chain:** Elder dialogue (`elder_utility_gate`) → skill/lore gate → `deep_utility_access` set → `scar_01_crater_rim` west richExit (questGate: `deep_utility_access`, hidden: implied by perception discover) → `dp_12_sealed_door` → `scar_03_decontamination`.
+
+**Status:** Completable. The `scar_01_crater_rim` west richExit has `questGate: deep_utility_access` and `discoverSkill: perception` DC unlisted for this report but confirmed present. The `dp_12_sealed_door` room ID appears in `scar_03_decontamination` exits (south), confirming the connection exists.
+
+**Most-missed route:** Utility access requires finding The Deep (sub-zone beneath Pine Sea), which has no quest flag pointing to it from the main arc until `discovered_archive_meridian_connection` provides a hint. Players who skip The Deep entirely have no organic path to utility access.
+
+---
+
+## 4. Stumble-In Analysis (Design-Noted)
+
+**Severity:** `design-decision` — not a bug.
+
+**Current behavior:** A player teleported to `scar_14_the_core` at cycle 3 with zero quest flags and zero faction rep can interact with all four ending extras. No `questGate` field exists on any of the four terminal extras. The only enforcement in the room is `cycleGate: 3`.
+
+**Design decision (per user):** This is intentional. The game does not lock the ending behind narrative completion. The cycle gate (requiring two prior deaths) is the only structural gate. The moral and emotional weight of the choice is carried entirely by narrative — how much the player has learned is up to them.
+
+**Practical consequence:** A determined player can die twice in a row immediately, gain `cycle: 3`, navigate to `scar_14_the_core` (bypassing all quest content), and choose an ending with no understanding of what they are triggering. The terminal descriptions are written to be comprehensible even without prior context.
+
+**Recommendation (design, not bug):** If the intent is ever to reward narrative investment, the simplest addition would be a `questGate` on a "preferred" flavor description for each ending — leaving the no-gate stumble-in path available but making the informed-player experience richer. This is out of scope for this evaluation.
+
+---
+
+## 5. Echo / Cycle Interaction
+
+### cycleGate: 3 enforcement
+
+`scar_14_the_core` and all Act III Scar rooms use `cycleGate: 3`. This means:
+- The player must have died at least twice (cycle increments on rebirth).
+- The echo system records each death: `createCycleSnapshot` captures `deathRoom`, `factionsAligned`, `npcRelationships`.
+
+### Echo influence on ending flavor
+
+The broadcaster's activity pool in `scar_13_broadcast_room` (the room before the Core) does NOT vary by cycle — both activity lines are generic. The broadcaster's identity varies based on "player evidence path" per `narrativeNotes`, but this variation is not wired to any flag comparison in the room data (it is noted as a future implementation detail).
+
+The `echoes.ts` system captures cycle history but does not feed back into the Core room extras at this time. **No stat echo or reputation echo changes ending flavor in the current code.**
+
+### What cycles do change
+
+- Lev's echo branches (`lev_echo_trusted`, `lev_echo_distrusted`) at cycle 2+ skip the keycard skill gate and grant it directly.
+- Harrow's echo branches (`harrow_echo_truth`, `harrow_echo_faithful`, `harrow_echo_deceived`) at cycle 2+ similarly fast-track tunnel access.
+- Death room narration in `echoes.ts` (`getDeathRoomNarration`) is cycle-aware and escalates with repeat deaths in the same room.
+
+None of these affect the ending choice itself, only the efficiency of reaching `scar_14_the_core`.
+
+---
+
+## 6. Fix Backlog
+
+### Real bugs
+
+**BUG-01 — Biometric route has door-lock mismatch (medium severity)**
+
+`scar_02_main_entrance` east richExit: `{ locked: true, lockedBy: 'meridian_keycard' }`. The biometric slide (`sanguine_biometric_obtained`) and tunnel access (`kindling_tunnel_access`) have no corresponding `lockedBy` field — they only appear as `questGate` on flavor extras, not on the east exit itself.
+
+This means: if the game engine checks `lockedBy` to determine if a player can pass the door, a player with only biometric or tunnel access (but not the keycard) cannot actually enter through the east exit. The game would need to check any of the four access flags, not just `meridian_keycard`.
+
+**Impact:** Depending on how `lib/actions/movement.ts` resolves locked exits, two of the four advertised entry routes may be non-functional in actual play. The keycard route always works. The utility route connects via `dp_12_sealed_door` → `scar_03_decontamination` (bypassing the locked east exit entirely), so it is unaffected.
+
+**Recommendation:** The movement handler should check `lockedBy` OR any of: `sanguine_biometric_obtained`, `kindling_tunnel_access`, `reclaimers_meridian_keycard` against the player's questFlags before blocking passage. Alternatively, define a union key system or remove the `lockedBy` restriction in favor of all four route flags.
+
+---
+
+**BUG-02 — Broadcaster identity variation not implemented (low severity)**
+
+`scar_13_broadcast_room` `narrativeNotes` states: "The broadcaster's identity varies based on player evidence path." No `conditionalDescription` or `questGate` fields on NPCSpawn entries implement this. Both activity pool entries are identity-neutral. The variation exists in design intent only.
+
+**Impact:** All players see the same broadcaster regardless of their evidence path. Low severity — the current text is intentionally generic ("someone like you"). No player experience is broken.
+
+---
+
+### Design decisions (not bugs)
+
+- **DESIGN-01:** All four endings accessible without narrative investment at cycle 3.
+- **DESIGN-02:** DC 4 lore check is flavor only; `questFlagOnSuccess` fires on any interaction.
+- **DESIGN-03:** No cycle-history echo feeds back to Core room ending flavor.
+
+---
+
+*Generated by Howler B — ending-eval convoy*

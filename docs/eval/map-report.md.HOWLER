@@ -1,0 +1,185 @@
+# Map Graph Integrity Report
+**Howler A — Evaluation Convoy**
+**Date:** 2026-04-23
+
+---
+
+## Summary
+
+- **Test suite:** 15 tests across 6 describe blocks; 9 passing, 6 failing.
+- **88 rooms are graph-orphaned** (unreachable from `cr_01_approach` via BFS over both `exits` and `richExits`). Severity: **blocker** — entire zones are cut off.
+- **83 bidirectionality violations** detected in simple exits, indicating widespread inconsistent back-linking across zones. Severity: **major**.
+- **2 exits where simple `exits[dir]` and `richExits[dir].destination` disagree** (data divergence bugs). Severity: **blocker**.
+- **1 quest gate flag** (`vesper_trust_level_3`) used in a `richExits` gate but undefined in `questDescriptions.ts` or `dialogueTrees.ts`. Severity: **major**.
+- **5 `lockedBy` item IDs** referenced in `richExits` that do not exist in `data/items.ts` (`courthouse_archive_key`, `cold_storage_key`, `red_court_key`). Severity: **blocker**.
+- README says 271 rooms; actual count is **297** (stale documentation). Severity: **cosmetic**.
+
+---
+
+## Methodology
+
+The test suite in `tests/integration/mapIntegrity.test.ts` imports the full `ALL_ROOMS` array from `data/rooms/index.ts` and performs static graph analysis. No game engine state or player state is simulated.
+
+**Graph traversal:** A BFS function traverses both `room.exits[dir]` (simple string targets) and `room.richExits[dir].destination` (rich exit destinations). Gates (`questGate`, `reputationGate`, `cycleGate`, `locked`) are intentionally ignored — the test operates at the graph level to determine whether a player who satisfies all conditions could physically reach a room. This is distinct from whether the game engine would allow transit on a given playthrough.
+
+**Scope:** All 297 rooms in the 13 zones. Out of scope: dynamic room population, NPC spawns, enemy spawns, environmental rolls, and non-exit questGates on `extras[]` or `npcSpawns[]`.
+
+**Test file location:** `tests/integration/mapIntegrity.test.ts`
+
+---
+
+## Findings
+
+### 1. Orphaned Rooms (88 rooms unreachable from start)
+
+A BFS from `cr_01_approach` traversing both `exits` and `richExits` fails to reach **88 rooms** (approximately 30% of the world). These rooms have no inbound exit from the reachable graph — they are islands.
+
+Affected zones and sample room IDs:
+
+| Zone | Orphaned Rooms | Notes |
+|------|---------------|-------|
+| `crossroads` | `cr_17_storage_shed`, `cr_18_the_pit` | 2 rooms with exits pointing back into the graph but nothing pointing into them |
+| `river_road` | `rr_18_hanging_tree` – `rr_22_motel_second_floor` | 5 late-zone rooms cut off |
+| `covenant` | `cv_12_the_jail`, `cv_16_marshals_quarters` – `cv_20_underground_archive`, `cv_24_holding_cells` | 7 rooms with no inbound edges |
+| `salt_creek` | `sc_01_outer_perimeter` – `sc_20_mess_hall` (all 20 rooms) | Entire zone orphaned — no room in the reachable graph has an exit pointing to any Salt Creek room |
+| `the_ember` | `em_09_garden_of_ashes`, `em_11_char_fields` – `em_20_the_incinerator` | 11 later rooms cut off |
+| `the_breaks` | `br_14_hidden_grotto` | 1 room |
+| `duskhollow` | `dh_01_long_drive` – `dh_18_night_market` (all 18 rooms) | Entire zone orphaned — no inbound exit from reachable graph |
+| `the_deep` | `dp_15_bioluminescent_garden` – `dp_20_upper_tunnels` | 6 rooms cut off |
+| `the_pens` | `pens_01_east_gate` – `pens_18_transit_tunnel` (all 19 rooms) | Entire zone orphaned |
+
+**Critical observation:** Salt Creek (20 rooms), Duskhollow (18 rooms), and The Pens (19 rooms) are **entirely orphaned zones** with zero inbound edges from any reachable room. The graph-level entry point for these zones is missing.
+
+The most likely cause across all orphans is that cross-zone connector exits exist only in `richExits` (not `exits`) — and those richExits destinations were not mirrored with a reverse edge. The Duskhollow case is illustrative: `dh_01_long_drive.richExits.east` points `{ destination: 'br_01_canyon_mouth', questGate: 'covenant_of_dusk_invited' }` but nothing in the reachable graph has a matching exit into `dh_01_long_drive`.
+
+### 2. Bidirectionality Violations (83 violations)
+
+Of 83 bidirectionality failures, patterns by category:
+
+**a) Missing reverse edge entirely (most common — ~60 violations):** Room A has `exits.north = 'B'` but `B.exits.south` is `undefined`. Common in late-zone rooms that were added without updating the target room. Examples:
+- `cv_05_courthouse_upper --[north]--> cv_22_council_chamber` (council_chamber has no south exit)
+- `sc_07_warlords_command --[north]--> sc_10_watchtower` (watchtower has no south exit)
+- `ps_12_hermit_camp --[north]--> ps_14_still_creek` (still_creek has no south exit)
+
+**b) Wrong reverse exit target (~15 violations):** Room A points to B, and B has a reverse exit in the right direction but it points to C, not A. Example:
+- `cr_05_market_north --[north]--> rr_07_north_fork` but `rr_07_north_fork.[south] = rr_06_the_narrows` — the south exit from rr_07 points somewhere else
+- `sc_08_armory --[south]--> sc_09_the_pit` but `sc_09_the_pit.[north] = sc_04_the_yard`
+
+**c) Self-loop exits (~1 violation):**
+- `cv_18_rooftop_garden --[down]--> cv_18_rooftop_garden` — a room pointing to itself in simple exits. This is almost certainly a copy-paste error. The corresponding `richExits[down]` correctly points to `cv_03_main_street` (see item 3 below).
+
+**d) One-way corridors with confirmed design intent:** `scar_15_the_exit --[north]--> scar_01_crater_rim` is the end-of-game exit path and is intentionally one-way. Added to `ONE_WAY_ALLOWLIST`.
+
+### 3. Simple/RichExits Destination Mismatches (2 violations)
+
+Two rooms have `exits[dir]` and `richExits[dir].destination` pointing to different targets — a silent bug where the two data sources diverge:
+
+1. **`rr_20_abandoned_motel[east]`**: `exits.east = 'rr_19_old_highway_rest'` but `richExits.east.destination = 'rr_21_motel_room7'`. The simple exit goes backward in the zone; the rich exit goes forward. The richExits destination is almost certainly correct.
+
+2. **`cv_18_rooftop_garden[down]`**: `exits.down = 'cv_18_rooftop_garden'` (self-loop — see §2c) but `richExits.down.destination = 'cv_03_main_street'`. The rich exit is the intended target; the simple exit is a bug.
+
+Both cases mean the game engine uses `exits` for movement navigation but `richExits` for gate display — the player would get the wrong room depending on which path the engine takes.
+
+### 4. Broken Gate References
+
+**Quest gate flags with no definition (richExits only):**
+
+Only `vesper_trust_level_3` in `dh_04_vespers_study.richExits[down]` is undefined in both `questDescriptions.ts` and `dialogueTrees.ts`. The companion flags `vesper_trust_level_2` and `vesper_trust_level_3` are used extensively as gates on `extras[]` across `duskhollow.ts` but are never set by any dialogue tree, social action, or quest description. The game has no mechanism to grant these flags to the player.
+
+Additional quest flags used as richExit gates but NOT registered in `questDescriptions.ts` (found by extended manual analysis):
+- `dog_kindness` — used in `the_deep.ts` and `the_scar.ts` but not defined anywhere
+- `sc_brig_moral_choice`, `sc_hollow_clearance` — used in `salt_creek.ts`
+- `em_meridian_tunnel_knowledge` — used in `the_ember.ts`
+- `cv_jail_spy`, `cv_supply_investigation`, `cv_wall_defense`, `cv_basement_hive_mother_active` — used in `covenant.ts`
+- `letters_collectible` — used in `the_dust.ts` and `the_scar.ts`
+- `witnessed_tithe_system` — used in `duskhollow.ts` (on `extras[]`, not `richExits`)
+
+These flags appear only in room data, never in dialogue `setFlag`, quest descriptions, or action handlers. Players can never obtain them, making those gates permanently locked.
+
+**Locked-by items not in `data/items.ts` (5 violations):**
+
+| Room | Exit | Missing Item |
+|------|------|-------------|
+| `cv_17_the_basement` | `[south]` | `courthouse_archive_key` |
+| `cv_20_underground_archive` | `[north]` | `courthouse_archive_key` |
+| `st_03_server_room` | `[north]` | `cold_storage_key` |
+| `pens_08_administration` | `[east]` | `red_court_key` |
+| `pens_11_research_wing` | `[south]` | `red_court_key` |
+
+`courthouse_archive_key`, `cold_storage_key`, and `red_court_key` are referenced as `lockedBy` keys in `richExits` but do not exist in `data/items.ts`. These exits are permanently impassable — no item to unlock them exists in the game.
+
+**Reputation gates:** All faction IDs in `reputationGate` references are valid `FactionType` values. No violations found.
+
+### 5. Zone Cohesion Drift
+
+Zone-cohesion test (verifying that each room's `id` prefix matches its zone) **passes** — all room ID prefixes are consistent with their zone assignments. The inferred prefix mapping is:
+
+| Zone | Prefix |
+|------|--------|
+| `crossroads` | `cr` |
+| `river_road` | `rr` |
+| `covenant` | `cv` |
+| `salt_creek` | `sc` |
+| `the_ember` | `em` |
+| `the_breaks` | `br` |
+| `the_dust` | `du` |
+| `the_stacks` | `st` |
+| `duskhollow` | `dh` |
+| `the_deep` | `dp` |
+| `the_pine_sea` | `ps` |
+| `the_scar` | `scar` |
+| `the_pens` | `pens` |
+
+**Room count discrepancy:** README states 271 rooms; actual count at test time is 297 — a delta of 26. The `the_ember` zone count is 20 (expected 21 per research context), suggesting one room may have been merged, removed, or mis-zoned during development.
+
+### 6. Ending Reachability
+
+`scar_14_the_core` **is graph-reachable** from `cr_01_approach` via the richExits graph (BFS confirms this). The `cycleGate: 3` on that room is documented and intentional. The ending room has correct exits to `scar_13_broadcast_room` (west) and `scar_15_the_exit` (east), both verified present in `ALL_ROOMS`.
+
+---
+
+## Map Renderer Truthfulness
+
+`lib/mapRenderer.ts` renders the world map using only `room.exits` (the simple direction-to-string map). It ignores `richExits` entirely — meaning gates (hidden exits, locked exits, quest-gated exits, skill gates) all render as normal traversable edges on the in-game map.
+
+**Is this a bug or a fog-of-war feature?** It depends on intent:
+
+- **If intended as fog of war:** a hidden exit (`richExits.hidden = true`) should not appear on the map at all. Currently it does (if it appears in `exits`), which defeats the purpose of hiding it.
+- **If intended as a player aid:** showing all traversable edges regardless of gate state helps players understand the world structure — but it spoils the discovery mechanic for hidden exits and skill-gated passages.
+
+**Recommendation:** Treat `richExits.hidden = true` exits as a map rendering exclusion. The renderer should consult `richExits` to suppress hidden exits from the minimap even if they appear in `exits`. Locked-but-known exits can render with a visual indicator (e.g., a padlock icon). Quest-gated exits are the gray area — rendering them could serve as a breadcrumb for completionists. A reasonable default: render all exits except `hidden: true` ones.
+
+Additionally, the `rr_20_abandoned_motel` and `cv_18_rooftop_garden` simple/richExits mismatches mean the renderer shows a connection to the wrong room — a concrete rendering bug independent of the fog-of-war question.
+
+---
+
+## POC `mapLayout.ts` Merge Recommendation
+
+The sibling `remnant-poc` repository's `lib/mapLayout.ts` includes a reverse-edge index that correctly handles one-way corridors by tracking inbound edges separately from outbound. The main repo's renderer does not have this — it only knows about outbound edges.
+
+**Verdict: worth pulling in, with caveats.**
+
+With 83 bidirectionality violations currently live, a proper reverse-edge index would immediately expose these gaps in the renderer and in any pathfinding logic. The POC approach of maintaining `Map<roomId, Set<inboundRoomId>>` is straightforward and adds minimal overhead at startup.
+
+However, merging should be deferred until the bidirectionality violations are fixed. A reverse-edge index built on broken data would produce a confusing graph — the index would show orphaned inbound edges or missing return paths that are misleading before the underlying data is corrected. **Fix the exit data first, then add the index.**
+
+---
+
+## Severity-Ranked Fix Backlog
+
+| Severity | Item | Fix |
+|----------|------|-----|
+| **Blocker** | `rr_20_abandoned_motel.exits.east` self-contradicts `richExits.east.destination` | Fix simple exit to match richExits: `exits.east = 'rr_21_motel_room7'` |
+| **Blocker** | `cv_18_rooftop_garden.exits.down` self-loop | Fix to `'cv_03_main_street'` to match richExits |
+| **Blocker** | `courthouse_archive_key` missing from `data/items.ts` | Add item definition or change lockedBy to existing key |
+| **Blocker** | `cold_storage_key` missing from `data/items.ts` | Add item definition |
+| **Blocker** | `red_court_key` missing from `data/items.ts` | Add item definition |
+| **Blocker** | 3 entirely orphaned zones (Salt Creek, Duskhollow, The Pens) | Add cross-zone connector exits from reachable rooms (e.g., `rr_*` → `sc_01`, `dh_01`, `pens_01`) |
+| **Major** | 85 partial orphans (individual rooms in connected zones) | Audit and add inbound exits from neighboring rooms |
+| **Major** | 83 bidirectionality violations | Add reverse exits; categorize intentional one-ways into `ONE_WAY_ALLOWLIST` |
+| **Major** | `vesper_trust_level_3` / `vesper_trust_level_2` / `dog_kindness` and other quest flags never set by any game mechanic | Add setFlag actions in dialogue trees or gameEngine for each flag |
+| **Major** | `em_meridian_tunnel_knowledge`, `sc_brig_moral_choice`, `sc_hollow_clearance`, `letters_collectible`, `cv_jail_spy`, `cv_supply_investigation`, `cv_wall_defense`, `cv_basement_hive_mother_active` — undefined quest flags used as gates | Register in `questDescriptions.ts` and wire setFlag in corresponding dialogue/actions |
+| **Minor** | `the_ember` zone count 20 vs expected 21 | Verify whether room was deleted or mis-counted |
+| **Minor** | Map renderer does not filter `hidden: true` richExits | Update renderer to suppress hidden exits |
+| **Cosmetic** | README says 271 rooms; actual 297 | Update README room count |
+| **Cosmetic** | POC `mapLayout.ts` reverse-edge index not in main | Defer merge until exit data is clean |

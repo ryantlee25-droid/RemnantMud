@@ -337,20 +337,20 @@ function WorldMapInner({ currentRoomId, discoveredRoomIds }: WorldMapInnerProps)
                   {Object.keys(selectedRoom.exits).length > 0 && (
                     <div className="mb-1">
                       <span className="text-amber-600">Exits: </span>
-                      {Object.keys(selectedRoom.exits).join(', ')}
+                      <span className="text-cyan-400">{Object.keys(selectedRoom.exits).join(', ')}</span>
                     </div>
                   )}
 
                   {selectedRoom.npcs && selectedRoom.npcs.length > 0 && (
                     <div className="mb-1">
                       <span className="text-amber-600">NPCs: </span>
-                      {selectedRoom.npcs.join(', ')}
+                      <span className="text-cyan-400">{selectedRoom.npcs.join(', ')}</span>
                     </div>
                   )}
 
                   <div>
                     <span className="text-amber-600">Items: </span>
-                    {selectedRoom.items?.length ?? 0}
+                    <span className="text-cyan-400">{selectedRoom.items?.length ?? 0}</span>
                   </div>
                 </>
               ) : (

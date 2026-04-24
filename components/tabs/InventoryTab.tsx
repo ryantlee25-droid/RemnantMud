@@ -83,7 +83,7 @@ export default function InventoryTab() {
         <SectionHeading label="Weapon" />
         {weapon ? (
           <>
-            <div className="text-amber-300 text-xs">{weapon.name}</div>
+            <div className="text-cyan-400 text-xs">{weapon.name}</div>
             {weapon.damage !== undefined && (
               <div className="text-xs">
                 <span className="text-amber-700">DMG </span>
@@ -109,7 +109,7 @@ export default function InventoryTab() {
         <SectionHeading label="Armor" />
         {armor ? (
           <>
-            <div className="text-amber-300 text-xs">{armor.name}</div>
+            <div className="text-cyan-400 text-xs">{armor.name}</div>
             {armor.defense !== undefined && (
               <div className="text-xs">
                 <span className="text-amber-700">DEF </span>
@@ -149,7 +149,7 @@ export default function InventoryTab() {
             <SectionHeading label={typeLabel(type)} />
             {items.map((inv) => (
               <div key={inv.id} className="text-xs">
-                <span className="text-amber-300">{inv.item.name}</span>
+                <span className="text-cyan-400">{inv.item.name}</span>
                 {inv.quantity > 1 ? ` x${inv.quantity}` : ''}
               </div>
             ))}

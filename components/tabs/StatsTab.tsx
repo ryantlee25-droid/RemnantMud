@@ -101,7 +101,7 @@ export default function StatsTab() {
             {formatZone(currentRoom.zone)}
           </div>
         )}
-        <div className="text-green-400">
+        <div className="text-cyan-400">
           {currentRoom?.name ?? '...'}
         </div>
       </div>
@@ -110,7 +110,7 @@ export default function StatsTab() {
       <div className="border-b border-gray-800 pb-2">
         <span className="text-gray-500">Exits:</span>{' '}
         {exitDirs.length > 0 ? (
-          <span className="text-green-400">
+          <span className="text-cyan-400">
             {exitDirs.map(d => d.charAt(0)).join(' ')}
           </span>
         ) : (

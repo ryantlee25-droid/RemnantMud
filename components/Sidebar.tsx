@@ -8,11 +8,8 @@
 import { useState } from 'react'
 import TabBar from '@/components/tabs/TabBar'
 import StatsTab from '@/components/tabs/StatsTab'
-// @ts-expect-error — provided by parallel Howler
 import WorldMapTab from '@/components/tabs/WorldMapTab'
-// @ts-expect-error — provided by parallel Howler
 import InventoryTab from '@/components/tabs/InventoryTab'
-// @ts-expect-error — provided by parallel Howler
 import DataTab from '@/components/tabs/DataTab'
 
 const TABS = [

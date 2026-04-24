@@ -1,5 +1,5 @@
 import type { Room } from '@/types/game'
-import { computeLayout } from './mapLayout'
+import { computeLayout } from '@/lib/mapLayout'
 
 // Box-drawing constants — each inner line is exactly 40 chars wide between the ║ borders.
 const BOX_WIDTH = 42

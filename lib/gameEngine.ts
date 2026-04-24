@@ -718,6 +718,21 @@ export class GameEngine implements EngineCore {
       broker: "Everyone here wants something. The question is who's most honest about it.",
     }
 
+    const newLedger: PlayerLedger = {
+      playerId: user.id,
+      worldSeed: seed,
+      currentCycle: 1,
+      totalDeaths: 0,
+      pressureLevel: 1,
+      discoveredRoomIds: [],
+      discoveredEnemies: [],
+      squirrelAlive: true,
+      squirrelTrust: 0,
+      squirrelCyclesKnown: 0,
+      squirrelName: undefined,
+      cycleHistory: [],
+    }
+
     this._setState({
       player,
       currentRoom: startRoom,
@@ -725,7 +740,7 @@ export class GameEngine implements EngineCore {
       combatState: null,
       loading: false,
       initialized: true,
-      ledger: null,
+      ledger: newLedger,
       stash: [],
       log: [
         systemMsg('Character created. The world stirs.'),

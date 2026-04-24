@@ -40,9 +40,11 @@ export default function GameLayout({
       </div>
 
       {/* Bottom: command input spanning full width */}
-      <div className="flex-shrink-0 border-t border-gray-800">
-        {input}
-      </div>
+      {input !== null && (
+        <div className="flex-shrink-0 border-t border-gray-800">
+          {input}
+        </div>
+      )}
     </div>
   )
 }

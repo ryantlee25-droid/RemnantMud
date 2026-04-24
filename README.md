@@ -209,6 +209,15 @@ tests/          Vitest test suite
 
 ## Release Notes
 
+### 2026-04-24 — Tabbed sidebar + interactive World Map
+
+- Right pane is now tabbed (STATS / MAP / INV / DATA), default STATS
+- New SVG World Map tab replaces the ASCII MiniMap — fog of war, danger overlay, reveal-all, center-on-player, click-to-inspect
+- Cyan = interactive entities (NPCs, exits, items); amber = narration/UI chrome
+- Bug fix: first-time characters no longer see "Loading world..." (createCharacter now populates `state.ledger`)
+- 5 UX polish items: prologue SKIP keyword highlight, dialogue choice hint, stat tooltips in creation, input auto-refocus after tab clicks, auto-save indicator
+- Dialogue tree integrity tests expanded (+101) — cycle/faction fallbacks, grantItem validity, empty-text guard, orphan-key warning
+
 ### 2026-04-24 — Visual character-creation UI restored (two-column layout, no desktop scroll)
 
 Replaced the text-terminal character creation flow (introduced 2026-03-29, commit 51a3444) with a visual React point-buy UI. The new `CharacterCreation` component renders a two-column desktop layout (max-w-5xl): name and class selection on the left, stat allocation on the right. Echo-stat hints from previous cycles surface in the rebirth path. The command input strip and its border are hidden while creation is active (`GameLayout` hides the bottom bar when `input` is `null`). `app/page.tsx` drops the `terminalCreation` imports and `creationState` machine; all three creation entry points (init, prologue SKIP, between→rebirth) now simply set `authPhase = 'creating'`.

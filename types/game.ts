@@ -157,6 +157,7 @@ export interface RoomExtra {
   questGate?: string
   reputationGrant?: { faction: FactionType; delta: number }
   conditionalDescription?: { flag: string; description: string }
+  narrativeKeyOnExamine?: string  // grants this narrative key on successful examine (or successful skill check if one is set)
 }
 
 // ------------------------------------------------------------
@@ -209,6 +210,7 @@ export interface RoomExit {
   hidden?: boolean
   locked?: boolean
   lockedBy?: string               // item_id of key
+  unlockFlags?: string[]          // any quest flag in this list bypasses `locked` (alt-route unlock)
   skillGate?: SkillGate
   reputationGate?: ReputationGate
   questGate?: string

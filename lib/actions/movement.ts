@@ -13,6 +13,7 @@ import { getStatForSkill } from '@/lib/skillBonus'
 import { getTimeOfDay } from '@/lib/gameEngine'
 import { fearCheck } from '@/lib/fear'
 import { rt } from '@/lib/richText'
+import { checkNarrativeUnlock, grantNarrativeKey } from '@/lib/narrativeKeys'
 import { msg, combatMsg, errorMsg } from '@/lib/messages'
 import { getDeathRoomNarration } from '@/lib/echoes'
 
@@ -263,13 +264,29 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
         return
       }
     }
-    // Locked exit — check if player holds the required key item
+    // Locked exit — check if player holds the required key item OR has any alt-route unlock flag
     if (richExit.locked) {
       const { inventory } = engine.getState()
-      if (richExit.lockedBy && !inventory.some(i => i.itemId === richExit.lockedBy)) {
+      const questFlags = player.questFlags ?? {}
+      const hasKey = richExit.lockedBy ? inventory.some(i => i.itemId === richExit.lockedBy) : false
+      const hasUnlockFlag = richExit.unlockFlags?.some(f => questFlags[f]) ?? false
+      if (!hasKey && !hasUnlockFlag) {
         engine._appendMessages([msg(`The way is locked. You need something to open it.`)])
         return
       }
+    }
+  }
+
+  // Narrative-key gate — a knowledge-based lock separate from item/flag locks.
+  // Checked for both simple exits and richExits (any room:direction in ROOM_EXIT_GATES).
+  {
+    const playerKeys = player.narrativeKeys ?? []
+    const unlock = checkNarrativeUnlock(currentRoom.id, direction, playerKeys)
+    if (!unlock.unlocked) {
+      engine._appendMessages(unlock.narration.length > 0
+        ? unlock.narration
+        : [msg('Something here is gated by knowledge you haven\'t earned yet.')])
+      return
     }
   }
 

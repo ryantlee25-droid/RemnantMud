@@ -112,6 +112,7 @@ export const THE_SCAR_ROOMS: Room[] = [
         descriptionVerbose: 'through the blast door',
         locked: true,
         lockedBy: 'meridian_keycard',
+        unlockFlags: ['sanguine_biometric_obtained', 'kindling_tunnel_access'],
       },
     },
     items: [],

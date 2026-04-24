@@ -122,6 +122,28 @@ const levTree: DialogueTree = {
       id: 'lev_charon_strains',
       speaker: 'Lev',
       text: `${rt.npc('Lev')}'s hands go still. "R-1 was the intended product — controlled augmentation. The ${rt.keyword('Sanguine')} expression. R-8 was the accident. It emerged during unauthorized trials. The integration looks cleaner under a microscope, but cleaner degradation is still degradation. The ${rt.keyword('Hollow')} were never supposed to exist." A breath. "The data is what it is. I don't editorialize."`,
+      onEnter: {
+        setFlag: { found_sanguine_origin: true, found_hollow_origin: true },
+      },
+      branches: [
+        {
+          label: `"Who authorized the unauthorized trials?"`,
+          targetNode: 'lev_charon_authority',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'lev_start',
+        },
+      ],
+    },
+
+    lev_charon_authority: {
+      id: 'lev_charon_authority',
+      speaker: 'Lev',
+      text: `${rt.npc('Lev')} looks at you for a measured moment. "Above Director Vane. That's what the document chain says when you read the redactions against the unredacted margins. The committee that signed off on live trials used a specific government redaction tool that doesn't cover the authorization codes. The codes route to a small number of people — pre-Collapse oversight — and several of those people are still alive in faction leadership positions." A flat glance. "I am not going to name them. You will find the same data in the Director's Office journal if you reach it. I prefer you reach that conclusion on documents, not on my say-so."`,
+      onEnter: {
+        setFlag: { meridian_authority_implied: true },
+      },
       branches: [
         {
           label: 'Back to other topics.',
@@ -2658,7 +2680,43 @@ const averyTree: DialogueTree = {
           targetNode: 'avery_doubt',
         },
         {
+          label: `"The Hollow are a genotype failure. Harrow's preparation changes nothing."`,
+          targetNode: 'avery_kindling_theater',
+          requiresFlag: 'found_hollow_origin',
+        },
+        {
           label: '"I should go."',
+          targetNode: 'avery_leave',
+        },
+      ],
+    },
+
+    avery_kindling_theater: {
+      id: 'avery_kindling_theater',
+      speaker: 'Avery',
+      text: `${rt.npc('Avery')} does not look surprised. That is the first thing you notice. The second thing is that he does not look at the stairs to check for listeners — he wanted you to say this in a voice that carried. "Yes. It is a genotype. Harrow knows. We all know, actually. The preparation isn't about changing the virus. It is about changing how you meet it." A pause that contains six months of conversation with himself. "I do not think Harrow is a liar. I think he is a grief counselor who realized he was leading a church. The purification ritual does not stop the transformation. It gives the person about to transform a frame for what is happening to them. That is not nothing. But it is also not what the theology claims, and I have stopped being able to say the theology without the distinction mattering."`,
+      onEnter: {
+        setFlag: { harrow_doctrine_examined: true, avery_shared_kindling_intel: true },
+      },
+      branches: [
+        {
+          label: `"Does Harrow know you know?"`,
+          targetNode: 'avery_kindling_theater_harrow',
+        },
+        {
+          label: `"Thank you for being straight with me."`,
+          targetNode: 'avery_leave',
+        },
+      ],
+    },
+
+    avery_kindling_theater_harrow: {
+      id: 'avery_kindling_theater_harrow',
+      speaker: 'Avery',
+      text: `${rt.npc('Avery')} smiles without any of the usual affect. "He knows I know. He pretends he doesn't, because pretending is how you hold a congregation together when half of them suspect the doctrine and the other half need it. I pretend back. It is a small courtesy. It is also the reason I am leaving, eventually. I do not want to make a career of pretending."`,
+      branches: [
+        {
+          label: `"When you leave, I'll help if I can."`,
           targetNode: 'avery_leave',
         },
       ],
@@ -3210,6 +3268,11 @@ const elderSanguineTree: DialogueTree = {
           targetNode: 'elder_lore_tier_1',
         },
         {
+          label: `"MERIDIAN designed two strains — R-1 and R-8. You are neither. What are the Lucid, really?"`,
+          targetNode: 'elder_r2_confrontation',
+          requiresFlag: 'found_sanguine_origin',
+        },
+        {
           label: `"I need access to the ${rt.keyword('utility passage')}."`,
           targetNode: 'elder_utility_gate',
         },
@@ -3220,6 +3283,49 @@ const elderSanguineTree: DialogueTree = {
         {
           label: '"I should go."',
           targetNode: 'elder_leave',
+        },
+      ],
+    },
+
+    elder_r2_confrontation: {
+      id: 'elder_r2_confrontation',
+      speaker: 'The Elder',
+      text: `${rt.npc('The Elder')} does not look surprised. The stillness deepens in the way still water darkens when a larger thing swims beneath it. "Ah. You have read enough to ask the right question. Good." A slow blink. "There was a third strain. R-2. Intelligence-preservation protocol. It never completed authorized trials — the program was cancelled for being insufficiently weaponizable, which is the word the funding committee used. But a small number of samples survived the cancellation, in the way small numbers of things always survive." The eyes — which have been patient — become briefly specific. "We are what R-2 made, in the bodies of people who were willing to carry it. MERIDIAN does not know we exist in this form. The file you will find in the Director's Office mentions R-2 as archived. It was not archived. It was carried."`,
+      onEnter: {
+        setFlag: { found_lucid_origin: true, elder_revealed_r2: true },
+      },
+      branches: [
+        {
+          label: `"Carried by whom?"`,
+          targetNode: 'elder_r2_carried',
+        },
+        {
+          label: `"Does Vesper know this?"`,
+          targetNode: 'elder_r2_vesper',
+        },
+      ],
+    },
+
+    elder_r2_carried: {
+      id: 'elder_r2_carried',
+      speaker: 'The Elder',
+      text: `"A researcher who believed the program was being cancelled for the wrong reason." ${rt.npc('The Elder')} tilts their head fractionally. "Her name is not preserved in the files. She chose that. She distributed the samples to volunteers before the cancellation was enforced. Most of the volunteers did not survive integration. Some did. The Lucid are those descendants — the second and third generation of an experiment that was not supposed to have a first." A pause. "I was one of the original volunteers. I am here because I did survive. That is all the authority my voice should carry."`,
+      branches: [
+        {
+          label: `"Back to other topics."`,
+          targetNode: 'elder_start',
+        },
+      ],
+    },
+
+    elder_r2_vesper: {
+      id: 'elder_r2_vesper',
+      speaker: 'The Elder',
+      text: `"No. ${rt.npc('Vesper')} believes she is a variant of R-1. She is not wrong — her transformation was R-1, she was an authorized subject. But she believes the Lucid are another R-1 outcome, a philosophical variant rather than a genetic one. We have not corrected her. Correction would require her to reframe three decades of internal work." A small motion of the hand, graceful and final. "When she is ready to ask the question, we will answer it. That is our arrangement. It was not negotiated; it is what respect looks like between two Sanguine philosophies that do not quite match."`,
+      branches: [
+        {
+          label: `"Back to other topics."`,
+          targetNode: 'elder_start',
         },
       ],
     },
@@ -3497,7 +3603,55 @@ const vesperTree: DialogueTree = {
           requiresFlag: 'pens_covenant_arrangement',
         },
         {
+          label: `"Your condition was engineered. R-1 was the intended product. You were never an accident."`,
+          targetNode: 'vesper_engineered_admission',
+          requiresFlag: 'found_sanguine_origin',
+        },
+        {
           label: '"I should go."',
+          targetNode: 'vesper_leave',
+        },
+      ],
+    },
+
+    vesper_engineered_admission: {
+      id: 'vesper_engineered_admission',
+      speaker: 'Vesper',
+      text: `${rt.npc('Vesper')} closes the book on her lap. Not angrily — with the care of someone putting down a thing she has been holding for a long time. "I have known this. Not in the clinical terms you are using. But I have known. When I walked out of my office that first night, what I chose was not to feed. What I did not choose was to be capable of feeding. Someone designed me to be capable. Someone else could have run the trial and produced a different Vesper, one who ate her graduate students and called it breakfast. I am an outcome. The outcome had a specification." A breath that is almost a laugh, with no pleasure in it. "My ethics are the part I added. The rest is catalog."`,
+      onEnter: {
+        setFlag: { vesper_admitted_engineered: true },
+      },
+      branches: [
+        {
+          label: `"That doesn't make your ethics smaller. It makes them more yours."`,
+          targetNode: 'vesper_engineered_response_affirm',
+        },
+        {
+          label: `"It does make your authority on Sanguine identity narrower."`,
+          targetNode: 'vesper_engineered_response_challenge',
+        },
+      ],
+    },
+
+    vesper_engineered_response_affirm: {
+      id: 'vesper_engineered_response_affirm',
+      speaker: 'Vesper',
+      text: `A long pause. "Perhaps. I will sit with that." ${rt.npc('Vesper')} opens the book again, not to read but to have somewhere to put her hands. "Thank you for saying so. It is a kindness I was not looking for."`,
+      branches: [
+        {
+          label: `"Be well, Vesper."`,
+          targetNode: 'vesper_leave',
+        },
+      ],
+    },
+
+    vesper_engineered_response_challenge: {
+      id: 'vesper_engineered_response_challenge',
+      speaker: 'Vesper',
+      text: `${rt.npc('Vesper')} accepts the blow without flinching. "Yes. It does. I have been speaking about Sanguine experience as though my testimony were complete. It is not. It is one product of one specification. The others — the ${rt.keyword('Red Court')}, the ${rt.keyword('Lucid')} — are not distortions of my truth. They are parallel truths. I have been mistaken about the shape of the subject."`,
+      branches: [
+        {
+          label: `"That's an honest revision."`,
           targetNode: 'vesper_leave',
         },
       ],

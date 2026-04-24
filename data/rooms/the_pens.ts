@@ -783,6 +783,7 @@ export const THE_PENS_ROOMS: Room[] = [
         keywords: ['map', 'facility', 'annotations', 'red', 'ink'],
         description: 'The facility map has Rook\'s annotations in red ink: extraction room capacity notes, ward population maximums, holding cell rotation schedules, a route marked between research wing and a location outside the facility labeled TRANSIT POINT 4. The map is a complete operational picture. The red ink notations are the decisions behind the clipboard, the numbers behind the euphemisms.',
         skillCheck: { skill: 'perception', dc: 10, successAppend: 'TRANSIT POINT 4 is marked outside the facility perimeter, in a direction that corresponds to a road that runs northwest. The notation has a time code — a regular schedule. The research wing\'s AB-negative material goes to Transit Point 4 on a schedule that bypasses the cold storage manifest. It does not go to the Accord. It goes somewhere else.' },
+        questFlagOnSuccess: { flag: 'transit_point_4_schedule_noted', value: true },
       },
       {
         keywords: ['ledger', 'numbers', 'yield', 'rook'],

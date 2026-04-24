@@ -812,6 +812,43 @@ export const THE_SCAR_ROOMS: Room[] = [
         description: 'You look at the terminals. If you have already made your choice, the room knows. If you haven\'t, it waits.',
         questGate: 'charon_choice',
       },
+      // Vane acknowledgment — gated on meridian_bombing_orders_found (most-specific final deduction flag)
+      // Players who assembled the full bombing-truth deduction path will have this flag set.
+      // See: scar_blast_pattern_analyzed + scar_bombing_intent_understood + meridian_bombing_orders_found
+      {
+        keywords: ['vane', 'broadcaster', 'knew'],
+        description: 'You think of Vane, forty meters below, the seven years of broadcast. He knew. That\'s what the journal will confirm upstairs. Someone told you already — not with words, but with the shape of the crater and the language of the strike order — and the broadcaster has been waiting for a listener who could assemble the telling. That was the job. You are the assembly.',
+        skillCheck: {
+          skill: 'lore',
+          dc: 10,
+          successAppend: 'The broadcaster\'s final recommendation, seven years old, sits in the terminal comment log. Vane did not tell you to choose. Vane told you he has stopped knowing. The rest is yours to carry.',
+        },
+        questGate: 'meridian_bombing_orders_found',
+      },
+      // Bombing-coverup ending epilogues — gated on bombing_cover_confirmed
+      // One variant per ending; each is accessible by ending-specific keywords.
+      // Type system supports only one questGate per extra, so all four are gated on
+      // bombing_cover_confirmed and distinguished by keyword.
+      {
+        keywords: ['cure aftermath', 'after cure', 'cure cover-up'],
+        description: 'The Accord\'s legitimacy was the story it told about the bombing. The story was a lie you and Cross and Briggs now all know. When the Accord\'s citizens learn what you know, the faction will not fall — but the silence that held it together will. Cross will manage that transition. She will be worse at it than she\'s been at anything. Briggs will probably thrive. Nobody plans for that.',
+        questGate: 'bombing_cover_confirmed',
+      },
+      {
+        keywords: ['weapon aftermath', 'after weapon', 'weapon cover-up'],
+        description: 'Cross and Briggs will consolidate now. The coverup was theirs; the truth is theirs too. Some measure of unity at the center of a broken thing. It will not feel like victory to either of them. It will feel like what they should have done seven years ago.',
+        questGate: 'bombing_cover_confirmed',
+      },
+      {
+        keywords: ['seal aftermath', 'after seal', 'seal cover-up'],
+        description: 'You chose to leave the world its problem. Cross and Briggs will tear at each other over who lied longer, who authorized what, whose signature sits on which order. The rest of the Four Corners will not be consulted.',
+        questGate: 'bombing_cover_confirmed',
+      },
+      {
+        keywords: ['throne aftermath', 'after throne', 'throne cover-up'],
+        description: 'A new order begins with a founding lie already in hand. You know where the bodies are; you know who knew; you will know how to use them. The coverup is now yours to extend or to reveal. Most new orders choose extend. The Remnant will not be different.',
+        questGate: 'bombing_cover_confirmed',
+      },
       // Flag `companion_the_dog_active` is set by Howler 1 when addCompanion fires for the_dog — see tests/integration/dogAdoption.test.ts
       {
         keywords: ['dog cure', 'dog heal', 'dog safe', 'examine dog'],

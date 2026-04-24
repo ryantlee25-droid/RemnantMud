@@ -745,7 +745,7 @@ export const CROSSROADS_ROOMS: Room[] = [
           { desc: 'A woman with Salter tattoos sits by the fire alone, drinking from a flask. She doesn\'t look like she wants company.', weight: 2 },
           { desc: 'Three travelers huddle around the fire, voices low. "...heard the broadcast again last night. Clearer this time. Like whoever\'s sending it knows we\'re close." One of them looks north toward the market. "Sparks says she needs a signal booster to triangulate. Says she\'s close to finding the source."', weight: 3 },
         ],
-        dialogueTree: 'cr_campfire_lore',
+        dialogueTree: 'drifters_storyteller_tree',
       },
       {
         npcId: 'mysterious_stranger_sanguine',

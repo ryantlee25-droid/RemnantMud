@@ -456,7 +456,7 @@ export const NPCS: Record<string, RichNPC> = {
     dialogue:
       "The dog doesn't speak. It sits, and it watches, and eventually it either comes closer or it doesn't. There's no negotiating with it. There's no persuading it. You either treated it kindly the last time, or you didn't. It remembers.",
     isNamed: true,
-    zone: 'crossroads',
+    zone: 'river_road',
     spawnChance: 0.50,
     dispositionRoll: { friendly: 0.20, neutral: 0.40, wary: 0.35, hostile: 0.05 },
     activityPool: [

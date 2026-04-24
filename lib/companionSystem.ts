@@ -44,6 +44,8 @@ import {
   CROSS_LEAVE_NARRATION,
   SPARKS_JOIN_NARRATION,
   SPARKS_LEAVE_NARRATION,
+  THE_DOG_JOIN_NARRATION,
+  THE_DOG_LEAVE_NARRATION,
   COMPANION_INTRODUCTIONS,
 } from '@/data/companionNarration'
 import type { CombatOutcome } from '@/data/companionNarration'
@@ -75,6 +77,7 @@ const JOIN_NARRATION: Record<string, string[]> = {
   vesper: VESPER_JOIN_NARRATION,
   marshal_cross: CROSS_JOIN_NARRATION,
   sparks_radio: SPARKS_JOIN_NARRATION,
+  the_dog: THE_DOG_JOIN_NARRATION,
 }
 
 const LEAVE_NARRATION: Record<string, Record<string, string[]>> = {
@@ -85,6 +88,7 @@ const LEAVE_NARRATION: Record<string, Record<string, string[]>> = {
   vesper: VESPER_LEAVE_NARRATION,
   marshal_cross: CROSS_LEAVE_NARRATION,
   sparks_radio: SPARKS_LEAVE_NARRATION,
+  the_dog: THE_DOG_LEAVE_NARRATION,
 }
 
 // ------------------------------------------------------------
@@ -159,12 +163,15 @@ export function getCompanionIntroduction(npcId: string): GameMessage[] | null {
 /**
  * Add a companion to the player.
  * Returns null if a companion is already active (single companion rule).
+ *
+ * @param cycle - Optional player cycle number. Used for cycle-aware canDie logic.
  */
 export function addCompanion(
   npcId: string,
   questContext: string,
   actionCount: number,
   canDie: boolean = true,
+  cycle?: number,
 ): Companion | null {
   // Single companion invariant: caller must check player.currentCompanion
   // before calling this. We return null to signal refusal.
@@ -172,11 +179,19 @@ export function addCompanion(
     // Unknown NPC — no narration pool, refuse silently
     return null
   }
+
+  // Late-cycle Dog is scarred/rare rather than killable — see NARRATIVE-PLAN.md Phase 4.
+  // At cycle 4+, the Dog has survived enough that it is treated as a permanent presence.
+  let resolvedCanDie = canDie
+  if (npcId === 'the_dog' && cycle !== undefined && cycle >= 4) {
+    resolvedCanDie = false
+  }
+
   return {
     npcId,
     joinedAt: actionCount,
     questContext,
-    canDie,
+    canDie: resolvedCanDie,
   }
 }
 

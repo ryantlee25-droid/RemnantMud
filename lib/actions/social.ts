@@ -16,6 +16,7 @@ import { getItem } from '@/data/items'
 import { removeItem, getInventory } from '@/lib/inventory'
 import { msg, systemMsg, errorMsg } from '@/lib/messages'
 import { getQuestEntries } from '@/data/questDescriptions'
+import { addCompanion, getCompanionIntroduction, getCompanionJoinMessage } from '@/lib/companionSystem'
 
 // ------------------------------------------------------------
 // Handlers
@@ -816,6 +817,89 @@ export async function handleGive(engine: EngineCore, noun: string | undefined): 
   await removeItem(player.id, itemId)
   const updatedInventory = await getInventory(player.id)
   engine._setState({ inventory: updatedInventory })
+
+  // ------------------------------------------------------------
+  // the_dog feeding adoption flow
+  // ------------------------------------------------------------
+  if (npcId === 'the_dog' && FOOD_ITEM_IDS.has(itemId)) {
+    const questFlags = player.questFlags ?? {}
+
+    // If the_dog is already the active companion — brief acknowledgment
+    if (player.currentCompanion?.npcId === 'the_dog') {
+      engine._appendMessages([
+        msg(`You offer the ${rt.item(itemName)} to the dog.`),
+        msg('The dog accepts the food. Tail moves once.', 'narrative'),
+      ])
+      return
+    }
+
+    // If the player already has a DIFFERENT companion — fall through to normal give
+    if (player.currentCompanion && player.currentCompanion.npcId !== 'the_dog') {
+      // Do not adopt; fall through to food give behavior below
+    } else {
+      // Feed-count adoption logic
+      const currentCount = (questFlags['dog_fed_count'] as number | undefined) ?? 0
+      const newCount = currentCount + 1
+
+      await engine.setQuestFlag('dog_fed_count', newCount)
+
+      if (newCount === 1) {
+        engine._appendMessages([
+          msg(`You set the ${rt.item(itemName)} down and step back.`),
+          msg(
+            'The stray eats at distance. It watches you while it chews. It does not say thank you.',
+            'narrative',
+          ),
+        ])
+        return
+      }
+
+      if (newCount === 2) {
+        engine._appendMessages([
+          msg(`You offer the ${rt.item(itemName)}. The dog steps forward this time.`),
+          msg(
+            'The dog comes closer this time. Still does not stay. Still does not leave.',
+            'narrative',
+          ),
+        ])
+        return
+      }
+
+      if (newCount >= 3) {
+        // Cap the feed count
+        await engine.setQuestFlag('dog_fed_count', 3)
+
+        // Get introduction narration (fires before join)
+        const intro = getCompanionIntroduction('the_dog')
+        if (intro) {
+          engine._appendMessages(intro)
+        }
+
+        // Create the companion
+        const companion = addCompanion(
+          'the_dog',
+          'fed_kindly',
+          player.actionsTaken,
+          true,
+          player.cycle ?? 1,
+        )
+
+        if (companion) {
+          // Read the freshest player state (setQuestFlag may have updated questFlags)
+          const freshPlayer = engine.getState().player ?? player
+          engine._setState({
+            player: { ...freshPlayer, currentCompanion: companion },
+          })
+
+          // Emit the join message
+          const joinMsg = getCompanionJoinMessage(companion)
+          engine._appendMessages([joinMsg])
+        }
+
+        return
+      }
+    }
+  }
 
   // Apply quest flags and reputation for specific item+NPC combinations
   if (itemId === 'meridian_keycard' && npcId === 'lev') {

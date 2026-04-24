@@ -1,4 +1,5 @@
 import type { Room } from '@/types/game'
+import { computeLayout } from './mapLayout'
 
 // Box-drawing constants — each inner line is exactly 40 chars wide between the ║ borders.
 const BOX_WIDTH = 42
@@ -7,27 +8,11 @@ const INNER_WIDTH = BOX_WIDTH - 2  // 40 chars between ║ and ║
 // Maximum grid radius from the current room (caps display at ~15x15 logical cells)
 const MAX_GRID_RADIUS = 7
 
-// Direction deltas: [dx, dy] where +x = east, +y = south
-const DIR_DELTAS: Record<string, [number, number]> = {
-  north: [0, -1],
-  south: [0,  1],
-  east:  [1,  0],
-  west:  [-1, 0],
-  up:    [0, -1],
-  down:  [0,  1],
-}
-
 function padLine(content: string): string {
   const padded = content.length >= INNER_WIDTH
     ? content.slice(0, INNER_WIDTH)
     : content.padEnd(INNER_WIDTH)
   return `║${padded}║`
-}
-
-interface PlacedRoom {
-  id: string
-  x: number
-  y: number
 }
 
 export function renderZoneMap(
@@ -41,10 +26,6 @@ export function renderZoneMap(
     roomById.set(room.id, room)
   }
 
-  // ── 2. BFS from current room, placing rooms on a coordinate grid ──────────
-  const coordByRoomId = new Map<string, [number, number]>()
-  const roomIdAtCoord = new Map<string, string>()  // key: "x,y"
-
   const startRoom = roomById.get(currentRoomId)
   if (!startRoom) {
     // Fallback: return a simple "no map" box
@@ -55,48 +36,17 @@ export function renderZoneMap(
     return lines
   }
 
-  const queue: PlacedRoom[] = [{ id: currentRoomId, x: 0, y: 0 }]
-  coordByRoomId.set(currentRoomId, [0, 0])
-  roomIdAtCoord.set('0,0', currentRoomId)
+  // ── 2. BFS from current room, placing rooms on a coordinate grid ──────────
+  const { positions: rawPositions, bounds } = computeLayout(rooms, currentRoomId, visitedRoomIds, MAX_GRID_RADIUS)
 
-  while (queue.length > 0) {
-    const current = queue.shift()!
-    const room = roomById.get(current.id)
-    if (!room?.exits) continue
-
-    // Only expand from rooms the player has visited (or the current room)
-    const isAccessible = current.id === currentRoomId || visitedRoomIds.has(current.id)
-    if (!isAccessible) continue
-
-    for (const [dir, delta] of Object.entries(DIR_DELTAS)) {
-      const neighborId = (room.exits as Record<string, string>)[dir]
-      if (!neighborId) continue
-      if (coordByRoomId.has(neighborId)) continue  // already placed
-
-      const nx = current.x + delta[0]
-      const ny = current.y + delta[1]
-
-      // Cap to grid radius
-      if (Math.abs(nx) > MAX_GRID_RADIUS || Math.abs(ny) > MAX_GRID_RADIUS) continue
-
-      const key = `${nx},${ny}`
-      // Don't overwrite a cell already claimed by a different room
-      if (roomIdAtCoord.has(key)) continue
-
-      coordByRoomId.set(neighborId, [nx, ny])
-      roomIdAtCoord.set(key, neighborId)
-      queue.push({ id: neighborId, x: nx, y: ny })
-    }
+  // Convert positions map format: LayoutResult uses {x, y} objects, renderer used [x, y] tuples
+  const coordByRoomId = new Map<string, [number, number]>()
+  for (const [id, { x, y }] of rawPositions) {
+    coordByRoomId.set(id, [x, y])
   }
 
   // ── 3. Compute grid bounds ─────────────────────────────────────────────────
-  let minX = 0, maxX = 0, minY = 0, maxY = 0
-  for (const [, [x, y]] of coordByRoomId) {
-    if (x < minX) minX = x
-    if (x > maxX) maxX = x
-    if (y < minY) minY = y
-    if (y > maxY) maxY = y
-  }
+  const { minX, maxX, minY, maxY } = bounds
 
   const gridW = maxX - minX + 1  // number of room columns
   const gridH = maxY - minY + 1  // number of room rows

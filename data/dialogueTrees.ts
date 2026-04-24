@@ -4079,6 +4079,26 @@ const rookTree: DialogueTree = {
           label: '"I want to discuss an arrangement."',
           targetNode: 'rook_alliance_gate',
         },
+        // ---- Evidence-gated branches (Phase 3b) ----
+        {
+          label: `"I've seen the ${rt.keyword('Vex')} manifest. You're playing three sides."`,
+          targetNode: 'rook_three_sides',
+          requiresFlag: 'pens_covenant_arrangement',
+        },
+        {
+          label: '"I read the letter. The one addressed to the Council."',
+          targetNode: 'rook_three_sides',
+          requiresFlag: 'pens_rooks_letter_found',
+        },
+        {
+          label: `"Tell me about ${rt.keyword('Transit Point 4')}.`,
+          targetNode: 'rook_transit_point_4',
+        },
+        {
+          label: '"I know about the letter. And the yield numbers. We need to talk."',
+          targetNode: 'rook_confrontation',
+          requiresFlag: 'pens_rooks_letter_found',
+        },
         {
           label: '"I should go."',
           targetNode: 'rook_leave',
@@ -4270,6 +4290,161 @@ const rookTree: DialogueTree = {
       id: 'rook_leave',
       speaker: 'Castellan Rook',
       text: `"Do come again. I so rarely get conversations that aren't —" ${rt.npc('Castellan Rook')} pauses, selecting the word with the care of someone choosing a blade from a display. "— nutritional." The thin smile. The lamp. The shadows returning to their assigned positions as you leave. The door closes behind you with a click that sounds, somehow, like a ledger entry being finalized.`,
+    },
+
+    // ============================================================
+    // Phase 3b — Rook arc deepening
+    // ============================================================
+
+    // ---- Systemic dishonesty: recharacterization (gated on manifest OR letter) ----
+    rook_three_sides: {
+      id: 'rook_three_sides',
+      speaker: 'Castellan Rook',
+      text: `The pen sets itself down — not dropped, not hidden, simply placed with the precision of someone who has stopped pretending the conversation is not happening. "You're a careful reader." ${rt.npc('Castellan Rook')} considers you for a moment that is longer than it needs to be. "Then you've already worked out the geometry. The ${rt.keyword('Red Court')} has my administrative loyalty — the quota systems, the extraction records, everything they audit. A second party has the yield that doesn't appear in those records. And I have —" A pause. The word that follows is chosen from a very short list. "— contingencies. For myself. That is the correct number of sides for a person in my position." The flat warmth holds — the surface of someone who is still choosing how much to show. "The question I find interesting is what you intend to do with that arithmetic."`,
+      branches: [
+        {
+          label: '"Who is the second party? The letter recipient?"',
+          targetNode: 'rook_three_sides_letter',
+          requiresFlag: 'pens_rooks_letter_found',
+        },
+        {
+          label: '"The Vex manifest showed a separate yield channel. You\'ve been skimming from the Court."',
+          targetNode: 'rook_three_sides_manifest',
+          requiresFlag: 'pens_covenant_arrangement',
+        },
+        {
+          label: '"I\'m not here to do anything with it. I just want to understand."',
+          targetNode: 'rook_three_sides_manifest',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'rook_start',
+        },
+      ],
+    },
+
+    rook_three_sides_letter: {
+      id: 'rook_three_sides_letter',
+      speaker: 'Castellan Rook',
+      text: `"The letter is insurance." ${rt.npc('Castellan Rook')} does not look at the desk where the letter sits. They do not need to. "If this facility is exposed — and eventually everything is exposed — the letter arrives at the Council with my evidence already in it. My evidence, my framing, my version of events. I become the person who documented the irregularities rather than the person who ran the operation." The tone carries the warmth of someone explaining a business decision they are comfortable with. "The recipient is not a name I've written anywhere. They exist in an arrangement predating my appointment here. The arrangement predates everything in this room." A small, precise adjustment of the pen. "The Court does not know. That is the point."`,
+      branches: [
+        {
+          label: '"You turned Lyris. The letter mentions that."',
+          targetNode: 'rook_three_sides_manifest',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'rook_start',
+        },
+      ],
+    },
+
+    rook_three_sides_manifest: {
+      id: 'rook_three_sides_manifest',
+      speaker: 'Castellan Rook',
+      text: `"I turned ${rt.npc('Lyris')} four months after I took this appointment." ${rt.npc('Castellan Rook')} says this with the same register used to report extraction yields — factual, clean, without the weight it should carry. "Lyris believed they were doing something important. I gave them a structure for that belief and a direction. They are — genuinely useful. Genuinely loyal to what they think the arrangement is." A slight shift in posture. Not discomfort. The adjustment of someone filing a thing correctly. "I have never been dishonest with the ${rt.keyword('Red Court')} about anything that would survive an audit. I have simply arranged the information so that the audit does not look in every direction." The flat gaze holds. "That is not the same as dishonesty. It is resource management at a more granular level."`,
+      branches: [
+        {
+          label: 'Back to other topics.',
+          targetNode: 'rook_start',
+        },
+        {
+          label: '"I should go."',
+          targetNode: 'rook_leave',
+        },
+      ],
+    },
+
+    // ---- Direct confrontation branch (4th Red Court resolution) ----
+    rook_confrontation: {
+      id: 'rook_confrontation',
+      speaker: 'Castellan Rook',
+      text: `${rt.npc('Castellan Rook')} looks at you for a long moment. The lamp. The letter on the desk between you. The shadows where they have always been. "I wondered when someone would come in through the door instead of the system." They do not reach for the letter. "The yield discrepancy and the letter together. You've done the work." Something in the professional warmth shifts — not gone, settled. The blade finding its angle. "Then let me be direct with you, since directness is apparently what this conversation requires." They lean forward slightly, the first movement that has not been economical. "I have been writing the letter as insurance. If ${rt.keyword('The Pens')} is exposed, the letter goes to the Council with my evidence. I am planning for failure. I have been planning for it since I turned ${rt.npc('Lyris')}." The silence that follows is not hesitation. It is the silence of a person who has said a true thing and is giving you time to understand its weight. "Now. What do you intend to do with that?"`,
+      onEnter: {
+        setFlag: { transit_point_4_noticed: true },
+      },
+      branches: [
+        {
+          label: '"Help me hand this facility to the Council. Together."',
+          targetNode: 'rook_handover_pact',
+        },
+        {
+          label: '"Nothing. I\'m not here to make a deal."',
+          targetNode: 'rook_refuse_pact',
+        },
+      ],
+    },
+
+    rook_handover_pact: {
+      id: 'rook_handover_pact',
+      speaker: 'Castellan Rook',
+      text: `The silence is three seconds long. "You understand what this means." It is not a question. "Kade and ${rt.npc('Vex')} are executed for operational incompetence — the Court does not forgive facility exposure in its administrators. ${rt.npc('Lyris')} becomes leverage, mine and then whoever I sell the arrangement to. Everyone in this building suffers more, in different ways, than they would under any of the other conclusions available to them." ${rt.npc('Castellan Rook')} reaches into the top drawer and removes a document — a single folded sheet, already written. "I prepared this six weeks ago. I have been waiting to see whether anyone would come who understood the whole picture." They slide it across the desk. "Sign it. Your name as witness. My name as the person who documented the irregularities and came forward voluntarily." The thin smile. The blade at its angle. "This is the darkest version of how this ends. I want you to know that before you pick up the pen."`,
+      onEnter: {
+        setFlag: { rook_council_handover_pact: true, red_court_arc_complete: true },
+      },
+      branches: [
+        {
+          label: 'Sign the document.',
+          targetNode: 'rook_leave',
+        },
+      ],
+    },
+
+    rook_refuse_pact: {
+      id: 'rook_refuse_pact',
+      speaker: 'Castellan Rook',
+      text: `${rt.npc('Castellan Rook')} studies you for a moment. Then they lean back — the slight, economical motion of someone recalibrating a risk assessment. "Then we stay on our feet as long as we can." The document goes back into the drawer. The letter remains on the desk. The lamp does not move. "I find I am not — disappointed. Most people who come into this office with the full picture want to use it. You are the first who has declined." The flat warmth holds, but something in it is different now. Not softened. More honest. "The facility continues. The arrangement continues. And one of us will eventually be wrong about how long we can stay on our feet." The thin smile, smaller this time. "Come back if you change your mind. The offer has an expiration — it's just not on the document."`,
+      branches: [
+        {
+          label: '"I\'ll think about it."',
+          targetNode: 'rook_leave',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'rook_start',
+        },
+      ],
+    },
+
+    // ---- Transit Point 4 thread ----
+    rook_transit_point_4: {
+      id: 'rook_transit_point_4',
+      speaker: 'Castellan Rook',
+      text: `The pen stops moving. ${rt.npc('Castellan Rook')} looks at you with the specific attention they reserve for information they did not expect someone to have. "You've seen the map." Not a question. "The schedule exists. The ${rt.keyword('AB-negative')} research material moves on a regular rotation — I will not give you the interval. It goes to ${rt.keyword('Transit Point 4')} and from there to a destination that is not in any record you have access to in this facility." They set the pen down. "I do not know what is at the destination. I have not asked. In my experience, the questions you don't ask are often the ones with the most actionable answers." A careful pause. "The arrangement predates me. I inherited it with the appointment. That is the entirety of what I'll say on this."`,
+      onEnter: {
+        setFlag: { transit_point_4_noticed: true },
+      },
+      branches: [
+        {
+          label: '"Lyris told me about a shipping route. Partial."',
+          targetNode: 'rook_transit_point_4_lyris',
+          requiresFlag: 'aid_lyris_extraction',
+        },
+        {
+          label: '"Who set up the arrangement originally?"',
+          targetNode: 'rook_transit_point_4',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'rook_start',
+        },
+      ],
+    },
+
+    rook_transit_point_4_lyris: {
+      id: 'rook_transit_point_4_lyris',
+      speaker: 'Castellan Rook',
+      text: `Something moves behind ${rt.npc('Castellan Rook')}'s eyes — not surprise. The assessment of a variable that has changed positions on the board. "Lyris." The name is placed with care. "Lyris was present for two transfers. The routing coordinates, the time window — what Lyris knows is partial by design. What they've shared with you is —" A slight pause. "Operational. You now have a piece of the map." They study you. "There are people who want to know where that route terminates. Powerful ones. Some of them are the ${rt.keyword('Red Court')}. Some of them are not." The flat warmth does not shift, but the edges that live underneath it are more visible. "Be careful what you do with a partial map. The people at the destination have had years to prepare for someone finding the thread."`,
+      branches: [
+        {
+          label: 'Back to other topics.',
+          targetNode: 'rook_start',
+        },
+        {
+          label: '"I should go."',
+          targetNode: 'rook_leave',
+        },
+      ],
     },
   },
 }

@@ -4,7 +4,7 @@
 // CommandInput.tsx — Terminal-style command line
 // ============================================================
 
-import { useState, useRef, useEffect, type KeyboardEvent } from 'react'
+import { useState, useRef, useEffect, type KeyboardEvent, type ReactNode } from 'react'
 import { parseCommand, parseDialogueInput } from '@/lib/parser'
 import { useGame } from '@/lib/gameContext'
 
@@ -96,13 +96,41 @@ export default function CommandInput() {
   }
 
   const player = state.player
-  const prompt = player
-    ? `<HP:${player.hp}/${player.maxHp}> `
-    : '> '
+  const combatState = state.combatState
+
+  // Build enemy state label from HP ratio
+  function enemyStateLabel(enemyHp: number, maxHp: number): string {
+    if (maxHp <= 0) return 'wounded'
+    const ratio = enemyHp / maxHp
+    if (ratio >= 0.66) return 'wounded'
+    if (ratio >= 0.33) return 'bloodied'
+    return 'dying'
+  }
+
+  // Render combat prompt as React nodes when in combat, otherwise plain string
+  let promptNode: ReactNode
+  if (player && combatState?.active) {
+    const stateLabel = enemyStateLabel(combatState.enemyHp, combatState.enemy.maxHp)
+    promptNode = (
+      <>
+        <span className="text-amber-400">{`[HP ${player.hp}/${player.maxHp}] `}</span>
+        <span className="text-amber-400">{'['}</span>
+        <span className="text-amber-400">{combatState.enemy.name}</span>
+        <span className="text-amber-400">{' — '}</span>
+        <span className="text-red-400">{stateLabel}</span>
+        <span className="text-amber-400">{'] '}</span>
+        <span className="text-cyan-400">{'(attack/flee) > '}</span>
+      </>
+    )
+  } else if (player) {
+    promptNode = <span className="text-cyan-400">{`<HP:${player.hp}/${player.maxHp}> `}</span>
+  } else {
+    promptNode = <span className="text-cyan-400">{'> '}</span>
+  }
 
   return (
     <div className="flex items-center bg-black border-t border-gray-700 px-4 py-2 font-mono">
-      <span className="text-cyan-400 mr-2 select-none whitespace-nowrap">{prompt}</span>
+      <span className="mr-2 select-none whitespace-nowrap">{promptNode}</span>
       <input
         ref={inputRef}
         type="text"
@@ -115,6 +143,7 @@ export default function CommandInput() {
         autoCorrect="off"
         autoCapitalize="off"
         spellCheck={false}
+        maxLength={200}
       />
     </div>
   )

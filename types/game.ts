@@ -756,6 +756,7 @@ export interface DialogueNode {
     grantItem?: string[]
     grantRep?: { faction: FactionType; delta: number }
     removeItem?: string[]
+    grantNarrativeKey?: string  // grants this narrative key when the node is entered
   }
 }
 

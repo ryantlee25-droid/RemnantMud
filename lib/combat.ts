@@ -563,6 +563,51 @@ export function playerAttack(
 }
 
 // ------------------------------------------------------------
+// Enemy flee check — called BEFORE enemy attacks each round
+// ------------------------------------------------------------
+
+/**
+ * Check whether the enemy attempts to flee this round.
+ * Uses fleeThreshold (default 0.0 = never flee).
+ * Flee is attempted at most once per fight (guarded by enemyFleeAttempted flag).
+ * Returns updated state and optional messages. If enemyFled=true in newState,
+ * the caller should end combat and award full XP.
+ */
+export function checkEnemyFlee(
+  state: CombatState,
+): { messages: GameMessage[]; newState: CombatState } {
+  const { enemy, enemyHp } = state
+  const messages: GameMessage[] = []
+
+  const fleeThreshold = enemy.fleeThreshold ?? 0.0
+
+  // Never flees, or already attempted
+  if (fleeThreshold <= 0 || state.enemyFleeAttempted) {
+    return { messages, newState: state }
+  }
+
+  const hpRatio = enemyHp / enemy.hp
+  if (hpRatio >= fleeThreshold) {
+    return { messages, newState: state }
+  }
+
+  // Mark attempt as used regardless of outcome
+  const afterAttempt: CombatState = { ...state, enemyFleeAttempted: true }
+
+  // 50% base chance to escape
+  if (Math.random() < 0.5) {
+    messages.push(msg(`${enemy.name} breaks off — wounded, retreating!`))
+    return {
+      messages,
+      newState: { ...afterAttempt, active: false, enemyFled: true },
+    }
+  }
+
+  messages.push(msg(`${enemy.name} hesitates but presses on.`))
+  return { messages, newState: afterAttempt }
+}
+
+// ------------------------------------------------------------
 // Enemy attacks player
 // ------------------------------------------------------------
 
@@ -688,11 +733,29 @@ export function enemyAttack(
   // Hive mother damage bonus for non-hive_mother enemies
   damage += hiveDamageBonus(state)
 
+  // Enemy critChance: per-hit critical strike (default 5% if not set)
+  // Applied before armor reduction so crit shows in message but armor still mitigates.
+  // Natural 10 roll is already a crit below — critChance only fires on non-natural-10 hits.
+  let rawDamage = damage
+  let enemyCrit = false
+  if (roll !== 10) {
+    const critChance = enemy.critChance ?? 0.05
+    if (Math.random() < critChance) {
+      rawDamage = Math.ceil(rawDamage * 1.5)
+      damage = rawDamage
+      enemyCrit = true
+      messages.push(msg(`${rt.enemy(enemy.name)} strikes a vital spot — critical damage!`))
+    }
+  }
+
   if (roll === 10) {
     damage = Math.ceil(damage * 1.5)
     messages.push(
       msg(`${rt.enemy(enemy.name)} catches you clean. It hurts. [${damage} damage]`),
     )
+  } else if (enemyCrit) {
+    // Critical message was pushed above; emit a damage line now
+    messages.push(msg(`[${damage} damage]`))
   } else if (isBruteCharge) {
     messages.push(
       msg(`The brute charges — there's no finesse in it, just mass and forward velocity. [${damage} damage]`),
@@ -1026,4 +1089,57 @@ export function rollLoot(enemy: Enemy): string[] {
     }
   }
   return dropped
+}
+
+// ------------------------------------------------------------
+// Log compression utility
+// ------------------------------------------------------------
+
+/**
+ * Collapse consecutive identical 'combat' messages into "(×N)" format.
+ * Only compresses messages with the same text AND the same type.
+ * Non-combat messages (system, narrative, etc.) are never compressed.
+ *
+ * Example input:
+ *   "Shuffler hits you for 2."   (combat)
+ *   "Shuffler hits you for 2."   (combat)
+ *   "Shuffler hits you for 2."   (combat)
+ * Example output:
+ *   "Shuffler hits you for 2. (×3)"  (combat)
+ */
+export function compressLog(messages: GameMessage[]): GameMessage[] {
+  if (messages.length === 0) return messages
+
+  const result: GameMessage[] = []
+  let i = 0
+
+  while (i < messages.length) {
+    const current = messages[i]!
+    // Only compress combat-type messages
+    if (current.type !== 'combat') {
+      result.push(current)
+      i++
+      continue
+    }
+
+    // Count consecutive identical combat messages
+    let count = 1
+    while (
+      i + count < messages.length &&
+      messages[i + count]!.type === 'combat' &&
+      messages[i + count]!.text === current.text
+    ) {
+      count++
+    }
+
+    if (count > 1) {
+      result.push({ ...current, text: `${current.text} (×${count})` })
+    } else {
+      result.push(current)
+    }
+
+    i += count
+  }
+
+  return result
 }

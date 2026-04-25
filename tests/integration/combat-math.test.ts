@@ -4,7 +4,7 @@
 
 import { describe, it, expect, vi } from 'vitest'
 import type { Player, Enemy, CombatState, Item } from '@/types/game'
-import { startCombat, playerAttack, enemyAttack, computeArmorReduction } from '@/lib/combat'
+import { startCombat, playerAttack, enemyAttack, computeArmorReduction, checkEnemyFlee, compressLog } from '@/lib/combat'
 import { statModifier, DC } from '@/lib/dice'
 import { ENEMIES } from '@/data/enemies'
 
@@ -333,6 +333,134 @@ describe('combat math (real, not mocked)', () => {
       // contract regardless of whether ceil or floor is used internally.
       expect(computeArmorReduction(1, 5)).toBe(1)
       expect(computeArmorReduction(1, 10)).toBe(1)
+    })
+  })
+
+  // ------------------------------------------------------------------
+  // H4: Enemy crit, flee, and log compression
+  // ------------------------------------------------------------------
+  describe('enemy critChance', () => {
+    it('crit does NOT fire when random is above critChance threshold', () => {
+      // enemy critChance=0.05; Math.random returns 0.75 for d10 hit-check (roll 8, hits remnant)
+      // then 0.5 for rollDamage, then 0.99 for critChance check (> 0.05 → no crit)
+      vi.spyOn(Math, 'random')
+        .mockReturnValueOnce(0.75)   // roll1d10 → 8 (hit)
+        .mockReturnValueOnce(0.5)    // rollDamage
+        .mockReturnValueOnce(0.99)   // critChance check → no crit (0.99 > 0.05)
+      const player = makePlayer()
+      const enemy: Enemy = { ...shuffler, critChance: 0.05 }
+      const state = makeCombatState(enemy)
+      const { messages } = enemyAttack(player, state)
+      const text = messages.map(m => m.text).join(' ')
+      expect(text).not.toContain('vital spot')
+      vi.restoreAllMocks()
+    })
+
+    it('crit fires when random is below critChance threshold', () => {
+      // enemy critChance=0.5; Math.random returns 0.75 for d10 hit-check (roll 8, non-nat-10),
+      // then 0.5 for rollDamage, then 0.01 for critChance check (< 0.5 → crit fires)
+      vi.spyOn(Math, 'random')
+        .mockReturnValueOnce(0.75)   // roll1d10 → 8 (hit, not nat-10)
+        .mockReturnValueOnce(0.5)    // rollDamage
+        .mockReturnValueOnce(0.01)   // critChance check → crit fires (0.01 < 0.5)
+      const player = makePlayer()
+      const enemy: Enemy = { ...shuffler, critChance: 0.5 }
+      const state = makeCombatState(enemy)
+      const { messages } = enemyAttack(player, state)
+      const text = messages.map(m => m.text).join(' ')
+      expect(text).toContain('vital spot')
+      vi.restoreAllMocks()
+    })
+  })
+
+  describe('enemy flee (checkEnemyFlee)', () => {
+    it('flee fires when HP is below fleeThreshold and random < 0.5', () => {
+      // Screamer: fleeThreshold=0.5. Set enemyHp to 40% of max (below threshold).
+      // Mock random < 0.5 so the flee attempt succeeds.
+      vi.spyOn(Math, 'random').mockReturnValue(0.3)  // < 0.5 → flee succeeds
+      const screamer = ENEMIES['screamer']!
+      // 4/10 = 40% — below the 50% threshold
+      const state = makeCombatState(screamer, { enemyHp: 4 })
+      const { messages, newState } = checkEnemyFlee(state)
+      const text = messages.map(m => m.text).join(' ')
+      expect(text).toContain('breaks off')
+      expect(newState.enemyFled).toBe(true)
+      expect(newState.active).toBe(false)
+      vi.restoreAllMocks()
+    })
+
+    it('flee does NOT fire when HP is above fleeThreshold', () => {
+      // Screamer at 60% HP — above the 50% flee threshold
+      const screamer = ENEMIES['screamer']!
+      const state = makeCombatState(screamer, { enemyHp: 6 })  // 6/10 = 60%
+      const { messages, newState } = checkEnemyFlee(state)
+      expect(messages).toHaveLength(0)
+      expect(newState.enemyFled).toBeFalsy()
+      expect(newState.active).toBe(true)
+    })
+
+    it('flee attempt only fires once per fight (enemyFleeAttempted flag)', () => {
+      // First call with HP below threshold and random that suppresses escape (>= 0.5)
+      // then second call — should produce no flee messages even with HP still low
+      vi.spyOn(Math, 'random').mockReturnValue(0.7)  // >= 0.5 → flee fails, flag set
+      const screamer = ENEMIES['screamer']!
+      const state = makeCombatState(screamer, { enemyHp: 2 })  // very low
+      const { messages: msgs1, newState: state1 } = checkEnemyFlee(state)
+      expect(msgs1.map(m => m.text).join(' ')).toContain('hesitates')
+      expect(state1.enemyFleeAttempted).toBe(true)
+
+      // Second call — already attempted, should be silent
+      vi.spyOn(Math, 'random').mockReturnValue(0.1)  // would flee if check ran
+      const { messages: msgs2, newState: state2 } = checkEnemyFlee(state1)
+      expect(msgs2).toHaveLength(0)
+      expect(state2.enemyFled).toBeFalsy()
+      vi.restoreAllMocks()
+    })
+  })
+
+  describe('compressLog', () => {
+    it('compresses 3 consecutive identical combat messages into (×3) format', () => {
+      const msgs = [
+        { id: 'a', text: 'Shuffler hits you for 2.', type: 'combat' as const },
+        { id: 'b', text: 'Shuffler hits you for 2.', type: 'combat' as const },
+        { id: 'c', text: 'Shuffler hits you for 2.', type: 'combat' as const },
+      ]
+      const result = compressLog(msgs)
+      expect(result).toHaveLength(1)
+      expect(result[0]!.text).toBe('Shuffler hits you for 2. (×3)')
+    })
+
+    it('does not compress messages with different text', () => {
+      const msgs = [
+        { id: 'a', text: 'Shuffler hits you for 2.', type: 'combat' as const },
+        { id: 'b', text: 'Shuffler hits you for 3.', type: 'combat' as const },
+        { id: 'c', text: 'Shuffler hits you for 2.', type: 'combat' as const },
+      ]
+      const result = compressLog(msgs)
+      expect(result).toHaveLength(3)
+    })
+
+    it('does not compress non-combat messages even if text is identical', () => {
+      const msgs = [
+        { id: 'a', text: 'Something shifts.', type: 'narrative' as const },
+        { id: 'b', text: 'Something shifts.', type: 'narrative' as const },
+      ]
+      const result = compressLog(msgs)
+      expect(result).toHaveLength(2)
+    })
+
+    it('handles mixed types: compresses combat runs but leaves others intact', () => {
+      const msgs = [
+        { id: 'a', text: 'Hit for 2.', type: 'combat' as const },
+        { id: 'b', text: 'Hit for 2.', type: 'combat' as const },
+        { id: 'c', text: 'Watch yourself.', type: 'system' as const },
+        { id: 'd', text: 'Hit for 2.', type: 'combat' as const },
+      ]
+      const result = compressLog(msgs)
+      expect(result).toHaveLength(3)
+      expect(result[0]!.text).toBe('Hit for 2. (×2)')
+      expect(result[1]!.text).toBe('Watch yourself.')
+      expect(result[2]!.text).toBe('Hit for 2.')
     })
   })
 })

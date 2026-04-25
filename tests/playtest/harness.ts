@@ -26,6 +26,12 @@ import type {
 } from '@/types/game'
 import type { ConditionId } from '@/types/traits'
 
+// Internal type alias used by the forceSpawn shim
+type EngineWithPopulation = {
+  _applyPopulation: (room: Room) => Room
+  getState: () => GameState
+}
+
 // ------------------------------------------------------------
 // Public types
 // ------------------------------------------------------------
@@ -42,6 +48,18 @@ export interface SessionOptions {
   mockRandom?: number
   /** Shim _applyPopulation to use pinned RNG instead of live Math.random — default true. */
   mockRoomPopulation?: boolean
+  /**
+   * When true, every room that has a `hollowEncounter` block will deterministically
+   * spawn an enemy on entry — regardless of baseChance, timeModifier, or pressure.
+   * Enemy selected = highest-weight entry from the room's threatPool (ties broken by
+   * first in array). Quantity = entry.quantity.min (fully deterministic).
+   *
+   * Safe-flag rooms (noCombat / safeRest / questHub) are still suppressed.
+   * Static room.enemies arrays are unchanged.
+   *
+   * Implementation: Option B — monkey-patch _applyPopulation on the engine instance.
+   */
+  forceSpawn?: boolean
 }
 
 // ------------------------------------------------------------
@@ -199,6 +217,7 @@ export class PlayerSession {
     this._options = {
       mockRandom: options.mockRandom ?? 0.5,
       mockRoomPopulation: options.mockRoomPopulation ?? true,
+      forceSpawn: options.forceSpawn ?? false,
     }
     this._engine = new GameEngine()
   }
@@ -215,12 +234,78 @@ export class PlayerSession {
     // Pin Math.random for deterministic RNG
     this._randomSpy = vi.spyOn(Math, 'random').mockReturnValue(this._options.mockRandom)
 
+    // forceSpawn shim — Option B: monkey-patch _applyPopulation on the engine instance.
+    // This intercepts every room population call and forces a hollowEncounter spawn for
+    // rooms that have one, bypassing the probabilistic baseChance roll entirely.
+    if (this._options.forceSpawn) {
+      this._installForceSpawnShim()
+    }
+
     await this._engine.createCharacter(
       spec.name,
       spec.stats,
       spec.characterClass,
       spec.personalLoss,
     )
+  }
+
+  /**
+   * Monkey-patches `_applyPopulation` on the engine instance so that every room
+   * with a `hollowEncounter` block deterministically spawns its highest-weight
+   * threat entry (quantity = entry.quantity.min).
+   *
+   * Safe rooms (noCombat / safeRest / questHub) are still suppressed.
+   * Static room.enemies arrays and NPC/item spawns are unchanged.
+   *
+   * Called only when forceSpawn === true.
+   */
+  private _installForceSpawnShim(): void {
+    const engineAny = this._engine as unknown as EngineWithPopulation
+    const originalBound = engineAny._applyPopulation.bind(this._engine)
+
+    engineAny._applyPopulation = (room: Room): Room => {
+      // Run the original population logic (handles NPCs, items, and clears).
+      const populated = originalBound(room)
+
+      // Only intercept rooms with a hollowEncounter definition.
+      if (!room.hollowEncounter) return populated
+
+      // Safety guarantee: skip safe-flag rooms.
+      if (room.flags.safeRest || room.flags.noCombat || room.flags.questHub) return populated
+
+      // Respect enemy defeat persistence — if room is cleared and not yet respawned, skip.
+      const ENEMY_RESPAWN_ACTIONS = 160
+      const roomCleared = room.flags.room_cleared
+      const clearedAt = room.flags.room_cleared_at
+      const actionsTakenNow = engineAny.getState().player?.actionsTaken ?? 0
+      const enemiesRestored =
+        !roomCleared ||
+        (typeof clearedAt === 'number' && actionsTakenNow - clearedAt >= ENEMY_RESPAWN_ACTIONS)
+
+      if (!enemiesRestored) return populated
+
+      // If the original already spawned hollow enemies (unlikely with low mockRandom),
+      // do not double-add. Compare against the static set.
+      const staticEnemyCount = room.enemies.length
+      if (populated.enemies.length > staticEnemyCount) return populated
+
+      // Pick highest-weight threat from the pool (deterministic).
+      const { threatPool } = room.hollowEncounter
+      if (!threatPool.length) return populated
+
+      const topEntry = [...threatPool].sort((a, b) => b.weight - a.weight)[0]!
+      const count = topEntry.quantity.min
+      const forceEnemies = Array.from({ length: count }, () => topEntry.type)
+      const allEnemies = [...populated.enemies, ...forceEnemies]
+
+      return {
+        ...populated,
+        enemies: allEnemies,
+        population: populated.population
+          ? { ...populated.population, enemyIds: allEnemies }
+          : { items: [], enemyIds: allEnemies, npcs: [], ambientLines: [] },
+      }
+    }
   }
 
   /** Cleans up timers/mocks. Safe to call multiple times. */
@@ -341,6 +426,22 @@ export class PlayerSession {
   async restore(snap: object): Promise<void> {
     const parsed = JSON.parse(JSON.stringify(snap))
     this._engine._setState(parsed as GameState)
+  }
+
+  /**
+   * Re-runs `_applyPopulation` on the current room and pushes the result
+   * back into engine state. Useful after `restore()` or `teleport()` helpers
+   * that set `currentRoom` directly (bypassing the normal population pipeline).
+   *
+   * When `forceSpawn:true` is active, this triggers the forceSpawn shim so
+   * that hollowEncounter rooms get their forced enemy after a teleport.
+   */
+  applyPopulation(): void {
+    const engineAny = this._engine as unknown as EngineWithPopulation
+    const currentRoom = this._engine.getState().currentRoom
+    if (!currentRoom) return
+    const populated = engineAny._applyPopulation(currentRoom)
+    this._engine._setState({ currentRoom: populated })
   }
 
   // ----------------------------------------------------------

@@ -8,9 +8,24 @@
 // Triggers staggered; questGate: 'act1_complete'.
 //
 // NO imports from lib — pure constant exports (invariant 4.3).
+//
+// Combat events (H8, Convoy 1): ALL_COMBAT_ACT2_EVENTS appended
+// below. Type declared inline to satisfy invariant 4.3.
 // ============================================================
 
-import type { WorldEvent } from '@/types/convoy-contracts'
+import type { WorldEvent, FactionType } from '@/types/convoy-contracts'
+
+// Inline type mirror of CombatWorldEvent (lib/worldEvents.ts).
+interface CombatParticipationInline {
+  enemyIds: string[]
+  swarmSize?: number
+  factionId?: FactionType
+}
+interface CombatWorldEventInline extends WorldEvent {
+  combatParticipation?: CombatParticipationInline
+  zoneGate?: string
+  minPressure?: number
+}
 
 export const ACT2_EVENTS: WorldEvent[] = [
   // ── WE-A2-01: Salter compound breach ──────────────────────
@@ -364,5 +379,136 @@ export const ACT2_EVENTS: WorldEvent[] = [
         'Crossroads</keyword>. Nobody is laughing.' +
         ' That\'s the part that\'s unsettling.',
     ],
+  },
+]
+
+// ============================================================
+// Act II Combat World Events (Convoy 1 — H8)
+// ============================================================
+
+export const ALL_COMBAT_ACT2_EVENTS: CombatWorldEventInline[] = [
+  // ── CE-A2-01: Salter–Drifter skirmish ─────────────────────
+  // In salt_creek, faction tension between Drifters and Salters.
+  // Injects faction-appropriate enemies based on player alignment.
+  {
+    id: 'ce_a2_01_salter_skirmish',
+    act: 2,
+    escalationLevel: 1,
+    triggerActionCount: 35,
+    questGate: 'act1_complete',
+    zoneGate: 'salt_creek',
+    messagePool: [
+      'Two patrols hit each other at the creek' +
+        ' crossing. <npc>Salters</npc> and' +
+        ' <npc>Drifters</npc>. They saw each other' +
+        ' before they saw you. Now they\'ve seen you.',
+      'The sound of an argument turned into something' +
+        ' louder. Shots. Then shouting. You come around' +
+        ' the bend into the middle of it.',
+      'A <npc>Salter</npc> peacekeeper puts her hand' +
+        ' up: "Stay back." Then the <npc>Drifters</npc>' +
+        ' on the ridge fire first and she\'s not' +
+        ' keeping you out anymore.',
+    ],
+    combatParticipation: {
+      enemyIds: ['sanguine_feral', 'sanguine_feral'],
+      swarmSize: 1,
+    },
+  },
+
+  // ── CE-A2-02: Pine Sea whisperer ambush ───────────────────
+  // Pressure ≥ 5, zone: the_pine_sea. Something in the canopy.
+  // Injects: 1× whisperer + 1× shuffler.
+  {
+    id: 'ce_a2_02_pine_sea_whisperer_ambush',
+    act: 2,
+    escalationLevel: 2,
+    triggerActionCount: 50,
+    questGate: 'act1_complete',
+    zoneGate: 'the_pine_sea',
+    minPressure: 5,
+    messagePool: [
+      'The voices are inside the canopy. You hear them' +
+        ' before you understand what you\'re hearing.' +
+        ' Then the branches above stop moving and' +
+        ' something drops.',
+      'A <keyword>Whisperer</keyword> — the sound it' +
+        ' makes isn\'t meant for human ears. Your' +
+        ' vision pulses. The trees are too close.' +
+        ' There\'s something behind you too.',
+      'The pine sea has gone completely silent.' +
+        ' Not wind, not birds, not distant road noise.' +
+        ' Just a low resonant hum, and then the hum' +
+        ' moves toward you.',
+    ],
+    combatParticipation: {
+      enemyIds: ['whisperer', 'shuffler'],
+      swarmSize: 1,
+    },
+  },
+
+  // ── CE-A2-03: Breaks canyon collapse encounter ────────────
+  // Random in the_breaks. Something falls from the canyon
+  // wall and stands up.
+  // Injects: 2× brute (rare guaranteed heavy encounter).
+  {
+    id: 'ce_a2_03_breaks_canyon_collapse',
+    act: 2,
+    escalationLevel: 2,
+    triggerActionCount: 55,
+    questGate: 'act1_complete',
+    zoneGate: 'the_breaks',
+    messagePool: [
+      'A section of canyon wall sheers off.' +
+        ' Dust and rock down the slope.' +
+        ' Something fell with the wall.' +
+        ' Something stands up.',
+      'The crack runs up the face before the' +
+        ' stone gives way. You step back.' +
+        ' Not far enough. The shape that emerges' +
+        ' from the rubble is enormous.',
+      'Two <keyword>brutes</keyword>. They must have' +
+        ' been sheltering in the overhang.' +
+        ' Now they\'re free and they\'re between' +
+        ' you and the exit.',
+    ],
+    combatParticipation: {
+      enemyIds: ['brute', 'brute'],
+      swarmSize: 1,
+    },
+  },
+
+  // ── CE-A2-04: Red Court patrol ────────────────────────────
+  // In the_pens approaches, cycle ≥ 1. Disciplined Red Court
+  // enforcers — no negotiation.
+  // Injects: 2× red_court_enforcer.
+  {
+    id: 'ce_a2_04_red_court_patrol',
+    act: 2,
+    escalationLevel: 1,
+    triggerActionCount: 65,
+    questGate: 'act1_complete',
+    zoneGate: 'the_pens',
+    factionCheck: {
+      faction: 'red_court',
+      maxRep: 0,
+    },
+    messagePool: [
+      '<npc>Red Court</npc> banner. Three of them.' +
+        ' Moving in a tight formation, checking' +
+        ' faces. They recognize yours.',
+      'Two <npc>Red Court</npc> enforcers step' +
+        ' into the street ahead. No challenge.' +
+        ' No warning. They\'re already reaching.',
+      'The <npc>Red Court</npc> patrol isn\'t' +
+        ' stopping people. They\'re stopping specific' +
+        ' people. The way they\'re looking at you,' +
+        ' you\'re on the list.',
+    ],
+    combatParticipation: {
+      enemyIds: ['red_court_enforcer', 'red_court_enforcer'],
+      swarmSize: 1,
+      factionId: 'red_court',
+    },
   },
 ]

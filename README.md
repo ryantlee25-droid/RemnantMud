@@ -209,6 +209,13 @@ tests/          Vitest test suite
 
 ## Release Notes
 
+### 2026-04-25 — Playtest convoy
+
+- New `tests/playtest/` suite — `PlayerSession` harness + 3 character playthroughs (Enforcer / Broker / Wraith) + verb-coverage + cross-cutting scenarios
+- 1475 main-suite tests pass (up from 1308 baseline = +167 tests)
+- Real bug flagged for follow-up: `cr_03_market_south` references the wrong `npcId` for Marta the food vendor (`food_vendor_marta` vs `marta_food_vendor`). Test skipped pending fix.
+- `forceSpawn` harness option lets tests deterministically exercise the probabilistic `hollowEncounter` pipeline
+
 ### 2026-04-24 — Combat system overhaul (Round 3)
 
 - Combat prompt now shows enemy state and verb hints; per-round status strip

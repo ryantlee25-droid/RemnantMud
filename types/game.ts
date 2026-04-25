@@ -516,6 +516,20 @@ export interface ZoneTemplate {
 }
 
 // ------------------------------------------------------------
+// Death Cause — narrative-driven cause of player death
+// Produced by gameEngine._handlePlayerDeath; consumed by
+// deathProse.selectDeathProse and stored on Player for H7
+// faction-reactivity dialogue.
+// ------------------------------------------------------------
+
+export type DeathCause =
+  | 'combat'         // killed by an enemy in combat
+  | 'environment'    // hazard (collapsing, drowning, fire, exposure)
+  | 'infection'      // narrative-driven (Hollow turn, Sanguine bite)
+  | 'faction'        // executed by faction (Red Court guard, Salter militia)
+  | 'unknown'        // fallback
+
+// ------------------------------------------------------------
 // Player
 // ------------------------------------------------------------
 
@@ -559,6 +573,17 @@ export interface Player {
   narrativeKeys?: string[]
   /** Active companion NPC, if any. */
   currentCompanion?: import('@/types/convoy-contracts').Companion
+  // --------------------------------------------------------
+  // Death prose / kill tracking (convoy battle-mud-pivot, H6)
+  // hollowKills: running count of Hollow defeated this cycle.
+  // Read by H7 (Wave 2) for faction-reactivity dialogue.
+  // lastDeathCause: most recent death's cause; informs next-
+  // cycle death prose variant selection.
+  // --------------------------------------------------------
+  /** Running count of Hollow defeated this cycle (H7 reads). */
+  hollowKills?: number
+  /** Most recent death cause; informs next-cycle prose selection. */
+  lastDeathCause?: DeathCause
 }
 
 // ------------------------------------------------------------

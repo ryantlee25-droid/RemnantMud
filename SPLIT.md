@@ -1,194 +1,279 @@
-# SPLIT: combat-followup-0425
+# SPLIT: playtest-suite-0424
 
-**Base commit:** `d68caa5542e572239e663575312996179faab56e`
-**Base branch:** `dev/followup-0425`
+**Branch:** `dev/followup-0426`
+**Base commit:** `35f157a334120761ce2b6b1d04fbc159ca19ed76`
 **Plan:** `PLAN.md` (written 2026-04-24)
-**Howlers:** 7 (H1–H7)
+**Howlers:** 6 (H1–H6)
+
+---
+
+## Dispatch Sequence — READ FIRST
+
+This convoy uses **two-phase dispatch**. H1 is foundational. Its `PlayerSession` API is consumed by
+every other Howler. H2–H6 cannot pass TypeScript compilation until `harness.ts` is on disk.
+
+**Phase 1 — Drop H1 alone. Wait for H1 to complete and its branch to merge before Phase 2.**
+
+**Phase 2 — Drop H2, H3, H4, H5, H6 in parallel** once H1's branch is merged to `dev/followup-0426`.
+
+Do not skip this gate. Dropping H2–H6 before H1 completes produces import errors that Orange
+cannot diagnose and that require manual intervention to unblock.
 
 ---
 
 ## File Ownership Matrix
 
-| Howler | Creates | Modifies |
-|--------|---------|----------|
-| H1 — Prompt + Status Strip | — | `components/CommandInput.tsx`, `lib/actions/combat.ts` |
-| H2 — Miss Reasons + Trait Strike Text | — | `lib/combat.ts` |
-| H3 — First-Fight Onboarding | — | `lib/actions/system.ts`, `lib/gameEngine.ts` |
-| H4 — Armor Formula Normalization | — | `lib/combat.ts`, `lib/actions/combat.ts` |
-| H5 — Save/Load + Env Modifier Tests | `tests/integration/save-load-roundtrip.test.ts`, `tests/integration/combat-env.test.ts` | — |
-| H6 — AdditionalEnemies Flee + Bug Fixes | — | `lib/actions/combat.ts`, `lib/gameEngine.ts` |
-| H7 — Spawn Density + Idle Hint | `lib/idleHint.ts`, `tests/unit/idleHint.test.ts` | `data/rooms/crossroads.ts`, `data/rooms/covenant.ts`, `data/rooms/duskhollow.ts`, `data/rooms/the_stacks.ts`, `lib/gameEngine.ts` |
-
----
-
-## Howler Scopes
-
-### H1 — Combat Prompt Redesign + Status Strip
-
-Replaces bare `<HP:X/Y>` with `[HP X/Y] [target — state] (attack/flee) >` and appends a status strip to every combat round when conditions are active.
-
-**MODIFY**
-- `components/CommandInput.tsx` — new combat prompt format; add `maxLength={200}` to input element (W-input-maxlength fix)
-- `lib/actions/combat.ts` — add `buildStatusStrip(player, combatState)` helper near top of file as a standalone export; do NOT touch flee handler (~line 558) or flee success path (~line 549) — those regions belong to H4 and H6 respectively
-
-**Key notes:**
-- Read existing `useGameStore` selectors before writing — `state.combatState` is one selector away from the already-selected `state.player`
-- After modifying the prompt string, run `grep -rn "HP:" tests/` and update any matching test assertions before committing
-- No new test file required; confirm existing combat tests pass
-
----
-
-### H2 — Miss-Reason Messaging + Weapon-Trait Strike Text
-
-Replaces the single generic miss line with three reason buckets; adds trait×enemy flavor text for blessed/vicious/scorching/draining on hit.
-
-**MODIFY**
-- `lib/combat.ts` — add miss-reason buckets in `doAttackRound()` and `playerCalledShot()`; add trait strike text paths
-
-**Key notes:**
-- Read the full miss path (lines ~278–336) before writing bucket logic — the whisperer debuff at ~line 306 mutates roll context before the miss check; bucketing must operate on the debuffed roll total, not the raw roll
-- Fumble retains its existing message; only non-fumble misses get new buckets
-- Add 6 test cases in `tests/integration/combat-math.test.ts` (3 miss-reason buckets, 3 trait strike texts)
-
----
-
-### H3 — First-Fight Onboarding Layer
-
-Adds four new `TUTORIAL_HINTS` entries and their trigger sites: `first_combat_start`, `first_kill`, `low_hp_combat`, `second_encounter`.
-
-**MODIFY**
-- `lib/actions/system.ts` — add four new entries to `TUTORIAL_HINTS` table
-- `lib/gameEngine.ts` — add trigger sites in the post-action hook section (~lines 1969–2017); `low_hp_combat` must fire on the correct side of the player-death check
-
-**Key notes:**
-- H7 depends on H3: H7 appends one call site immediately after H3's hint block closes. **H3 MUST merge before H7.**
-- Read `lib/gameEngine.ts` lines 1823–2009 before wiring the HP trigger — `low_hp_combat` must not surface after the death check
-- Add 4 test cases confirming each hint fires exactly once per localStorage key; `low_hp_combat` triggers at ≤30% HP
-- H3's block ends approximately at line 2016 (`first_npc` check); H7 appends after whatever the last `attemptTutorialHint` call is post-merge
-
----
-
-### H4 — Armor Formula Normalization
-
-Extracts `computeArmorReduction` utility and normalizes the flee-path armor formula to match flat-subtraction used in all other damage paths.
-
-**MODIFY**
-- `lib/combat.ts` — extract and export `computeArmorReduction(rawDamage: number, armorDefense: number): number`; update `doEnemyTurn` caller (~line 689)
-- `lib/actions/combat.ts` — update flee handler (~line 558) to call `computeArmorReduction`; do NOT touch `buildStatusStrip` region near top (H1) or flee success path (~line 549, H6)
-
-**Key notes:**
-- H6 depends on H4: **H4 MUST merge before H6.** Frozen export contract for H6: `computeArmorReduction(rawDamage: number, armorDefense: number): number` exported from `lib/combat.ts`
-- Read all of `lib/combat.ts:600–740` before writing — verify exactly one armor-reduction site in `doEnemyTurn` before extracting
-- Add 3 test cases in `tests/integration/combat-math.test.ts` pinning the flee-path formula
-- Behavior note: defense 3 armor on 10-damage parting shot shifts from ~5 to 7 damage — document explicitly in PR description as intentional
-
----
-
-### H5 — Save/Load Round-Trip + Environment Modifier Tests
-
-Pure test work closing TODO-RELEASE B12 and adding environment modifier coverage. No source modifications.
-
-**CREATE**
-- `tests/integration/save-load-roundtrip.test.ts` — three scenarios: `combatState` active, `combatState` null, `narrative_progress` JSONB round-trip
-- `tests/integration/combat-env.test.ts` — four environment modifier test cases
-
-**Key notes:**
-- Read `computeEnvironmentEffects` and `getEnvironmentModifiers` source in `lib/combat.ts` before writing any env test — `computeEnvironmentEffects` reads deeply from `GameState.currentRoom`; fixture setup requires understanding the full room initialization chain
-- Fully independent of all other Howlers; can merge at any point
-
----
-
-### H6 — AdditionalEnemies Flee Persistence + Bug Fixes
-
-Re-injects screamer summons (`additionalEnemies`) into `currentRoom.enemies` when the player flees; documents the Overwhelm+Keen non-crit design choice.
-
-**MODIFY**
-- `lib/actions/combat.ts` — update flee success path (~line 549); do NOT touch `buildStatusStrip` region near top (H1) or flee handler (~line 558, H4)
-- `lib/gameEngine.ts` — room enemy injection on flee; this region is the flee path, separate from H3's and H7's post-action section
-
-**Key notes:**
-- **H6 MUST merge after H4** — imports `computeArmorReduction` from H4's export
-- Verify that `engine._setState({ currentRoom: { ...currentRoom, enemies: [...] } })` is the correct mutation pattern by checking one existing room-state mutation in `lib/gameEngine.ts` before implementing (confirmed at `lib/gameEngine.ts:200`)
-- `additionalEnemies` re-added to `currentRoom.enemies` immediately on flee; cleared on zone transition
-- Add 2 test cases in `tests/integration/combat.test.ts` (additionalEnemies present/absent on flee)
-- H6 does NOT touch `components/CommandInput.tsx`
-
----
-
-### H7 — Spawn Density Floor + Idle No-Combat Hint
-
-Adds `hollowEncounter` blocks to ~15–20 currently-empty rooms in four early zones; adds a one-shot idle hint after 30 no-combat actions.
-
-**CREATE**
-- `lib/idleHint.ts` — counter logic + message text; tracks `actionsTaken` since `lastCombatActionsTaken` in localStorage (not game state — avoids save migration); per-cycle key: `remnant_idle_hint_cycle_${player.cycle}`
-- `tests/unit/idleHint.test.ts` — hint fires after 30 no-combat actions; suppresses until next combat; resets on `combatState.active`; does not fire if cycle localStorage flag already set
-
-**MODIFY**
-- `data/rooms/crossroads.ts` — 2 → ≥4 encounter rooms
-- `data/rooms/covenant.ts` — 5 → ≥10 encounter rooms
-- `data/rooms/duskhollow.ts` — 6 → ≥10 encounter rooms
-- `data/rooms/the_stacks.ts` — 7 → ≥10 encounter rooms
-- `lib/gameEngine.ts` — one call site appended in post-action section after H3's tutorial-hint block: `await checkIdleHint(engine, this.state)`
-
-**Key notes:**
-- **H7 MUST merge after H3** — H7's `lib/gameEngine.ts` line is positioned relative to H3's block close
-- H7 MUST NOT touch `lib/spawn.ts` (pressure scaling) or `types/game.ts` (no new fields — localStorage only)
-- New `hollowEncounter` blocks must conform to the existing `RoomEncounter` interface in `types/game.ts` — read it before writing data
-- `baseChance` for new blocks: 0.06–0.10; use `threatPool` entries already established in same-zone rooms for tonal consistency
-- Verify `player.cycle` is accessible at the `lib/gameEngine.ts` call site before writing `lib/idleHint.ts`
+| Howler | Pillar | Creates | Modifies |
+|--------|--------|---------|----------|
+| H1 | Harness (foundation) | `tests/playtest/harness.ts` | none |
+| H2 | Enforcer path (combat) | `tests/playtest/enforcer-path.test.ts` | none |
+| H3 | Broker path (social) | `tests/playtest/broker-path.test.ts` | none |
+| H4 | Wraith path (stealth/exploration) | `tests/playtest/wraith-path.test.ts` | none |
+| H5 | Full verb coverage | `tests/playtest/verb-coverage.test.ts` | none |
+| H6 | Cross-cutting scenarios | `tests/playtest/cross-cutting.test.ts` | none |
 
 ---
 
 ## Conflict Audit
 
-The full union of owned files across H1–H7 produces **3 multi-Howler advisories**. Every other file is single-owner with no advisory.
+Union of all owned files across H1–H6:
 
-| File | Owners | Advisory |
-|------|--------|----------|
-| `lib/combat.ts` | H2, H4 | Different regions: H2 in miss-message paths (~278–336), H4 in armor block (~600–740) and new export. No line overlap. Standard merge. |
-| `lib/actions/combat.ts` | H1, H4, H6 | Three distinct regions: H1 near top (`buildStatusStrip`), H4 at flee handler (~line 558), H6 at flee success path (~line 549). H4 must merge before H6. H1 is independent of both. |
-| `lib/gameEngine.ts` | H3, H6, H7 | H3 and H7 both write to the post-action section (~lines 1969–2018). H6 edits the flee path — a separate region. H7 appends after H3's block; H3 must merge first. |
+```
+tests/playtest/harness.ts
+tests/playtest/enforcer-path.test.ts
+tests/playtest/broker-path.test.ts
+tests/playtest/wraith-path.test.ts
+tests/playtest/verb-coverage.test.ts
+tests/playtest/cross-cutting.test.ts
+```
 
-All other files are single-owner. `types/traits.ts` and `types/game.ts` are read-only for this entire convoy.
+**Result: zero overlaps.** Each file appears in exactly one Howler's CREATE column.
+H2–H6 import from `harness.ts` (read-only) but do not modify it.
+No source files outside `tests/playtest/` are touched by any Howler.
 
 ---
 
-## COORDINATION NOTE — H7 Safe-Room Guard (HIGH RISK)
+## Frozen Harness API Contract (H2–H6 reference)
 
-Covenant has `noCombat: true` on most rooms. Any `hollowEncounter` block added to a flagged room will surface encounters in safe zones, breaking faction hub and healing room contracts. This is the most likely source of a post-merge regression.
+All Phase 2 Howlers must import exclusively from `../playtest/harness`:
 
-**Before adding any `hollowEncounter` block, H7 MUST run:**
-
+```typescript
+import {
+  PlayerSession,
+  CharacterSpec,
+  SessionSnapshot,
+  makeTestEngine,
+  assertSnapshotEqual,
+} from '../playtest/harness'
 ```
-grep -n "noCombat\|safeRest\|questHub" data/rooms/crossroads.ts
-grep -n "noCombat\|safeRest\|questHub" data/rooms/covenant.ts
-grep -n "noCombat\|safeRest\|questHub" data/rooms/duskhollow.ts
-grep -n "noCombat\|safeRest\|questHub" data/rooms/the_stacks.ts
-```
 
-Only target rooms that have `noCombat: false` or no `noCombat` flag AND currently lack `hollowEncounter`. Any room with `flags.noCombat: true`, `flags.safeRest: true`, or `flags.questHub: true` is off-limits regardless of other flags.
+Never construct `GameEngine` directly in playtest files. Never import `@/lib/gameEngine` in
+any playtest test file.
+
+The full API surface is defined in PLAN.md §"Frozen Harness API":
+
+- `PlayerSession` — class: `init()`, `cmd()`, `walk()`, `snapshot()`, `expectState()`,
+  `expectMessage()`, `expectNoError()`, `reset()`
+- `makeTestEngine()` — factory silencing all narrative pipeline modules; shims `_applyPopulation`
+  to return rooms unchanged (deterministic NPC/item presence)
+- `assertSnapshotEqual(a, b)` — deep equality on `SessionSnapshot`; throws on any field mismatch
+- Types: `CharacterSpec`, `SessionSnapshot`
+
+If H1 discovers during implementation that the engine requires a different signature than PLAN.md
+specifies, H1 delivers the closest conformant API and documents the discrepancy in its commit
+message. H2–H6 adapt to whatever H1 actually ships.
 
 ---
 
-## Merge Order
+## Per-Howler Sections
 
-```
-Wave 1 — parallel, no inter-dependencies:
-  H1, H2, H3, H4, H5
+### H1 — Harness (Phase 1 — alone)
 
-After H4 merges:
-  H6 — imports computeArmorReduction
+**Scope:** Implement `tests/playtest/harness.ts` with the frozen API. Silence all narrative
+pipeline modules (`hollowPressure`, `npcInitiative`, `companionSystem`, `factionWeb`,
+`playerMonologue`, `narratorVoice`, `worldEvents`). Shim `_applyPopulation` at the engine level
+to return rooms unchanged. Wire the Supabase dev mock using the same pattern as
+`gameEngine-core.test.ts`. Include a `describe('harness smoke')` self-test block.
 
-After H3 merges:
-  H7 — appends one gameEngine.ts call site after H3's block
+**Files (owned):**
+- CREATE: `tests/playtest/harness.ts`
 
-Recommended sequence: H1 + H2 + H3 + H4 + H5 (parallel) → H6 → H7
-```
+**Depends on:** nothing
 
-If H4 finishes before H3, H6 and H7 can proceed in parallel after their respective prerequisites.
+**Self-test requirement:** Instantiate `PlayerSession` with Enforcer spec (vigor 8), call
+`cmd('look')`, assert `messages.length > 0`, `snapshot().roomId === 'cr_01_approach'`,
+`snapshot().hp === 20`.
+
+**Key risk:** `createCharacter()` requires a fully wired Supabase mock chain plus an auth mock
+returning a user object. Mirror the `makePlayersBuilder` pattern from `gameEngine-core.test.ts`
+exactly — approximately 60 lines of scaffolding. Any missing piece fails silently with "Not
+authenticated". See PLAN.md §H1 Pre-mortem.
 
 ---
 
-## Post-Merge Quality Gate
+### H2 — Enforcer Path (Phase 2)
 
-After all 7 Howler branches merge to `dev/followup-0425`, spawn White + Gray + /diff-review in parallel once on the combined diff. Zero blockers/failures/criticals required before Copper opens PR. Coverage gaps and security high/medium are warnings in the PR description only.
+**Scope:** 50-room playthrough for Kael Morrow (enforcer, vigor 8, maxHp 20). Zones:
+crossroads → river_road → the_breaks → salt_creek → river_road return → crossroads. Combat
+milestones: 5 distinct enemy encounters; at least one each of called shot (`attack_called`),
+ability (`overwhelm`/`abilityUsed`), defend (`defendingThisTurn`), wait (`waitingBonus === 3`),
+analyze; loot pickup; equip/unequip; `stats`; `equipment` system command.
+
+**Files (owned):**
+- CREATE: `tests/playtest/enforcer-path.test.ts`
+
+**Depends on:** H1 merged
+
+**Frozen API import:** `../playtest/harness`
+
+**Key risk:** The Breaks entries may have survival-gate DCs that Kael (low wits) cannot pass.
+Read `richExits` in the actual zone files before committing to the route. Mock combat via
+`vi.mock('@/lib/combat', ...)` to deterministic outcomes — pattern is in
+`tests/integration/combat.test.ts`. See PLAN.md §H2 Pre-mortem.
+
+---
+
+### H3 — Broker Path (Phase 2)
+
+**Scope:** 50-room playthrough for Sable Rein (broker, presence 6, shadow 6, maxHp 8). Zones:
+all 15 crossroads rooms → all accessible Covenant rooms (route around rep-gated exits) → 15
+Duskhollow rooms. Milestones: 8 NPC dialogue trees with node-transition assertions; `onEnter`
+effects (setFlag, grantItem, grantRep, grantNarrativeKey) each asserted; full trade session
+(`buy` + `sell`); `give` to NPC advancing quest flag; `flee` combat; `rest`; `travel`
+fast-travel; `rep`; `quests` commands.
+
+**Files (owned):**
+- CREATE: `tests/playtest/broker-path.test.ts`
+
+**Depends on:** H1 merged
+
+**Frozen API import:** `../playtest/harness`
+
+**Key risk:** Covenant has `reputationGate` exits requiring rep >= 1; Sable starts at 0. Audit
+Covenant room `richExits`, seed rep in test setup or route around gated exits. For `give`, use
+Patch at `cr_07_patch_clinic` — documented quest interactions in release notes. See PLAN.md §H3
+Pre-mortem.
+
+---
+
+### H4 — Wraith Path (Phase 2)
+
+**Scope:** 50-room playthrough for Vesna (wraith, shadow 6, wits 6, maxHp 8). Zones: crossroads
+(including locked basement exit) → the_pine_sea → the_stacks → the_deep. Milestones: 10+
+`examine_extra` calls with extras state assertions; 3 successful skill-check extras (DC <= 6);
+`sneak` suppresses encounter; `unlock` on locked exit, subsequent move succeeds; `search`
+reveals item; `stash`/`unstash` round-trip; `read` lore item; `drink` at water source; `camp`
+if `campfireAllowed` room found.
+
+**Files (owned):**
+- CREATE: `tests/playtest/wraith-path.test.ts`
+
+**Depends on:** H1 merged
+
+**Frozen API import:** `../playtest/harness`
+
+**Key risk:** The Stacks and The Deep have rooms with `cycleGate: 2` or `questGate`. Read every
+room definition in both zone files, enumerate gated rooms, route around them. Wraith
+`shadowstrike` sets `cantFlee = true` — only test in encounters where enemy HP is mockable to
+low values. See PLAN.md §H4 Pre-mortem.
+
+---
+
+### H5 — Verb Coverage (Phase 2)
+
+**Scope:** Cover every verb in the 42-verb matrix not already owned by H2–H4: `swim`, `climb`,
+`examine_spatial` (look under/behind/inside), `smell`, `listen`, `touch`, `journal`, `drop`,
+`craft`, `map`, `help`, `hint`, `dialogue_blocked`. Spot-check `the_ember` (`em_01_the_approach`)
+and `the_dust` (`du_01_dust_edge`) to push zone coverage to 11 of 13.
+
+**Files (owned):**
+- CREATE: `tests/playtest/verb-coverage.test.ts`
+
+**Depends on:** H1 merged
+
+**Frozen API import:** `../playtest/harness`
+
+**Key risk:** `craft` requires a recipe from `data/recipes.ts` with ingredients from
+`data/items.ts`, seeded into test inventory. If recipe gates are complex, narrow to the simplest
+available recipe. `swim`/`climb` returning a safe error message (no matching exit in room) is a
+valid passing test — no crash and a message returned is sufficient. See PLAN.md §H5 Pre-mortem.
+
+---
+
+### H6 — Cross-Cutting Scenarios (Phase 2)
+
+**Scope:** Six scenario groups in separate `describe` blocks with `beforeEach` resets.
+(1) Save/load round-trip — `assertSnapshotEqual` before and after `_savePlayer`/`loadPlayer`.
+(2) Interrupt handling — move/attack/inventory in wrong engine state all return blocked messages
+without corrupting state. (3) Death/rebirth cycle — assert `totalDeaths === 1`, `cycle === 2`,
+HP restored, ledger `discoveredRoomIds` persists after `rebirthWithStats()`. (4) Verb safety —
+six invalid forms each in a separate `it` block; assert `type === 'error' | 'system'`, no
+exception. (5) Boost stat — inject XP to level 3, trigger `_checkLevelUp()`, `cmd('boost vigor')`,
+assert stat increases and `pendingStatIncrease === false`. (6) Restart gate — confirm prompt
+step then `cmd('CONFIRM RESTART')` resets state.
+
+**Files (owned):**
+- CREATE: `tests/playtest/cross-cutting.test.ts`
+
+**Depends on:** H1 merged
+
+**Frozen API import:** `../playtest/harness`
+
+**Key risk:** Save/load round-trip requires the Supabase mock to persist across three tables
+(`players`, `player_ledger`, `player_inventory`). Copy `makePlayersBuilder` from
+`save-load-roundtrip.test.ts` directly — approximately 80 lines. Do not reinvent. Use
+`expect.assertions(N)` in verb-safety tests to guard against silent passes. See PLAN.md §H6
+Pre-mortem.
+
+---
+
+## Coordination Notes
+
+**Engine bug protocol.** If any Howler encounters a genuine engine defect mid-path, it must NOT
+patch source code. Use `it.fails()` or `.skip` with a comment containing: symptom, expected
+value, actual value, and recommended next-convoy fix target. The suite must pass overall; flagged
+failures do not block merge. Defects become the next convoy's scope.
+
+**No source code modifications.** Zero files outside `tests/playtest/` are touched by any
+Howler. If an import path or type is missing, work around it with a local type assertion or a
+targeted mock — do not edit engine files.
+
+**Test runtime budget: under 60 seconds total.** Mitigation:
+- Use `beforeAll` for expensive per-file state setup rather than `beforeEach`
+- Batch assertions inline during the walk instead of separate `it` blocks per room
+- Mock all Supabase async calls to resolve synchronously
+
+**NPC presence.** The harness shims `_applyPopulation` to return rooms unchanged (static `npcs`
+array, no random rolls). H3 must use NPC IDs that appear in the static `npcs: []` arrays of
+Crossroads rooms, or coordinate with H1 on the shim strategy if needed.
+
+---
+
+## Integration and Merge Order
+
+**Phase 1:**
+1. H1 branch → merge to `dev/followup-0426`
+
+**Phase 2 (after H1 merged):**
+2. H2, H3, H4, H5, H6 → merge to `dev/followup-0426` in any order (no inter-dependencies among
+   Phase 2 Howlers)
+
+**Post-merge quality gate (after all 6 merged):**
+- White + Gray + /diff-review run once on the combined diff
+- Zero blockers required to proceed; coverage gaps are PR description warnings only
+- Copper opens PR per project branch-protection rules
+
+---
+
+## Worktree Paths
+
+```
+~/.claude/parallel/playtest-suite-0424/worktrees/h1-harness
+~/.claude/parallel/playtest-suite-0424/worktrees/h2-enforcer
+~/.claude/parallel/playtest-suite-0424/worktrees/h3-broker
+~/.claude/parallel/playtest-suite-0424/worktrees/h4-wraith
+~/.claude/parallel/playtest-suite-0424/worktrees/h5-verb-coverage
+~/.claude/parallel/playtest-suite-0424/worktrees/h6-cross-cutting
+```
+
+Branch pattern: `parallel/playtest-suite-0424/<howler-name>`

@@ -422,6 +422,7 @@ export interface InventoryItem {
 export interface LootEntry {
   itemId: string
   chance: number
+  count?: [number, number]  // Convoy 2 H3 — min/max quantity per drop. Default [1,1] when absent.
 }
 
 export interface Enemy {

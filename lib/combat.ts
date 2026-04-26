@@ -1076,7 +1076,10 @@ export function playerCalledShot(
 
 /**
  * Roll against each entry in the enemy's loot table.
- * Returns an array of item IDs that dropped.
+ * Returns an array of item IDs that dropped (one entry per unit).
+ *
+ * Respects LootEntry.count: [min, max] — defaults to [1, 1] when absent.
+ * The chance roll still gates the whole entry; count only controls quantity.
  */
 export function rollLoot(enemy: Enemy): string[] {
   const dropped: string[] = []
@@ -1084,7 +1087,11 @@ export function rollLoot(enemy: Enemy): string[] {
     if (Math.random() < entry.chance) {
       // Validate that the item actually exists before adding to drops
       if (getItem(entry.itemId)) {
-        dropped.push(entry.itemId)
+        const [min, max] = entry.count ?? [1, 1]
+        const qty = min + Math.floor(Math.random() * (max - min + 1))
+        for (let i = 0; i < qty; i++) {
+          dropped.push(entry.itemId)
+        }
       }
     }
   }

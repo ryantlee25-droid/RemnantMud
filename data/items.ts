@@ -3424,6 +3424,101 @@ export const ITEMS: Record<string, Item> = {
     armorSlot: 'feet',
     armorTraits: [],
   },
+  hive_chitin: {
+    id: 'hive_chitin',
+    name: 'Hive Chitin',
+    description: 'A dense plate of hardened chitin, secreted by the Hive Mother as protective casing for her pheromonal glands. Almost impossibly light for its rigidity. The surface still smells faintly of something below the threshold of language.',
+    type: 'lore',
+    weight: 0.5,
+    value: 40,
+    loreText: 'The chitin is warm to the touch. Whatever biological process produced it stopped when she died. Something in you is relieved about that.',
+    rarity: 'rare',
+  },
+
+  feral_fang: {
+    id: 'feral_fang',
+    name: 'Feral Fang',
+    description: 'A canine tooth the size of a finger, drawn from a Sanguine Feral. The enamel is denser than human teeth and has a faint iridescent sheen. Pre-Collapse biologists never catalogued what CHARON-7 did to dentition. You are cataloguing it now.',
+    type: 'junk',
+    weight: 0.1,
+    value: 15,
+    rarity: 'uncommon',
+  },
+
+  red_court_baton: {
+    id: 'red_court_baton',
+    name: 'Red Court Baton',
+    description: 'Telescoping impact baton, Red Court manufacture. The grip is wrapped in dyed leather — red, of course. The mechanism still deploys cleanly. Someone maintained this. Someone who is no longer maintaining anything.',
+    type: 'weapon',
+    weight: 1.5,
+    damage: 5,
+    value: 35,
+    rarity: 'uncommon',
+  },
+
+  elder_signet_ring: {
+    id: 'elder_signet_ring',
+    name: 'Elder Signet Ring',
+    description: 'A heavy signet ring in a metal you cannot identify. The seal is a stylized crown over two crossed fangs. The Red Court\'s elder hierarchy marks rank with these. This one has been worn for years — the band has shaped itself to the finger that wore it. That finger is no longer attached to anything.',
+    type: 'lore',
+    weight: 0.1,
+    value: 80,
+    loreText: 'The inscription inside the band reads: "First among the blooded." You do not know what ranking system this refers to. You know this was the person in charge.',
+    rarity: 'rare',
+  },
+
+  tunnel_pick: {
+    id: 'tunnel_pick',
+    name: 'Tunnel Pick',
+    description: 'A short-handled mining pick, adapted for use in confined underground passages. The head is asymmetric — one end for rock, one end for something else. The "something else" end has stains that predate the Collapse.',
+    type: 'weapon',
+    weight: 2,
+    damage: 4,
+    value: 20,
+    rarity: 'common',
+  },
+
+  meridian_servo_motor: {
+    id: 'meridian_servo_motor',
+    name: 'Meridian Servo Motor',
+    description: 'A precision servo motor extracted from a MERIDIAN automated turret. The tolerances are beyond anything post-Collapse manufacture can replicate. The Reclaimers would give a great deal for this. The Red Court would give more.',
+    type: 'junk',
+    weight: 1.0,
+    value: 60,
+    rarity: 'uncommon',
+  },
+
+  meridian_research_log: {
+    id: 'meridian_research_log',
+    name: 'MERIDIAN Research Log',
+    description: 'A waterproof field notebook, MERIDIAN Research Division. The handwriting begins orderly and becomes something else entirely by the final entries. The date stamps stop three weeks before the Collapse became official.',
+    type: 'lore',
+    weight: 0.2,
+    value: 50,
+    loreText: 'The last entry reads: "Protocol REMNANT authorized. God help us. God help whatever comes after us." The initials beneath are too smeared to read.',
+    rarity: 'rare',
+  },
+
+  pheromone_cluster: {
+    id: 'pheromone_cluster',
+    name: 'Pheromone Cluster',
+    description: 'A dense nodule of glandular tissue from the Deep Hive Mother, saturated with concentrated CHARON-7 pheromonal compounds. It pulses faintly in your hand, a biological radio transmitter broadcasting on a frequency the living dead can hear. You should not be holding this.',
+    type: 'junk',
+    weight: 0.3,
+    value: 45,
+    rarity: 'uncommon',
+  },
+
+  apex_signet_ring: {
+    id: 'apex_signet_ring',
+    name: 'Apex Signet Ring',
+    description: 'Heavier than the elder ring. The metal is different — darker, with a grain like wood. The seal depicts a single eye over a stylized spine. Whatever hierarchy this represented, this ring sat at the top of it. Whatever sat at the top of it is no longer sitting.',
+    type: 'lore',
+    weight: 0.1,
+    value: 120,
+    loreText: 'The ring is cold in a way that has nothing to do with temperature. The Deep\'s oldest Sanguine wore this for seven years. Whatever they were remembering when they became what they became, they kept this.',
+    rarity: 'epic',
+  },
 }
 
 export function getItem(id: string): Item | undefined {

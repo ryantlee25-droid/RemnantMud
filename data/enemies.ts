@@ -250,6 +250,8 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'hazmat_suit', chance: 0.08 },
       { itemId: 'scrap_metal', chance: 0.20 },
       { itemId: 'ammo_22lr', chance: 0.80, count: [6, 12] },
+      // H10 boss-unique drops (item pending H9)
+      { itemId: 'hive_chitin', chance: 0.30 },
     ],
     flavorText: [
       'The Hollow around it move in patterns — coordinated, geometric, wrong.',
@@ -288,6 +290,8 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'sanguine_blood_vial', chance: 0.40 },
       { itemId: 'scrap_metal', chance: 0.20 },
       { itemId: 'ammo_22lr', chance: 0.80, count: [6, 12] },
+      // H10 boss-unique drops (item pending H9)
+      { itemId: 'feral_fang', chance: 0.20 },
     ],
     flavorText: [
       'It moves like something that does not need to explain itself to physics.',
@@ -325,6 +329,8 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'ammo_9mm', chance: 0.25 },
       { itemId: 'kevlar_vest', chance: 0.08 },
       { itemId: 'ammo_22lr', chance: 0.70, count: [4, 10] },
+      // H10 boss-unique drops (item pending H9)
+      { itemId: 'red_court_baton', chance: 0.15 },
     ],
     flavorText: [
       'It circles left, cutting off the eastern approach without appearing to notice you.',
@@ -363,6 +369,8 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'meridian_keycard', chance: 0.06 },
       { itemId: 'kevlar_vest', chance: 0.08 },
       { itemId: 'ammo_22lr', chance: 0.95, count: [10, 20] },
+      // H10 boss-unique drops (item pending H9)
+      { itemId: 'elder_signet_ring', chance: 0.10 },
     ],
     flavorText: [
       'It has been watching you since you entered the zone. You are only now realizing this.',
@@ -404,6 +412,8 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'ammo_9mm', chance: 0.30 },
       { itemId: 'scrap_metal', chance: 0.20 },
       { itemId: 'ammo_22lr', chance: 0.90, count: [8, 15] },
+      // H10 boss-unique drops (item pending H9)
+      { itemId: 'meridian_servo_motor', chance: 0.40 },
     ],
     flavorText: [
       'The barrel traverses at a speed that does not correspond to any mechanism you can see.',
@@ -442,6 +452,8 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'bandages', chance: 0.20 },
       { itemId: 'scrap_metal', chance: 0.20 },
       { itemId: 'ammo_22lr', chance: 0.60, count: [4, 8] },
+      // H10 boss-unique drops (item pending H9)
+      { itemId: 'meridian_research_log', chance: 0.50 },
     ],
     flavorText: [
       'It turns toward you with a precision that no other Hollow has demonstrated. Seven years of refinement.',
@@ -482,6 +494,8 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'silver_knife', chance: 0.15 },
       { itemId: 'meridian_keycard', chance: 0.08 },
       { itemId: 'ammo_22lr', chance: 0.95, count: [10, 20] },
+      // H10 boss-unique drops (item pending H9)
+      { itemId: 'apex_signet_ring', chance: 0.15 },
     ],
     flavorText: [
       'It does not move first. It has never needed to move first.',
@@ -520,6 +534,8 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'sanguine_blood_vial', chance: 0.10 },
       { itemId: 'scrap_metal', chance: 0.20 },
       { itemId: 'ammo_22lr', chance: 0.80, count: [6, 12] },
+      // H10 boss-unique drops (item pending H9)
+      { itemId: 'pheromone_cluster', chance: 0.25 },
     ],
     flavorText: [
       'The tunnels change when it moves. The other Hollow reorient.',
@@ -555,6 +571,8 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'pipe_wrench', chance: 0.20 },
       { itemId: 'bandages', chance: 0.20 },
       { itemId: 'ammo_22lr', chance: 0.50, count: [3, 6] },
+      // H10 boss-unique drops (item pending H9)
+      { itemId: 'tunnel_pick', chance: 0.20 },
     ],
     flavorText: [
       'It fills the tunnel in a way that suggests the tunnel was not built for something this wide.',

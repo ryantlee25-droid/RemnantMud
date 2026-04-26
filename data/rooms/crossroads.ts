@@ -106,6 +106,7 @@ export const CROSSROADS_ROOMS: Room[] = [
       threatPool: [
         { type: 'shuffler', weight: 95, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'remnant', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'drifter_road_warden', weight: 4, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.7, awarePassive: 0.2, awareAggressive: 0.1 },
       activityPool: {
@@ -946,6 +947,7 @@ export const CROSSROADS_ROOMS: Room[] = [
       threatPool: [
         { type: 'shuffler', weight: 95, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'drifter_road_warden', weight: 4, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       activityPool: {
         shuffler: [

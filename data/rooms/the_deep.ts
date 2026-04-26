@@ -48,6 +48,7 @@ export const THE_DEEP_ROOMS: Room[] = [
       threatPool: [
         { type: 'shuffler', weight: 60, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'apex_screamer', weight: 8, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.3, awarePassive: 0.4, awareAggressive: 0.3 },
     },
@@ -402,6 +403,7 @@ export const THE_DEEP_ROOMS: Room[] = [
         { type: 'brute', weight: 30, quantity: { min: 2, max: 4, distribution: 'bell' } },
         { type: 'remnant', weight: 30, quantity: { min: 3, max: 6, distribution: 'bell' } },
         { type: 'shuffler', weight: 30, quantity: { min: 8, max: 15, distribution: 'weighted_high' } },
+        { type: 'apex_screamer', weight: 8, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.0, awarePassive: 0.1, awareAggressive: 0.9 },
     },
@@ -1053,6 +1055,7 @@ export const THE_DEEP_ROOMS: Room[] = [
         { type: 'remnant', weight: 35, quantity: { min: 2, max: 4, distribution: 'bell' } },
         { type: 'shuffler', weight: 20, quantity: { min: 3, max: 6, distribution: 'bell' } },
         { type: 'elder_sanguine', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'apex_screamer', weight: 8, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.1, awarePassive: 0.3, awareAggressive: 0.6 },
     },

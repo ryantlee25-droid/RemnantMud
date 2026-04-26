@@ -54,6 +54,7 @@ export const THE_DUST_ROOMS: Room[] = [
         { type: 'shuffler', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'brute', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'frenzy', weight: 5, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
     },
@@ -174,6 +175,7 @@ export const THE_DUST_ROOMS: Room[] = [
         { type: 'shuffler', weight: 60, quantity: { min: 2, max: 6, distribution: 'bell' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
         { type: 'screamer', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'frenzy', weight: 5, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.3, awarePassive: 0.4, awareAggressive: 0.3 },
       activityPool: {
@@ -666,6 +668,7 @@ export const THE_DUST_ROOMS: Room[] = [
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
         { type: 'brute', weight: 15, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'screamer', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'frenzy', weight: 5, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.1, awarePassive: 0.3, awareAggressive: 0.6 },
     },

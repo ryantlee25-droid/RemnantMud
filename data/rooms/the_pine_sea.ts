@@ -42,8 +42,8 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.08,
-      timeModifier: { day: 0.5, night: 1.5, dawn: 0.8, dusk: 1.2 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.75, night: 1.5, dawn: 0.8, dusk: 1.2 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -104,8 +104,8 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.05,
-      timeModifier: { day: 0.3, night: 1.2, dawn: 0.5, dusk: 0.8 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.70, night: 1.2, dawn: 0.5, dusk: 0.8 },
       threatPool: [
         { type: 'shuffler', weight: 80, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -231,8 +231,8 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.06,
-      timeModifier: { day: 0.4, night: 1.3, dawn: 0.6, dusk: 0.9 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.70, night: 1.3, dawn: 0.6, dusk: 0.9 },
       threatPool: [
         { type: 'shuffler', weight: 80, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -281,8 +281,8 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.12,
-      timeModifier: { day: 0.6, night: 1.5, dawn: 0.9, dusk: 1.2 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.80, night: 1.5, dawn: 0.9, dusk: 1.2 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -407,8 +407,8 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.06,
-      timeModifier: { day: 0.5, night: 0.8, dawn: 0.6, dusk: 0.7 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.75, night: 0.8, dawn: 0.6, dusk: 0.7 },
       threatPool: [
         { type: 'shuffler', weight: 80, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -478,8 +478,8 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.08,
-      timeModifier: { day: 0.5, night: 1.2, dawn: 0.7, dusk: 1.0 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.75, night: 1.2, dawn: 0.7, dusk: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 75, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -551,7 +551,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.18,
+      baseChance: 0.40,
       timeModifier: { day: 0.8, night: 1.8, dawn: 1.0, dusk: 1.4 },
       threatPool: [
         { type: 'remnant', weight: 60, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -695,8 +695,8 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.02,
-      timeModifier: { day: 0.2, night: 0.3, dawn: 0.2, dusk: 0.3 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.70, night: 0.3, dawn: 0.70, dusk: 0.3 },
       threatPool: [
         { type: 'remnant', weight: 100, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
@@ -754,8 +754,8 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.10,
-      timeModifier: { day: 0.6, night: 1.4, dawn: 0.8, dusk: 1.1 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.80, night: 1.4, dawn: 0.8, dusk: 1.1 },
       threatPool: [
         { type: 'shuffler', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -853,8 +853,8 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.07,
-      timeModifier: { day: 0.4, night: 1.4, dawn: 0.6, dusk: 1.0 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.70, night: 1.4, dawn: 0.6, dusk: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 75, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -919,8 +919,8 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.10,
-      timeModifier: { day: 0.5, night: 1.6, dawn: 0.7, dusk: 1.2 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.75, night: 1.6, dawn: 0.7, dusk: 1.2 },
       threatPool: [
         { type: 'remnant', weight: 50, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'shuffler', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -1013,8 +1013,8 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.12,
-      timeModifier: { day: 0.6, night: 1.5, dawn: 0.8, dusk: 1.2 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.80, night: 1.5, dawn: 0.8, dusk: 1.2 },
       threatPool: [
         { type: 'shuffler', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 35, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1071,7 +1071,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.15,
+      baseChance: 0.40,
       timeModifier: { day: 0.7, night: 1.6, dawn: 0.9, dusk: 1.3 },
       threatPool: [
         { type: 'remnant', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -1153,7 +1153,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.14,
+      baseChance: 0.40,
       timeModifier: { day: 0.7, night: 1.5, dawn: 0.8, dusk: 1.2 },
       threatPool: [
         { type: 'remnant', weight: 55, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -1214,7 +1214,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.18,
+      baseChance: 0.40,
       timeModifier: { day: 0.8, night: 1.8, dawn: 1.0, dusk: 1.4 },
       threatPool: [
         { type: 'whisperer', weight: 40, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1381,7 +1381,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.25,
+      baseChance: 0.40,
       timeModifier: { day: 1.0, night: 1.5, dawn: 1.0, dusk: 1.2 },
       threatPool: [
         { type: 'whisperer', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },

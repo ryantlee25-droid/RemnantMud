@@ -48,11 +48,12 @@ export const THE_DUST_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.15,
-      timeModifier: { day: 0.5, night: 2.0, dawn: 0.8, dusk: 1.5 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.75, night: 2.0, dawn: 0.8, dusk: 1.5 },
       threatPool: [
-        { type: 'shuffler', weight: 80, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
-        { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'brute', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
     },
@@ -106,11 +107,12 @@ export const THE_DUST_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.20,
-      timeModifier: { day: 0.6, night: 2.5, dawn: 1.0, dusk: 1.8 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.80, night: 2.5, dawn: 1.0, dusk: 1.8 },
       threatPool: [
-        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
+        { type: 'shuffler', weight: 65, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'brute', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.5, awarePassive: 0.3, awareAggressive: 0.2 },
     },
@@ -165,8 +167,8 @@ export const THE_DUST_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.35,
-      timeModifier: { day: 0.8, night: 3.0, dawn: 1.5, dusk: 2.0 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.80, night: 3.0, dawn: 1.5, dusk: 2.0 },
       noiseModifier: 1.5,
       threatPool: [
         { type: 'shuffler', weight: 60, quantity: { min: 2, max: 6, distribution: 'bell' } },
@@ -249,7 +251,7 @@ export const THE_DUST_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.30,
+      baseChance: 0.40,
       timeModifier: { day: 1.0, night: 2.5, dawn: 1.5, dusk: 2.0 },
       threatPool: [
         { type: 'shuffler', weight: 50, quantity: { min: 1, max: 4, distribution: 'weighted_low' } },
@@ -330,8 +332,8 @@ export const THE_DUST_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.20,
-      timeModifier: { day: 0.8, night: 2.0, dawn: 1.0, dusk: 1.5 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.80, night: 2.0, dawn: 1.0, dusk: 1.5 },
       threatPool: [
         { type: 'shuffler', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 40, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -410,11 +412,12 @@ export const THE_DUST_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.20,
-      timeModifier: { day: 0.7, night: 2.0, dawn: 0.9, dusk: 1.5 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.80, night: 2.0, dawn: 0.9, dusk: 1.5 },
       threatPool: [
-        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'shuffler', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'brute', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.55, awarePassive: 0.3, awareAggressive: 0.15 },
     },
@@ -478,11 +481,12 @@ export const THE_DUST_ROOMS: Room[] = [
       ],
     },
     hollowEncounter: {
-      baseChance: 0.15,
-      timeModifier: { day: 0.5, night: 1.5, dawn: 0.8, dusk: 1.2 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.75, night: 1.5, dawn: 0.8, dusk: 1.2 },
       threatPool: [
-        { type: 'shuffler', weight: 80, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
-        { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'brute', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
     },
@@ -719,11 +723,12 @@ export const THE_DUST_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.20,
-      timeModifier: { day: 0.6, night: 1.8, dawn: 0.9, dusk: 1.4 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.80, night: 1.8, dawn: 0.9, dusk: 1.4 },
       threatPool: [
-        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'shuffler', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'brute', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.5, awarePassive: 0.35, awareAggressive: 0.15 },
     },
@@ -767,11 +772,12 @@ export const THE_DUST_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.10,
-      timeModifier: { day: 0.4, night: 1.5, dawn: 0.6, dusk: 1.0 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.70, night: 1.5, dawn: 0.6, dusk: 1.0 },
       threatPool: [
-        { type: 'shuffler', weight: 90, quantity: { min: 1, max: 1, distribution: 'single' } },
-        { type: 'remnant', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 65, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'brute', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.7, awarePassive: 0.2, awareAggressive: 0.1 },
     },
@@ -936,8 +942,8 @@ export const THE_DUST_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.30,
-      timeModifier: { day: 0.7, night: 2.0, dawn: 1.0, dusk: 1.6 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.80, night: 2.0, dawn: 1.0, dusk: 1.6 },
       threatPool: [
         { type: 'remnant', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'shuffler', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -1022,11 +1028,12 @@ export const THE_DUST_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.15,
-      timeModifier: { day: 0.5, night: 1.5, dawn: 0.8, dusk: 1.2 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.75, night: 1.5, dawn: 0.8, dusk: 1.2 },
       threatPool: [
-        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'shuffler', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'brute', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
       activityPool: {
@@ -1132,11 +1139,12 @@ export const THE_DUST_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.20,
-      timeModifier: { day: 0.6, night: 2.0, dawn: 1.0, dusk: 1.5 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.80, night: 2.0, dawn: 1.0, dusk: 1.5 },
       threatPool: [
         { type: 'shuffler', weight: 65, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
-        { type: 'remnant', weight: 35, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'brute', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.4, awarePassive: 0.4, awareAggressive: 0.2 },
     },
@@ -1185,8 +1193,8 @@ export const THE_DUST_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.30,
-      timeModifier: { day: 0.8, night: 2.0, dawn: 1.0, dusk: 1.5 },
+      baseChance: 0.40,
+      timeModifier: { day: 0.80, night: 2.0, dawn: 1.0, dusk: 1.5 },
       noiseModifier: 1.5,
       threatPool: [
         { type: 'shuffler', weight: 55, quantity: { min: 1, max: 4, distribution: 'weighted_low' } },

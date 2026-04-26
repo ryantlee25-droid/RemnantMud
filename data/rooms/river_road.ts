@@ -73,11 +73,12 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.10,
-      timeModifier: { day: 0.5, night: 2.0, dawn: 0.8, dusk: 1.5 },
+      baseChance: 0.20,
+      timeModifier: { day: 0.75, night: 2.0, dawn: 0.8, dusk: 1.5 },
       threatPool: [
-        { type: 'shuffler', weight: 92, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
-        { type: 'remnant', weight: 8, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'stalker', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
       activityPool: {
@@ -388,8 +389,8 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.12,
-      timeModifier: { day: 0.6, night: 1.8, dawn: 0.9, dusk: 1.3 },
+      baseChance: 0.20,
+      timeModifier: { day: 0.80, night: 1.8, dawn: 0.9, dusk: 1.3 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -573,8 +574,8 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.18,
-      timeModifier: { day: 0.7, night: 2.2, dawn: 1.0, dusk: 1.5 },
+      baseChance: 0.20,
+      timeModifier: { day: 0.80, night: 2.2, dawn: 1.0, dusk: 1.5 },
       threatPool: [
         { type: 'shuffler', weight: 60, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 25, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -752,8 +753,8 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.12,
-      timeModifier: { day: 0.6, night: 1.8, dawn: 0.8, dusk: 1.4 },
+      baseChance: 0.20,
+      timeModifier: { day: 0.80, night: 1.8, dawn: 0.8, dusk: 1.4 },
       threatPool: [
         { type: 'shuffler', weight: 75, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1014,7 +1015,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
     itemSpawns: [],
     hollowEncounter: {
       baseChance: 0.20,
-      timeModifier: { day: 0.7, night: 2.0, dawn: 1.0, dusk: 1.5 },
+      timeModifier: { day: 0.80, night: 2.0, dawn: 1.0, dusk: 1.5 },
       threatPool: [
         { type: 'shuffler', weight: 50, quantity: { min: 2, max: 4, distribution: 'weighted_low' } },
         { type: 'screamer', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1263,8 +1264,8 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       { entityId: 'juniper_firewood', spawnChance: 0.4, quantity: { min: 1, max: 1, distribution: 'flat' } },
     ],
     hollowEncounter: {
-      baseChance: 0.25,
-      timeModifier: { night: 1.4, dawn: 0.7, dusk: 1.1, day: 0.6 },
+      baseChance: 0.20,
+      timeModifier: { night: 1.4, dawn: 0.7, dusk: 1.1, day: 0.80 },
       threatPool: [
         { type: 'shuffler', weight: 3, quantity: { min: 1, max: 2, distribution: 'flat' } },
         { type: 'remnant', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
@@ -1374,8 +1375,8 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       { entityId: 'juniper_firewood', spawnChance: 0.4, quantity: { min: 1, max: 1, distribution: 'flat' } },
     ],
     hollowEncounter: {
-      baseChance: 0.25,
-      timeModifier: { night: 1.4, dawn: 0.7, dusk: 1.1, day: 0.6 },
+      baseChance: 0.20,
+      timeModifier: { night: 1.4, dawn: 0.7, dusk: 1.1, day: 0.80 },
       threatPool: [
         { type: 'shuffler', weight: 3, quantity: { min: 1, max: 2, distribution: 'flat' } },
         { type: 'remnant', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
@@ -1503,8 +1504,8 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.14,
-      timeModifier: { day: 0.6, night: 2.0, dawn: 0.8, dusk: 1.4 },
+      baseChance: 0.20,
+      timeModifier: { day: 0.80, night: 2.0, dawn: 0.8, dusk: 1.4 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1603,8 +1604,8 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.18,
-      timeModifier: { day: 0.5, night: 2.5, dawn: 0.7, dusk: 1.5 },
+      baseChance: 0.20,
+      timeModifier: { day: 0.75, night: 2.5, dawn: 0.7, dusk: 1.5 },
       threatPool: [
         { type: 'shuffler', weight: 65, quantity: { min: 1, max: 3, distribution: 'bell' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },

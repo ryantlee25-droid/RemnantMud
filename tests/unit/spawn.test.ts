@@ -227,25 +227,26 @@ describe('computePressure', () => {
 // pressureModifier
 // ---------------------------------------------------------------
 describe('pressureModifier', () => {
-  it('pressure 1 → modifier 1.0 (no change)', () => {
-    expect(pressureModifier(1)).toBe(1.0)
+  it('pressure 1 → modifier 1.10 (M1 density baseline)', () => {
+    expect(pressureModifier(1)).toBeCloseTo(1.10)
   })
 
-  it('pressure 2 → 1.15', () => {
-    expect(pressureModifier(2)).toBeCloseTo(1.15)
+  it('pressure 2 → 1.25', () => {
+    expect(pressureModifier(2)).toBeCloseTo(1.25)
   })
 
-  it('pressure 3 → 1.30', () => {
-    expect(pressureModifier(3)).toBeCloseTo(1.30)
+  it('pressure 3 → 1.40', () => {
+    expect(pressureModifier(3)).toBeCloseTo(1.40)
   })
 
-  it('pressure 5 → 1.60', () => {
-    expect(pressureModifier(5)).toBeCloseTo(1.60)
+  it('pressure 5 → 1.70', () => {
+    expect(pressureModifier(5)).toBeCloseTo(1.70)
   })
 
-  it('increments by 0.15 per level', () => {
+  it('increments by 0.15 per level above 1', () => {
+    // Baseline at pressure 1 is 1.10; each step above adds 0.15
     for (let p = 1; p <= 5; p++) {
-      expect(pressureModifier(p)).toBeCloseTo(1.0 + (p - 1) * 0.15)
+      expect(pressureModifier(p)).toBeCloseTo(1.10 + (p - 1) * 0.15)
     }
   })
 })

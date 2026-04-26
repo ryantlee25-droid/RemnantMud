@@ -8,9 +8,12 @@
 // No React imports. Pure TypeScript. Framework-agnostic.
 // ============================================================
 
-import type { GameMessage } from '@/types/game'
+import type { GameMessage, ZoneType } from '@/types/game'
+import type { DeathCause } from '@/types/game'
 import { msg } from '@/lib/messages'
 import { echoRetentionFactor } from '@/lib/fear'
+import { selectDeathProse } from '@/lib/deathProse'
+import type { DeathContext } from '@/lib/deathProse'
 
 // ------------------------------------------------------------
 // Constants moved from deleted components
@@ -20,23 +23,14 @@ const CAUSE_LABELS: Record<string, string> = {
   combat:        'KILLED IN COMBAT',
   infection:     'CONSUMED BY INFECTION',
   environmental: 'CLAIMED BY THE ENVIRONMENT',
+  environment:   'CLAIMED BY THE ENVIRONMENT',
+  faction:       'EXECUTED',
+  unknown:       'CAUSE UNKNOWN',
 }
 
 function causeLabel(cause: string): string {
   return CAUSE_LABELS[cause] ?? cause.toUpperCase()
 }
-
-const DEATH_NARRATIVE =
-  'The Revenant effect is not resurrection. That word implies ' +
-  'something sacred. What happens to you is more like a document ' +
-  'being restored from an older backup -- some edits lost, some ' +
-  'corruptions introduced, the file a little smaller each time. ' +
-  'CHARON-7 does not bring you back. It reconstructs something ' +
-  'that can pass for you.\n\n' +
-  'Each cycle you are a little less certain which memories are yours. ' +
-  'Each cycle the violence comes a little more naturally. The virus ' +
-  'is not keeping you alive out of mercy. It is keeping you alive ' +
-  'because you are useful to it, and it has not finished deciding what for.'
 
 const ENDING_TITLES: Record<string, string> = {
   cure:   'THE CURE',
@@ -148,6 +142,11 @@ export function deathMessages(opts: {
   echoStats?: Record<string, unknown>
   stashCount?: number
   questMilestones?: string[]
+  // Extended fields for death prose variant selection (H6)
+  hollowKills?: number
+  killedBy?: string
+  zone?: ZoneType
+  rng?: () => number
 }): GameMessage[] {
   const messages: GameMessage[] = []
 
@@ -160,8 +159,25 @@ export function deathMessages(opts: {
   // Cause of death
   messages.push(msg(causeLabel(opts.causeOfDeath), 'death'))
 
-  // Narrative
-  messages.push(msg(DEATH_NARRATIVE, 'death'))
+  // Narrative — use variant prose system if cause maps to a DeathCause
+  const knownCauses = new Set<string>(['combat', 'environment', 'environmental', 'infection', 'faction', 'unknown'])
+  const isKnownCause = knownCauses.has(opts.causeOfDeath)
+  const deathCause: DeathCause = isKnownCause
+    ? (opts.causeOfDeath === 'environmental' ? 'environment' : opts.causeOfDeath as DeathCause)
+    : 'unknown'
+
+  const ctx: DeathContext = {
+    cause: deathCause,
+    cycle: opts.cycle,
+    zone: opts.zone,
+    hollowKills: opts.hollowKills ?? 0,
+    killedBy: opts.killedBy,
+  }
+
+  const proseMessages = selectDeathProse(ctx, opts.rng)
+  for (const m of proseMessages) {
+    messages.push(m)
+  }
 
   // Stats
   const statsLines = [

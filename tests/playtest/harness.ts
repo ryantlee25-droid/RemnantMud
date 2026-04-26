@@ -274,7 +274,7 @@ export class PlayerSession {
       if (room.flags.safeRest || room.flags.noCombat || room.flags.questHub) return populated
 
       // Respect enemy defeat persistence — if room is cleared and not yet respawned, skip.
-      const ENEMY_RESPAWN_ACTIONS = 160
+      const ENEMY_RESPAWN_ACTIONS = 80  // synced with lib/gameEngine.ts (Convoy 1 H1)
       const roomCleared = room.flags.room_cleared
       const clearedAt = room.flags.room_cleared_at
       const actionsTakenNow = engineAny.getState().player?.actionsTaken ?? 0

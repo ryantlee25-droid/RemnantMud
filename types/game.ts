@@ -438,6 +438,8 @@ export interface Enemy {
   loot: LootEntry[]
   flavorText?: string[]  // varied combat descriptions
   resistanceProfile?: EnemyResistance
+  critChance?: number       // 0.0–1.0 — chance per hit to deal 1.5× damage. Default 0.05 (5%) if absent.
+  fleeThreshold?: number    // 0.0–1.0 — HP fraction below which enemy attempts to flee. Default 0.0 (never flee) if absent.
 }
 
 // ------------------------------------------------------------
@@ -516,6 +518,20 @@ export interface ZoneTemplate {
 }
 
 // ------------------------------------------------------------
+// Death Cause — narrative-driven cause of player death
+// Produced by gameEngine._handlePlayerDeath; consumed by
+// deathProse.selectDeathProse and stored on Player for H7
+// faction-reactivity dialogue.
+// ------------------------------------------------------------
+
+export type DeathCause =
+  | 'combat'         // killed by an enemy in combat
+  | 'environment'    // hazard (collapsing, drowning, fire, exposure)
+  | 'infection'      // narrative-driven (Hollow turn, Sanguine bite)
+  | 'faction'        // executed by faction (Red Court guard, Salter militia)
+  | 'unknown'        // fallback
+
+// ------------------------------------------------------------
 // Player
 // ------------------------------------------------------------
 
@@ -559,6 +575,17 @@ export interface Player {
   narrativeKeys?: string[]
   /** Active companion NPC, if any. */
   currentCompanion?: import('@/types/convoy-contracts').Companion
+  // --------------------------------------------------------
+  // Death prose / kill tracking (convoy battle-mud-pivot, H6)
+  // hollowKills: running count of Hollow defeated this cycle.
+  // Read by H7 (Wave 2) for faction-reactivity dialogue.
+  // lastDeathCause: most recent death's cause; informs next-
+  // cycle death prose variant selection.
+  // --------------------------------------------------------
+  /** Running count of Hollow defeated this cycle (H7 reads). */
+  hollowKills?: number
+  /** Most recent death cause; informs next-cycle prose selection. */
+  lastDeathCause?: DeathCause
 }
 
 // ------------------------------------------------------------
@@ -646,6 +673,9 @@ export interface CombatState {
   // Transient flags set by playerAttack for the action handler to consume
   _suppressNoise?: boolean        // silenced trait: suppress noise encounter on kill
   _healPlayer?: number            // draining trait: HP to restore after attack
+  // Enemy flee state
+  enemyFleeAttempted?: boolean    // true after enemy has made one flee attempt (max once per fight)
+  enemyFled?: boolean             // true if enemy successfully fled
 }
 
 export interface CombatResult {
@@ -734,6 +764,7 @@ export interface GameState {
   activeBuffs: ActiveBuff[]
   cycleHistory?: CycleSnapshot[]
   pendingStatIncrease?: boolean  // true when player needs to choose a stat to boost
+  wanderers?: Wanderer[]         // active wandering enemies (transient, not persisted)
   weather?: 'clear' | 'overcast' | 'rain' | 'dust_storm' | 'fog'
   lastInitiativeAction?: number  // action count when NPC initiative last fired
   activeDialogue?: {
@@ -742,6 +773,24 @@ export interface GameState {
     currentNodeId: string
   }
   explorationProgress?: ExplorationProgress
+}
+
+// ------------------------------------------------------------
+// Wandering Enemies System (convoy battle-mud-pivot, H2)
+// Pressure-driven mob movement between rooms.
+// ------------------------------------------------------------
+
+export interface Wanderer {
+  id: string                 // unique runtime id (uuid)
+  enemyId: string            // ENEMIES key (e.g., 'shuffler')
+  currentRoomId: string
+  zone: ZoneType             // restricts wanderer to its origin zone
+  ttl: number                // remaining actions before despawn (decrements each tick)
+  lastMovedAt: number        // actionsTaken when last moved
+}
+
+export interface WandererState {
+  wanderers: Wanderer[]
 }
 
 // ------------------------------------------------------------

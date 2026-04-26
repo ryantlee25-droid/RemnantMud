@@ -209,6 +209,18 @@ tests/          Vitest test suite
 
 ## Release Notes
 
+### 2026-04-26 — Battle-MUD pivot, Convoy 1: Combat Spine (Wave 1)
+
+- Spawn density rebalanced across all 13 zones; day-time modifier softened; enemy respawn timer cut in half
+- Cycle-1 pressure baseline raised; Scar and Pens unlocked at cycle 2 (was cycle 3)
+- New wandering-enemy system: pressure-driven mobs that move between rooms in late zones
+- Enemy crit and flee mechanics added; combat log compression for repeated lines
+- .22 LR currency now drops from all enemies
+- Death prose has 7 variants (was 1) — selected by cause, cycle, zone, kill count
+- 8 new combat world events (raids, swarms, faction skirmishes)
+- Wave 2 (new enemy roster + faction-reactivity dialogue) deferred to follow-up
+- 1538 tests passing (up from 1475 baseline = +63 tests)
+
 ### 2026-04-25 — Playtest convoy
 
 - New `tests/playtest/` suite — `PlayerSession` harness + 3 character playthroughs (Enforcer / Broker / Wraith) + verb-coverage + cross-cutting scenarios

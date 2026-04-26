@@ -132,8 +132,10 @@ export function computePressure(cycle: number): number {
 // ------------------------------------------------------------
 
 export function pressureModifier(pressure: number): number {
-  // +15% per pressure level above 1
-  return 1.0 + (pressure - 1) * 0.15
+  // Cycle-1 (pressure 1) baseline lifted to 1.10 for M1 density target.
+  // +15% per pressure level above 1 (pressure 2+ unchanged in shape).
+  if (pressure <= 1) return 1.10
+  return 1.10 + (pressure - 1) * 0.15
 }
 
 // ------------------------------------------------------------

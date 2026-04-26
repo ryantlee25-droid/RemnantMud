@@ -31,8 +31,8 @@ export const EMBER_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.08,
-      timeModifier: { day: 0.4, dusk: 1.0, night: 1.5, dawn: 0.6 },
+      baseChance: 0.25,
+      timeModifier: { day: 0.70, dusk: 1.0, night: 1.5, dawn: 0.6 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -516,8 +516,8 @@ export const EMBER_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.12,
-      timeModifier: { day: 0.5, dusk: 1.5, night: 2.5, dawn: 1.0 },
+      baseChance: 0.25,
+      timeModifier: { day: 0.75, dusk: 1.5, night: 2.5, dawn: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'whisperer', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -830,8 +830,8 @@ export const EMBER_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.20,
-      timeModifier: { day: 0.6, dusk: 1.2, night: 1.8, dawn: 0.9 },
+      baseChance: 0.25,
+      timeModifier: { day: 0.80, dusk: 1.2, night: 1.8, dawn: 0.9 },
       threatPool: [
         { type: 'shuffler', weight: 40, quantity: { min: 1, max: 3, distribution: 'bell' } },
         { type: 'remnant', weight: 25, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -963,8 +963,8 @@ export const EMBER_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.15,
-      timeModifier: { day: 0.8, dusk: 1.0, night: 1.5, dawn: 0.9 },
+      baseChance: 0.25,
+      timeModifier: { day: 0.80, dusk: 1.0, night: 1.5, dawn: 0.9 },
       threatPool: [
         { type: 'remnant', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'shuffler', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -1039,8 +1039,8 @@ export const EMBER_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.10,
-      timeModifier: { day: 0.5, dusk: 1.2, night: 1.8, dawn: 0.8 },
+      baseChance: 0.25,
+      timeModifier: { day: 0.75, dusk: 1.2, night: 1.8, dawn: 0.8 },
       threatPool: [
         { type: 'remnant', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'shuffler', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1335,7 +1335,7 @@ export const EMBER_ROOMS: Room[] = [
     npcs: [],
     hollowEncounter: {
       baseChance: 0.25,
-      timeModifier: { day: 0.6, dusk: 1.3, night: 2.0, dawn: 0.8 },
+      timeModifier: { day: 0.80, dusk: 1.3, night: 2.0, dawn: 0.8 },
       threatPool: [
         { type: 'shuffler', weight: 45, quantity: { min: 1, max: 3, distribution: 'bell' } },
         { type: 'remnant', weight: 35, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -1552,8 +1552,8 @@ export const EMBER_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.18,
-      timeModifier: { day: 0.5, dusk: 1.2, night: 1.8, dawn: 0.7 },
+      baseChance: 0.25,
+      timeModifier: { day: 0.75, dusk: 1.2, night: 1.8, dawn: 0.7 },
       threatPool: [
         { type: 'shuffler', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 35, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1663,8 +1663,8 @@ export const EMBER_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.20,
-      timeModifier: { day: 0.5, dusk: 1.0, night: 2.0, dawn: 0.7 },
+      baseChance: 0.25,
+      timeModifier: { day: 0.75, dusk: 1.0, night: 2.0, dawn: 0.7 },
       threatPool: [
         { type: 'remnant', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'whisperer', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },

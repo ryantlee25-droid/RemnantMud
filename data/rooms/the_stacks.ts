@@ -38,11 +38,12 @@ export const THE_STACKS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.05,
-      timeModifier: { day: 0.3, night: 1.0, dawn: 0.5, dusk: 0.8 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.70, night: 1.0, dawn: 0.5, dusk: 0.8 },
       threatPool: [
-        { type: 'shuffler', weight: 90, quantity: { min: 1, max: 1, distribution: 'single' } },
-        { type: 'remnant', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'stalker', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
     },
@@ -502,11 +503,12 @@ export const THE_STACKS_ROOMS: Room[] = [
       ],
     },
     hollowEncounter: {
-      baseChance: 0.06,
-      timeModifier: { day: 0.5, dawn: 1.0, dusk: 1.0, night: 1.5 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.75, dawn: 1.0, dusk: 1.0, night: 1.5 },
       threatPool: [
-        { type: 'shuffler', weight: 3, quantity: { min: 1, max: 1, distribution: 'single' } },
-        { type: 'remnant', weight: 1, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'stalker', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.4, awarePassive: 0.4, awareAggressive: 0.2 },
       activityPool: {
@@ -569,8 +571,8 @@ export const THE_STACKS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.10,
-      timeModifier: { day: 0.5, night: 1.2, dawn: 0.7, dusk: 1.0 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.75, night: 1.2, dawn: 0.7, dusk: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -648,7 +650,7 @@ export const THE_STACKS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.20,
+      baseChance: 0.30,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -871,8 +873,8 @@ export const THE_STACKS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.15,
-      timeModifier: { day: 0.6, night: 1.3, dawn: 0.8, dusk: 1.0 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.80, night: 1.3, dawn: 0.8, dusk: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1089,11 +1091,12 @@ export const THE_STACKS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.08,
-      timeModifier: { day: 0.5, dawn: 1.0, dusk: 1.0, night: 1.5 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.75, dawn: 1.0, dusk: 1.0, night: 1.5 },
       threatPool: [
-        { type: 'shuffler', weight: 3, quantity: { min: 1, max: 1, distribution: 'single' } },
-        { type: 'remnant', weight: 1, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'stalker', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.5, awarePassive: 0.35, awareAggressive: 0.15 },
       activityPool: {
@@ -1160,8 +1163,8 @@ export const THE_STACKS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.25,
-      timeModifier: { day: 0.7, night: 1.5, dawn: 0.9, dusk: 1.2 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.80, night: 1.5, dawn: 0.9, dusk: 1.2 },
       threatPool: [
         { type: 'shuffler', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1242,11 +1245,12 @@ export const THE_STACKS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.20,
+      baseChance: 0.30,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
-        { type: 'shuffler', weight: 80, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
-        { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'stalker', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.25, awarePassive: 0.35, awareAggressive: 0.40 },
       activityPool: {

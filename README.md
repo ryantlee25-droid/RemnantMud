@@ -209,6 +209,15 @@ tests/          Vitest test suite
 
 ## Release Notes
 
+### 2026-04-26 — Battle-MUD pivot, Convoy 2B: Gear Content (Wave 2)
+
+- 7 new enemies: Frenzy (glass cannon that explodes on death), Apex Screamer, plus 5 faction enforcers (Drifter / Salter / Accord / Kindling / Lucid)
+- 60 new weapons and armor pieces across 5 rarity tiers, faction-flavored
+- 3 armor sets with 2-piece and 4-piece bonuses (Salter Executioner, Accord Inquisitor, Kindling Purifier)
+- 9 boss-unique drops — every named boss now drops something only it can drop
+- Roster: 16 → 23 enemies. Item count: 202 → 271.
+- 1602 tests passing (+17 from Convoy 2A baseline)
+
 ### 2026-04-26 — Battle-MUD pivot, Convoy 2A: Gear Foundation (Wave 1)
 
 - Item rarity tiers (common / uncommon / rare / epic / legendary) backfilled across all 202 items

@@ -37,6 +37,8 @@ export const SALT_CREEK_ROOMS: Room[] = [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'brute', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'salter_scout', weight: 10, quantity: { min: 1, max: 1, distribution: 'flat' } },
+        { type: 'accord_peacekeeper', weight: 5, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.5, awarePassive: 0.3, awareAggressive: 0.2 },
     },
@@ -99,6 +101,8 @@ export const SALT_CREEK_ROOMS: Room[] = [
       threatPool: [
         { type: 'shuffler', weight: 80, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'screamer', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'salter_scout', weight: 10, quantity: { min: 1, max: 1, distribution: 'flat' } },
+        { type: 'accord_peacekeeper', weight: 5, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.3, awarePassive: 0.3, awareAggressive: 0.4 },
       noiseModifier: 3,
@@ -240,6 +244,8 @@ export const SALT_CREEK_ROOMS: Room[] = [
       threatPool: [
         { type: 'shuffler', weight: 90, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'remnant', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'salter_scout', weight: 10, quantity: { min: 1, max: 1, distribution: 'flat' } },
+        { type: 'accord_peacekeeper', weight: 5, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.2, awarePassive: 0.3, awareAggressive: 0.5 },
     },

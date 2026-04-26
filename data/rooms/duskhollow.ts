@@ -52,6 +52,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'lucid_thrall', weight: 8, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.5, awarePassive: 0.4, awareAggressive: 0.1 },
     },
@@ -431,6 +432,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
       threatPool: [
         { type: 'remnant', weight: 2, quantity: { min: 1, max: 1, distribution: 'flat' } },
         { type: 'shuffler', weight: 3, quantity: { min: 1, max: 2, distribution: 'flat' } },
+        { type: 'lucid_thrall', weight: 8, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
     },
     extras: [
@@ -841,6 +843,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
         { type: 'remnant', weight: 4, quantity: { min: 1, max: 2, distribution: 'flat' } },
         { type: 'shuffler', weight: 3, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
         { type: 'screamer', weight: 1, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'lucid_thrall', weight: 8, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.25, awarePassive: 0.35, awareAggressive: 0.4 },
       noiseModifier: -2,

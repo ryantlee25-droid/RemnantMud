@@ -41,6 +41,7 @@ export const THE_PENS_ROOMS: Room[] = [
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'lucid_thrall', weight: 5, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
     },
     narrativeNotes: 'Entry point. The horror starts here — not in the dark, but in the sign, the clean fence, the professional manner. Establish the bureaucratic-horror tone immediately.',
@@ -509,6 +510,7 @@ export const THE_PENS_ROOMS: Room[] = [
       threatPool: [
         { type: 'shuffler', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 40, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'lucid_thrall', weight: 5, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
     },
     personalLossEchoes: {
@@ -869,6 +871,7 @@ export const THE_PENS_ROOMS: Room[] = [
         { type: 'remnant', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'brute', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'whisperer', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'lucid_thrall', weight: 5, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.15, awarePassive: 0.35, awareAggressive: 0.50 },
     },

@@ -36,6 +36,7 @@ export const EMBER_ROOMS: Room[] = [
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'kindling_zealot', weight: 12, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.5, awarePassive: 0.3, awareAggressive: 0.2 },
     },
@@ -522,6 +523,7 @@ export const EMBER_ROOMS: Room[] = [
         { type: 'shuffler', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'whisperer', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'kindling_zealot', weight: 12, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.3, awarePassive: 0.4, awareAggressive: 0.3 },
       activityPool: {
@@ -727,6 +729,7 @@ export const EMBER_ROOMS: Room[] = [
         { type: 'remnant', weight: 55, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'screamer', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'shuffler', weight: 20, quantity: { min: 1, max: 3, distribution: 'bell' } },
+        { type: 'kindling_zealot', weight: 12, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.2, awarePassive: 0.3, awareAggressive: 0.5 },
       activityPool: {

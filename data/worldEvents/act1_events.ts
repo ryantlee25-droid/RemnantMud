@@ -8,9 +8,29 @@
 // Triggers staggered from 15–20 actions.
 //
 // NO imports from lib — pure constant exports (invariant 4.3).
+//
+// Combat events (H8, Convoy 1): ALL_COMBAT_ACT1_EVENTS appended
+// below. Type imported from lib/worldEvents at runtime; declared
+// inline here to satisfy invariant 4.3 (no lib imports in data/).
 // ============================================================
 
-import type { WorldEvent } from '@/types/convoy-contracts'
+import type { WorldEvent, FactionType } from '@/types/convoy-contracts'
+
+// Inline type mirror of CombatWorldEvent (lib/worldEvents.ts).
+// Data files must not import from lib, so we redeclare the
+// structural shape here. Both declarations are identical — the
+// lib version is the canonical one; this is only for data-file
+// type-checking.
+interface CombatParticipationInline {
+  enemyIds: string[]
+  swarmSize?: number
+  factionId?: FactionType
+}
+interface CombatWorldEventInline extends WorldEvent {
+  combatParticipation?: CombatParticipationInline
+  zoneGate?: string
+  minPressure?: number
+}
 
 export const ACT1_EVENTS: WorldEvent[] = [
   // ── WE-A1-01: The missing gate guard ──────────────────────
@@ -327,5 +347,133 @@ export const ACT1_EVENTS: WorldEvent[] = [
         ' voice beneath the tone. Too distorted to parse.' +
         ' Except one word: <keyword>MERIDIAN</keyword>.',
     ],
+  },
+]
+
+// ============================================================
+// Act I Combat World Events (Convoy 1 — H8)
+//
+// Each event carries a combatParticipation block that injects
+// enemies into the player's room when the event fires.
+// Guards (combat active, dialogue active) are enforced by
+// getScheduledCombatEvents in lib/worldEvents.ts.
+// ============================================================
+
+export const ALL_COMBAT_ACT1_EVENTS: CombatWorldEventInline[] = [
+  // ── CE-A1-01: Hollow tide on River Road ───────────────────
+  // Pressure ≥ 3, zone: river_road. Low moaning from the trees;
+  // a tide of Hollow moving toward the player.
+  // Injects: 2× shuffler + 1× remnant.
+  {
+    id: 'ce_a1_01_hollow_tide_river_road',
+    act: 1,
+    escalationLevel: 1,
+    triggerActionCount: 30,
+    zoneGate: 'river_road',
+    minPressure: 3,
+    messagePool: [
+      'A low moaning rises from the tree line.' +
+        ' The <keyword>Hollow</keyword> are moving east' +
+        ' and you\'re standing in their path.',
+      'The brush shakes on both sides of the road.' +
+        ' Not wind. Too rhythmic. Something is converging' +
+        ' on your position.',
+      'Forty yards ahead the road dips into shadow.' +
+        ' Three shapes emerge from it. Then two more behind' +
+        ' you. The Hollow aren\'t wandering. They\'re sweeping.',
+    ],
+    combatParticipation: {
+      enemyIds: ['shuffler', 'shuffler', 'remnant'],
+      swarmSize: 1,
+    },
+  },
+
+  // ── CE-A1-02: Covenant picket clash ───────────────────────
+  // Pressure ≥ 4, zone: covenant. Covenant peacekeeper fires
+  // at a sanguine_feral; player is caught in the middle.
+  // Injects: 1× sanguine_feral.
+  {
+    id: 'ce_a1_02_covenant_picket_clash',
+    act: 1,
+    escalationLevel: 1,
+    triggerActionCount: 40,
+    zoneGate: 'covenant',
+    minPressure: 4,
+    messagePool: [
+      'An <npc>Accord</npc> rifle cracks somewhere' +
+        ' uphill. A second shot. Then silence.' +
+        ' Then something running toward you.',
+      'A <npc>Covenant</npc> peacekeeper shouts a warning' +
+        ' from the ridge: "Left flank — it\'s coming' +
+        ' your way!" She\'s already reloading.',
+      'The body of a <npc>Covenant</npc> sentry is' +
+        ' at the gate, still warm. Whatever put' +
+        ' him there didn\'t go far.',
+    ],
+    combatParticipation: {
+      enemyIds: ['sanguine_feral'],
+      swarmSize: 1,
+      factionId: 'accord',
+    },
+  },
+
+  // ── CE-A1-03: Drifter caravan ambush ──────────────────────
+  // Random trigger in river_road or crossroads approaches.
+  // Wagons stopped, men down — bandits not gone yet.
+  // Injects: 2× remnant + 1× stalker.
+  {
+    id: 'ce_a1_03_drifter_caravan_ambush',
+    act: 1,
+    escalationLevel: 1,
+    triggerActionCount: 45,
+    zoneGate: 'river_road',
+    messagePool: [
+      'Two wagons stopped in the road, one tipped.' +
+        ' A <npc>Drifter</npc> lies face-down in the' +
+        ' dust. Others are down. The people who did' +
+        ' this haven\'t left.',
+      'Somebody fired a flare — old signal color for' +
+        ' ambush. The <npc>Drifter</npc> caravan is' +
+        ' pinned. You\'re close enough to hear' +
+        ' them yelling.',
+      'The cargo is scattered across the road.' +
+        ' Whoever hit the caravan is still here,' +
+        ' picking through it. They see you at the' +
+        ' same moment you see them.',
+    ],
+    combatParticipation: {
+      enemyIds: ['remnant', 'remnant', 'stalker'],
+      swarmSize: 1,
+      factionId: 'drifters',
+    },
+  },
+
+  // ── CE-A1-04: Stacks facility alarm ───────────────────────
+  // First entry into the_stacks triggers automated response.
+  // Injects: 1× meridian_automated_turret (if present) or brute.
+  // Falls back to brute if turret enemy not yet in roster.
+  {
+    id: 'ce_a1_04_stacks_facility_alarm',
+    act: 1,
+    escalationLevel: 2,
+    triggerActionCount: 35,
+    zoneGate: 'the_stacks',
+    messagePool: [
+      'Something just powered up. A low hum rises from' +
+        ' the floor and doesn\'t stop. Then a grinding' +
+        ' of gears from deep inside the facility.',
+      'Red indicator lights bloom across a panel you' +
+        ' didn\'t see until they lit up. A mechanical' +
+        ' clunk echoes from the corridor. Automated.' +
+        ' Old. Still functional.',
+      'The lights cut to red. A recorded voice announces' +
+        ' something in a language you don\'t recognize.' +
+        ' Then a door slides open at the far end of' +
+        ' the hall.',
+    ],
+    combatParticipation: {
+      enemyIds: ['brute'],
+      swarmSize: 1,
+    },
   },
 ]

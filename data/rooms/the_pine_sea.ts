@@ -47,6 +47,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'lucid_thrall', weight: 4, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
     },
@@ -557,6 +558,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
         { type: 'remnant', weight: 60, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'whisperer', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'shuffler', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'lucid_thrall', weight: 4, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.3, awarePassive: 0.5, awareAggressive: 0.2 },
       noiseModifier: -0.3,
@@ -699,6 +701,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       timeModifier: { day: 0.70, night: 0.3, dawn: 0.70, dusk: 0.3 },
       threatPool: [
         { type: 'remnant', weight: 100, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'lucid_thrall', weight: 4, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.8, awarePassive: 0.15, awareAggressive: 0.05 },
     },

@@ -79,6 +79,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'stalker', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'drifter_road_warden', weight: 8, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
       activityPool: {
@@ -758,6 +759,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       threatPool: [
         { type: 'shuffler', weight: 75, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'drifter_road_warden', weight: 8, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
       activityPool: {
         shuffler: [
@@ -1509,6 +1511,7 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'drifter_road_warden', weight: 8, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
     },
   },

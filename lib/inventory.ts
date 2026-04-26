@@ -1,6 +1,7 @@
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 import type { InventoryItem, Player } from '@/types/game'
 import { getItem } from '@/data/items'
+import { getSetBonusDelta } from '@/lib/setBonuses'
 
 // ------------------------------------------------------------
 // DB row shape returned by Supabase
@@ -52,6 +53,28 @@ function rowToInventoryItem(row: InventoryRow): InventoryItem | null {
     quantity: row.quantity,
     equipped: row.equipped,
   }
+}
+
+/**
+ * Build a synthetic InventoryItem array from lightweight row data.
+ * Used by the set-bonus integration to construct before/after inventory snapshots.
+ * Rows missing an item definition in the registry are silently dropped.
+ */
+function buildInventorySnapshot(
+  rows: Array<{ id: string; item_id: string; equipped: boolean }>,
+): InventoryItem[] {
+  return rows.flatMap((r) => {
+    const item = getItem(r.item_id)
+    if (item === undefined) return []
+    return [{
+      id: r.id,
+      playerId: '',  // not needed for set-bonus computation
+      itemId: r.item_id,
+      item,
+      quantity: 1,
+      equipped: r.equipped,
+    }]
+  })
 }
 
 // ------------------------------------------------------------
@@ -260,6 +283,9 @@ export async function equipItem(playerId: string, itemId: string, player?: Playe
 
   const toUnequipIds = toUnequipRows.map((r) => r.id)
 
+  // Set-bonus: capture before-equip inventory snapshot for delta computation
+  const inventoryBefore = player !== undefined ? buildInventorySnapshot(rows) : undefined
+
   // Step 1: reverse old item's statBonus (if player provided) — H4's flow
   if (player !== undefined && toUnequipRows.length > 0) {
     for (const row of toUnequipRows) {
@@ -295,6 +321,37 @@ export async function equipItem(playerId: string, itemId: string, player?: Playe
     applyStatBonus(player, item.statBonus, 1)
   }
 
+  // Set-bonus: compute after-equip snapshot and apply delta difference
+  if (player !== undefined && inventoryBefore !== undefined) {
+    // Build after-state: apply the equip/unequip changes to the rows
+    const rowsAfter = rows.map((r) => ({
+      ...r,
+      equipped: toUnequipIds.includes(r.id) ? false
+        : r.item_id === itemId ? true
+        : r.equipped,
+    }))
+    const inventoryAfter = buildInventorySnapshot(rowsAfter)
+    const deltaBefore = getSetBonusDelta(player, inventoryBefore)
+    const deltaAfter = getSetBonusDelta(player, inventoryAfter)
+    // Collect all stat keys from both deltas
+    const allStats = new Set([...Object.keys(deltaBefore), ...Object.keys(deltaAfter)])
+    for (const stat of allStats) {
+      const after = deltaAfter[stat as keyof typeof deltaAfter] ?? 0
+      const before = deltaBefore[stat as keyof typeof deltaBefore] ?? 0
+      const diff = after - before
+      if (diff !== 0) {
+        const key = stat as keyof Player
+        const current = player[key]
+        if (typeof current === 'number') {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ;(player as any)[key] = current + diff
+        }
+      }
+    }
+    // Recompute maxHp if vigor changed via set bonus
+    player.maxHp = computeMaxHp(player.vigor)
+  }
+
   return player
 }
 
@@ -309,6 +366,17 @@ export async function equipItem(playerId: string, itemId: string, player?: Playe
 export async function unequipItem(playerId: string, itemId: string, player?: Player): Promise<Player | undefined> {
   const supabase = createSupabaseBrowserClient()
 
+  // Set-bonus: fetch inventory before unequip for delta computation
+  let inventoryBefore: InventoryItem[] | undefined
+  if (player !== undefined) {
+    const { data: allRows } = await supabase
+      .from('player_inventory')
+      .select('id, item_id, equipped')
+      .eq('player_id', playerId)
+    const rows = (allRows ?? []) as Array<{ id: string; item_id: string; equipped: boolean }>
+    inventoryBefore = buildInventorySnapshot(rows)
+  }
+
   const { error } = await supabase
     .from('player_inventory')
     .update({ equipped: false })
@@ -322,6 +390,36 @@ export async function unequipItem(playerId: string, itemId: string, player?: Pla
     if (item?.statBonus) {
       applyStatBonus(player, item.statBonus, -1)
       // Clamp hp if maxHp dropped below current hp
+      if (player.hp > player.maxHp) {
+        player.hp = player.maxHp
+      }
+    }
+
+    // Set-bonus: apply delta difference after unequip
+    if (inventoryBefore !== undefined) {
+      // Build after-state: unequip the target item
+      const inventoryAfter = inventoryBefore.map((inv) =>
+        inv.itemId === itemId ? { ...inv, equipped: false } : inv,
+      )
+      const deltaBefore = getSetBonusDelta(player, inventoryBefore)
+      const deltaAfter = getSetBonusDelta(player, inventoryAfter)
+      const allStats = new Set([...Object.keys(deltaBefore), ...Object.keys(deltaAfter)])
+      for (const stat of allStats) {
+        const after = deltaAfter[stat as keyof typeof deltaAfter] ?? 0
+        const before = deltaBefore[stat as keyof typeof deltaBefore] ?? 0
+        const diff = after - before
+        if (diff !== 0) {
+          const key = stat as keyof Player
+          const current = player[key]
+          if (typeof current === 'number') {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ;(player as any)[key] = current + diff
+          }
+        }
+      }
+      // Recompute maxHp if vigor changed via set bonus
+      player.maxHp = computeMaxHp(player.vigor)
+      // Clamp hp after maxHp recomputation
       if (player.hp > player.maxHp) {
         player.hp = player.maxHp
       }

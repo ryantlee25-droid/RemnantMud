@@ -10,6 +10,7 @@ import type {
   ActiveBuff,
   CombatState,
   CycleSnapshot,
+  DeathCause,
   EndingChoice,
   GameState,
   GameMessage,
@@ -233,6 +234,13 @@ export class GameEngine implements EngineCore {
    */
   private _noCombatActionCounter = 0
 
+  /**
+   * Transient: name of the enemy that killed the player this cycle.
+   * Set in _handlePlayerDeath when cause is combat; cleared on rebirth.
+   * Read by page.tsx via getLastKilledBy() for death prose variant selection.
+   */
+  private _lastKilledBy: string | undefined = undefined
+
   // ----------------------------------------------------------
   // State subscription
   // ----------------------------------------------------------
@@ -246,6 +254,22 @@ export class GameEngine implements EngineCore {
 
   getState(): GameState {
     return this.state
+  }
+
+  /**
+   * Returns the name of the enemy that killed the player in the most recent
+   * death, or undefined if death was not caused by a named combatant.
+   * Used by page.tsx to pass `killedBy` into deathMessages for the
+   * combat_specific_killer prose variant.
+   * Cleared on rebirth via _clearDeathContext().
+   */
+  getLastKilledBy(): string | undefined {
+    return this._lastKilledBy
+  }
+
+  /** Clear transient death context after rebirth. */
+  _clearDeathContext(): void {
+    this._lastKilledBy = undefined
   }
 
   _setState(partial: Partial<GameState>): void {
@@ -522,18 +546,39 @@ export class GameEngine implements EngineCore {
   // Player death
   // ----------------------------------------------------------
 
-  async _handlePlayerDeath(): Promise<void> {
-    const { player } = this.state
+  async _handlePlayerDeath(deathCauseOverride?: DeathCause): Promise<void> {
+    const { player, combatState } = this.state
     if (!player) return
+
+    // Determine the cause of death from context:
+    // If a cause was supplied explicitly (e.g. infection, faction, environment), use it.
+    // Otherwise infer: active combat => 'combat', fallback => 'unknown'.
+    const deathCause: DeathCause = deathCauseOverride
+      ?? (combatState?.active ? 'combat' : 'unknown')
+
+    // Capture the enemy name if we're in combat (for specific-killer variant)
+    const lastKilledBy: string | undefined = combatState?.active
+      ? combatState.enemy.name
+      : undefined
 
     this._appendMessages([
       msg('The world goes dark. You are still.', 'combat'),
       systemMsg('...'),
     ])
 
-    const updatedPlayer: Player = { ...player, hp: 0, isDead: true }
+    // Store lastDeathCause on player for next-cycle prose and H7 reactivity
+    const updatedPlayer: Player = {
+      ...player,
+      hp: 0,
+      isDead: true,
+      lastDeathCause: deathCause,
+      // killedBy is transient (not persisted) — captured via combatState above
+    }
     // Clear combat and dialogue state on death — these don't survive a cycle.
     this._setState({ player: updatedPlayer, combatState: null, activeDialogue: undefined, playerDead: true })
+
+    // Store killedBy for page.tsx death message rendering (session-only, not persisted)
+    this._lastKilledBy = lastKilledBy
 
     // Save cycle snapshot before wiping inventory
     const snapshot = createCycleSnapshot(player)
@@ -1130,6 +1175,8 @@ export class GameEngine implements EngineCore {
 
     // Reset narrative session for new cycle
     this._resetNarrativeSession()
+    // Clear transient death context (killedBy etc.) — no longer relevant post-rebirth
+    this._clearDeathContext()
   }
 
   // ----------------------------------------------------------
@@ -1245,6 +1292,8 @@ export class GameEngine implements EngineCore {
 
     // Reset narrative session for new cycle
     this._resetNarrativeSession()
+    // Clear transient death context (killedBy etc.)
+    this._clearDeathContext()
   }
 
   // ----------------------------------------------------------
@@ -1839,6 +1888,8 @@ export class GameEngine implements EngineCore {
     // Capture pre-action state for narrative pipeline
     const prevRoomId = this.state.currentRoom?.id ?? null
     const wasInCombat = !!(this.state.combatState?.active)
+    // Capture the enemy being fought (for hollowKills increment on kill)
+    const preCombatEnemy = this.state.combatState?.enemy ?? null
 
     try {
     switch (action.verb) {
@@ -2062,6 +2113,17 @@ export class GameEngine implements EngineCore {
     // Guard: combatState is now null (not just inactive) and the player is alive.
     if (wasInCombat && !this.state.combatState && this.state.player && this.state.player.hp > 0 && !this.state.playerDead) {
       await this.attemptTutorialHint('first_kill')
+
+      // Increment hollowKills when the defeated enemy was a Hollow (has hollowType set).
+      // H7 (Wave 2) reads this counter for faction-reactivity dialogue.
+      if (preCombatEnemy?.hollowType) {
+        const currentPlayer = this.state.player
+        const updatedPlayer: Player = {
+          ...currentPlayer,
+          hollowKills: (currentPlayer.hollowKills ?? 0) + 1,
+        }
+        this._setState({ player: updatedPlayer })
+      }
     }
 
     // low_hp_combat: fires when in combat and HP has dropped to ≤30% of maxHp.

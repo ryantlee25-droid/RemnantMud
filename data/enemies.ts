@@ -607,6 +607,199 @@ export const ENEMIES: Record<string, Enemy> = {
       conditionImmunities: [],
     },
   },
+
+  // ----------------------------------------------------------
+  // Convoy 2B H7 — Glass Cannons + Faction Enforcers
+  // ----------------------------------------------------------
+
+  frenzy: {
+    id: 'frenzy',
+    name: 'Frenzy',
+    description: 'A wiry figure with bloodshot eyes and a chemical sheen on bare skin. They move too fast and bleed too easily. The vial in their hand is empty. Whatever they took, it bought them this minute.',
+    hp: 8,
+    maxHp: 8,
+    attack: 5,
+    defense: 6,
+    damage: [6, 12],
+    xp: 120,
+    loot: [
+      { itemId: 'ammo_22lr', chance: 0.50, count: [3, 4] },
+      { itemId: 'stim_shot', chance: 0.15 },
+      { itemId: 'scrap_metal', chance: 0.25 },
+    ],
+    critChance: 0.20,
+    fleeThreshold: 0.0,
+    resistanceProfile: {
+      weaknesses: {},
+      resistances: {
+        keen: { reduction: 0.3, description: 'Chemical frenzy dulls precise strikes. Keen damage reduced.' },
+      },
+      conditionImmunities: [],
+    },
+    onDeath: { aoe: { radius: 'adjacent', damage: [1, 4] } },
+  },
+
+  apex_screamer: {
+    id: 'apex_screamer',
+    name: 'Apex Screamer',
+    description: 'Larger, faster, and angrier than its kin. Its scream is short, sharp, and arrives with claws.',
+    hollowType: 'screamer',
+    hp: 8,
+    maxHp: 8,
+    attack: 3,
+    defense: 5,
+    damage: [4, 10],
+    xp: 95,
+    loot: [
+      { itemId: 'ammo_22lr', chance: 0.60, count: [2, 4] },
+      { itemId: 'bandages', chance: 0.15 },
+      { itemId: 'electronics_salvage', chance: 0.10 },
+    ],
+    critChance: 0.15,
+    fleeThreshold: 0.0,
+    resistanceProfile: {
+      weaknesses: {},
+      resistances: {
+        blessed: { reduction: 0.2, description: 'Hollow adaptation dulls holy resonance. Blessed damage reduced.' },
+      },
+      conditionImmunities: ['poisoned', 'frightened'],
+    },
+  },
+
+  drifter_road_warden: {
+    id: 'drifter_road_warden',
+    name: 'Drifter Road Warden',
+    description: 'A road-leathered Drifter with a hand on a holstered .38 and eyes that have seen the wagons not come back.',
+    hp: 28,
+    maxHp: 28,
+    attack: 4,
+    defense: 12,
+    damage: [4, 8],
+    xp: 140,
+    loot: [
+      { itemId: 'ammo_22lr', chance: 0.70, count: [4, 8] },
+      { itemId: 'pipe_wrench', chance: 0.08 },
+      { itemId: 'bandages', chance: 0.25 },
+    ],
+    critChance: 0.10,
+    fleeThreshold: 0.2,
+    resistanceProfile: {
+      weaknesses: {},
+      resistances: {
+        keen: { reduction: 0.3, description: 'Road-worn instincts deflect precise strikes. Keen damage reduced.' },
+      },
+      conditionImmunities: [],
+    },
+  },
+
+  salter_scout: {
+    id: 'salter_scout',
+    name: 'Salter Scout',
+    description: 'Salt-rimed armor and disciplined eyes. They don\'t speak. They sight, breathe, and shoot.',
+    hp: 32,
+    maxHp: 32,
+    attack: 4,
+    defense: 13,
+    damage: [4, 8],
+    xp: 150,
+    loot: [
+      { itemId: 'ammo_22lr', chance: 0.70, count: [4, 8] },
+      { itemId: 'boiled_rations', chance: 0.30 },
+      { itemId: 'scrap_metal', chance: 0.20 },
+    ],
+    critChance: 0.08,
+    fleeThreshold: 0.15,
+    resistanceProfile: {
+      weaknesses: {},
+      resistances: {
+        heavy: { reduction: 0.4, description: 'Salt-hardened armor absorbs blunt force. Heavy damage reduced.' },
+      },
+      conditionImmunities: [],
+    },
+  },
+
+  accord_peacekeeper: {
+    id: 'accord_peacekeeper',
+    name: 'Accord Peacekeeper',
+    description: 'A Covenant rifle. A measured stance. The Peacekeepers do not negotiate, but they do not gloat.',
+    hp: 26,
+    maxHp: 26,
+    attack: 4,
+    defense: 12,
+    damage: [3, 7],
+    xp: 130,
+    loot: [
+      { itemId: 'ammo_22lr', chance: 0.60, count: [3, 6] },
+      { itemId: 'bandages', chance: 0.30 },
+      { itemId: 'pipe_wrench', chance: 0.08 },
+    ],
+    critChance: 0.10,
+    fleeThreshold: 0.0,
+    resistanceProfile: {
+      weaknesses: {
+        blessed: { bonusDamage: 2, description: 'Faith turned against faith. Blessed damage amplified.' },
+      },
+      resistances: {},
+      conditionImmunities: [],
+    },
+  },
+
+  kindling_zealot: {
+    id: 'kindling_zealot',
+    name: 'Kindling Zealot',
+    description: 'Fire-marked skin and a lit torch in one hand. They speak of cleansing the way most speak of weather.',
+    hp: 32,
+    maxHp: 32,
+    attack: 4,
+    defense: 12,
+    damage: [4, 10],
+    xp: 160,
+    loot: [
+      { itemId: 'ammo_22lr', chance: 0.50, count: [3, 6] },
+      { itemId: 'scrap_metal', chance: 0.20 },
+      { itemId: 'bandages', chance: 0.15 },
+    ],
+    critChance: 0.10,
+    fleeThreshold: 0.0,
+    resistanceProfile: {
+      weaknesses: {
+        blessed: { bonusDamage: 3, description: 'Zealotry made fragile by faith\'s edge. Blessed damage amplified.' },
+      },
+      resistances: {
+        scorching: { reduction: 1.0, description: 'Fire cannot burn what has already been baptized in flame. Immune to scorching.' },
+      },
+      conditionImmunities: ['burning'],
+    },
+  },
+
+  lucid_thrall: {
+    id: 'lucid_thrall',
+    name: 'Lucid Thrall',
+    hollowType: 'sanguine_feral',
+    description: 'Composed, dressed in clean black. The smile is intact. The hunger is not.',
+    hp: 36,
+    maxHp: 36,
+    attack: 5,
+    defense: 13,
+    damage: [5, 10],
+    xp: 180,
+    loot: [
+      { itemId: 'ammo_22lr', chance: 0.60, count: [4, 8] },
+      { itemId: 'sanguine_blood_vial', chance: 0.50 },
+      { itemId: 'silver_knife', chance: 0.04 },
+    ],
+    critChance: 0.12,
+    fleeThreshold: 0.0,
+    resistanceProfile: {
+      weaknesses: {
+        blessed: { bonusDamage: 2, description: 'Consecrated steel disrupts the Sanguine bond. Blessed damage amplified.' },
+      },
+      resistances: {
+        draining: { reduction: 1.0, description: 'Sanguine blood cannot be drained. Immune to draining effects.' },
+      },
+      conditionImmunities: ['frightened'],
+    },
+  },
 }
 
 export function getEnemy(id: string): Enemy | undefined {

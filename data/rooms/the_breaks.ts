@@ -40,8 +40,8 @@ export const BREAKS_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.10,
-      timeModifier: { day: 0.5, dusk: 1.5, night: 2.5, dawn: 0.8 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.75, dusk: 1.5, night: 2.5, dawn: 0.8 },
       threatPool: [
         { type: 'shuffler', weight: 75, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -102,8 +102,8 @@ export const BREAKS_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.15,
-      timeModifier: { day: 0.5, dusk: 1.5, night: 3.0, dawn: 1.0 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.75, dusk: 1.5, night: 3.0, dawn: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 60, quantity: { min: 1, max: 3, distribution: 'bell' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -176,8 +176,8 @@ export const BREAKS_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.20,
-      timeModifier: { day: 0.8, dusk: 1.8, night: 3.5, dawn: 1.5 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.80, dusk: 1.8, night: 3.5, dawn: 1.5 },
       threatPool: [
         { type: 'remnant', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'shuffler', weight: 30, quantity: { min: 1, max: 3, distribution: 'bell' } },
@@ -243,8 +243,8 @@ export const BREAKS_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.12,
-      timeModifier: { day: 0.6, dusk: 1.5, night: 2.5, dawn: 1.0 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.80, dusk: 1.5, night: 2.5, dawn: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 60, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'remnant', weight: 40, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -296,7 +296,7 @@ export const BREAKS_ROOMS: Room[] = [
     npcs: [],
     hollowEncounter: {
       baseChance: 0.30,
-      timeModifier: { day: 0.6, dusk: 2.0, night: 4.0, dawn: 1.5 },
+      timeModifier: { day: 0.80, dusk: 2.0, night: 4.0, dawn: 1.5 },
       threatPool: [
         { type: 'shuffler', weight: 40, quantity: { min: 2, max: 4, distribution: 'bell' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -457,8 +457,8 @@ export const BREAKS_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.15,
-      timeModifier: { day: 0.6, dusk: 1.5, night: 2.5, dawn: 1.0 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.80, dusk: 1.5, night: 2.5, dawn: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 55, quantity: { min: 1, max: 3, distribution: 'bell' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -566,8 +566,8 @@ export const BREAKS_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.10,
-      timeModifier: { day: 0.5, dusk: 1.5, night: 2.5, dawn: 0.8 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.75, dusk: 1.5, night: 2.5, dawn: 0.8 },
       threatPool: [
         { type: 'shuffler', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 35, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -623,8 +623,8 @@ export const BREAKS_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.12,
-      timeModifier: { day: 0.5, dusk: 1.5, night: 2.5, dawn: 0.8 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.75, dusk: 1.5, night: 2.5, dawn: 0.8 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -695,8 +695,8 @@ export const BREAKS_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.08,
-      timeModifier: { day: 0.3, dusk: 1.5, night: 2.5, dawn: 1.0 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.70, dusk: 1.5, night: 2.5, dawn: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -752,8 +752,8 @@ export const BREAKS_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.12,
-      timeModifier: { day: 0.5, dusk: 1.5, night: 2.0, dawn: 0.8 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.75, dusk: 1.5, night: 2.0, dawn: 0.8 },
       threatPool: [
         { type: 'remnant', weight: 60, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'shuffler', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -815,8 +815,8 @@ export const BREAKS_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.10,
-      timeModifier: { day: 0.4, dusk: 1.8, night: 2.5, dawn: 1.0 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.70, dusk: 1.8, night: 2.5, dawn: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'shuffler', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -966,8 +966,8 @@ export const BREAKS_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.12,
-      timeModifier: { day: 0.6, dusk: 1.5, night: 2.0, dawn: 0.8 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.80, dusk: 1.5, night: 2.0, dawn: 0.8 },
       threatPool: [
         { type: 'shuffler', weight: 55, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1033,8 +1033,8 @@ export const BREAKS_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.20,
-      timeModifier: { day: 0.6, dusk: 2.0, night: 3.5, dawn: 1.5 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.80, dusk: 2.0, night: 3.5, dawn: 1.5 },
       threatPool: [
         { type: 'shuffler', weight: 45, quantity: { min: 2, max: 4, distribution: 'bell' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -1104,8 +1104,8 @@ export const BREAKS_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.18,
-      timeModifier: { day: 0.5, dusk: 1.5, night: 3.0, dawn: 1.0 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.75, dusk: 1.5, night: 3.0, dawn: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 50, quantity: { min: 1, max: 3, distribution: 'bell' } },
         { type: 'remnant', weight: 35, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -1179,8 +1179,8 @@ export const BREAKS_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.15,
-      timeModifier: { day: 0.6, dusk: 1.8, night: 2.5, dawn: 1.0 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.80, dusk: 1.8, night: 2.5, dawn: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 55, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'shuffler', weight: 30, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -1269,8 +1269,8 @@ export const BREAKS_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.14,
-      timeModifier: { day: 0.4, dusk: 1.5, night: 2.5, dawn: 1.0 },
+      baseChance: 0.30,
+      timeModifier: { day: 0.70, dusk: 1.5, night: 2.5, dawn: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 45, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'shuffler', weight: 35, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },

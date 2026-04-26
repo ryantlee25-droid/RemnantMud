@@ -43,7 +43,7 @@ export const THE_DEEP_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.25,
+      baseChance: 0.40,
       timeModifier: { day: 1.0, night: 1.5, dawn: 1.2, dusk: 1.3 },
       threatPool: [
         { type: 'shuffler', weight: 60, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
@@ -324,7 +324,7 @@ export const THE_DEEP_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.35,
+      baseChance: 0.40,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       noiseModifier: 4.0,
       threatPool: [
@@ -455,7 +455,7 @@ export const THE_DEEP_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.15,
+      baseChance: 0.40,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -574,7 +574,7 @@ export const THE_DEEP_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.25,
+      baseChance: 0.40,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -620,7 +620,7 @@ export const THE_DEEP_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.30,
+      baseChance: 0.40,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -676,7 +676,7 @@ export const THE_DEEP_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.20,
+      baseChance: 0.40,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -774,11 +774,11 @@ export const THE_DEEP_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.10,
+      baseChance: 0.40,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
-        { type: 'shuffler', weight: 80, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
-        { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.6, awarePassive: 0.3, awareAggressive: 0.1 },
     },
@@ -840,7 +840,7 @@ export const THE_DEEP_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.08,
+      baseChance: 0.40,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -928,7 +928,7 @@ export const THE_DEEP_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.12,
+      baseChance: 0.40,
       timeModifier: { day: 1.0, night: 1.2, dawn: 1.0, dusk: 1.1 },
       threatPool: [
         { type: 'remnant', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -995,7 +995,7 @@ export const THE_DEEP_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.05,
+      baseChance: 0.40,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1208,7 +1208,7 @@ export const THE_DEEP_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.35,
+      baseChance: 0.40,
       timeModifier: { day: 1.0, night: 1.4, dawn: 1.1, dusk: 1.2 },
       noiseModifier: 2.5,
       threatPool: [

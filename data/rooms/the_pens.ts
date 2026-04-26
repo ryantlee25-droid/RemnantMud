@@ -36,8 +36,8 @@ export const THE_PENS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.05,
-      timeModifier: { day: 0.5, night: 0.8, dawn: 0.6, dusk: 0.7 },
+      baseChance: 0.50,
+      timeModifier: { day: 0.75, night: 0.8, dawn: 0.6, dusk: 0.7 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -432,8 +432,8 @@ export const THE_PENS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.05,
-      timeModifier: { day: 0.6, night: 1.0, dawn: 0.7, dusk: 0.8 },
+      baseChance: 0.50,
+      timeModifier: { day: 0.80, night: 1.0, dawn: 0.7, dusk: 0.8 },
       threatPool: [
         { type: 'shuffler', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 40, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -504,8 +504,8 @@ export const THE_PENS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.05,
-      timeModifier: { day: 0.6, night: 1.0, dawn: 0.7, dusk: 0.8 },
+      baseChance: 0.50,
+      timeModifier: { day: 0.80, night: 1.0, dawn: 0.7, dusk: 0.8 },
       threatPool: [
         { type: 'shuffler', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 40, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -555,8 +555,8 @@ export const THE_PENS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.05,
-      timeModifier: { day: 0.6, night: 1.0, dawn: 0.7, dusk: 0.8 },
+      baseChance: 0.50,
+      timeModifier: { day: 0.80, night: 1.0, dawn: 0.7, dusk: 0.8 },
       threatPool: [
         { type: 'shuffler', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -602,7 +602,7 @@ export const THE_PENS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.15,
+      baseChance: 0.50,
       timeModifier: { day: 0.8, night: 1.5, dawn: 1.0, dusk: 1.2 },
       threatPool: [
         { type: 'sanguine_feral', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -648,8 +648,8 @@ export const THE_PENS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.05,
-      timeModifier: { day: 0.5, night: 0.8, dawn: 0.5, dusk: 0.7 },
+      baseChance: 0.50,
+      timeModifier: { day: 0.75, night: 0.8, dawn: 0.5, dusk: 0.7 },
       threatPool: [
         { type: 'shuffler', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 40, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -720,8 +720,8 @@ export const THE_PENS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.03,
-      timeModifier: { day: 0.4, night: 0.7, dawn: 0.5, dusk: 0.6 },
+      baseChance: 0.50,
+      timeModifier: { day: 0.70, night: 0.7, dawn: 0.5, dusk: 0.6 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -805,8 +805,8 @@ export const THE_PENS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.03,
-      timeModifier: { day: 0.3, night: 0.5, dawn: 0.4, dusk: 0.4 },
+      baseChance: 0.50,
+      timeModifier: { day: 0.70, night: 0.5, dawn: 0.4, dusk: 0.4 },
       threatPool: [
         { type: 'shuffler', weight: 60, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'remnant', weight: 40, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -863,7 +863,7 @@ export const THE_PENS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.10,
+      baseChance: 0.50,
       timeModifier: { day: 0.7, night: 1.5, dawn: 0.9, dusk: 1.2 },
       threatPool: [
         { type: 'remnant', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -919,8 +919,8 @@ export const THE_PENS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.08,
-      timeModifier: { day: 0.6, night: 1.2, dawn: 0.7, dusk: 0.9 },
+      baseChance: 0.50,
+      timeModifier: { day: 0.80, night: 1.2, dawn: 0.7, dusk: 0.9 },
       threatPool: [
         { type: 'shuffler', weight: 55, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 35, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -975,7 +975,7 @@ export const THE_PENS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.12,
+      baseChance: 0.50,
       timeModifier: { day: 0.7, night: 1.8, dawn: 0.9, dusk: 1.3 },
       threatPool: [
         { type: 'whisperer', weight: 45, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1031,7 +1031,7 @@ export const THE_PENS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.15,
+      baseChance: 0.50,
       timeModifier: { day: 0.8, night: 1.6, dawn: 0.9, dusk: 1.2 },
       threatPool: [
         { type: 'remnant', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },

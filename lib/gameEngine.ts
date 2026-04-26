@@ -51,6 +51,7 @@ import { attemptStealth } from '@/lib/stealth'
 import { createCycleSnapshot, computeInheritedReputation } from '@/lib/echoes'
 import { suggestVerb as parserSuggestVerb } from '@/lib/parser'
 import { shouldFireIdleHint, markIdleHintFired, IDLE_HINT_MESSAGE } from '@/lib/idleHint'
+import { tickWanderers } from '@/lib/wanderers'
 
 // ------------------------------------------------------------
 // Narrative Overhaul imports (convoy remnant-narrative-0329)
@@ -290,7 +291,7 @@ export class GameEngine implements EngineCore {
     const actionsTakenNow = this.state.player?.actionsTaken ?? 0
 
     // --- W-4: Enemy defeat persistence constants ---
-    const ENEMY_RESPAWN_ACTIONS = 160 // 8 time periods
+    const ENEMY_RESPAWN_ACTIONS = 80 // 4 time periods (halved for faster room refill — M1 density target)
     const roomCleared = room.flags.room_cleared
     const clearedAt = room.flags.room_cleared_at
     const enemiesRestored = !roomCleared ||
@@ -2115,6 +2116,34 @@ export class GameEngine implements EngineCore {
         await this._recordRoomDiscovery(newRoomId)
       }
     }
+
+    // ----------------------------------------------------------
+    // Wanderer post-move hook (H2 — battle-mud-pivot)
+    // Tick wanderers on every movement action that changes the room.
+    // Inject wanderer enemy into currentRoom enemies if they share the room.
+    // ----------------------------------------------------------
+    if (MOVEMENT_VERBS.has(action.verb) && this.state.currentRoom) {
+      const newRoomId = this.state.currentRoom.id
+      if (newRoomId && newRoomId !== prevRoomId) {
+        const roomMap = new Map(ALL_ROOMS.map(r => [r.id, r]))
+        const tickResult = tickWanderers(this.state, roomMap, Math.random)
+        this._setState({ wanderers: tickResult.wanderers })
+
+        // If a wanderer is now in the player's current room, inject its enemyId
+        const currentWanderer = tickResult.wanderers.find(
+          w => w.currentRoomId === this.state.currentRoom?.id
+        )
+        if (currentWanderer && this.state.currentRoom) {
+          this._setState({
+            currentRoom: {
+              ...this.state.currentRoom,
+              enemies: [...this.state.currentRoom.enemies, currentWanderer.enemyId],
+            },
+          })
+        }
+      }
+    }
+    // ── End wanderer post-move hook ──
 
     // Advance in-world time for meaningful actions (must happen BEFORE
     // the narrative pipeline so pressure, narrator, and world events all

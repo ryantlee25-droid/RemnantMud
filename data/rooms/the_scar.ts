@@ -17,7 +17,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       hazard_mitigation_message: 'Your suit\'s filtration layer catches the worst of the chemical byproduct. You breathe measured air instead of crater floor.',
       combat_high_ground: true,
     },
-    cycleGate: 3,
+    cycleGate: 2,
     description: 'The crater rim is a broken circle of upthrown stone and chemical residue — the bombing\'s actual footprint, seven years old and unchanged, as permanent as the geography it modified. Inside the crater: the haze is real up close, a greenish-brown shimmer at ground level that tastes like battery acid and old fire. The facility below is fully visible now — a squat four-story structure occupying most of the crater floor, its concrete poured to military spec, its roof undamaged. The bombing cracked the perimeter. The facility is intact. Everything you were told was a lie, and you are standing in the evidence.',
     descriptionNight: 'At night the crater glows from within. The facility\'s lights, the chemical haze backlighting orange from the heat source, the blue-green luminescence rising from cracks in the crater floor. You\'ve seen that blue-green before. CHARON-7, escaping in trace amounts from whatever process maintains the facility\'s heat. This ground is contaminated. You knew that before you came down. You came anyway.',
     shortDescription: 'The crater rim. MERIDIAN below. Everything they said was wrong.',
@@ -74,7 +74,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.30,
+      baseChance: 0.45,
       timeModifier: { day: 0.8, night: 2.0, dawn: 1.0, dusk: 1.5 },
       threatPool: [
         { type: 'shuffler', weight: 45, quantity: { min: 2, max: 5, distribution: 'bell' } },
@@ -104,7 +104,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     difficulty: 4,
     visited: false,
     flags: {},
-    cycleGate: 3,
+    cycleGate: 2,
     description: 'The blast door is eight feet of hardened steel, MERIDIAN PROJECT seal embossed in the center, the government crest worn but legible. Four access routes. The keycard reader is powered. The biometric panel\'s fingerprint and retinal scanners are operational. A maintenance hatch ten feet south has a hasp that could be cut or blown. The mine utility door is visible to the west from here. Four ways in, and the door makes them all feel like choices rather than solutions. You stand in front of seven years of broadcast signal and eight feet of steel and the gap between what you know and what you\'re about to know.',
     descriptionNight: 'The door reads the same at night. The readers\' standby lights make a small constellation in the crater dark. Green for the keycard. Blue for biometric. Red for the maintenance hatch alarm. The door has been waiting in exactly this configuration since the last person went through it from inside.',
     shortDescription: 'Blast door. Four access routes. The way in.',
@@ -149,7 +149,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.20,
+      baseChance: 0.45,
       timeModifier: { day: 0.8, night: 2.0, dawn: 1.0, dusk: 1.5 },
       threatPool: [
         { type: 'shuffler', weight: 50, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
@@ -169,7 +169,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     difficulty: 3,
     visited: false,
     flags: {},
-    cycleGate: 3,
+    cycleGate: 2,
     description: 'The automated systems are still running. UV strips cycle on as you enter. A chemical mist activates — the nozzles spray something that smells like isopropyl and ozone, a decontamination protocol running the same cycle it\'s been running, presumably, for seven years. Nobody updated the decontamination system when the facility went dark. It doesn\'t know the facility went dark. It greets you with institutional efficiency and the specific eerie functionality of a machine that has outlasted its purpose.',
     descriptionNight: 'The UV strips are blue-white and harsh. The decon mist is cold. The automated welcome is the same at 3am.',
     shortDescription: 'Automated decontamination. Still running. Eerie.',
@@ -228,7 +228,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     difficulty: 3,
     visited: false,
     flags: { dark: false, combat_narrow_passage: true },
-    cycleGate: 3,
+    cycleGate: 2,
     description: 'Office spaces, evacuated. Seven years of silence that is not quite silence — the ventilation system runs, the lighting runs (emergency red, not full-spectrum), and somewhere far below, something generates heat and movement that transmits as a subsonic hum. The offices were cleared in a hurry: file drawers pulled and emptied, computers left but hard drives removed, personal items still on desks. A coffee mug on one desk has grown a seven-year culture that has evolved into something that would interest a microbiologist. The hallway stretches east-west. BIOCONTAINMENT B2 points east. DIRECTOR\'S SUITE points west. Both arrows are covered in a thin layer of dust undisturbed for seven years.',
     descriptionNight: 'The emergency lighting is always red. There is no other light source here. The corridor looks the same at midnight as at noon.',
     shortDescription: 'Office corridor. Evacuated. Seven years of silence.',
@@ -263,7 +263,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.15,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -290,7 +290,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       hazard_mitigation_message: 'Your suit\'s sealed air supply keeps the contaminated ventilation out. You work in the lab on borrowed clean air.',
       combat_narrow_passage: true,
     },
-    cycleGate: 3,
+    cycleGate: 2,
     description: 'This is where CHARON-7 was developed. The lab equipment is still present, powered down but intact — the biological safety cabinets, the PCR machines, the sequencing instruments, the culture chambers. Data terminals line the east wall, still connected to the facility\'s network, accessible. The whiteboards are covered in notation that takes time to read and changes everything once you do. R-1 and R-8. Both strains. The intended outcome and the failure state. The intended outcome is the Sanguine. The failure state is the Hollow. This wasn\'t an accident. This was a research program.',
     descriptionNight: 'Same emergency lighting. The terminal screens glow. The data has been here waiting since the Collapse.',
     shortDescription: 'The lab. CHARON-7 was developed here. Data terminals. Revelation.',
@@ -325,7 +325,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.10,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -344,7 +344,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     difficulty: 4,
     visited: false,
     flags: { dark: true, combat_darkness: true, combat_narrow_passage: true },
-    cycleGate: 3,
+    cycleGate: 2,
     description: 'Twelve cells in two rows, steel doors with sliding food ports, small window grilles. All cells are empty now. The doors are open — unlocked from inside, in the final days. The cells were occupied during the trial period: death row inmates, fourteen of them, transferred under the legal grey area the lab wing documents describe. The cell walls tell their story in the way cell walls always do: scratch marks counting days, writing in whatever medium was available. Letters never sent, addressed to specific people, written to be left in the walls.',
     descriptionNight: 'Emergency lighting in the cell block is minimal — barely enough to read the wall writing, which may be merciful.',
     shortDescription: 'Holding cells. Test subjects. Letters collectible. Horror.',
@@ -391,7 +391,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     difficulty: 3,
     visited: false,
     flags: { questHub: true },
-    cycleGate: 3,
+    cycleGate: 2,
     description: 'The cold storage vault hums at four degrees Celsius, maintained by a dedicated power circuit that has been running without interruption since installation. Rack after rack of sealed vials, two colors: blue-capped and red-capped, labeled in the same precise stencil as everything else in this facility. R-1 in blue. R-8 in red. The quantities are significant — enough for mass distribution, enough for a targeted release, enough for analysis and development. The vault is clean, cold, and fluorescent. The samples do not care what you decide to do with them. They are patient in the way that biology is patient: they will wait.',
     descriptionNight: 'The cold storage hum is constant. The blue-green glow from the vials lights the vault from within.',
     shortDescription: 'Cold storage vault. CHARON-7 samples — both strains — in temperature-controlled racks.',
@@ -414,7 +414,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.08,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -433,7 +433,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     difficulty: 4,
     visited: false,
     flags: { scavengingZone: true, combat_narrow_passage: true },
-    cycleGate: 3,
+    cycleGate: 2,
     description: 'The security center is the only room in MERIDIAN where something might still kill you without involving the Hollow. Automated defense systems: motion sensors, two turret-style deterrent units that are still armed, a locked armory with military-grade equipment. The motion sensors have a calibration that distinguishes between sizes — designed, you eventually work out, to let Sanguine-sized signatures pass without triggering and flag human-sized ones. The automated defense was built to protect against human intruders, not Sanguine ones.',
     descriptionNight: 'The turrets track in the dark. Their IR targeting doesn\'t care about the time.',
     shortDescription: 'Automated defenses. Combat possible. Military loot.',
@@ -461,7 +461,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.25,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 55, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -481,7 +481,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     difficulty: 3,
     visited: false,
     flags: { questHub: true },
-    cycleGate: 3,
+    cycleGate: 2,
     description: 'The full data archive. Unlike the hard drives removed from the office wing, the server room was connected to a dead man\'s switch: if the facility went into lockdown without manual data deletion, the servers stayed live. The servers stayed live. Seven years of data, intact, waiting. The truth about MERIDIAN\'s funding consortium is in these machines — not just the government contract, but the private investment structure underneath it. Corporate names. Individuals. The money that built MERIDIAN and the money that walked away when it went wrong.',
     descriptionNight: 'The servers run. They always run.',
     shortDescription: 'Full data archive. The truth about who funded MERIDIAN.',
@@ -510,7 +510,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.12,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -529,7 +529,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     difficulty: 4,
     visited: false,
     flags: { dark: true, combat_darkness: true, combat_collapsing: true },
-    cycleGate: 3,
+    cycleGate: 2,
     description: 'The stairwell to Level 2. Power fluctuations — the emergency lighting on this staircase flickers on an irregular cycle, the fluorescent tubes running at 60% capacity due to load variation from something on Level 2. The something is alive. The hum gets louder as you descend. At the bottom, the air temperature rises by fifteen degrees. The heat source is real and it\'s below and there is a biological signature in the thermal variation that isn\'t mechanical. Alive. Something alive is generating this much heat.',
     descriptionNight: 'The fluorescent flicker is the same at night. The heat from below doesn\'t know what time it is.',
     shortDescription: 'Descent to Level 2. Power fluctuations. Something alive below.',
@@ -553,7 +553,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.30,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -573,7 +573,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     difficulty: 5,
     visited: false,
     flags: { dark: false },
-    cycleGate: 3,
+    cycleGate: 2,
     personalLossEchoes: {
       identity: 'You watch the Sanguine pace their enclosure and the recognition is physical. Something made them into what they are, and they have spent years trying to understand what is left of what they were. You know this feeling. You live inside it.',
       community: 'One person, alone, in a space designed to contain them. You think of the people you lost and the walls that used to hold you all together. The vivarium is just a room with no one else in it. You know what that is.',
@@ -620,7 +620,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.05,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -639,7 +639,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     difficulty: 3,
     visited: false,
     flags: { questHub: true },
-    cycleGate: 3,
+    cycleGate: 2,
     description: 'The Director\'s office is the last piece. Personal logs on the desk — a physical journal, handwritten, covering the final two years of MERIDIAN\'s operation and the seven years since. The full story is here: what the program was designed to do, what it actually did, who knew, who authorized the unauthorized trials, who built the dead man\'s switch into the servers, who gave the holding cell subjects their door codes, who stayed behind when everyone else left. The full story is a person. A person who has been living with it.',
     descriptionNight: 'The desk lamp is on. Someone uses this office.',
     shortDescription: 'The Director\'s office. Personal logs. The full story.',
@@ -676,7 +676,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.05,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 80, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -695,7 +695,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     difficulty: 3,
     visited: false,
     flags: { questHub: true, noCombat: true },
-    cycleGate: 3,
+    cycleGate: 2,
     description: 'The source of the signal. The broadcast equipment occupies one corner — a quality shortwave rig, connected to the antenna array on the roof through a sealed cable run. The signal has been going out for seven years on the same schedule: three seconds on, three seconds off, the message repeating. Someone is here. The broadcaster is here. The person who has been calling you across the Four Corners for years is in this room, and they\'ve been waiting — not anxiously, the way someone waits when they\'re not sure, but the way someone waits when they\'ve done everything they can do and now it\'s someone else\'s turn.',
     descriptionNight: 'The broadcast equipment hums. The person at the rig sits with their back to the door, because they heard you coming from decon, and they\'ve had seven years to decide how they want this to go.',
     shortDescription: 'The broadcast source. The broadcaster. The meeting.',
@@ -749,7 +749,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     difficulty: 3,
     visited: false,
     flags: { noCombat: true, questHub: true },
-    cycleGate: 3,
+    cycleGate: 2,
     description: 'The Core lab is a round room with four interactive terminals arranged at the compass points, each labeled with a simple phrase. CURE. WEAPON. SEAL. THRONE. The room is clean — someone has been cleaning it. The terminals are powered, have been powered, will be powered until you use one. The weight in this room is not dramatic. It is not orchestral. It is the specific weight of having come a long way and learned enough to understand what you\'re deciding, and now needing to decide it. The broadcaster said: it is yours. The four terminals say: choose.',
     descriptionNight: 'The terminal screens glow in the dark of the Core. Four options, lit. The room is the same at 3am as at noon. It will wait. It has waited.',
     shortDescription: 'The Core. Four terminals. Four endings. The choice.',
@@ -882,7 +882,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     difficulty: 1,
     visited: false,
     flags: { safeRest: false, fastTravelWaypoint: false },
-    cycleGate: 3,
+    cycleGate: 2,
     description: 'An emergency exit staircase, leading up. The door at the top opens to the crater rim, the chemical haze, the sky. You\'ve made a choice — you don\'t know yet what it will mean for the world, because the world takes time to respond to the things that happen in it. What you know is that you were here. You learned what happened. You decided what should happen next. The broadcaster is still in the facility — they said they\'d stay. The Vivarium Sanguine is still in their enclosure, until or unless the choice you made changes that. The Four Corners is out there, doing what it does: surviving, building, losing things, finding things, continuing.',
     descriptionNight: 'The exit door opens to the crater rim at night. Stars above the chemical haze. The orange glow of MERIDIAN behind you, now changed or unchanged depending on your choice, but present. The world doesn\'t look different from out here. The world takes time.',
     shortDescription: 'The way out. The world changed. What\'s left is what matters.',
@@ -946,7 +946,7 @@ export const THE_SCAR_ROOMS: Room[] = [
     difficulty: 4,
     visited: false,
     flags: { combat_narrow_passage: true },
-    cycleGate: 3,
+    cycleGate: 2,
     description: 'A secondary decontamination corridor, longer than the main airlock — personnel coming from the lab wings passed through here before accessing shared areas. The sprayers are empty, the reservoirs depleted years ago, but the nozzles remain in their ceiling mounts, still angled for the bodies that used to walk under them. Personnel badge slots line the east wall, one per staff member, a physical check-in record for who was where. The last shifts are still in the slots. Nobody came back to clock out.',
     descriptionNight: 'The badge slots hold their ghosts at night too. The corridor feels narrower in the dark. You know it isn\'t.',
     shortDescription: 'Personnel decon corridor. Badge slots. The last shifts, still clocked in.',
@@ -984,7 +984,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.20,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.2, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -1048,7 +1048,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.25,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.2, dawn: 1.0, dusk: 1.1 },
       threatPool: [
         { type: 'remnant', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -1165,7 +1165,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.15,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.2, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -1217,7 +1217,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.10,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.2, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1268,7 +1268,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.05,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1319,7 +1319,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.05,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 80, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1381,7 +1381,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.08,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1433,7 +1433,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.20,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.1, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 55, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -1486,7 +1486,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.15,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.1, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 60, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -1541,7 +1541,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.08,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.0, dawn: 1.0, dusk: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1647,7 +1647,7 @@ export const THE_SCAR_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.25,
+      baseChance: 0.45,
       timeModifier: { day: 1.0, night: 1.2, dawn: 1.0, dusk: 1.1 },
       threatPool: [
         { type: 'remnant', weight: 50, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },

@@ -47,10 +47,11 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.03,
+      baseChance: 0.20,
       timeModifier: { day: 1.0, night: 0.2, dawn: 0.5, dusk: 0.3 },
       threatPool: [
-        { type: 'shuffler', weight: 100, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
       ],
       awarenessRoll: { unaware: 0.5, awarePassive: 0.4, awareAggressive: 0.1 },
     },
@@ -425,8 +426,8 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
       { entityId: 'scrap_metal', spawnChance: 0.5, quantity: { min: 1, max: 2, distribution: 'flat' } },
     ],
     hollowEncounter: {
-      baseChance: 0.05, // Sanguine maintain their territory — high Hollow rates inside the manor are implausible
-      timeModifier: { night: 1.5, dawn: 0.8, dusk: 1.2, day: 0.5 },
+      baseChance: 0.20, // Sanguine maintain their territory — high Hollow rates inside the manor are implausible
+      timeModifier: { night: 1.5, dawn: 0.8, dusk: 1.2, day: 0.75 },
       threatPool: [
         { type: 'remnant', weight: 2, quantity: { min: 1, max: 1, distribution: 'flat' } },
         { type: 'shuffler', weight: 3, quantity: { min: 1, max: 2, distribution: 'flat' } },
@@ -469,10 +470,11 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
       { entityId: 'scrap_metal', spawnChance: 0.3, quantity: { min: 1, max: 1, distribution: 'flat' } },
     ],
     hollowEncounter: {
-      baseChance: 0.03, // Lore room, not combat — Sanguine keep their gallery undisturbed
-      timeModifier: { night: 1.6, dawn: 0.7, dusk: 1.3, day: 0.4 },
+      baseChance: 0.20, // Lore room, not combat — Sanguine keep their gallery undisturbed
+      timeModifier: { night: 1.6, dawn: 0.7, dusk: 1.3, day: 0.70 },
       threatPool: [
-        { type: 'remnant', weight: 1, quantity: { min: 1, max: 1, distribution: 'flat' } },
+        { type: 'shuffler', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
+        { type: 'remnant', weight: 30, quantity: { min: 1, max: 1, distribution: 'flat' } },
       ],
     },
     extras: [
@@ -834,7 +836,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     ],
     hollowEncounter: {
       baseChance: 0.55,
-      timeModifier: { day: 0.4, dawn: 1.5, dusk: 1.2, night: 2.0 },
+      timeModifier: { day: 0.70, dawn: 1.5, dusk: 1.2, night: 2.0 },
       threatPool: [
         { type: 'remnant', weight: 4, quantity: { min: 1, max: 2, distribution: 'flat' } },
         { type: 'shuffler', weight: 3, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
@@ -1038,7 +1040,7 @@ export const DUSKHOLLOW_ROOMS: Room[] = [
     ],
     hollowEncounter: {
       baseChance: 0.40,
-      timeModifier: { day: 0.5, dawn: 0.8, dusk: 1.3, night: 1.8 },
+      timeModifier: { day: 0.75, dawn: 0.8, dusk: 1.3, night: 1.8 },
       threatPool: [
         { type: 'remnant', weight: 3, quantity: { min: 1, max: 2, distribution: 'flat' } },
         { type: 'shuffler', weight: 2, quantity: { min: 1, max: 2, distribution: 'flat' } },

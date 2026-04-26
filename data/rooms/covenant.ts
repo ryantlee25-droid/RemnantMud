@@ -953,7 +953,7 @@ export const COVENANT_ROOMS: Room[] = [
     npcs: [],
     hollowEncounter: {
       baseChance: 0.08,
-      timeModifier: { day: 0.3, dusk: 1.5, night: 2.5, dawn: 0.8 },
+      timeModifier: { day: 0.70, dusk: 1.5, night: 2.5, dawn: 0.8 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1028,7 +1028,7 @@ export const COVENANT_ROOMS: Room[] = [
     npcs: [],
     hollowEncounter: {
       baseChance: 0.12,
-      timeModifier: { day: 0.4, dusk: 1.8, night: 3.0, dawn: 1.0 },
+      timeModifier: { day: 0.70, dusk: 1.8, night: 3.0, dawn: 1.0 },
       threatPool: [
         { type: 'shuffler', weight: 60, quantity: { min: 1, max: 3, distribution: 'weighted_low' } },
         { type: 'brute', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1428,7 +1428,7 @@ export const COVENANT_ROOMS: Room[] = [
     ],
     hollowEncounter: {
       baseChance: 0.08,
-      timeModifier: { day: 0.5, dawn: 1.0, dusk: 1.0, night: 1.5 },
+      timeModifier: { day: 0.75, dawn: 1.0, dusk: 1.0, night: 1.5 },
       threatPool: [
         { type: 'shuffler', weight: 3, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'remnant', weight: 1, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1713,7 +1713,7 @@ export const COVENANT_ROOMS: Room[] = [
     npcs: [],
     hollowEncounter: {
       baseChance: 0.07,
-      timeModifier: { day: 0.3, dusk: 1.4, night: 2.2, dawn: 0.7 },
+      timeModifier: { day: 0.70, dusk: 1.4, night: 2.2, dawn: 0.7 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1925,7 +1925,7 @@ export const COVENANT_ROOMS: Room[] = [
     npcs: [],
     hollowEncounter: {
       baseChance: 0.05,
-      timeModifier: { day: 0.2, dusk: 1.2, night: 2.0, dawn: 0.6 },
+      timeModifier: { day: 0.70, dusk: 1.2, night: 2.0, dawn: 0.6 },
       threatPool: [
         { type: 'shuffler', weight: 65, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 35, quantity: { min: 1, max: 1, distribution: 'single' } },

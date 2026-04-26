@@ -31,8 +31,8 @@ export const SALT_CREEK_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.10,
-      timeModifier: { day: 0.3, dusk: 1.5, night: 2.5, dawn: 0.7 },
+      baseChance: 0.25,
+      timeModifier: { day: 0.70, dusk: 1.5, night: 2.5, dawn: 0.7 },
       threatPool: [
         { type: 'shuffler', weight: 70, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -94,8 +94,8 @@ export const SALT_CREEK_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.05,
-      timeModifier: { day: 0.5, dusk: 1.0, night: 1.5, dawn: 0.7 },
+      baseChance: 0.25,
+      timeModifier: { day: 0.75, dusk: 1.0, night: 1.5, dawn: 0.7 },
       threatPool: [
         { type: 'shuffler', weight: 80, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'screamer', weight: 20, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -235,8 +235,8 @@ export const SALT_CREEK_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.03,
-      timeModifier: { day: 0.5, dusk: 1.0, night: 1.5, dawn: 0.7 },
+      baseChance: 0.25,
+      timeModifier: { day: 0.75, dusk: 1.0, night: 1.5, dawn: 0.7 },
       threatPool: [
         { type: 'shuffler', weight: 90, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'remnant', weight: 10, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -590,8 +590,8 @@ export const SALT_CREEK_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.04,
-      timeModifier: { day: 0.5, dusk: 1.5, night: 2.0, dawn: 1.0 },
+      baseChance: 0.25,
+      timeModifier: { day: 0.75, dusk: 1.5, night: 2.0, dawn: 1.0 },
       threatPool: [
         { type: 'brute', weight: 60, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'remnant', weight: 30, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -660,8 +660,8 @@ export const SALT_CREEK_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.06,
-      timeModifier: { day: 0.3, dusk: 1.5, night: 2.5, dawn: 0.8 },
+      baseChance: 0.25,
+      timeModifier: { day: 0.70, dusk: 1.5, night: 2.5, dawn: 0.8 },
       threatPool: [
         { type: 'remnant', weight: 60, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'shuffler', weight: 40, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
@@ -967,7 +967,7 @@ export const SALT_CREEK_ROOMS: Room[] = [
     npcs: [],
     hollowEncounter: {
       baseChance: 0.25,
-      timeModifier: { day: 0.5, dusk: 2.0, night: 3.5, dawn: 1.5 },
+      timeModifier: { day: 0.75, dusk: 2.0, night: 3.5, dawn: 1.5 },
       threatPool: [
         { type: 'shuffler', weight: 50, quantity: { min: 2, max: 4, distribution: 'bell' } },
         { type: 'brute', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1062,8 +1062,8 @@ export const SALT_CREEK_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.12,
-      timeModifier: { day: 0.4, dusk: 1.5, night: 2.5, dawn: 0.8 },
+      baseChance: 0.25,
+      timeModifier: { day: 0.70, dusk: 1.5, night: 2.5, dawn: 0.8 },
       threatPool: [
         { type: 'shuffler', weight: 60, quantity: { min: 1, max: 3, distribution: 'bell' } },
         { type: 'remnant', weight: 25, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1191,8 +1191,8 @@ export const SALT_CREEK_ROOMS: Room[] = [
     enemies: ['sanguine_feral'],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.04,
-      timeModifier: { day: 0.5, dusk: 1.5, night: 2.0, dawn: 1.0 },
+      baseChance: 0.25,
+      timeModifier: { day: 0.75, dusk: 1.5, night: 2.0, dawn: 1.0 },
       threatPool: [
         { type: 'remnant', weight: 70, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'sanguine_feral', weight: 30, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1253,8 +1253,8 @@ export const SALT_CREEK_ROOMS: Room[] = [
     enemies: [],
     npcs: [],
     hollowEncounter: {
-      baseChance: 0.08,
-      timeModifier: { day: 0.3, dusk: 1.5, night: 2.8, dawn: 0.8 },
+      baseChance: 0.25,
+      timeModifier: { day: 0.70, dusk: 1.5, night: 2.8, dawn: 0.8 },
       threatPool: [
         { type: 'remnant', weight: 50, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'shuffler', weight: 35, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },

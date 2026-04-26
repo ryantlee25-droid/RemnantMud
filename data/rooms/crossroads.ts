@@ -101,8 +101,8 @@ export const CROSSROADS_ROOMS: Room[] = [
       },
     ],
     hollowEncounter: {
-      baseChance: 0.05,
-      timeModifier: { day: 0.3, night: 2.5, dawn: 0.5, dusk: 1.5 },
+      baseChance: 0.15,
+      timeModifier: { day: 0.70, night: 2.5, dawn: 0.5, dusk: 1.5 },
       threatPool: [
         { type: 'shuffler', weight: 95, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'remnant', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -942,7 +942,7 @@ export const CROSSROADS_ROOMS: Room[] = [
     ],
     hollowEncounter: {
       baseChance: 0.15,
-      timeModifier: { day: 0.5, night: 2.0, dawn: 0.8, dusk: 1.3 },
+      timeModifier: { day: 0.75, night: 2.0, dawn: 0.8, dusk: 1.3 },
       threatPool: [
         { type: 'shuffler', weight: 95, quantity: { min: 1, max: 2, distribution: 'weighted_low' } },
         { type: 'remnant', weight: 5, quantity: { min: 1, max: 1, distribution: 'single' } },
@@ -1183,8 +1183,8 @@ export const CROSSROADS_ROOMS: Room[] = [
     ],
     itemSpawns: [],
     hollowEncounter: {
-      baseChance: 0.06,
-      timeModifier: { day: 0.5, dawn: 1.0, dusk: 1.0, night: 1.5 },
+      baseChance: 0.15,
+      timeModifier: { day: 0.75, dawn: 1.0, dusk: 1.0, night: 1.5 },
       threatPool: [
         { type: 'shuffler', weight: 3, quantity: { min: 1, max: 1, distribution: 'single' } },
         { type: 'remnant', weight: 1, quantity: { min: 1, max: 1, distribution: 'single' } },

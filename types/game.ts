@@ -4,7 +4,7 @@
 // All game interfaces live here. No `any` allowed.
 // ============================================================
 
-import type { ActiveCondition, WeaponTraitId, ArmorTraitId, EnemyResistance } from '@/types/traits'
+import type { ActiveCondition, ConditionId, WeaponTraitId, ArmorTraitId, EnemyResistance } from '@/types/traits'
 
 // ------------------------------------------------------------
 // Primitives
@@ -387,6 +387,21 @@ export interface Action {
 // Items
 // ------------------------------------------------------------
 
+// Convoy 2 — rarity is the new player-facing tier label (color-coded)
+export type ItemRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary'
+
+// Convoy 2 — armor pieces are now slot-typed (head/chest/legs/feet) when type==='armor'
+export type ArmorSlot = 'head' | 'chest' | 'legs' | 'feet'
+
+// Convoy 2 — affix entry shape (rolled at drop-time onto an Item)
+export interface AffixEntry {
+  id: string
+  name: string                      // shown to player ("Bloodthirsty", "of the Vigilant")
+  appliesToType: 'weapon' | 'armor' | 'any'
+  statEffect?: Partial<Record<Stat, number>>
+  traitAdd?: WeaponTraitId | ArmorTraitId
+}
+
 export interface Item {
   id: string
   name: string
@@ -404,6 +419,10 @@ export interface Item {
   weaponTraits?: WeaponTraitId[]
   armorTraits?: ArmorTraitId[]
   tier?: 1 | 2 | 3 | 4 | 5  // Scrap/Salvage/Military/PreCollapse/MERIDIAN
+  rarity?: ItemRarity                // Convoy 2 H1 — backfilled across all 182 items
+  armorSlot?: ArmorSlot              // Convoy 2 H6 — only set when type==='armor'
+  setId?: string                     // Convoy 2 H10 — set-bonus grouping
+  affixes?: AffixEntry[]             // Convoy 2 H2 — rolled at drop time; max 2 (1 prefix + 1 suffix)
 }
 
 export interface InventoryItem {
@@ -422,6 +441,14 @@ export interface InventoryItem {
 export interface LootEntry {
   itemId: string
   chance: number
+  count?: [number, number]  // Convoy 2 H3 — min/max quantity per drop. Default [1,1] when absent.
+}
+
+// Convoy 2 H5 — area-of-effect damage shape; consumed by Frenzy onDeath and AoE weapon traits
+export interface AoEDamage {
+  radius: 'adjacent' | 'room'
+  damage: [number, number]
+  condition?: ConditionId
 }
 
 export interface Enemy {
@@ -440,6 +467,10 @@ export interface Enemy {
   resistanceProfile?: EnemyResistance
   critChance?: number       // 0.0–1.0 — chance per hit to deal 1.5× damage. Default 0.05 (5%) if absent.
   fleeThreshold?: number    // 0.0–1.0 — HP fraction below which enemy attempts to flee. Default 0.0 (never flee) if absent.
+  // Convoy 2
+  onDeath?: { aoe?: AoEDamage }   // H5 — Frenzy's signature; weapon-trait AoE consumes the same shape
+  bossIntro?: string              // H12 — line played when boss is first encountered
+  combatIntro?: string            // H12 — short tagline at combat start
 }
 
 // ------------------------------------------------------------
@@ -586,6 +617,15 @@ export interface Player {
   hollowKills?: number
   /** Most recent death cause; informs next-cycle prose selection. */
   lastDeathCause?: DeathCause
+  // --------------------------------------------------------
+  // Armor slot fields (Convoy 2 H6 — slot-aware equip system)
+  // Each holds an inventoryItemId (InventoryItem.id, not itemId).
+  // Four independent slots replace the old single-armor-equipped model.
+  // --------------------------------------------------------
+  equippedArmorHead?: string    // inventoryItemId of equipped head armor
+  equippedArmorChest?: string   // inventoryItemId of equipped chest armor
+  equippedArmorLegs?: string    // inventoryItemId of equipped legs armor
+  equippedArmorFeet?: string    // inventoryItemId of equipped feet armor
 }
 
 // ------------------------------------------------------------

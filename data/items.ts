@@ -15,6 +15,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'currency',
     weight: 0,
     value: 1,
+    rarity: 'common',
   },
 
   ammo_9mm: {
@@ -24,6 +25,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'currency',
     weight: 0,
     value: 3,
+    rarity: 'common',
   },
 
   ammo_shotgun_shell: {
@@ -33,6 +35,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'currency',
     weight: 0,
     value: 4,
+    rarity: 'common',
   },
 
   // ----------------------------------------------------------
@@ -49,6 +52,7 @@ export const ITEMS: Record<string, Item> = {
     value: 5,
     weaponTraits: ['heavy'],
     tier: 1,
+    rarity: 'common',
   },
 
   hatchet: {
@@ -61,6 +65,7 @@ export const ITEMS: Record<string, Item> = {
     value: 8,
     weaponTraits: ['vicious'],
     tier: 1,
+    rarity: 'uncommon',
   },
 
   combat_knife: {
@@ -73,6 +78,7 @@ export const ITEMS: Record<string, Item> = {
     value: 12,
     weaponTraits: ['keen', 'quick'],
     tier: 2,
+    rarity: 'uncommon',
   },
 
   machete: {
@@ -85,6 +91,7 @@ export const ITEMS: Record<string, Item> = {
     value: 15,
     weaponTraits: ['keen', 'vicious'],
     tier: 2,
+    rarity: 'uncommon',
   },
 
   silver_knife: {
@@ -98,6 +105,7 @@ export const ITEMS: Record<string, Item> = {
     usable: false,
     weaponTraits: ['blessed', 'keen'],
     tier: 5,
+    rarity: 'epic',
   },
 
   // ----------------------------------------------------------
@@ -114,6 +122,7 @@ export const ITEMS: Record<string, Item> = {
     value: 20,
     weaponTraits: ['precise'],
     tier: 2,
+    rarity: 'epic',
   },
 
   '22_rifle': {
@@ -126,6 +135,7 @@ export const ITEMS: Record<string, Item> = {
     value: 35,
     weaponTraits: ['quick', 'silenced'],
     tier: 3,
+    rarity: 'rare',
   },
 
   '9mm_pistol': {
@@ -138,6 +148,7 @@ export const ITEMS: Record<string, Item> = {
     value: 45,
     weaponTraits: ['precise', 'quick'],
     tier: 3,
+    rarity: 'rare',
   },
 
   shotgun: {
@@ -150,6 +161,7 @@ export const ITEMS: Record<string, Item> = {
     value: 60,
     weaponTraits: ['heavy', 'vicious'],
     tier: 4,
+    rarity: 'legendary',
   },
 
   // ----------------------------------------------------------
@@ -166,6 +178,7 @@ export const ITEMS: Record<string, Item> = {
     value: 8,
     usable: true,
     useText: 'You wrap the wound tight. The bleeding slows.',
+    rarity: 'common',
   },
 
   antibiotics_01: {
@@ -177,6 +190,7 @@ export const ITEMS: Record<string, Item> = {
     value: 50,
     usable: true,
     useText: 'You take the dose. The fever breaks over the next few hours.',
+    rarity: 'common',
   },
 
   quiet_drops: {
@@ -188,6 +202,7 @@ export const ITEMS: Record<string, Item> = {
     value: 30,
     usable: true,
     useText: 'The tension in the air shifts. Something that was paying attention to you stops.',
+    rarity: 'common',
   },
 
   stim_shot: {
@@ -200,6 +215,7 @@ export const ITEMS: Record<string, Item> = {
     usable: true,
     statBonus: { grit: 3 },
     useText: 'The world sharpens at the edges. Everything is very clear and very fast.',
+    rarity: 'uncommon',
   },
 
   field_surgery_kit: {
@@ -212,6 +228,7 @@ export const ITEMS: Record<string, Item> = {
     value: 100,
     usable: true,
     useText: 'The work is slow and hurts. When it\'s done, the wound is closed and clean.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -228,6 +245,7 @@ export const ITEMS: Record<string, Item> = {
     value: 4,
     usable: true,
     useText: 'You eat. The cold settles out of your bones a fraction.',
+    rarity: 'common',
   },
 
   elk_jerky: {
@@ -237,6 +255,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'consumable',
     weight: 1,
     healing: 3,
+    rarity: 'common',
     value: 6,
     usable: true,
     useText: 'You eat. It is good. You allow yourself to register that it is good.',
@@ -252,6 +271,7 @@ export const ITEMS: Record<string, Item> = {
     value: 4,
     usable: true,
     useText: 'You drink. Clean. Cold. The thirst recedes.',
+    rarity: 'common',
   },
 
   purification_tabs: {
@@ -263,6 +283,7 @@ export const ITEMS: Record<string, Item> = {
     value: 10,
     usable: true,
     useText: 'You treat the water. Thirty minutes to safety. You wait.',
+    rarity: 'common',
   },
 
   sanguine_blood_vial: {
@@ -275,6 +296,7 @@ export const ITEMS: Record<string, Item> = {
     value: 100,
     usable: true,
     useText: 'The warmth spreads from the injection site outward. Everything is brighter. You feel the edge before you were supposed to feel it.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -288,6 +310,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 3,
     value: 2,
+    rarity: 'common',
   },
 
   textiles: {
@@ -297,6 +320,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 2,
     value: 3,
+    rarity: 'common',
   },
 
   electronics_salvage: {
@@ -306,6 +330,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 1,
     value: 8,
+    rarity: 'common',
   },
 
   chemicals_basic: {
@@ -315,6 +340,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 2,
     value: 5,
+    rarity: 'common',
   },
 
   wire_coil: {
@@ -324,6 +350,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 1,
     value: 4,
+    rarity: 'common',
   },
 
   juniper_firewood: {
@@ -333,6 +360,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 3,
     value: 1,
+    rarity: 'common',
   },
 
   river_stone_flat: {
@@ -342,6 +370,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 1,
     value: 1,
+    rarity: 'common',
   },
 
   // ----------------------------------------------------------
@@ -355,6 +384,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'key',
     weight: 0,
     value: 0,
+    rarity: 'epic',
   },
 
   courthouse_archive_key: {
@@ -364,6 +394,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'key',
     weight: 0,
     value: 0,
+    rarity: 'rare',
   },
 
   cold_storage_key: {
@@ -373,6 +404,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'key',
     weight: 0,
     value: 0,
+    rarity: 'rare',
   },
 
   red_court_key: {
@@ -382,6 +414,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'key',
     weight: 0,
     value: 0,
+    rarity: 'rare',
   },
 
   bunker_access_badge: {
@@ -391,6 +424,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'key',
     weight: 0,
     value: 0,
+    rarity: 'rare',
   },
 
   deep_mine_rope: {
@@ -400,6 +434,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'key',
     weight: 4,
     value: 0,
+    rarity: 'rare',
   },
 
   sanguine_biometric_slide: {
@@ -409,6 +444,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'key',
     weight: 0,
     value: 0,
+    rarity: 'rare',
   },
 
   purified_stims: {
@@ -420,6 +456,7 @@ export const ITEMS: Record<string, Item> = {
     value: 15,
     usable: true,
     useText: 'The stim hits fast and clean — no edge shake, no crash taste. You feel more alert than circumstances warrant. You can work with that.',
+    rarity: 'common',
   },
 
   // ----------------------------------------------------------
@@ -435,6 +472,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'CROSSROADS ACCORD — THIRD AMENDMENT. No firearms in the trading circle. No unchecked wounds in the medical tent. No one gets run out without a hearing. Signed, the Drifter Council, Spring 2037. Someone has crossed out "Council" and written "nobody" above it.',
+    rarity: 'uncommon',
   },
 
   torn_note_fragment: {
@@ -446,6 +484,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: '...if you find this before the Salters do, the cache is under the third merchant stall from the east gate, under the floorboards. Take the medicals and leave the — [TORN]. Whatever was under that flap of paper, it\'s gone.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -461,6 +500,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Sarah — I made it past the crossing. Howard\'s bridge is real. The man who built it is real too, which I didn\'t expect. He asked me if I came from the east and when I said yes he got quiet and offered me extra food without explaining why. I think he\'s waiting for someone. I didn\'t ask. I\'m writing this so if I don\'t make it to the Covenant, somebody finds this and knows I got this far. Love, Mae.',
+    rarity: 'uncommon',
   },
 
   truck_dashboard_note: {
@@ -472,6 +512,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Gas gauge broke in \'33. The actual empty is two ticks below the E. I am writing this so you stop running out on the flats. Also the radio only gets AM now. There is one broadcast worth hearing. You\'ll know it when you find it.',
+    rarity: 'uncommon',
   },
 
   border_patrol_log: {
@@ -483,6 +524,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Day 11. Three more CDC vehicles on the northern road, military escort, heading toward the Scar site. We were told not to stop them. Sergeant Ramos asked why. No one answered. Day 14. The CDC vehicles have not come back south. We have been told to stop logging movement at this checkpoint effective immediately. This is the last entry. — Officer T. Whitfield, NMSP.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -498,6 +540,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Article IV: No citizen of the Accord shall be expelled without a hearing before the full council. Article V: The medical stores are communal property. No individual faction may withhold medicine from any resident in need. The margin annotation reads: Cross pushed this through over Salter objection in \'36. Cost her two votes and she didn\'t flinch.',
+    rarity: 'uncommon',
   },
 
   cross_personal_journal_page: {
@@ -509,6 +552,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'I think about the radio signal more than I should. Sparks says it\'s MERIDIAN. The Reclaimers say MERIDIAN was destroyed. The Salters say the same thing Briggs does. The problem is Briggs was there. He was perimeter security. He says it was destroyed and I believe he believes that. I don\'t think he knows what he helped cover up.',
+    rarity: 'uncommon',
   },
 
   chapel_memorial_book: {
@@ -520,6 +564,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'The names fill twelve pages. Each entry has a date, a brief note, and a small pressed flower or leaf. The last entry reads: Tomás Rael, age 71. Died peacefully. He planted the east garden. He taught three people to make bread. He was kind. That is enough.',
+    rarity: 'uncommon',
   },
 
   granary_theft_note: {
@@ -531,6 +576,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'To whoever took the rye seed stock on the 12th — I know it was you. I know you have people who are hungry. I would have given it to you if you had asked. The fact that you didn\'t ask means something, and I am not sure it means what you think it means. The seed is not coming back. Neither is the trust. — Marta.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -546,6 +592,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'CLASSIFIED — PERIMETER SECURITY ROTATION, MERIDIAN SITE. Sergeant Briggs assigned to outer perimeter, Section C. NO ENTRY into the facility structure without Level 4 clearance. In the event of detonation order: withdraw to safe distance, do not re-enter, do not engage survivors. The word "survivors" has been underlined by hand, years after the order was written.',
+    rarity: 'uncommon',
   },
 
   meridian_perimeter_memo: {
@@ -557,6 +604,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'RE: Perimeter Security Rotation, MERIDIAN. Effective [REDACTED], all civilian access to the facility is hereby terminated. The public cover story is [REDACTED]. Personnel with knowledge of the [REDACTED] program are advised that their NDAs are enforceable under the Emergency Powers Act. The facility did not have a [REDACTED] accident. The facility had a [REDACTED]. Those are different things.',
+    rarity: 'uncommon',
   },
 
   salters_manifesto: {
@@ -568,6 +616,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'What we are: the last professional military force in the Four Corners. What we do: protect the living from everything that wants them dead. What we don\'t do: negotiate with Sanguine. Treat. Coexist. The Accord calls this "hardline." We call it "looking at what those things actually are." — Warlord Briggs, Salt Creek Compact, 2036.',
+    rarity: 'uncommon',
   },
 
   bombing_site_notes: {
@@ -579,6 +628,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'DAY 1. 0340 hrs. Strike confirmed. Surface structures destroyed. Per protocol: no re-entry. DAY 1. 1200 hrs. Facility power still active — thermal signature unchanged. Structure intact below grade. DAY 2. Command told us to file it as destroyed and move out. The power readings contradict this. Nobody in my chain wants to hear it. DAY 3. Three names in the roll call are wrong — two soldiers on perimeter acknowledged they saw movement after the strike. They have been reassigned. I am writing this down because this did not happen the way the report says it happened. — Sgt. D. Briggs, USMC, MERIDIAN perimeter detail.',
+    rarity: 'uncommon',
   },
 
   commanders_notes: {
@@ -590,6 +640,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'OPERATION MERIDIAN SEAL — CLASSIFIED. Unit: 3rd Battalion, B Company, Perimeter Security Command. Issued: 14 October 2031. Objective: Maintain outer perimeter, prevent civilian re-entry, confirm detonation coverage. Actual outcome: [Handwritten margin] The facility is intact. I watched it happen. The bombs hit the surface. The bunker survived. I was ordered not to report the power signature. I am keeping this in case someone needs to know it was real. — Major D. Briggs.',
+    rarity: 'rare',
   },
 
   // ----------------------------------------------------------
@@ -605,6 +656,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'I did not intend to found anything. I intended to survive. The fire was warmth first and then meaning and then something I cannot stop. What Harrow is doing with it now — the experiments, the controlled burns, the survival rate climbing — I don\'t know if I made this or if CHARON-7 made this through me. I don\'t think there is a difference anymore. — First Kindler, name burned out.',
+    rarity: 'uncommon',
   },
 
   harrow_sermon_notes: {
@@ -616,6 +668,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Key point: the survival rate is the revelation, not the fire itself. 67% survive the purification. 67% of those show resistance markers we cannot fully explain. The Reclaimers call this "epigenetic priming." I call it election. The language matters less than the fact: we are selecting for something. Whether it selected us first is the question I pray about.',
+    rarity: 'uncommon',
   },
 
   purification_survivor_account: {
@@ -627,6 +680,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'I went in because my brother went in. He came out different — not bad different, just more. I came out and I couldn\'t explain it either. The Hollow at the perimeter that night didn\'t react to us when we walked past them. Three people watched it happen. Harrow won\'t tell me what it means. I don\'t think he knows either and that scares me more than the fire.',
+    rarity: 'uncommon',
   },
 
   crypt_inscription: {
@@ -638,6 +692,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'WE WERE HERE. WE ENDURED. THE FIRE KNEW US. Anyone who reads this in a year or ten years or a hundred — we tried. We built something in the ruin. We fed people. We buried our dead with their names. That is not nothing. That is everything. — The Kindling, Year 4.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -653,6 +708,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Page 1: ARIA WAS HERE 2032. Page 2: RED COURT — TURN BACK. Page 3 (new hand): Red Court hasn\'t been in this canyon in two years. Whoever put that up is either old intel or a liar. Page 7: something written in a language I don\'t recognize, maybe Diné, maybe something else. The letters are careful. Whoever wrote them wanted them to last.',
+    rarity: 'uncommon',
   },
 
   feral_hunters_note: {
@@ -664,6 +720,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'If you are reading this you survived the drop. Good. There are three Sanguine Ferals in the canyon below — not Red Court, Feral, which means no coordination but also no restraint. They move at night. They do not use the main trail. I lost two people finding this out. I am writing it down so you don\'t have to find it out the same way. — Drifter scout, unnamed.',
+    rarity: 'uncommon',
   },
 
   lucid_safe_house_message: {
@@ -675,6 +732,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'To any Lucid reading this: the safe house at the lower canyon is compromised. Red Court found it in autumn. Dr. Osei has moved. The new location is in the signal — you know which signal. Listen for the second tone. She is still working. She needs samples from the new Hollow variant — the ones that don\'t aggregate. If you can help, she will know what to do with it.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -690,6 +748,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Oct 3, 2031. Third day with no contact from the highway patrol. The radio has stopped giving anything useful. There are six of us left in town. We have enough food for two weeks if we ration. Sandra says we should go south. I think south is the problem. Something big moved through the Dust last night and it didn\'t move like anything I\'ve seen. I\'m staying indoors tomorrow. I\'m writing this in case tomorrow is the last tomorrow.',
+    rarity: 'uncommon',
   },
 
   hardware_store_invoice_2031: {
@@ -701,6 +760,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Customer: T. Harrow. Items: 40lb concrete mix x10, rebar #5 x30, sheet steel 4\'x8\' x6, hinges (heavy-duty) x12, padlocks (keyed alike) x8. Payment: cash. Note: customer asked whether the store had any more lye. We didn\'t. He said he\'d find some. This was March 2031, two weeks before the Collapse. Make of that what you will.',
+    rarity: 'uncommon',
   },
 
   water_tower_log: {
@@ -712,6 +772,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Last service: August 2031. Chlorinator cartridge replaced. Pump functioning. Pressure nominal. Final entry, November 2031: contamination detected, source unknown, chemical signature not matching any known pollutant. Recommend boiling until further analysis. Further analysis never came. If you\'re drinking from the ground water here — boil it.',
+    rarity: 'uncommon',
   },
 
   radio_tower_broadcast_notes: {
@@ -723,6 +784,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'The signal is coming from somewhere in the mountains. Not random — structured. I\'ve been listening for three months. There is a repeating sequence of five tones. Each recurrence introduces a variation. It is a message. Someone is encoding information in the pattern. I don\'t have the key. I think the key is somewhere near the Scar site. I think the signal is a call for someone who already knows what it means.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -738,6 +800,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'CHARON-7 is not a weaponized pathogen in any conventional sense. It is an optimization protocol delivered by a viral vector. The Hollow represent failed optimization — the prefrontal cortex degradation was not the intended outcome. The Sanguine represent successful optimization. The Revenant phenomenon suggests a third expression we have not yet characterized. All three share a common root instruction set. Someone designed this with a goal. The goal was not the Hollow.',
+    rarity: 'uncommon',
   },
 
   revenant_study_notes: {
@@ -749,6 +812,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Subject R-7 (cycle 3): skill retention at 65% physical, 28% cognitive — within predicted range. Subject R-12 (cycle 8): retention at 78% across all categories. Anomalous. The standard degradation model does not account for this. Either the model is wrong or R-12 is different. The third ink, added later: R-12 is you. If you\'re reading this you found the archive. We should talk.',
+    rarity: 'uncommon',
   },
 
   meridian_keycard_acquisition_log: {
@@ -760,6 +824,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Keycard batch 7-C, 3 recovered from Scar perimeter, 1 recovered from Red Court courier (circumstances redacted), 1 recovered from Salter armory via (circumstances redacted). Active keycards remaining at large: unknown. Facility access status: intact, unpowered sections open to entry, powered sections require Level 4 card. Note: two keycards have been distributed to trusted assets for Expedition planning. Disposition of remaining cards is operational and not logged here.',
+    rarity: 'uncommon',
   },
 
   signal_decode_partial: {
@@ -771,6 +836,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Decoded fragment, Broadcast 14: "...the trial data is intact. The Theta variant is stable. If you are receiving this, the facility is accessible via [ENCODING BREAK]. The answer to the Scar question is not the weapon. It was never the weapon. The goal was always the [ENCODING BREAK]." Remaining fragments require direct antenna access at the tower site. The answer is inside the Scar.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -786,6 +852,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'This agreement, between the household of Ezra Callan and the Covenant of Dusk, establishes voluntary tithe of 400ml blood per household adult per month, in exchange for protection of said household from Sanguine predation, Red Court enforcement, and Hollow incursion within a 5km radius of Duskhollow Manor. The arrangement has been in place since 2034. Vesper\'s signature is careful and even. The human signatory\'s hand was shaking.',
+    rarity: 'uncommon',
   },
 
   vesper_philosophy_essay: {
@@ -797,6 +864,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'The question is not whether coexistence is possible. The question is whether either species deserves it. We were monsters before CHARON-7 — all of us. The virus clarified what was already present. What the Covenant is building is not reconciliation. It is an experiment in whether intelligent apex predators can choose not to behave as such. I believe we can. I acknowledge that believing this makes me unusual among my kind. — V.',
+    rarity: 'uncommon',
   },
 
   gallery_portrait_placard: {
@@ -808,6 +876,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'This portrait was commissioned by the subject in 2033, two years after their conversion. The sitter requested the painting be done in natural light, at noon — a deliberate choice, given the discomfort it caused. The expression has been described as "defiant." The subject preferred "present." The subject is still alive. Whether the sitter in the portrait is the same person, they cannot say.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -823,6 +892,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'August 2030. Federal contractors arrived today, six of them, civilian cover but military bearing. They are not here for the gold. They have surveying equipment that costs more than this entire mine and they are mapping the lower levels for something they won\'t explain. I asked the foreman what they were looking for. He said: "Depth and stability." He didn\'t look at me when he said it.',
+    rarity: 'uncommon',
   },
 
   meridian_construction_memo: {
@@ -834,6 +904,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'RE: MERIDIAN Sub-Level 3 Expansion. The mining infrastructure at the target site provides natural cover for the lower laboratory complex. Ventilation through existing mine shafts is viable with modification. The facility should be invisible from surface survey. No satellite signature. The mine cover story is adequate. The project can proceed to Phase 2.',
+    rarity: 'uncommon',
   },
 
   deep_pool_observation: {
@@ -845,6 +916,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'The water in the lower pool is not ordinary water. Something biological is growing in it — not algae, not fungal, something we do not have a name for. It responds to sound. Approached closely, it retracts from light sources. The Hollow in this section do not approach the pool. They avoid it. I don\'t know if that is warning or worship. I\'m not staying to find out.',
+    rarity: 'uncommon',
   },
 
   sanguine_lair_note: {
@@ -856,6 +928,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'To whoever finds this. Do not go deeper. There is an Elder Sanguine in the lowest level. We lost four people finding that out. It does not appear to be Red Court or Feral — it does not behave like either. It has been down here a very long time and it knows this place. It may know things about MERIDIAN. If you are brave enough or desperate enough to try to communicate with it rather than fight it, the word to use first is "Theta." We don\'t know why. It is what the Lucid told us. — Reclaimer advance team, what remains.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -871,6 +944,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'The elk are back. Five cows, two calves. I have not seen calves in three years. I sat with them for an hour before they moved on and I did not reach for the rifle once. I do not know what that means about me. The world ended and the elk are having calves and I sat in the grass and watched them. Maybe that\'s what surviving looks like when you\'re not paying attention to the dark parts.',
+    rarity: 'uncommon',
   },
 
   scar_approach_warning: {
@@ -882,6 +956,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'THE SCAR IS NOT A RUIN. IT IS A LID. DO NOT LIFT IT WITHOUT A REASON. WHAT IS INSIDE DOES NOT CARE THAT YOU SURVIVED TO GET HERE. IF YOU GO DOWN, KNOW WHAT YOU ARE GOING DOWN FOR. — Three lines below, a different hand: I went down. I came back. It is worth it. Go.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -897,6 +972,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'SUBJECT: Dr. Elias Vane. ROLE: Lead Virologist, CHARON-7 Program. CLEARANCE: Level 5 (MERIDIAN-only). STATUS as of October 2031: [REDACTED]. NOTES: Subject expressed ethical objections to live-trial protocol in September 2031 and was placed on administrative hold. Subject was inside the facility at time of detonation order. No body recovered. No signal attributed to subject in post-detonation survey. This file is listed as INACTIVE — PRESUMED DECEASED. Someone has written in the margin: PRESUMED.',
+    rarity: 'uncommon',
   },
 
   lab_wing_data_terminal: {
@@ -908,6 +984,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'CHARON-7 TRIAL RESULTS — SERIES 9, SUBJECTS 44-51. Sanguine expression achieved in 2 of 8 subjects (25%). Hollow expression in 4 of 8 (50%). Revenant expression in 1 of 8 (12.5%). No expression in 1 of 8 (12.5%). Note: Revenant expression was not predicted by model. Recommend further study. Project Director comment: "This is the finding. Everything else is a side effect."',
+    rarity: 'uncommon',
   },
 
   director_personal_log: {
@@ -919,6 +996,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: '"Day four hundred inside. The upper levels are structurally sound. I have not heard any detonation activity above for two years. I believe the containment protocol was performed as ordered and that no one on the outside knows the facility is intact. I have power. I have food for another eighteen months. I have the entire CHARON-7 dataset. The broadcast has been running for two hundred and sixteen days. Someone will come. They will come because they are the kind of person the signal is designed to call. I am patient. The work has always been patient."',
+    rarity: 'uncommon',
   },
 
   holding_cell_graffiti: {
@@ -930,6 +1008,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'WE DID NOT CONSENT. scratched in first. THEY CALLED IT VOLUNTARY. added below. WE WERE TOLD THE ALTERNATIVE. added below that. Then, in careful letters from someone who had time: They were making gods. That\'s all it was. They wanted to make gods and we were the first draft. Below that, one final line: Gods are just people who survived the fire. Nothing special about that. Most of us just didn\'t get the chance.',
+    rarity: 'uncommon',
   },
 
   broadcaster_final_message: {
@@ -941,6 +1020,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'If you found this, you are the right person. I don\'t know your name. I don\'t need to. The signal found you. The data is complete — the Theta variant, the Revenant mechanism, the cure pathway, the weapon pathway, the Seal protocol. All of it is here. All of it is yours. I am not telling you what to do with it. I designed a system to improve human beings and ended the world instead. I do not get to make that choice a second time. The choice is yours. It was always going to be yours. I just had to wait for you to arrive. — E.V.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -956,6 +1036,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Broadcast initiated Day 1 post-detonation. Signal is low-power, designed for sustained operation, not wide coverage. The signal is a question. The answer is the person who comes to find it. I have structured the broadcast in layers — each layer requires the listener to have understood the previous one. The outermost layer says: "something is here." The innermost layer says: "here is what to do with it."',
+    rarity: 'uncommon',
   },
 
   broadcaster_log_fragment_2: {
@@ -967,6 +1048,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Year two. The signal is still transmitting. I have had no response. This is expected. The layers are designed to require geographic proximity for full decode. Whoever is listening from a distance hears only noise and suggestion. The invitation. The actual message requires presence. I am patient. The facility is holding. I have begun cataloguing the CHARON-7 dataset by intervention type. The work keeps me functional.',
+    rarity: 'uncommon',
   },
 
   broadcaster_log_fragment_3: {
@@ -978,6 +1060,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'I don\'t know how many people have died because of what I built. I have tried to calculate it. The number does not converge. Every Hollow was a person first. Every person who was killed by a Hollow was killed by my work. I have stopped trying to hold that number. I hold the signal instead. The signal is what I can do. It\'s the only thing left.',
+    rarity: 'uncommon',
   },
 
   broadcaster_log_fragment_4: {
@@ -989,6 +1072,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Year five. Someone tried the outer perimeter. They did not make it inside. I watched the approach on the surviving cameras. They were well-equipped and skilled and the Sanguine in the deep level found them first. I have adjusted the broadcast. The new layer includes routing information that should allow the right person to avoid the lower reaches. I have done what I can from here. The rest is up to whoever receives it.',
+    rarity: 'uncommon',
   },
 
   broadcaster_log_fragment_5: {
@@ -1000,6 +1084,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'You are close. The core is through the lab wing, past the holding cells, down one more level. The power is still on in the core. My office is the third door on the left. The dataset is in the terminal on the desk. The terminal will respond to voice. My name is the password. If you have read everything else, you know my name. Come and find me. I\'ll be here. I have always been here. — E.V.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -1013,6 +1098,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.3,
     value: 1,
+    rarity: 'common',
   },
 
   lighter_disposable: {
@@ -1022,6 +1108,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.1,
     value: 2,
+    rarity: 'common',
   },
 
   old_binoculars: {
@@ -1031,6 +1118,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.8,
     value: 3,
+    rarity: 'common',
   },
 
   binoculars_intact: {
@@ -1040,6 +1128,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.9,
     value: 8,
+    rarity: 'common',
   },
 
   can_opener_quality: {
@@ -1049,6 +1138,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.3,
     value: 2,
+    rarity: 'common',
   },
 
   cast_iron_skillet: {
@@ -1058,6 +1148,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 2.0,
     value: 4,
+    rarity: 'common',
   },
 
   hand_tools_basic: {
@@ -1067,6 +1158,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 1.5,
     value: 5,
+    rarity: 'common',
   },
 
   gun_oil: {
@@ -1076,6 +1168,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.2,
     value: 3,
+    rarity: 'common',
   },
 
   crafting_components: {
@@ -1085,6 +1178,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.8,
     value: 4,
+    rarity: 'common',
   },
 
   salvaged_engine_part: {
@@ -1094,6 +1188,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 3.0,
     value: 6,
+    rarity: 'common',
   },
 
   mineral_sample: {
@@ -1103,6 +1198,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.5,
     value: 2,
+    rarity: 'common',
   },
 
   smooth_river_stone: {
@@ -1110,6 +1206,7 @@ export const ITEMS: Record<string, Item> = {
     name: 'Smooth River Stone',
     description: 'A basalt pebble, river-polished to an ellipse that fills the hand without effort. No practical use. You carry it because it is one of the few things in this world that the Collapse did not change, and sometimes that matters.',
     type: 'junk',
+    rarity: 'common',
     weight: 0.4,
     value: 1,
   },
@@ -1121,6 +1218,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.3,
     value: 1,
+    rarity: 'common',
   },
 
   fire_starter_kit: {
@@ -1130,6 +1228,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.4,
     value: 3,
+    rarity: 'common',
   },
 
   wild_herbs: {
@@ -1139,6 +1238,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.2,
     value: 2,
+    rarity: 'common',
   },
 
   ghost_sage_sprig: {
@@ -1148,6 +1248,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.1,
     value: 3,
+    rarity: 'common',
   },
 
   fishing_line_improvised: {
@@ -1157,6 +1258,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.2,
     value: 2,
+    rarity: 'common',
   },
 
   scavenging_useful_bones: {
@@ -1166,6 +1268,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.3,
     value: 2,
+    rarity: 'common',
   },
 
   hollow_nest_salvage: {
@@ -1175,6 +1278,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.6,
     value: 4,
+    rarity: 'common',
   },
 
   soap_bar: {
@@ -1184,6 +1288,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.2,
     value: 1,
+    rarity: 'common',
   },
 
   room_key_motel: {
@@ -1193,6 +1298,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.05,
     value: 1,
+    rarity: 'common',
   },
 
   motel_bible: {
@@ -1202,6 +1308,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.4,
     value: 1,
+    rarity: 'common',
   },
 
   empty_cola_can: {
@@ -1211,6 +1318,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.05,
     value: 0,
+    rarity: 'common',
   },
 
   backpack_child: {
@@ -1220,6 +1328,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.3,
     value: 1,
+    rarity: 'common',
   },
 
   lost_cargo_crate: {
@@ -1229,6 +1338,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 5.0,
     value: 10,
+    rarity: 'common',
   },
 
   // ----------------------------------------------------------
@@ -1243,6 +1353,7 @@ export const ITEMS: Record<string, Item> = {
     weight: 2.5,
     damage: 6,
     value: 4,
+    rarity: 'rare',
   },
 
   // ----------------------------------------------------------
@@ -1259,6 +1370,7 @@ export const ITEMS: Record<string, Item> = {
     value: 5,
     usable: true,
     useText: 'You eat. It\'s fine. You don\'t ask what it was.',
+    rarity: 'uncommon',
   },
 
   canned_food_random: {
@@ -1271,6 +1383,7 @@ export const ITEMS: Record<string, Item> = {
     value: 5,
     usable: true,
     useText: 'You open it. Corn, you think. Maybe hominy. You eat it cold and don\'t complain.',
+    rarity: 'uncommon',
   },
 
   canned_food_premium: {
@@ -1283,6 +1396,7 @@ export const ITEMS: Record<string, Item> = {
     value: 10,
     usable: true,
     useText: 'You eat. It tastes like it was made in a world that still had quality control.',
+    rarity: 'uncommon',
   },
 
   dried_meat_strip: {
@@ -1295,6 +1409,7 @@ export const ITEMS: Record<string, Item> = {
     value: 3,
     usable: true,
     useText: 'You chew. It takes a while. It keeps you going.',
+    rarity: 'uncommon',
   },
 
   scavenged_rations: {
@@ -1307,6 +1422,7 @@ export const ITEMS: Record<string, Item> = {
     value: 4,
     usable: true,
     useText: 'You eat what\'s there. It\'s enough.',
+    rarity: 'uncommon',
   },
 
   preserved_rations: {
@@ -1319,6 +1435,7 @@ export const ITEMS: Record<string, Item> = {
     value: 8,
     usable: true,
     useText: 'You eat. The preservation held. That alone is worth something.',
+    rarity: 'uncommon',
   },
 
   salted_rations: {
@@ -1331,6 +1448,7 @@ export const ITEMS: Record<string, Item> = {
     value: 7,
     usable: true,
     useText: 'You eat. The salt burns your lips. You don\'t mind.',
+    rarity: 'uncommon',
   },
 
   emergency_rations: {
@@ -1343,6 +1461,7 @@ export const ITEMS: Record<string, Item> = {
     value: 9,
     usable: true,
     useText: 'You eat the whole pack. You\'re still hungry, but less so.',
+    rarity: 'uncommon',
   },
 
   fresh_fish: {
@@ -1355,6 +1474,7 @@ export const ITEMS: Record<string, Item> = {
     value: 6,
     usable: true,
     useText: 'You cook it over the fire. It\'s good. Simple and good.',
+    rarity: 'uncommon',
   },
 
   culinary_herbs_fresh: {
@@ -1367,6 +1487,7 @@ export const ITEMS: Record<string, Item> = {
     value: 2,
     usable: true,
     useText: 'You chew a leaf. The taste is sharp and clean.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -1383,6 +1504,7 @@ export const ITEMS: Record<string, Item> = {
     value: 10,
     usable: true,
     useText: 'You wrap the wound with clean gauze. It holds.',
+    rarity: 'uncommon',
   },
 
   first_aid_kit_basic: {
@@ -1395,6 +1517,7 @@ export const ITEMS: Record<string, Item> = {
     value: 25,
     usable: true,
     useText: 'You open the kit and work through it methodically. Gauze, tape, antiseptic. Better.',
+    rarity: 'uncommon',
   },
 
   field_dressing: {
@@ -1407,6 +1530,7 @@ export const ITEMS: Record<string, Item> = {
     value: 12,
     usable: true,
     useText: 'You press the dressing into the wound. The bleeding slows.',
+    rarity: 'uncommon',
   },
 
   fresh_water_container: {
@@ -1419,6 +1543,7 @@ export const ITEMS: Record<string, Item> = {
     value: 8,
     usable: true,
     useText: 'You drink. Clean water. You forgot how good that feels.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -1434,6 +1559,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Dr. Harlow — entry 44. The trial subjects in Block C are responding. Not to the serum. To each other. They\'re communicating through the walls. Tapping. In sequence. I reported this to Director Vane. She said: document it. I said: shouldn\'t we stop it? She said: document it.',
+    rarity: 'uncommon',
   },
 
   osei_research_notebook: {
@@ -1445,6 +1571,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Field note — canyon site. The organism in the bones isn\'t CHARON-7. It predates the facility by at least sixty years. Someone was studying it long before MERIDIAN. Someone who didn\'t leave their name. Just initials: E.V.',
+    rarity: 'uncommon',
   },
 
   meridian_file_fragment: {
@@ -1456,6 +1583,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'CLEARANCE: RED-TIER / EYES ONLY. Subject: CHARON-7 Exposure Protocol, Cohort 3. All cohort-3 subjects have been reclassified from \'patient\' to \'asset.\' Transfer to Holding Wing C upon successful phase-2 transition. Note: Do not inform subjects of reclassification.',
+    rarity: 'uncommon',
   },
 
   meridian_security_log: {
@@ -1467,6 +1595,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Security Director Briggs — final entry. They\'re calling it a containment breach. It\'s not. They opened the doors. I was there. I saw Vane give the order. Whatever comes next — whatever the Hollow are now — that was a choice. Made by people in suits. I want that on the record.',
+    rarity: 'uncommon',
   },
 
   meridian_tunnel_map: {
@@ -1478,6 +1607,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Hand-drawn on graph paper. The maintenance tunnels run under the entire facility — including sections not on any official blueprint. Someone marked three locations in red ink: WATER INTAKE / SIGNAL ARRAY / THE BELOW. Below what is not labeled.',
+    rarity: 'uncommon',
   },
 
   radio_fragment: {
@@ -1489,6 +1619,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: '...if you can hear this, the signal is still running. CHARON-7 is still running. We didn\'t stop it. We just moved the dial. Find the source. Find the choice. What you do with it... [signal degrades]',
+    rarity: 'uncommon',
   },
 
 
@@ -1501,6 +1632,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Eleven visits marked in the same handwriting. Each visit: a date, a bearing, and a distance. The last entry: \'Confirmed. Still broadcasting. Still changing things. The shepherd I met on visit 9 — he doesn\'t remember being human. But he misses it. I could see it.\'',
+    rarity: 'uncommon',
   },
 
   lore_director_vane_journal: {
@@ -1512,6 +1644,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'I have stopped trying to justify CHARON-7 in terms the ethics board will accept. The ethics board is a legacy institution from a world that no longer exists. What I know: the Hollow are not dying. They are becoming. I know because I took a half-dose six months ago. I know because I can hear the ones in the basement. Not words. Intent.',
+    rarity: 'uncommon',
   },
 
   lore_meridian_funding_data: {
@@ -1523,6 +1656,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Recovered financial records. MERIDIAN was not a government project. It was privately funded — twelve investors, names redacted — with a government contract as cover. The money came from somewhere. The directive to \'develop a population-scale behavioral modification agent\' came from somewhere. That somewhere is not in this file.',
+    rarity: 'uncommon',
   },
 
   lore_meridian_r1_research: {
@@ -1534,6 +1668,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Phase 1 results: CHARON-7 achieves 98.7% tissue integration within 72 hours. Subjects display increased aggression, sensory acuity, and pack-behavior formation. Subjects display decreased verbal cognition. This was unexpected. Dr. Harlow believes verbal cognition can be restored with a stabilizing compound. Director Vane has not approved further testing on stabilization.',
+    rarity: 'uncommon',
   },
 
   lore_reclaimer_field_notes: {
@@ -1545,6 +1680,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'The Stacks were supposed to be a comms hub. We found it that way — equipment still running on solar backup, signal still cycling. Someone set this up to last. The question is: last until what? Until someone with the right key arrived? The broadcast array upstairs is still locked. We haven\'t found the key.',
+    rarity: 'uncommon',
   },
 
   kindling_treatment_compound: {
@@ -1556,6 +1692,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'An opaque flask with a handwritten label: PURIFICATION FORMULA R-7. The Kindling have been distributing this through their clinics. It smells chemical and sweet. What it actually does to the Hollow exposure in the body — you\'d need a lab to know.',
+    rarity: 'uncommon',
   },
 
   pre_collapse_prayer_book: {
@@ -1567,6 +1704,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'A small devotional book. The prayers are standard. But someone has added margin notes in a different hand: \'God didn\'t leave. We did. The signal isn\'t His. But maybe answering it is.\' Dated three years post-collapse.',
+    rarity: 'uncommon',
   },
 
   letter_meridian_cell_11: {
@@ -1578,6 +1716,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Written on the wall in what might be charcoal. \'To whoever is next: they feed you. They test you. They say you\'re helping. They don\'t say what you\'re helping with. I lasted 40 days. I think that\'s a record. My name was Kepler. I was from Albuquerque. I had a son.\'',
+    rarity: 'uncommon',
   },
 
   letter_meridian_cell_7: {
@@ -1589,6 +1728,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Scratched into the floor beside the bunk. \'Day 1 they took blood. Day 7 I could hear the others. Not through the walls. Just — hear them. Day 14 I stopped needing to sleep. Day 21 I stopped being afraid. I don\'t know if that\'s better or worse.\'',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -1604,6 +1744,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'The first entries are controlled and optimistic. R-8 divergence identified Day 14. Corrective measures proposed. By Day 30: \'corrective measures insufficient.\' By Day 60: \'subjects displaying terminal behavioral degradation.\' By Day 90: \'containment protocol initiated.\' The last entry, different handwriting: \'Dr. Harlow was the one who noticed first. She\'s gone now. I don\'t know if gone means dead or gone means left. I can\'t ask anyone.\'',
+    rarity: 'uncommon',
   },
 
   lore_augmentation_protocol_alpha: {
@@ -1615,6 +1756,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Eleven Alpha Series subjects. R-1 integration successful in nine of eleven. Metrics: sensory acuity increased 340%. Physical regeneration rate 12x baseline. Thermal output reduced — subjects run cold. Cognitive function: preserved, with modifications to social instinct architecture that subjects describe as \'clarity.\' Two of eleven: R-1 integrated but verbal cognition partially suppressed. Classified as near-miss. The nine who succeeded are listed by first name only. You have met at least one of them.',
+    rarity: 'uncommon',
   },
 
   broadcasters_recording: {
@@ -1626,6 +1768,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'The recording is not what you expected. No justifications. No explanations. No blame assigned. What it says, in a voice that is tired in the way that people get tired after years of carrying something alone: \'I don\'t know who you are. I don\'t know what you found, or what you believe about what happened here. I know you made it this far, which means you wanted to know the truth badly enough to come looking for it. The truth is in the rooms you already walked through. What\'s in that room ahead is a choice. It\'s not mine to make. It was never mine to make — I just built the place where someone else could make it. I am sorry for what happened here. I am not sorry that you found it. Those are different things. They are both true. I\'m sorry for that too.\'',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -1641,6 +1784,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'INTAKE FORM — FACILITY 7 (MERCY GENERAL REPURPOSING). Name: [REDACTED]. Blood Type: O-negative. Age estimate: 30–35. Condition on arrival: ambulatory, mild dehydration. Yield classification: Premium. Ward assignment: A (voluntary). Extraction schedule: bi-weekly. Notes: Cooperative. No restraint necessary. Wristband: YELLOW. Signature of processing officer: [illegible]. The paper is clean. The boxes are all filled in. The horror is that nothing about it is sloppy.',
+    rarity: 'uncommon',
   },
 
   rooks_letter: {
@@ -1652,6 +1796,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'To the Council — I am writing this knowing I will not send it. You don\'t want philosophy from your castellans. You want yield numbers. Yield is up 12% since I implemented the color-coded scheduling system. The voluntary intake rate has held at 34%. I tell myself these are good numbers. I tell myself the ones in Ward A made a choice. I tell myself that a world that needs us to do this is the world that made us necessary. I am writing this because I need to say, somewhere, that I know what we are. I have known since the first week. I choose it anyway. I choose it because the alternative is chaos and chaos kills more. This is what I tell myself in the dark. It works less than it used to. — R.',
+    rarity: 'uncommon',
   },
 
   burn_shelter_journal: {
@@ -1663,6 +1808,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'Day 1 in the shelter. The fire is still moving north. I can hear it through the floor — not crackling, more like breathing. The basement held. I have food for maybe two weeks if I ration. Day 9. The smell has changed. Not smoke anymore. Something chemical from the tank farm. Day 21. I went upstairs today for the first time. The street is glass in places. The factory is open sky. I came back down. Day 34. Someone has been in the tank farm — I can see footprints in the ash from the upper window. They didn\'t come here. Day 41. Leaving tomorrow. The footprints are gone. I don\'t know who made them or if they made it out. I am writing this so whoever finds this place knows: I was here, I survived, and I don\'t know why the fire started either. — [name torn away]',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -1678,6 +1824,7 @@ export const ITEMS: Record<string, Item> = {
     value: 15,
     usable: true,
     loreText: 'Seven panels of bark, fitted together. The complete route from the tree line to the Scar, with hazard notes in tiny handwriting: "DO NOT camp here — morning fog conceals drop"; "water here, safe, cold"; "Hollow sign — move through fast after dark"; "the big tree — bearing 312, three hundred paces, do not lose this bearing." At the bottom of the last panel: "The forest knows you\'re here. Walk like you belong and it won\'t tell anyone else."',
+    rarity: 'uncommon',
   },
 
   lore_precollapse_survey: {
@@ -1689,6 +1836,7 @@ export const ITEMS: Record<string, Item> = {
     value: 20,
     usable: true,
     loreText: 'USDA Forest Service, 2027. Sector 7 old-growth inventory. Tree ages confirmed by core sample: seventeen specimens over 400 years, three specimens over 600 years, one specimen — grid reference 7-NW-14 — estimated 890 years old. Pre-Collapse notes in the margin: "Protect at all costs — last stand old-growth in region." Below that, in different handwriting, post-Collapse: "It protected itself. We just stayed out of the way." And below that, a third hand: "The coast is accessible from the northwest approach if you follow the survey grid. Nobody has mapped it since the Collapse. Nobody knows what\'s out there."',
+    rarity: 'uncommon',
   },
 
   blood_type_chart: {
@@ -1700,6 +1848,7 @@ export const ITEMS: Record<string, Item> = {
     value: 0,
     usable: true,
     loreText: 'EXTRACTION EFFICIENCY BY BLOOD TYPE — Internal Reference Only. O-neg: highest demand, lowest yield per draw, 10-day recovery minimum. A-pos: moderate demand, good yield, 7-day recovery. B-pos: specialized applications only, flag for research queue. AB-neg: PRIORITY — contact facility coordinator immediately upon intake. Wristband color codes: YELLOW=voluntary/O-neg, BLUE=voluntary/A-pos, RED=involuntary (any), WHITE=research queue. Recovery nutrition targets by type listed on reverse. The chart has been laminated. Someone updated it in pen at least twice. It is a living document.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -1715,6 +1864,8 @@ export const ITEMS: Record<string, Item> = {
     defense: 1,
     value: 6,
     tier: 1,
+    armorSlot: 'chest',
+    rarity: 'common',
   },
 
   leather_jacket: {
@@ -1726,6 +1877,8 @@ export const ITEMS: Record<string, Item> = {
     defense: 2,
     value: 18,
     tier: 2,
+    armorSlot: 'chest',
+    rarity: 'uncommon',
   },
 
   reinforced_coat: {
@@ -1738,6 +1891,8 @@ export const ITEMS: Record<string, Item> = {
     value: 45,
     armorTraits: ['fortified'],
     tier: 3,
+    armorSlot: 'chest',
+    rarity: 'rare',
   },
 
   kevlar_vest: {
@@ -1750,6 +1905,8 @@ export const ITEMS: Record<string, Item> = {
     value: 80,
     armorTraits: ['fortified', 'reactive'],
     tier: 4,
+    armorSlot: 'chest',
+    rarity: 'epic',
   },
 
   hazmat_suit: {
@@ -1762,6 +1919,8 @@ export const ITEMS: Record<string, Item> = {
     value: 35,
     armorTraits: ['insulated', 'reactive'],
     tier: 3,
+    armorSlot: 'chest',
+    rarity: 'rare',
   },
 
   // ----------------------------------------------------------
@@ -1777,6 +1936,8 @@ export const ITEMS: Record<string, Item> = {
     defense: 2,
     value: 20,
     tier: 2,
+    armorSlot: 'chest',
+    rarity: 'uncommon',
   },
 
   militia_vest: {
@@ -1789,6 +1950,8 @@ export const ITEMS: Record<string, Item> = {
     value: 28,
     armorTraits: ['fortified'],
     tier: 2,
+    armorSlot: 'chest',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -1805,6 +1968,8 @@ export const ITEMS: Record<string, Item> = {
     value: 100,
     armorTraits: ['fortified'],
     tier: 4,
+    armorSlot: 'chest',
+    rarity: 'epic',
   },
 
   // ----------------------------------------------------------
@@ -1821,6 +1986,7 @@ export const ITEMS: Record<string, Item> = {
     value: 130,
     weaponTraits: ['precise'],
     tier: 4,
+    rarity: 'legendary',
   },
 
   sniper_rifle: {
@@ -1833,6 +1999,7 @@ export const ITEMS: Record<string, Item> = {
     value: 200,
     weaponTraits: ['precise', 'keen'],
     tier: 4,
+    rarity: 'legendary',
   },
 
   military_sidearm: {
@@ -1845,6 +2012,7 @@ export const ITEMS: Record<string, Item> = {
     value: 75,
     weaponTraits: ['precise', 'quick'],
     tier: 3,
+    rarity: 'epic',
   },
 
   accord_issue_rifle: {
@@ -1857,6 +2025,7 @@ export const ITEMS: Record<string, Item> = {
     value: 55,
     weaponTraits: ['precise'],
     tier: 3,
+    rarity: 'rare',
   },
 
   accord_issue_pistol: {
@@ -1868,6 +2037,7 @@ export const ITEMS: Record<string, Item> = {
     damage: 5,
     value: 30,
     tier: 2,
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -1883,6 +2053,7 @@ export const ITEMS: Record<string, Item> = {
     value: 60,
     usable: true,
     useText: 'You pull the pin and throw. Four seconds later, the question is answered.',
+    rarity: 'common',
   },
 
   // ----------------------------------------------------------
@@ -1899,6 +2070,7 @@ export const ITEMS: Record<string, Item> = {
     value: 5,
     usable: true,
     useText: 'You wrap the wound with gauze. Not elegant. It works.',
+    rarity: 'common',
   },
 
   antiseptic: {
@@ -1910,6 +2082,7 @@ export const ITEMS: Record<string, Item> = {
     value: 15,
     usable: true,
     useText: 'You apply the antiseptic. It burns. The infection risk drops.',
+    rarity: 'common',
   },
 
   pain_tabs: {
@@ -1922,6 +2095,7 @@ export const ITEMS: Record<string, Item> = {
     usable: true,
     statBonus: { vigor: 1 },
     useText: 'You swallow two. Within twenty minutes the hurt is still there, just quieter.',
+    rarity: 'uncommon',
   },
 
   antibiotics_single_dose: {
@@ -1933,6 +2107,7 @@ export const ITEMS: Record<string, Item> = {
     value: 20,
     usable: true,
     useText: 'You take the dose. It\'s not enough on its own, but it\'s a start.',
+    rarity: 'common',
   },
 
   // ----------------------------------------------------------
@@ -1949,6 +2124,7 @@ export const ITEMS: Record<string, Item> = {
     value: 6,
     usable: true,
     useText: 'You drink. Clean, verified water. The thirst and a little of the ache both recede.',
+    rarity: 'common',
   },
 
   clean_water_1L: {
@@ -1961,6 +2137,7 @@ export const ITEMS: Record<string, Item> = {
     value: 4,
     usable: true,
     useText: 'You drink. Clean. No aftertaste, no hesitation. You allow yourself to enjoy it.',
+    rarity: 'common',
   },
 
   runners_kit: {
@@ -1973,6 +2150,7 @@ export const ITEMS: Record<string, Item> = {
     usable: true,
     statBonus: { grit: 1 },
     useText: 'You work through the kit methodically. Eat the bar, mix the powder, patch the foot. You feel the road length differently after.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -1986,6 +2164,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.5,
     value: 12,
+    rarity: 'common',
   },
 
   salt_1kg: {
@@ -1995,6 +2174,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 1,
     value: 8,
+    rarity: 'common',
   },
 
   basic_repair_kit: {
@@ -2004,6 +2184,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 1,
     value: 15,
+    rarity: 'common',
   },
 
   leather_patch_kit: {
@@ -2013,6 +2194,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.5,
     value: 12,
+    rarity: 'common',
   },
 
   salvaged_components: {
@@ -2022,6 +2204,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.8,
     value: 7,
+    rarity: 'common',
   },
 
   rare_parts_random: {
@@ -2031,6 +2214,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.5,
     value: 35,
+    rarity: 'common',
   },
 
   electronics_kit: {
@@ -2040,6 +2224,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 1.5,
     value: 45,
+    rarity: 'common',
   },
 
   welding_rod: {
@@ -2049,6 +2234,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 1,
     value: 14,
+    rarity: 'common',
   },
 
   leather_belt: {
@@ -2058,6 +2244,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.4,
     value: 6,
+    rarity: 'common',
   },
 
   knife_sheath: {
@@ -2067,6 +2254,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.2,
     value: 8,
+    rarity: 'common',
   },
 
   pistol_holster: {
@@ -2076,6 +2264,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'junk',
     weight: 0.3,
     value: 12,
+    rarity: 'common',
   },
 
   // ----------------------------------------------------------
@@ -2089,6 +2278,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'currency',
     weight: 0,
     value: 5,
+    rarity: 'common',
   },
 
   ammo_556: {
@@ -2098,6 +2288,7 @@ export const ITEMS: Record<string, Item> = {
     type: 'currency',
     weight: 0,
     value: 4,
+    rarity: 'common',
   },
 
   // ----------------------------------------------------------
@@ -2113,6 +2304,7 @@ export const ITEMS: Record<string, Item> = {
     value: 25,
     usable: true,
     loreText: 'The Breaks: canyon country east of the River Road. The main trail drops three hundred feet over a quarter mile — marked in red. Red Court presence noted at the lower fork as of last season, though the notation below reads "cleared, unverified." Two water sources marked with blue circles. One has a check beside it and "confirmed, cold." The other just has a question mark. The cartographer signed it: "Best I could do without getting shot."',
+    rarity: 'uncommon',
   },
 
   map_river_road: {
@@ -2124,6 +2316,7 @@ export const ITEMS: Record<string, Item> = {
     value: 20,
     usable: true,
     loreText: 'River Road runs southwest to northeast along the Animas. Three crossings marked: Howard\'s Bridge (reliable), the log ford near mile marker 12 (seasonal — impassable spring runoff), and the ruins of the Route 550 overpass (structurally compromised, single-file only). Hollow activity noted at the overpass ruins. Drifter camp at mile marker 8 — listed as seasonal but a later note reads "permanent now, ask for Sal." A route to the Covenant is penciled along the western bank.',
+    rarity: 'uncommon',
   },
 
   map_dust_partial: {
@@ -2135,6 +2328,7 @@ export const ITEMS: Record<string, Item> = {
     value: 15,
     usable: true,
     loreText: 'The Dust: open hardpan country, former agricultural land. The map covers the northern half only — whoever drew this either ran out of time or paper or both. What\'s here: the ghost town at the center marked with a skull icon and "HOLLOW — DO NOT CAMP"; two abandoned farmsteads marked with star symbols, the notation "scavenged, empty" beside one and "NOT scavenged yet" beside the other. The water tower is marked with a question mark and the note: "contamination warning, do NOT drink without treatment." The southern half of the map is blank.',
+    rarity: 'uncommon',
   },
 
   // ----------------------------------------------------------
@@ -2152,6 +2346,7 @@ export const ITEMS: Record<string, Item> = {
     tier: 2,
     usable: true,
     useText: 'The antiseptic hisses against raw tissue. Clean heat, then nothing. The wound edges go pale. Stable. The infection risk drops to almost zero -- almost being the operative word in a world without sterile environments.',
+    rarity: 'uncommon',
   },
 
   crafted_combat_medkit: {
@@ -2165,6 +2360,7 @@ export const ITEMS: Record<string, Item> = {
     tier: 2,
     usable: true,
     useText: 'You tear the tape seal. Your hands know the order: tourniquet first, compression wrap second, pain tab dry-swallowed between steps. The bleeding slows. The pain dulls to a manageable roar. You keep moving because the alternative is not moving ever again.',
+    rarity: 'uncommon',
   },
 
   crafted_trauma_kit: {
@@ -2178,6 +2374,7 @@ export const ITEMS: Record<string, Item> = {
     tier: 3,
     usable: true,
     useText: 'The work takes time. Gauze first to clear the field. Antiseptic -- the patient gasps. Compression wrap, tight enough to blanch the skin. Antibiotics administered. When it is done the wound is cleaned, closed, and treated. The laminated card says "reassess in four hours." You will not be here in four hours. But you will be alive.',
+    rarity: 'uncommon',
   },
 
   crafted_improvised_trap: {
@@ -2191,6 +2388,7 @@ export const ITEMS: Record<string, Item> = {
     tier: 1,
     usable: true,
     useText: 'You set the trap low, pressure plate flush with the ground. The spring tension holds -- ugly but functional. Wire coil creaks once as it settles. Anything that steps here is going to have a very bad moment.',
+    rarity: 'common',
   },
 
   crafted_reinforced_plate: {
@@ -2203,6 +2401,8 @@ export const ITEMS: Record<string, Item> = {
     value: 20,
     tier: 2,
     armorTraits: ['fortified'],
+    armorSlot: 'chest',
+    rarity: 'rare',
   },
 
   crafted_pipe_weapon_improved: {
@@ -2215,6 +2415,7 @@ export const ITEMS: Record<string, Item> = {
     value: 35,
     tier: 2,
     weaponTraits: ['keen'],
+    rarity: 'rare',
   },
 
   crafted_incendiary_charge: {
@@ -2228,6 +2429,7 @@ export const ITEMS: Record<string, Item> = {
     tier: 2,
     usable: true,
     useText: 'You strike the fuse. It catches with a hiss and a curl of acrid smoke. You throw. The canister hits, splits, and blooms -- oily orange fire spreading across the impact zone, sticking to everything it touches. The heat pushes against your face even from here.',
+    rarity: 'common',
   },
 
   crafted_signal_booster: {
@@ -2241,6 +2443,7 @@ export const ITEMS: Record<string, Item> = {
     usable: true,
     useText: 'You extend the antenna and rotate the array slowly. Static. More static. Then -- a carrier tone, faint but steady, buried under the noise floor. The signal booster locks on and the direction indicator settles. Southeast. Somewhere past the tree line. Something is broadcasting, and now you know where.',
     loreText: 'The signal booster picks up a repeating transmission on a frequency that pre-Collapse emergency services reserved for automated distress beacons. But this is not automated. The cadence is irregular. Someone is keying a transmitter by hand, sending the same message over and over. The signal is weak but it is real.',
+    rarity: 'rare',
   },
 
   crafted_armor_patch: {
@@ -2254,6 +2457,7 @@ export const ITEMS: Record<string, Item> = {
     tier: 1,
     usable: true,
     useText: 'You press the patch over the damaged section and hold. The adhesive grips, bites, cures. Sixty seconds of pressure and the metal is bonded to the leather is bonded to the armor plate beneath. Not perfect. Better. The crack is sealed. It will hold until the next hit, and maybe the one after that.',
+    rarity: 'common',
   },
 
   crafted_chemical_light: {
@@ -2266,6 +2470,7 @@ export const ITEMS: Record<string, Item> = {
     tier: 1,
     usable: true,
     useText: 'You crack the seal and shake once. The chemical reaction starts immediately -- blue-green light bleeding outward from the center of the liquid, steady and cold. The darkness pulls back. You can see the walls, the floor, the things that were standing in the dark watching you before you could see them. Silent light. Four hours. Use them well.',
+    rarity: 'common',
   },
 
   crafted_lockpick_set: {
@@ -2278,6 +2483,7 @@ export const ITEMS: Record<string, Item> = {
     tier: 2,
     usable: true,
     useText: 'You unroll the canvas and select the pick by touch -- the right gauge for the keyway, the tension wrench seated at the bottom of the cylinder. Rake, set, feel for the pins. One. Two. The third pin resists, then gives with a soft click. The lock turns. Patience is the only skill this requires, and patience is the one thing the wastes teach everyone eventually.',
+    rarity: 'rare',
   },
 
   crafted_antiviral_compound: {
@@ -2291,6 +2497,7 @@ export const ITEMS: Record<string, Item> = {
     tier: 4,
     usable: true,
     useText: 'You break the vial seal and drink. The taste is chemical and bitter, coating the back of your throat like cold metal. For ten seconds nothing happens. Then the tremors in your hands slow, stop, and the pressure behind your eyes -- the one you had stopped noticing because it had been there so long -- releases. The world sharpens. Your thoughts are your own again. You have time. Not much. Enough.',
+    rarity: 'uncommon',
   },
 
   crafted_emp_device: {
@@ -2304,6 +2511,7 @@ export const ITEMS: Record<string, Item> = {
     tier: 4,
     usable: true,
     useText: 'You flip the safety cover and press the trigger. There is no sound. There is no flash. There is a sensation like the air being squeezed, a pressure wave that you feel in your fillings and behind your sternum, and then every light in the room dies at once. Screens go black. Servos wind down. The automated turret in the corner twitches once and stops. Silence, the kind that only exists when machines stop talking to each other.',
+    rarity: 'uncommon',
   },
 
   crafted_fortified_armor: {
@@ -2316,6 +2524,8 @@ export const ITEMS: Record<string, Item> = {
     value: 180,
     tier: 5,
     armorTraits: ['fortified', 'reactive'],
+    armorSlot: 'chest',
+    rarity: 'legendary',
   },
 
   // ----------------------------------------------------------
@@ -2331,6 +2541,8 @@ export const ITEMS: Record<string, Item> = {
     defense: 0,
     value: 35,
     usable: false,
+    armorSlot: 'head',
+    rarity: 'common',
   },
 
   cold_gear: {
@@ -2343,6 +2555,8 @@ export const ITEMS: Record<string, Item> = {
     value: 40,
     usable: false,
     armorTraits: ['insulated'],
+    armorSlot: 'chest',
+    rarity: 'common',
   },
 }
 

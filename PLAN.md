@@ -1,498 +1,795 @@
-# Plan: Convoy 1 — Combat Spine
-_Created: 2026-04-24 | Type: New Feature (battle-MUD pivot — first convoy)_
+# Plan: Convoy 2 — Gear Overhaul
+_Created: 2026-04-24 | Type: New Feature_
 
 ---
 
 ## 1. Situation
 
-### Pivot context
+### Convoy 1 retrospective
 
-The Remnant is architecturally a battle-MUD — 7 classes, combat verbs, threat pools, a full action-economy engine — but runs a narrative-first experience inside that shell. A cycle-1 player walking through mid-game zones at daytime sees an effective spawn chance of 4–6% per room (baseChance 0.10 × day modifier 0.4–0.6 × no cycle bonus = ~0.04–0.06) and can cross 10 rooms without a fight. The game describes a lethal post-collapse world; it delivers a quiet exploration experience interrupted by occasional fights. That mismatch is the pivot.
+Convoy 1 shipped the combat spine (spawn density, wanderers, faction reactivity partial,
+death prose variants, world events). Two Howlers stalled: H3 (7 new enemies x 11-zone
+integration in one scope) and H7 (6 NPCs x 5,700-line dialogue tree in one scope). The
+lesson is not that the work was wrong — it is that scopes touching many files with no
+frozen contract collapse into research paralysis. Howlers read forever and write nothing.
+The fix for Convoy 2 is enforced narrow ownership: every Howler owns 2 files or fewer
+and is given an explicit frozen contract for any shared type it depends on.
 
-The research brief numbers are grounded in code. `ENEMY_RESPAWN_ACTIONS = 160` at `lib/gameEngine.ts:292`. The `pressureModifier()` in `lib/spawn.ts` gives cycle-1 players a flat 1.0× multiplier with no bonus. The daytime modifier in `lib/gameEngine.ts:_applyPopulation` compounds those reductions. The Scar and The Pens carry `cycleGate: 3` on all 16 Scar rooms and all 18 Pens rooms (confirmed by grep), locking cycle-1 and cycle-2 players out of 34 of the best combat rooms. Four zones have 80–100% single-enemy threat-pool weight (Duskhollow 100% shuffler at baseChance 0.03, River Road 92%, Stacks 90%, Dust 80%), producing encounter homogeneity whenever encounters do fire. No enemy in `data/enemies.ts` has behavioral hooks — `onAttack`, `critChance`, or `fleeThreshold` fields do not exist in the `Enemy` interface or in any enemy definition; the brute's charge and the screamer's shriek are flavor text only.
+### What Convoy 2 delivers
 
-### Convoy 1 scope
+Convoy 2 completes PRD Pillars C (loot economy) and D (gear and class differentiation,
+partial), plus the two deferred Convoy 1 pieces (H3 enemies, H7 faction dialogue). When
+it lands, the game will have: 5-tier rarity labels on all items, a light random affix
+system (1 optional roll from a curated pool on Uncommon+ drops), per-quantity loot entry
+support, a statBonus field that actually applies on equip (it is defined in types/game.ts
+line 399 but only applied for consumables today), 4-slot armor (head/chest/legs/feet),
+an initiative field on weapons, resistance fields on armor, 7 new enemies, zone
+integration for those enemies, 60+ new gear items, boss-unique drops, 3+ gear sets with
+2/4-piece bonuses, gear lore on all Rare+ items, boss intros for 8-12 bosses, and faction
+reactivity dialogue split across two focused Howlers.
 
-Convoy 1 establishes the combat spine: density, wanderers, new enemies, behavioral hooks, loot currency fix, and the three must-launch narrative counterparts (death prose variants, faction reactivity, combat world events). It does not touch gear affixes (Convoy 2), class active abilities (Convoy 3), or ending bosses (Convoy 4). The goal is that after Convoy 1 a cycle-1 mid-game walk delivers at least 10 fights per 50 rooms and no zone dominates above 70% single-enemy weight — partial fulfillment of M1 and M2, with the full M1 target (18–25 fights) requiring Convoy 2's gear lifts to make that density survivable and legible.
+### Locked decisions
 
-### Locked decisions (do not reopen)
-
-- **OQ1 — cycleGate 3→2:** Scar and Pens remain cycle-gated but open at cycle 2 instead of cycle 3. The `cycleGate` field lives on `Room` objects checked in `lib/actions/movement.ts:302` and `lib/actions/travel.ts:163`. H1 changes the value on all 34 rooms.
-- **OQ2 — Random affixes:** Diablo-style prefix/suffix system is Convoy 2 work. Convoy 1 must not change `Item` or `Enemy` types in ways that break the affix schema Convoy 2 will introduce. New fields must be optional or additive.
-- **OQ3 — Keep 7 classes:** No class differentiation in this convoy.
-- **OQ4 — Durability optional:** No durability fields added in Convoy 1.
-- **OQ5 — One big release:** Each convoy is its own PR; all 4 land before public release.
+- OQ2 — Random affixes: YES, light only. Uncommon and Rare items roll 1 optional affix
+  from a curated pool of 20-30 entries (not a full prefix/suffix generator). Legendary
+  items are hand-authored and never roll affixes — their identity is fixed.
+- OQ4 — Durability: OPTIONAL, default OFF. If H15 ships, durability decays on hit and
+  is repaired via crafting or hub NPCs. The player can ignore it entirely. It does not
+  block any other Howler.
 
 ---
 
 ## 2. Architecture Decisions
 
-### Density formula changes (H1 scope)
+### Tier scheme
 
-The spawn pipeline lives in `lib/gameEngine.ts:_applyPopulation` (lines 286–322). It reads `baseChance` from room data, applies `timeModifier[timeOfDay]` from the room's `hollowEncounter` block, then multiplies by `pressureModifier(pressure)` from `lib/spawn.ts`. The `pressureModifier` function currently returns `1.0 + (pressure - 1) * 0.15`, so cycle-1 (pressure=1) gets exactly 1.0× — no bonus.
+Items carry `tier?: 1 | 2 | 3 | 4 | 5` today (cosmetic). Convoy 2 adds a parallel
+`rarity?: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary'` field to Item in
+types/game.ts. Tier (1-5) remains the numeric progression label. Rarity gates affix rolls
+and display color. Color mapping via lib/ansiColors.ts:
+- common: no prefix (default white)
+- uncommon: green prefix
+- rare: blue prefix
+- epic: purple prefix
+- legendary: gold prefix + [Legendary] suffix
 
-**Four changes in H1:**
-1. **baseChance floor increases** — edited directly in `data/rooms/*.ts`. Target values per PRD A1: River Road 0.10→0.35, Salt Creek 0.12→0.45, Breaks/Dust/Stacks 0.14–0.32→0.55, Scar/Pens 0.28/0.38→0.60–0.65. Covenant and Crossroads left below 0.15 (safe hubs per PRD A6).
-2. **Daytime modifier softening** — the per-room `timeModifier.day` values are currently 0.4–0.6 in starting and mid zones. Raise to 0.7–0.85. These are per-room data fields in the `hollowEncounter` block, not a centralized config — each room gets updated individually.
-3. **Respawn timer cut** — `ENEMY_RESPAWN_ACTIONS = 160` at `lib/gameEngine.ts:292` → `80`. One-line change.
-4. **Cycle-1 pressure baseline** — `pressureModifier()` in `lib/spawn.ts` currently returns `1.0 + (pressure - 1) * 0.15`. Change so pressure=1 returns 1.10: `1.0 + Math.max(0, pressure - 1) * 0.15 + (pressure === 1 ? 0.10 : 0.0)`.
-5. **cycleGate 3→2** — all 34 rooms in `data/rooms/the_scar.ts` (16 rooms, all `cycleGate: 3`) and `data/rooms/the_pens.ts` (18 rooms, all `cycleGate: 3`) updated to `cycleGate: 2`.
+Backfilling strategy for H1: map existing 182 items to rarity by heuristic bands (weapon
+damage 4 or below, or armor defense 1 or below = common; dmg 5-6 or def 2 = uncommon;
+dmg 7-9 or def 3-4 = rare; dmg 10-11 or def 5 = epic; named/boss-unique = legendary).
+Backfill is data-only, no runtime logic change.
 
-Note: `lib/spawn.ts` is shared infrastructure — `pressureModifier()` is imported by `lib/gameEngine.ts`. Flag: `lib/spawn.ts` is imported by `lib/gameEngine.ts` — changes to `pressureModifier()` affect the entire spawn pipeline. Verify with `grep -rn "pressureModifier\|computePressure" lib/` before modifying.
+### Affix algorithm
 
-### Spawn-weight rebalancing (H1 and H3 scope — sequenced)
+New file lib/affixes.ts. Two exports: AFFIX_POOL (array of 20-30 curated entries, each
+with id, name, description, statEffect: Partial<Record<Stat, number>>, traitAdd optional
+WeaponTraitId or ArmorTraitId, appliesToType 'weapon' | 'armor' | 'any') and
+rollAffix(item: Item): Item. Rolling logic: if item.rarity is 'uncommon' or 'rare', roll
+once with 60% chance of an affix; 'epic' always gets one affix; 'legendary' never rolls.
+rollAffix is called in the loot resolver lib/loot.ts on drop, not at item definition
+time. Items in data/items.ts are never pre-affixed.
 
-H1 rebalances existing enemies in the four lopsided zones (using `remnant` and `stalker` already defined):
-- Duskhollow: change shuffler weight 100→65, add remnant weight 20, stalker weight 15.
-- River Road, Stacks, Dust: similar redistribution capping the dominant enemy at ≤70%.
+Note: lib/affixes.ts is new shared infrastructure — changes affect all loot paths.
 
-H3 then adds new faction-flavored enemy IDs to these same zone `threatPool` arrays after H1 merges. This is a hard sequencing dependency — H3 must wait for H1's file changes to land to avoid a merge conflict on 7 zone files.
+### Armor slot expansion strategy
 
-### Wandering enemies system (H2 scope)
+InventoryItem currently uses equipped: boolean with no slot discriminator. The equipItem()
+function in lib/inventory.ts already unequips same-type items. Slot expansion adds
+armorSlot?: 'head' | 'chest' | 'legs' | 'feet' to the Item interface. equipItem() is
+updated to unequip only the item with the same armorSlot (not all armor). Defense
+calculation in lib/actions/combat.ts (lines 249-250) currently reads one equipped armor.
+After H6 it must sum defense across all equipped armor pieces.
 
-The existing `lib/worldEvents.ts` provides scheduled events but is not the right hook for wanderers (combat encounters tied to movement, not action count). H2 creates a separate lightweight module.
+H4 (stat bonus on equip) and H6 (armor slot expansion) both modify lib/actions/items.ts.
+Resolution: H6 merges first; H4 is dropped after H6 lands.
 
-**System shape:**
-- New module: `lib/wanderers.ts`. Pure functions only.
-- `WandererState` persisted inside existing `narrative_progress` JSONB field — no new Supabase migration required.
-- `tickWanderers(state, currentRoomId, cycle): WandererEvent | null` — called from `lib/gameEngine.ts` after the post-move `_applyPopulation` block.
-- A wanderer holds a `currentRoomId` and moves to adjacent rooms probabilistically each tick.
-- Hard cap: `MAX_WANDERERS_ACTIVE = 2` (cycles 1–3), `= 4` (cycles 4+), enforced at spawn time.
-- Wanderers do not set `room_cleared` flag and do not count against per-room density.
+No DB migration required for the slot expansion: equipped: boolean on player_inventory
+still works — multiple armor rows can be equipped simultaneously. The migration file
+20260327000004_fix_inventory_unique.sql likely constrains on (player_id, item_id), not
+on (player_id, equipped) — verify before H6 merges.
 
-Note: `lib/gameEngine.ts` is touched by H1 (line 292), H2 (post-move block), and H6 (death handler). These three regions are distinct and non-overlapping. Each Howler must grep `gameEngine.ts` before writing to confirm.
+### AoE primitive shape
 
-### New enemy types (H3 scope, behavioral fields H4 scope)
+New AoEDamage interface in types/game.ts: { radius: 'adjacent' | 'room', damage:
+[number, number], condition?: ConditionId }. Added as optional field aoe? on Enemy.
+Frenzy sets aoe: { radius: 'adjacent', damage: [1, 6], condition: 'burning' } and fires
+on death via a new onDeath? hook field on Enemy. Weapons can declare aoeTrait hints but
+weapon AoE resolution is Convoy 3 (class abilities). H5 only wires Frenzy's
+death-explosion using the existing additionalEnemies path in CombatState.
 
-The `Enemy` interface at `types/game.ts:427` has no behavioral fields. H4 adds these optional fields:
-- `critChance?: number` — probability (0.0–1.0) of enemy dealing 1.5× damage on attack
-- `fleeThreshold?: number` — HP fraction (0.0–1.0) below which enemy attempts to flee
-
-H3 authors new enemies without these fields (adding `// TODO-H4: critChance/fleeThreshold` comments on entries that will receive them). H4 fills in values on both H3's new enemies and select existing enemies. This design allows true parallel execution between H3 and H4, with H4 doing a final patch on H3's entries.
-
-**TYPE DEPENDENCY: `HollowType` union in `types/game.ts`** — H3 adds 7 new string literals. This union is used in `data/enemies.ts`, all `data/rooms/*.ts` threat pool blocks, and `lib/combat.ts`. H3 must run `tsc --noEmit` after extending the union to catch any exhaustive-switch failures.
-
-### Behavioral hooks contract (H4 scope)
-
-H4 modifies `lib/combat.ts` in two existing functions:
-1. `playerAttack()` (~line 245): after damage calculation, check `enemy.critChance` — if the enemy's counter-attack this round rolls under critChance, the damage is multiplied by 1.5.
-2. `applyHollowRoundEffects()` (~line 573): check `enemy.fleeThreshold`; if `enemy.hp / enemy.maxHp < fleeThreshold`, roll flee attempt for the enemy (escape combat, no loot).
-
-H4 also adds `combatLogCompress(messages: GameMessage[]): GameMessage[]` as a pure utility in `lib/combat.ts` that collapses consecutive identical messages. This does not change any function signatures.
-
-H4 does NOT touch `startCombat()`, `flee()`, `rollLoot()`, or any part of `lib/gameEngine.ts` beyond what is already called.
-
-### Narrative selection logic
-
-**Death prose (H6):** Creates `lib/deathProse.ts` exporting `selectDeathProse(context: DeathContext): string`. Context: `{ cause: 'combat' | 'infection' | 'environmental' | 'faction-vendetta', zone: string, cycle: number }`. The death handler in `lib/gameEngine.ts` replaces the hard-coded string with a call to this function. H6 also adds a single kill-count increment line (`questFlags['hollow_kills']++`) in the death handler for H7 to consume.
-
-**Faction reactivity (H7):** Uses `questFlags['hollow_kills']` (set by H6) as the trigger. Adds new dialogue nodes to `data/dialogueTrees.ts` and adds a kill-count check in `lib/actions/social.ts` before NPC dialogue node selection.
-
-**Combat world events (H8):** Adds 8+ `WorldEvent` entries to `data/worldEvents/act1_events.ts` and `data/worldEvents/act2_events.ts`. May extend `WorldEvent` in `types/convoy-contracts.d.ts` with an optional `combatParticipation?` field — see Open Questions for the freeze-constraint issue.
+Note: types/game.ts is shared infrastructure — H1, H3, H4, H5, H6, H10 all read or
+extend it. Freeze the Wave 1 type contract before Howlers are dropped.
 
 ---
 
-## 3. Type Dependencies
-
-- `HollowType` union in `types/game.ts` — H3 adds 7 new values. Used by: `data/enemies.ts`, all `data/rooms/*.ts` threatPool blocks, `lib/combat.ts`. All Howlers touching these files depend on the expanded union.
-- `Enemy` interface in `types/game.ts` — H4 adds `critChance?`, `fleeThreshold?`. Used by: `lib/combat.ts`, `data/enemies.ts`, all test files that mock Enemy objects.
-- `WorldEvent` interface in `types/convoy-contracts.d.ts` — H8 adds `combatParticipation?`. Used by: `lib/worldEvents.ts`, `data/worldEvents/*.ts`. **Freeze constraint — see Open Questions.**
-
----
-
-## 4. File Ownership Matrix
+## 3. File Ownership Matrix
 
 | Howler | Creates | Modifies |
 |--------|---------|----------|
-| **H1** | — | `data/rooms/river_road.ts`, `data/rooms/salt_creek.ts`, `data/rooms/the_breaks.ts`, `data/rooms/the_dust.ts`, `data/rooms/the_stacks.ts`, `data/rooms/duskhollow.ts`, `data/rooms/the_ember.ts`, `data/rooms/the_pens.ts`, `data/rooms/the_scar.ts`, `lib/spawn.ts`, `lib/gameEngine.ts` (line 292 only) |
-| **H2** | `lib/wanderers.ts`, `tests/unit/wanderers.test.ts` | `lib/gameEngine.ts` (post-move block — distinct from H1 line 292 and H6 death handler), `types/game.ts` (add `WandererState` interface and `WandererEvent` interface if needed) |
-| **H3** | `tests/unit/new-enemies.test.ts` | `data/enemies.ts` (append 7 new entries at end only — zero edits to existing entries), `types/game.ts` (extend `HollowType` union), `data/rooms/river_road.ts`†, `data/rooms/salt_creek.ts`†, `data/rooms/the_dust.ts`†, `data/rooms/the_ember.ts`†, `data/rooms/the_breaks.ts`†, `data/rooms/the_scar.ts`†, `data/rooms/duskhollow.ts`† |
-| **H4** | `tests/unit/behavioral-hooks.test.ts` | `types/game.ts` (add fields to `Enemy` interface), `lib/combat.ts` (playerAttack + applyHollowRoundEffects + compress utility), `data/enemies.ts` (add behavioral fields to existing entries only — not new H3 entries) |
-| **H5** | `tests/unit/loot-drop.test.ts` | `data/enemies.ts` (loot arrays in existing entries only — not new H3 entries, not behavioral fields from H4) |
-| **H6** | `lib/deathProse.ts`, `tests/unit/death-prose.test.ts` | `lib/gameEngine.ts` (death handler — add `selectDeathProse()` call and `hollow_kills` increment; region distinct from H1 and H2) |
-| **H7** | `tests/integration/faction-reactivity.test.ts` | `data/dialogueTrees.ts`, `lib/actions/social.ts` |
-| **H8** | `tests/unit/combat-events.test.ts` | `data/worldEvents/act1_events.ts`, `data/worldEvents/act2_events.ts`, `types/convoy-contracts.d.ts` (conditional on freeze resolution) |
+| H1 — Tier/rarity labels | — | types/game.ts (rarity on Item), data/items.ts (backfill 182 items) |
+| H2 — Affix system | lib/affixes.ts | types/game.ts (AffixEntry interface), lib/loot.ts (rollAffix on drop) |
+| H3 — LootEntry count | — | types/game.ts (LootEntry.count field), data/enemies.ts (update loot tables), lib/loot.ts (count resolver) |
+| H4 — Stat bonus on equip | — | lib/actions/items.ts (equip/unequip applies statBonus) |
+| H5 — AoE primitive | — | types/game.ts (AoEDamage, onDeath on Enemy), data/enemies.ts (Frenzy + Apex Screamer), lib/actions/combat.ts (onDeath handler) |
+| H6 — Armor slot expansion | supabase/migrations/20260424000002_armor_slots.sql | types/game.ts (armorSlot on Item), lib/inventory.ts (slot-aware equip logic), lib/actions/combat.ts (sum multi-slot defense), lib/actions/items.ts (equip display) |
+| H7 — 7 new enemies | — | data/enemies.ts (7 new entries, data only) |
+| H8 — Zone integration | — | data/rooms/river_road.ts, data/rooms/salt_creek.ts, data/rooms/covenant.ts, data/rooms/the_ember.ts, data/rooms/the_breaks.ts, data/rooms/the_dust.ts, data/rooms/the_stacks.ts |
+| H9 — 60+ new gear items | — | data/items.ts (60+ new entries) |
+| H10 — Boss drops + sets | data/sets.ts | data/enemies.ts (boss loot tables), lib/loot.ts (set bonus detection), types/game.ts (setId on Item) |
+| H11 — Gear lore | — | data/items.ts (loreText on all Rare+ items) |
+| H12 — Boss intros | — | data/enemies.ts (bossIntro + combatIntro fields on 8-12 enemies) |
+| H13 — Dialogue Part A | — | data/dialogueTrees.ts (Cross + Patch reactivity nodes) |
+| H14 — Dialogue Part B | — | data/dialogueTrees.ts (Lev + Howard + Sparks reactivity nodes) |
+| H15 — Durability (optional) | — | types/game.ts (durability on InventoryItem), lib/actions/combat.ts (decay), data/recipes.ts (repair recipes) |
 
-† H3 modifies these 7 room files to add new enemy IDs to `threatPool` arrays. H1 also modifies these same files for `baseChance`/`timeModifier` changes. **Hard sequencing constraint: H1 must merge before H3 begins editing these files.**
+No file overlap between any two simultaneous Howlers within a wave. types/game.ts and
+data/enemies.ts are touched across waves — managed by the wave sequencing below.
 
-**`data/enemies.ts` three-way coordination:**
-H3 appends new entries at file end. H4 edits existing entries' `critChance`/`fleeThreshold`. H5 edits existing entries' `loot` arrays. These target different properties on different entries, but to avoid merge conflicts: H4 and H5 complete and merge first (Wave 1), then H3 appends safely (Wave 2).
+Note: lib/loot.ts is touched by H2 (create), H3 (extend), and H10 (extend across waves).
+Wave sequencing handles this — each Howler works on a distinct section of the file.
 
-**`lib/gameEngine.ts` three-region split:**
-H1 edits line 292 (`ENEMY_RESPAWN_ACTIONS`). H2 edits the post-move block (after `_applyPopulation`). H6 edits the death handler. All three must grep their target region before writing to confirm no overlap.
-
----
-
-## 5. Per-Howler Specifications
-
----
-
-### H1 — Spawn Pipeline Retune
-**One-line scope:** Raise `baseChance` floors across 9 zone files, soften daytime modifiers, cut respawn timer to 80, add 1.10× cycle-1 density bonus, loosen Scar/Pens `cycleGate` to 2, and rebalance 4 lopsided threat pools using existing enemy types.
-
-**Owned files:** (see matrix above — 9 zone files + `lib/spawn.ts` + `lib/gameEngine.ts` line 292)
-
-**Frozen contracts:**
-- `pressureModifier(pressure: number): number` signature in `lib/spawn.ts` must not change.
-- `computePressure(cycle: number): number` must not change — other Howlers depend on stable pressure levels.
-- `cycleGate` field on `Room` type must not be removed.
-- Do not add any new rooms or remove any rooms. Data edits only.
-
-**Specific changes:**
-1. `lib/spawn.ts:pressureModifier` — new body: `return 1.0 + Math.max(0, pressure - 1) * 0.15 + (pressure === 1 ? 0.10 : 0.0)`
-2. `lib/gameEngine.ts:292` — `ENEMY_RESPAWN_ACTIONS = 160` → `= 80`
-3. All 34 rooms in `the_scar.ts` and `the_pens.ts` with `cycleGate: 3` → `cycleGate: 2`. Before changing: audit these rooms' `extras`, `descriptionPool`, and `narrativeNotes` for any cycle-3-specific narrative content that would be exposed too early.
-4. Per-zone `baseChance` increases — apply to `hollowEncounter.baseChance` fields. Leave Crossroads (max 0.15) and Covenant (max 0.12) as near-safe hubs.
-5. `timeModifier.day` in affected zones: raise from 0.4–0.5 range to 0.7–0.8.
-6. Threat-pool rebalancing in Duskhollow, River Road, Stacks, Dust: add `remnant` (weight ~20) and `stalker` (weight ~15) entries, reduce dominant entry weight so no single type exceeds 70% of total.
-
-**Tests:**
-- `pressureModifier(1)` returns 1.10.
-- `pressureModifier(3)` returns 1.30 (unchanged from prior formula — pressure 3 → `1.0 + 2 * 0.15 = 1.30`).
-- For each rebalanced zone, total threat-pool weight sum / dominant-entry weight ≥ 1.43 (i.e., dominant ≤ 70%).
-- All 1475 existing tests pass after respawn timer and pressure changes.
-
-**Effort:** M  
-**Depends on:** Nothing — first task in execution order.  
-**Pre-mortem:** "If this task fails or takes 3× longer, it will be because: the pressureModifier change breaks downstream test assertions that hard-code the old pressure-1 = 1.0 value, requiring a grep-and-fix pass across the 65 test files."
+Note: data/dialogueTrees.ts is touched by H13 and H14 — they are sequenced, not parallel.
 
 ---
 
-### H2 — Wandering Enemies System
-**One-line scope:** New `lib/wanderers.ts` module implementing pressure-driven wanderer movement, integrated at the post-move hook in `lib/gameEngine.ts`.
+## 4. Per-Howler Specs
 
-**Owned files:** (see matrix above)
+### Type Freeze Pre-Pass (manual or single focused Howler, ~1 hour before Wave 1)
 
-**Frozen contracts:**
-- Exported function signature: `tickWanderers(state: WandererState, currentRoomId: string, zoneId: string, cycle: number, adjacentRoomIds: string[]): { updatedState: WandererState; event: WandererEvent | null }`
-- `WandererEvent` shape: `{ enemyId: string; roomId: string; message: string }`
-- Max wanderers: `MAX_WANDERERS_ACTIVE_LOW = 2` (cycles 1–3), `MAX_WANDERERS_ACTIVE_HIGH = 4` (cycles 4+). Constants, not configurable per zone.
-- Wanderers do not set `room_cleared` and do not count against per-room `hollowEncounter` rolls.
-- Persist `WandererState` inside `narrative_progress` JSONB — no new Supabase column, no migration.
-- Initial wanderer types: only `stalker` and (after H3 merges) `apex_screamer`. Do not reference H3 enemy IDs directly — make the wanderer type a string that callers supply.
+Before dropping any Wave 1 Howler, add all of the following to types/game.ts in one
+commit. This eliminates Wave 1 type conflicts entirely.
 
-**Specific changes:**
-1. `lib/wanderers.ts`: implement `WandererState` (map of wanderer ID → current room), `tickWanderers`, `spawnWanderer`, `getActiveWanderers` (filtered by zone), `capWanderers`.
-2. `lib/gameEngine.ts`: in the post-move block (after the `_applyPopulation` call and before the NPC spawn block), call `tickWanderers` and append any `WandererEvent` messages to the output. Identify exact line range by reading the post-move region before writing.
+Fields to add:
+- Item.rarity?: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary'
+- Item.armorSlot?: 'head' | 'chest' | 'legs' | 'feet'
+- Item.setId?: string
+- LootEntry.count?: [number, number]
+- AoEDamage interface: { radius: 'adjacent' | 'room'; damage: [number, number]; condition?: ConditionId }
+- Enemy.onDeath?: { aoe?: AoEDamage }
+- Enemy.bossIntro?: string
+- Enemy.combatIntro?: string
+- AffixEntry interface: { id: string; name: string; appliesToType: 'weapon' | 'armor' | 'any'; statEffect?: Partial<Record<Stat, number>>; traitAdd?: WeaponTraitId | ArmorTraitId }
 
-**Tests:**
-- `tickWanderers` with 0 wanderers returns null event.
-- At cap, `spawnWanderer` returns without adding a new wanderer.
-- Wanderer movement does not produce a roomId outside the current zone.
-
-**Effort:** M  
-**Depends on:** Nothing (no overlap with H1's line 292 edit in `gameEngine.ts`).  
-**Pre-mortem:** "If this task fails or takes 3× longer, it will be because: the `narrative_progress` JSONB column has existing shape assumptions that make nesting `WandererState` inside it awkward, requiring either a new column (migration) or a different persistence strategy."
+This is a ~40-line addition to types/game.ts with zero logic. Safe to do manually.
 
 ---
 
-### H3 — New Enemy Roster
-**One-line scope:** Add 7 new enemies to `data/enemies.ts` and integrate them into zone threat pools. Runs after H1 merges.
+### Wave 1 — Foundation (parallel after type freeze)
 
-**Owned files:** (see matrix — append to `data/enemies.ts`, extend `HollowType`, add to 7 zone threatPools)
+**H1 — Item Tier / Rarity Labels**
 
-**TYPE DEPENDENCY:** Extending `HollowType` in `types/game.ts` affects every file importing this type. Run `tsc --noEmit` after the extension before editing zone files.
+Backfill all 182 existing items in data/items.ts with a rarity field using the damage/
+defense band heuristic. Bands: weapons dmg 4 or below or armor def 1 or below = common;
+dmg 5-6 or def 2 = uncommon; dmg 7-9 or def 3-4 = rare; dmg 10-11 or def 5 = epic;
+silver_knife and any meridian-tier gear = legendary. Add color rendering in the item
+display path (examine output, loot summary) via lib/ansiColors.ts — add color constants
+for 5 tiers if not present.
 
-**Frozen contracts:**
-- Append new enemy entries at the END of `data/enemies.ts`. Zero edits to existing entries (H4 and H5 own those).
-- New entries include `// TODO-H4: add critChance/fleeThreshold here` on entries that will receive behavioral fields from H4.
-- Zone placement rules: `frenzy` and `apex_screamer` must NOT appear in Crossroads or Covenant threat pools. `lucid_thrall` appears only in Deep and Scar (now cycleGate:2 after H1). `accord_peacekeeper` goes in the Duskhollow approach room (not inside Covenant interior).
-- Do not change existing enemy loot arrays (H5 scope) or add behavioral fields (H4 scope).
-
-**Enemies to add:**
-1. `frenzy` — HP 8, attack 5, defense 8, damage [6,12], xp 60. Glass cannon. Zones: dust, breaks, scar. Note: "explodes on death" is flavor text only in Convoy 1; mechanical AoE is Convoy 2.
-2. `apex_screamer` — HP 8, attack 4, defense 8, damage [4,10], xp 70. Glass cannon / caster. Zones: breaks, scar, deep.
-3. `drifter_road_warden` — HP 28, attack 3, defense 12, damage [3,7], xp 120. Faction: Drifters. Zone: river_road only.
-4. `salter_scout` — HP 32, attack 4, defense 13, damage [3,8], xp 130. Faction: Salters. Zone: salt_creek only.
-5. `accord_peacekeeper` — HP 26, attack 3, defense 12, damage [2,6], xp 110. Faction: Accord/Covenant. Zone: duskhollow (approach room only).
-6. `kindling_zealot` — HP 32, attack 4, defense 11, damage [3,8], xp 140. Faction: Kindling. Zone: ember.
-7. `lucid_thrall` — HP 36, attack 5, defense 12, damage [4,9], xp 180. Faction: Sanguine. Zone: deep and scar.
-
-**Tests:**
-- Each new enemy has valid `id`, `name`, `hp`, `damage` tuple, `loot` array, and `resistanceProfile`.
-- Zone threat-pool weight totals are positive after adding new entries.
-- No new enemy appears in Crossroads or Covenant threat pools (automated assertion).
-
-**Effort:** M  
-**Depends on:** H1 must merge first (H3 writes to 7 zone files that H1 also touches). H4 must have delivered the `Enemy` interface extension so TypeScript compiles correctly if any new enemies use `critChance` — but since H3 adds fields as `// TODO-H4` comments only, H3 can proceed with the existing interface.  
-**Pre-mortem:** "If this task fails or takes 3× longer, it will be because: the `HollowType` union expansion triggers exhaustive-switch errors in `lib/combat.ts` or `lib/gameEngine.ts` that were not caught in planning, requiring a search for all switch-on-hollowType patterns and adding fallthrough cases."
+- Files: data/items.ts (182 items backfilled), lib/ansiColors.ts (verify/add tier colors)
+- Tests: each rarity tier has >=1 item; color constants exist for all 5 tiers; examine
+  output on a rare item shows the blue prefix
+- Depends on: type freeze pre-pass
+- Effort: S
+- Pre-mortem: Will stall if the Howler reads each item individually rather than doing a
+  bulk text replacement by damage band. Provide the bands table explicitly. Do not make
+  it derive them from research.
 
 ---
 
-### H4 — Behavioral Hooks
-**One-line scope:** Add `critChance` and `fleeThreshold` optional fields to `Enemy` interface, implement the hooks in `lib/combat.ts`, and add combat log compression utility.
+**H2 — Affix System**
 
-**Owned files:** (see matrix — `types/game.ts` Enemy interface, `lib/combat.ts` two functions + new utility, `data/enemies.ts` behavioral fields on existing entries)
+Create lib/affixes.ts with AFFIX_POOL and rollAffix(item: Item): Item. Create or extend
+lib/loot.ts to call rollAffix on any drop where item.rarity is uncommon or higher. Affix
+is applied as a runtime mutation of the dropped item copy — not to the source record in
+data/items.ts.
 
-**Frozen contracts:**
-- `playerAttack(player, enemy, weapon, state, ...): AttackResult` — signature must not change.
-- `applyHollowRoundEffects(state): { state, messages }` — signature must not change.
-- `critChance` semantics: on each enemy attack in `applyHollowRoundEffects` (or wherever enemy attacks are resolved — confirm by reading the function), if `Math.random() < enemy.critChance`, the damage for that attack is `Math.ceil(baseDamage * 1.5)`. This is the same formula as player crits at `lib/combat.ts:185`.
-- `fleeThreshold` semantics: checked at the start of `applyHollowRoundEffects`; if `enemy.hp / enemy.maxHp < fleeThreshold`, the enemy exits combat (no loot, room clears, message output).
-- `combatLogCompress(messages: GameMessage[]): GameMessage[]` — pure function, collapses consecutive identical `text` fields into one entry with ` (×N)` suffix.
-- Both new fields are `optional` — enemies without them behave identically to today. No existing test should break.
+AFFIX POOL SEED (use exactly these 10; add 10-20 more in the same format):
+- { id: 'sharp',    appliesToType: 'weapon', statEffect: { reflex: 1 } }
+- { id: 'brutal',   appliesToType: 'weapon', statEffect: { vigor: 1 } }
+- { id: 'fleet',    appliesToType: 'any',    statEffect: { reflex: 1 } }
+- { id: 'sturdy',   appliesToType: 'armor',  statEffect: { grit: 1 } }
+- { id: 'warded',   appliesToType: 'armor',  traitAdd: 'warded' }
+- { id: 'reactive', appliesToType: 'armor',  traitAdd: 'reactive' }
+- { id: 'keen',     appliesToType: 'weapon', traitAdd: 'keen' }
+- { id: 'draining', appliesToType: 'weapon', traitAdd: 'draining' }
+- { id: 'silent',   appliesToType: 'weapon', traitAdd: 'silenced' }
+- { id: 'blessed',  appliesToType: 'weapon', traitAdd: 'blessed' }
 
-**Enemies to add behavioral fields to (existing roster):**
-- `screamer`: `fleeThreshold: 0.30` (fits lore — signal flare enemy avoids direct fight)
-- `stalker`: `critChance: 0.15` (ambush specialist)
-- `brute`: `critChance: 0.10` (slow but devastating swing)
-- H3's new enemies (after H3 merges): `frenzy` gets `critChance: 0.25`; `apex_screamer` gets `fleeThreshold: 0.20`.
+Rolling rule: common = no affix; uncommon/rare = 60% chance of one affix; epic = always
+one affix; legendary = never (hand-authored identity preserved).
 
-**Tests:**
-- Enemy with `critChance: 1.0` always crits (damage = `ceil(baseDamage * 1.5)`).
-- Enemy with `fleeThreshold: 1.0` flees immediately on first round.
-- Enemy without either field: behavior identical to pre-H4 (regression guard using existing enemy in existing test).
-- `combatLogCompress(['foo','foo','foo'])` returns `['foo (×3)']` (or equivalent collapsed representation).
-- Existing 1700-line combat test suite passes without modification.
-
-**Effort:** M  
-**Depends on:** Can run in parallel with H1, H2, H5, H6, H8 in Wave 1. Must coordinate with H3 on `data/enemies.ts` — H4 edits existing entries (lines before H3's appended entries), H3 appends new entries. No structural conflict if both Howlers are careful about line ranges, but safest to have H4 merge before H3 (Wave 1 vs Wave 2).  
-**Pre-mortem:** "If this task fails or takes 3× longer, it will be because: test fixtures that mock the `Enemy` type exhaustively (without allowing extra properties) fail TypeScript compilation after the interface extension, requiring a fixture-update pass across multiple test files."
-
----
-
-### H5 — Loot Drop Fix
-**One-line scope:** Add `.22 LR` currency entries to every enemy loot table that lacks them, and reduce Brute's overweighted scrap_metal drop.
-
-**Owned files:** (see matrix — `data/enemies.ts` loot arrays in existing entries only)
-
-**Frozen contracts:**
-- H5 ONLY touches `loot: []` arrays in existing entries. No HP, attack, defense, damage, behavioral fields, or new entries.
-- Verify `ammo_22lr` is a valid item ID: `grep "'ammo_22lr'" data/items.ts`. If not found, check `grep "22lr\|22_lr\|ammo_22" data/items.ts` and use the correct ID.
-- Do not change loot tables for entries appended by H3. H5 runs in Wave 1, H3 runs in Wave 2, so there is no conflict — but H5 should not reference H3's new enemy IDs.
-
-**Specific changes:**
-- Add `{ itemId: 'ammo_22lr', chance: 0.20 }` to: `remnant`, `stalker`, `brute`, `whisperer`, `sanguine_feral`, `red_court_enforcer`, `elder_sanguine`, `meridian_ancient_hollow`, `elder_sanguine_deep`, `hive_mother_the_deep`, `hollow_brute_deep`, `hollow_remnant_deep`.
-- `shuffler` and `screamer` already have `ammo_22lr` in loot — verify and leave unchanged.
-- Brute `scrap_metal` chance: 0.60 → 0.35.
-
-**Tests:**
-- Statistical test: `rollLoot(enemy)` for each modified enemy run 500 times, assert at least one `ammo_22lr` result.
-- Brute loot test: 500 rolls, assert `scrap_metal` appears in fewer than 45% of results (was 60%).
-
-**Effort:** S  
-**Depends on:** Nothing in Wave 1. H5 should not begin editing any entries that H3 will add — those don't exist yet, and H3 runs in Wave 2.  
-**Pre-mortem:** "If this task fails or takes 3× longer, it will be because: `ammo_22lr` does not exist as a valid item ID in `data/items.ts` and needs to be added there first, which is outside the H5 scope and requires a quick cross-check."
+- Files: lib/affixes.ts (create), lib/loot.ts (create or extend — check first)
+- Tests: rollAffix on a common item returns item unchanged; rollAffix on epic always
+  returns item with an affix; legendary items not modified
+- Depends on: type freeze pre-pass (AffixEntry type), H1 merged (rarity field populated)
+- Effort: S
+- Pre-mortem: Will stall if the Howler over-engineers this into prefix+suffix tables or
+  compound affixes. One pool, one roll, one field. No compound affixes this convoy.
 
 ---
 
-### H6 — Death Prose Variants (E1)
-**One-line scope:** Create `lib/deathProse.ts` with 7 death prose templates selected by cause/cycle/zone; wire into the death handler in `lib/gameEngine.ts`; add kill-count increment for H7.
+**H3 — LootEntry Count Field**
 
-**Owned files:** (see matrix — creates `lib/deathProse.ts` + test; modifies `lib/gameEngine.ts` death handler only)
+LootEntry in types/game.ts has { itemId: string; chance: number }. The type freeze adds
+count?: [number, number]. This Howler wires the count resolver in lib/loot.ts and updates
+the most imbalanced enemy loot tables in data/enemies.ts.
 
-**Frozen contracts:**
-- `selectDeathProse(context: DeathContext): string` — exported from `lib/deathProse.ts`. `DeathContext`: `{ cause: 'combat' | 'infection' | 'environmental' | 'faction-vendetta', zone: string, cycle: number }`.
-- The death handler change in `lib/gameEngine.ts` is exactly two modifications: (1) replace the hard-coded death prose string with `selectDeathProse(context)`, (2) add `player.questFlags['hollow_kills'] = (player.questFlags['hollow_kills'] ?? 0) + 1` immediately before the death sequence completes. No other changes to the death handler.
-- Do NOT touch `rebirthWithStats()`, `createCharacter()`, or Supabase persistence logic.
-- Minimum 7 variants. Required variants: combat-generic, combat-in-Sanguine-territory, cycle-1 (first-run tone), cycle-5-plus (veteran tone), environmental/infection, faction-vendetta, and one wildcard (location-specific or cycle-aware interpolation).
+Specific loot table fixes required:
+- All 16 enemies: add ammo_22lr drop with count [2,8] at chance 0.40 if not already
+  present (the audit found no currency in any loot table)
+- brute: reduce scrap_metal chance from 0.60 to 0.25
+- screamer: add bandages 0.20 (currently only 2 drops — underfilled vs standard 3-5)
+- elder_sanguine: add ammo_22lr count [5,15] at chance 0.60
+- hive_mother variants: add ammo_22lr count [3,10] at chance 0.50
 
-**Tests:**
-- `selectDeathProse({ cause: 'combat', zone: 'the_scar', cycle: 1 })` returns non-empty string.
-- `selectDeathProse({ cause: 'combat', zone: 'the_scar', cycle: 1 })` and `selectDeathProse({ cause: 'combat', zone: 'crossroads', cycle: 6 })` return different strings.
-- All 7 variants are reachable by some input combination (coverage check using varied inputs).
-- Existing death handler tests in integration test suite pass after the call-site change.
-
-**Effort:** S  
-**Depends on:** Nothing — `lib/deathProse.ts` is new and independent. The `lib/gameEngine.ts` death handler change is a targeted single-region modification with no overlap from H1 (line 292), H2 (post-move block).  
-**Pre-mortem:** "If this task fails or takes 3× longer, it will be because: the death handler in gameEngine.ts embeds the prose inline inside a block with conditional logic rather than as a simple string, making surgical replacement harder than expected."
-
----
-
-### H7 — Faction Combat Reactivity (E4)
-**One-line scope:** Add body-count-triggered dialogue nodes for Marshal Cross, Patch, Vesper, and Lev; wire kill-count check in `lib/actions/social.ts`. Runs after H6 merges.
-
-**Owned files:** (see matrix — `data/dialogueTrees.ts`, `lib/actions/social.ts`, creates integration test)
-
-**Frozen contracts:**
-- Kill-count field: `player.questFlags['hollow_kills']` (integer), incremented by H6's death handler change. H7 reads this field but does not write it.
-- Trigger thresholds: 5 kills (light awareness), 15 kills (strong acknowledgment), 30 kills (reputation comment). Each NPC may use different thresholds that fit their character.
-- At minimum 3 new dialogue nodes per NPC (Marshal Cross, Patch, Vesper, Lev). Lines must fit established NPC voice (Marshal Cross: tactical/resource framing; Patch: clinical observation; Vesper: aesthetic distance; Lev: data/pattern observation).
-- Do not modify `data/npcs.ts`. Do not touch any combat path.
-- Dialogue trigger is additive — existing dialogue for these NPCs must still fire in their existing conditions. Kill-count dialogue is supplemental, not replacing.
-
-**Tests:**
-- `player.questFlags['hollow_kills'] = 0` → NPC returns default dialogue (no new node).
-- `player.questFlags['hollow_kills'] = 20` → Marshal Cross returns a combat-aware line.
-- NPC dialogue nodes pass any existing dialogue-tree schema validation tests (grep `tests/integration/` for dialogue tests before writing).
-
-**Effort:** M  
-**Depends on:** H6 must merge first (H7 depends on `hollow_kills` being incremented by H6's death handler change).  
-**Pre-mortem:** "If this task fails or takes 3× longer, it will be because: `data/dialogueTrees.ts` is large (~130 nodes) and authoring 12+ new NPC lines in consistent voice across four NPCs is creative work that often requires multiple draft passes to feel right."
+- Files: data/enemies.ts (loot table updates), lib/loot.ts (count resolver)
+- Tests: loot resolver with count [2,8] returns quantity between 2 and 8 inclusive;
+  count absent returns quantity 1; elder_sanguine loot table includes ammo_22lr
+- Depends on: type freeze pre-pass
+- Effort: S
+- Pre-mortem: Will stall if the Howler reads room files looking for loot tables. Enemy
+  loot tables are in data/enemies.ts only. Room item spawns are separate and out of scope.
 
 ---
 
-### H8 — Combat World Events (E5)
-**One-line scope:** Add 8+ new combat world events to the act1 and act2 event data files; extend `WorldEvent` type with optional `combatParticipation` field if the freeze constraint allows.
+**H5 — AoE Damage Primitive**
 
-**Owned files:** (see matrix — `data/worldEvents/act1_events.ts`, `data/worldEvents/act2_events.ts`, `types/convoy-contracts.d.ts` conditionally)
+The type freeze adds AoEDamage interface and Enemy.onDeath. This Howler adds two new
+enemy entries to data/enemies.ts and wires the death handler in lib/actions/combat.ts.
 
-**Frozen contracts:**
-- Existing `WorldEvent` fields must not change — only add `combatParticipation?` as optional.
-- Combat events must NOT fire during active combat. Verify by reading the `getScheduledEvents()` call site in `lib/gameEngine.ts` to confirm it is outside the `combatState` block. Add a test asserting events do not fire when `state.combat !== null`.
-- If `types/convoy-contracts.d.ts` frozen-contract header blocks extension: H8 creates a new type `CombatWorldEvent extends WorldEvent` in `lib/worldEvents.ts` or in a new `data/worldEvents/combatEvents.ts`. Do not block on the freeze decision — attempt the extension, and if it fails the process, use the fallback type.
+Frenzy stats: id='frenzy', name='Frenzy', HP 8, maxHp 8, attack 3, defense 6,
+damage [6,12], xp 45, critChance 0.10,
+onDeath: { aoe: { radius: 'adjacent', damage: [1,6], condition: 'burning' } },
+loot: [{ itemId: 'scrap_metal', chance: 0.30 }, { itemId: 'ammo_22lr', chance: 0.40,
+count: [1,3] }]
 
-**Events to author (8 minimum — spread between act1 and act2):**
-1. "Hollow swarm converging north — Drifters holding the bridge, calling for help." (Act 1, interval 30)
-2. "Sanguine raiding party hit the creek caravan — survivors moving south." (Act 1, interval 45)
-3. "Accord and Salters clashed at the ford last night — bodies on both banks." (Act 1, interval 60)
-4. "Screamer signal from the Breaks. Three groups of Hollow converging." (Act 1, interval 40)
-5. "Kindling patrol burning Hollow nests in the Ember. Smoke visible from two zones away." (Act 2, interval 35)
-6. "Red Court patrol sighted the Drifter camp. Both sides are armed. Nobody has fired." (Act 2, interval 50)
-7. "Deep colony eruption. Hollow spilling from the old mine entrance at Stacks border." (Act 2, interval 55)
-8. "Pack of Sanguine ferals cleared a Salter outpost at dawn. No survivors reported." (Act 2, interval 65)
+Apex Screamer stats: id='apex_screamer', name='Apex Screamer', HP 8, maxHp 8, attack 2,
+defense 7, damage [4,10], xp 40, critChance 0.15,
+loot: [{ itemId: 'ammo_22lr', chance: 0.50, count: [2,5] }]
 
-**Tests:**
-- Each new event fires at expected action interval (unit test of `getScheduledEvents`).
-- Events with faction gates do not fire outside rep range.
-- World events do not fire when `state.combat !== null`.
+Combat.ts change: in handleEnemyDefeated(), after enemy death confirmed, check
+enemy.onDeath?.aoe — if present, compute damage [min,max] roll, apply to player HP,
+output a message. Also apply to each enemy in activeCombat.additionalEnemies if any.
 
-**Effort:** M  
-**Depends on:** Nothing (fully independent).  
-**Pre-mortem:** "If this task fails or takes 3× longer, it will be because: the frozen-contract constraint on `convoy-contracts.d.ts` triggers a process question that requires user decision, stalling the task while awaiting resolution."
+- Files: data/enemies.ts (2 new entries), lib/actions/combat.ts (onDeath handler)
+- Tests: Frenzy death triggers AoE damage to player (HP decreases + message logged);
+  standard enemy death does not trigger AoE
+- Depends on: type freeze pre-pass
+- Effort: S
+- Pre-mortem: Will stall if the Howler tries to implement room-wide AoE, weapon AoE, or
+  a new system for multi-enemy fights. Scope: one conditional in handleEnemyDefeated,
+  damage applied to player only (and additionalEnemies already in combatState).
 
 ---
 
-## 6. Cross-Howler Coordination
+**H6 — Armor Slot Expansion**
 
-### Hard sequencing constraints
+armorSlot field added to Item in type freeze. This Howler updates the business logic.
 
-1. **H1 before H3** — H3 adds new enemy IDs to 7 zone room files that H1 also modifies for `baseChance` and `timeModifier` changes. H1 must merge to the convoy branch before H3 begins editing those zone files. This is the single biggest sequencing risk for the Howler dispatch.
+lib/inventory.ts changes:
+- equipItem(): when equipping armor, unequip only the item with the same armorSlot
+  (not all armor). Items without armorSlot field use the old single-slot behavior.
+- getEquipped(playerId, 'armor') either becomes getEquippedArmor returning an array,
+  or a new function is added. Update all callers.
 
-2. **H6 before H7** — H7 depends on `questFlags['hollow_kills']` being incremented in the death handler, which H6 adds. H6 must merge before H7 begins.
+lib/actions/combat.ts changes:
+- Lines 249-250: replace single equippedArmor lookup with all-armor sum.
+  armorDefense = sum of defense across all equipped armor InventoryItems.
 
-3. **H4 and H5 before H3 on `data/enemies.ts`** — H4 and H5 edit existing entries in `data/enemies.ts`; H3 appends new entries. Running H4 and H5 first in Wave 1, then H3 in Wave 2, eliminates any merge conflict on this file.
+lib/actions/items.ts changes:
+- Equip confirmation message: include slot name if armorSlot is set
+  ("You equip the Salter Ironwork Helm [head slot].")
 
-### Parallel wave structure
+Migration: create supabase/migrations/20260424000002_armor_slots.sql. If no new columns
+are needed on players table (slot state lives in player_inventory rows), the migration
+body can be a comment-only placeholder confirming the decision. Write it anyway to keep
+the migration log intact per project rules.
 
-**Wave 1 (simultaneous):** H1, H2, H4, H5, H6, H8
+- Files: lib/inventory.ts, lib/actions/combat.ts, lib/actions/items.ts,
+  supabase/migrations/20260424000002_armor_slots.sql
+- Tests: equip head + chest simultaneously — both show equipped=true; equip second head
+  piece — first head unequips; defense sum in combat = head.defense + chest.defense;
+  existing equip tests updated (they will break and must be fixed)
+- Depends on: type freeze pre-pass
+- Effort: M (3 files + test updates for changed equip invariant)
+- Pre-mortem: Existing integration tests assert "equipping armor unequips existing armor"
+  — this is now true only within a slot, not globally. Run pnpm test immediately after
+  changes. If >5 failures, escalate rather than patching blindly.
 
-**Wave 2 (after Wave 1 merges):** H3 (after H1+H4+H5 merge), H7 (after H6 merges)
+**H4 — Stat Bonus on Equip** (drops after H6 merges — same file conflict)
 
-Wave 1 completes 6 of 8 Howlers in one dispatch. Wave 2 is 2 Howlers.
+statBonus exists on Item (types/game.ts line 399) and is only applied for consumable use
+(lib/actions/items.ts lines 298-300), not on equip/unequip. Wire the equip path.
 
-### `lib/gameEngine.ts` coordination
+In handleEquip() (lib/actions/items.ts ~line 220): after calling equipItem(), read the
+new item's statBonus and apply deltas to player.[stat] in-memory. In handleUnequip():
+reverse the deltas. The stat mutation is in-memory only — the normal save cycle persists
+it. No new DB columns needed: statBonus applies to the Player record's existing stat
+fields (vigor, grit, reflex, etc.) which are already saved.
 
-Three Howlers touch `lib/gameEngine.ts` in Wave 1 (H1 at line 292, H2 at post-move block, H6 at death handler). These are three distinct, non-overlapping code regions. Gold should verify after Wave 1 merges by running `diff` on gameEngine.ts to confirm no merge conflicts before Wave 2 dispatch.
+Equip cycle test is mandatory: equip item with statBonus: { vigor: 2 }, verify vigor +2,
+unequip, verify vigor returns to base, equip again, verify vigor +2 (no accumulation).
 
-### `types/game.ts` coordination
+- Files: lib/actions/items.ts
+- Tests: equip/unequip cycle does not accumulate stats; combat reads updated stat after
+  equip (engine.getState().player already carries the stat — no combat.ts change needed)
+- Depends on: H6 merged
+- Effort: S
+- Pre-mortem: Will stall if the Howler tries to add statBonus persistence to the DB schema
+  or refactor the equip system. In-memory application only. If the equip system was
+  substantially rewritten by H6, H4 must read H6's output before starting.
 
-H2 may add `WandererState`/`WandererEvent` interfaces. H3 extends `HollowType` union. H4 adds fields to `Enemy` interface. All three modify different declarations. Git merge should handle this cleanly, but if all three are in Wave 1, coordinate merge order: H4 → H2 → H3, so `Enemy` interface is stable before wanderer types are added and before `HollowType` is extended.
+---
+
+### Wave 2 — Content (after Wave 1 merges to feature branch)
+
+**H7 — 7 New Enemies (data/enemies.ts only)**
+
+Add exactly these 7 entries to data/enemies.ts. No zone integration (H8). No type
+changes (Wave 1 handles those). Data rows only.
+
+1. drifter_road_warden: HP 28, attack 4, defense 12, damage [4,9], xp 130,
+   flavorText: ["Warden raises a hand — not in greeting."],
+   loot: [ammo_22lr 0.60 count[3,8], combat_knife 0.15, scrap_vest 0.12]
+
+2. salter_scout: HP 32, attack 4, defense 13, damage [4,8], xp 140,
+   flavorText: ["The Scout moves in short deliberate bursts."],
+   loot: [ammo_9mm 0.50 count[2,5], bandages 0.25, hatchet 0.10]
+
+3. accord_peacekeeper: HP 26, attack 3, defense 12, damage [3,7], xp 110,
+   flavorText: ["The Peacekeeper's eyes are tired. The baton is not."],
+   loot: [ammo_22lr 0.55 count[4,10], field_dressing 0.20]
+
+4. kindling_zealot: HP 32, attack 4, defense 11, damage [4,9], xp 120,
+   flavorText: ["The Zealot does not speak. Fire is the only sermon."],
+   resistanceProfile: { weaknesses: {}, resistances: {}, conditionImmunities: ['burning'] },
+   loot: [ammo_22lr 0.50 count[2,6], scrap_metal 0.30]
+
+5. lucid_thrall: HP 36, attack 3, defense 11, damage [3,8], xp 160,
+   flavorText: ["The Thrall's movements are elegant. Wrong, but elegant."],
+   loot: [sanguine_blood_vial 0.45, ammo_22lr 0.35 count[1,4]]
+
+6. plague_carrier: HP 14, attack 2, defense 8, damage [2,5], xp 55,
+   flavorText: ["It moves like something leaking."],
+   onDeath: { spawnEnemy: { id: 'plague_carrier', maxDepth: 2 } },
+   loot: [gauze 0.30, ammo_22lr 0.40 count[1,3]]
+
+7. hive_worker: HP 6, attack 1, defense 6, damage [1,2], xp 20,
+   quantity spawns in groups via room threat pool (weight them at 3x in H8),
+   loot: [ammo_22lr 0.35 count[1,2]]
+
+Note: plague_carrier's onDeath spawn requires extending the onDeath type to include
+spawnEnemy?: { id: string; maxDepth: number }. Add this to types/game.ts before H7
+drops — either in the type freeze pre-pass or as a Wave 2 pre-pass.
+
+- Files: data/enemies.ts
+- Tests: each enemy has id, name, hp, loot with >=1 entry; plague_carrier onDeath.spawnEnemy
+  is present; kindling_zealot is immune to burning condition
+- Depends on: Wave 1 merged (AoEDamage types, onDeath type must exist for plague_carrier)
+- Effort: S
+- Pre-mortem: Will stall if the Howler cross-references zone files or ability systems.
+  This Howler writes data rows only.
+
+---
+
+**H8 — Zone Integration of New Enemies**
+
+Inject the 9 new enemies (7 from H7 + Frenzy + Apex Screamer from H5) into threatPool
+arrays across exactly 7 zone files. Do not change baseChance or existing enemy weights —
+only add new entries. Verify total per-room probability does not exceed 0.95.
+
+Exact zone assignments:
+- data/rooms/river_road.ts: drifter_road_warden weight 0.15, frenzy weight 0.10
+- data/rooms/salt_creek.ts: salter_scout weight 0.15, plague_carrier weight 0.08
+- data/rooms/covenant.ts: accord_peacekeeper weight 0.10 in rooms with difficulty >= 2 only
+- data/rooms/the_ember.ts: kindling_zealot weight 0.12, apex_screamer weight 0.10
+- data/rooms/the_breaks.ts: frenzy weight 0.15
+- data/rooms/the_dust.ts: frenzy weight 0.15
+- data/rooms/the_stacks.ts: hive_worker weight 0.10, plague_carrier weight 0.08
+
+- Files: 7 zone files in data/rooms/
+- Tests: each modified zone has >=3 distinct enemy types in threat pools; no room's total
+  spawn probability exceeds 0.95
+- Depends on: H7 merged (enemy IDs must exist)
+- Effort: S
+- Pre-mortem: Will stall if the Howler reads all 13 zone files. Scope is exactly the 7
+  listed files with the exact weights above. Grep for 'threatPool' in each file, append.
+
+---
+
+**H9 — 60+ New Gear Items**
+
+Add 60+ new item entries to data/items.ts. All items must use rarity (H1 field) and
+armorSlot if armor (H6 field). Rare+ items must have at least one statBonus field.
+
+Target mix:
+- 18 new weapons (3 per tier; each favors one stat via statBonus)
+- 28 new armor pieces (7 per slot — head/chest/legs/feet — across 4-5 tiers)
+- 8 faction-flavored Rare/Epic items with faction names in their names
+- 6 boss-unique stubs (items with names like 'elder_sanguine_cloak' for H10 to assign)
+
+Naming convention for faction gear: [Faction Adjective] [Item Type].
+Examples: "Accord-Issue Vest", "Salter Ironwork Helm", "Red Court Bloodcoat".
+
+Stat bonus alignment by class:
+- vigor-boosting items: great weapons, heavy chestpieces (Enforcer/Warden)
+- reflex-boosting items: light weapons, light helms, leg pieces (Scout/Wraith)
+- shadow-boosting items: dark blades, hooded helms (Wraith/Broker)
+- grit-boosting items: reinforced chests, heavy boots (Warden/Shepherd)
+- presence-boosting items: Accord/Covenant gear, cloaks (Shepherd/Broker)
+- wits-boosting items: precision weapons, MERIDIAN-tech (Reclaimer/Scout)
+
+Stat band reference (tier = rarity map):
+- tier 1 / common: dmg 3-4 or def 1
+- tier 2 / uncommon: dmg 5-6 or def 2
+- tier 3 / rare: dmg 7-9 or def 3-4
+- tier 4 / epic: dmg 10-12 or def 5
+- tier 5 / legendary: dmg 13-16 or def 6
+
+Lore stubs: all Rare+ items get loreText: '' (empty string). H11 fills them.
+
+- Files: data/items.ts
+- Tests: total ITEMS count >= 240; every armor entry has armorSlot set; every Rare+ entry
+  has statBonus with >=1 field; no duplicate IDs
+- Depends on: H1 merged (rarity field), H6 merged (armorSlot field)
+- Effort: M (high volume creative data authoring)
+- Pre-mortem: Will stall if the Howler tries to balance every stat meticulously or waits
+  on class build path research. Rough bands are sufficient — balance is Convoy 3. Risk:
+  creative fatigue at item 30. Batch by slot type: all helms first, then all chests.
+
+---
+
+**H10 — Boss-Unique Drops + Set Bonuses**
+
+Part A — Boss loot tables:
+Add >=1 boss-unique drop to every enemy with xp >= 200 in data/enemies.ts. Use the 6
+boss-unique item stubs created by H9. Each unique item must have a chance <= 0.15 (rare
+but not impossible). The item must not appear in any other enemy's loot table.
+
+Boss-tier enemies (xp >= 200): elder_sanguine (400xp), elder_sanguine_deep (600xp),
+hive_mother (250xp), hive_mother_the_deep (350xp), red_court_enforcer (200xp),
+meridian_ancient_hollow (180xp — borderline, include), plus lucid_thrall (160xp) and
+salter_scout (140xp) from H7 (include the two highest new enemies).
+
+Part B — Gear sets:
+Create data/sets.ts. Minimum 3 sets. Each set has 4 piece IDs (referencing items from
+H9), a 2-piece bonus (stat delta only), and a 4-piece bonus (stat delta + description).
+
+Required sets:
+1. salvagers_pact: pieces from H9 reclaimer-aligned items; 2pc: wits+1;
+   4pc: wits+2 + reflex+1 + description "You see the weak point in everything."
+2. accord_inquisitor: pieces from H9 presence/grit items; 2pc: presence+1;
+   4pc: presence+2 + grit+1 + description "The Accord does not forget its own."
+3. hollow_marked: pieces from H9 shadow items; 2pc: shadow+1;
+   4pc: shadow+2 + vigor+1 + description "You move like something that was never there."
+
+Add set bonus detection to lib/loot.ts or a new lib/sets.ts: on equip event, count
+equipped items with matching setId; apply bonus to player stats at 2-piece and 4-piece
+thresholds. Track via activeBuffs (existing GameState field) to keep reversal clean.
+
+- Files: data/sets.ts (create), data/enemies.ts (boss loot additions), lib/loot.ts or
+  lib/sets.ts (set detection), types/game.ts (setId already in type freeze)
+- Tests: equipping 2 pieces of salvagers_pact applies wits+1; equipping all 4 applies
+  4-piece bonus; unequipping 1 piece reverts to 2-piece bonus; boss enemy loot tables
+  contain at least 1 item ID not found in any non-boss enemy table
+- Depends on: H9 merged (set piece item IDs must exist)
+- Effort: M
+- Pre-mortem: Will stall if the Howler designs more than 3 sets or tries to make set
+  bonuses interact with class abilities (Convoy 3). Bonuses are stat deltas only here.
+
+---
+
+### Wave 3 — Narrative + Carry-overs (after Wave 2 merges)
+
+**H11 — Gear Lore**
+
+Fill loreText on every item with rarity 'rare', 'epic', or 'legendary' in data/items.ts.
+Target >=50 items. Each entry: 2-4 sentences, post-apocalyptic register, specific and
+grounded (not fantasy-generic).
+
+VOICE TEMPLATE — use this register exactly:
+"The blade was Salter-issue once. The factory stamp is still readable under the rust:
+MERIDIAN SUBSIDIARY / LOT 7-B. Whoever owned it last didn't bring it back."
+
+BANNED WORDS: magical, enchanted, mystical, ancient power, imbued. If you write any of
+these, delete the sentence and rewrite.
+
+Batch order for voice consistency:
+1. Drifter/Accord gear: grounded, pragmatic, community-built
+2. Red Court/Salter gear: brutal, efficient, marked with authority
+3. MERIDIAN/Pre-Collapse gear: clinical, cold, institutional
+4. Kindling/Lucid gear: fervent, ritualistic, transformed
+
+Do not split this Howler. Voice consistency > parallelism.
+
+- Files: data/items.ts
+- Tests: all items with rarity 'rare' or higher have loreText.length > 0;
+  no loreText contains the strings "magical" or "enchanted"
+- Depends on: H9 merged (new items must exist), H1 merged (rarity field set)
+- Effort: M (serial creative bottleneck)
+- Pre-mortem: Will stall if lore is written alphabetically rather than by faction batch
+  (incoherent voice across adjacent items). Use the batch order above.
+
+---
+
+**H12 — Boss Intros**
+
+Add bossIntro?: string and combatIntro?: string to Enemy (done in type freeze pre-pass).
+Populate for exactly 8 required bosses, 4 bonus if time allows.
+
+Required 8:
+1. elder_sanguine
+2. elder_sanguine_deep
+3. hive_mother_the_deep
+4. meridian_automated_turret
+5. meridian_ancient_hollow
+6. frenzy (boss-tier variant introduced by H5 as wave boss in the_breaks)
+7. drifter_road_warden (boss-tier variant)
+8. lucid_thrall
+
+Wire bossIntro display: in the room-entry path (lib/actions/movement.ts or equivalent),
+after loading the room, check if any static enemy in room.enemies is a boss-tier enemy
+(xp >= 150) with a bossIntro field — if so, output the intro once (track via a per-room
+flag or check if the player has previously entered the room). Wire combatIntro: output
+once at the start of round 1 if not already shown, via the combat state.
+
+INTRO TEMPLATE:
+bossIntro: 3-6 line room-entry description. Present tense. Specific physical detail first,
+then dread. End on a line that makes the player feel seen.
+combatIntro: 1 sentence. Short. The moment the fight begins.
+
+- Files: data/enemies.ts (8-12 entries with intro fields)
+- Tests: all 8 required enemies have non-empty bossIntro and combatIntro; display path
+  outputs bossIntro on first room entry
+- Depends on: Wave 2 merged (enemy entries must exist)
+- Effort: S-M
+- Pre-mortem: Will stall if display wiring becomes a large refactor. The wiring is one
+  conditional per display path — if it requires building new infrastructure, scope is
+  wrong. Write the conditional directly and move on.
+
+---
+
+**H13 — Faction Dialogue Part A: Cross + Patch**
+
+Add 3 reactivity dialogue nodes per NPC to data/dialogueTrees.ts, gated on hollowKills
+tracking (via questFlags set by the combat handler when kill thresholds are crossed).
+
+Before writing, grep for npcId: 'cross' and npcId: 'patch' to find their tree roots.
+Do not read the full file — find those two subtrees only.
+
+Three tiers per NPC (set questFlags: hollow_kills_tier_1/2/3 in combat handler or derive
+from player.hollowKills directly if DialogueBranch supports numeric checks):
+
+Cross tier gates:
+- hollow_kills_tier_1 (>= 5 kills): "You've been busy outside the wire."
+- hollow_kills_tier_2 (>= 20 kills): "The Hollow count on River Road dropped.
+  I noticed. Was that you?"
+- hollow_kills_tier_3 (>= 50 kills): "Stop. I'm not concerned about the Hollow.
+  I'm concerned about what it takes to kill that many and feel nothing."
+
+Patch tier gates:
+- hollow_kills_tier_1: "Another one. Sit down before you fall down."
+- hollow_kills_tier_2: "I've stopped asking what happened. The body tells me."
+- hollow_kills_tier_3: "I patched the last one who fought like you.
+  She didn't come back from her next run. I'm not saying you will too. I'm saying I
+  remember their names."
+
+For each tier, create a DialogueNode with id pattern 'cross_hollow_t1' etc., branching
+from the NPC's start node with requiresFlag pointing to the appropriate flag key.
+
+- Files: data/dialogueTrees.ts (Cross and Patch subtrees only)
+- Tests: Cross dialogue shows tier-1 node when questFlags.hollow_kills_tier_1 is truthy;
+  base node shows when no tier flags are set; Patch follows same pattern
+- Depends on: Wave 2 complete; verify hollowKills is incremented in combat handler
+- Effort: S
+- Pre-mortem: Will stall if the Howler reads the entire 5,700-line file. Grep for the
+  two NPC IDs and read only those subtrees.
+
+---
+
+**H14 — Faction Dialogue Part B: Lev + Howard + Sparks**
+
+Same structure as H13 for three more NPCs. Drop after H13 merges to avoid same-file
+conflict.
+
+Grep first: npcId: 'lev', npcId: 'howard', npcId: 'sparks'.
+
+Lev tier voice (data-driven, analytical):
+- tier_1: "Cycle N, [K] Hollow eliminated. You're trending above the mortality curve."
+- tier_2: "You're becoming a data point. I mean that as a compliment."
+- tier_3: "The data is clear. You're going to die in the field. I'd rather it happened
+  later. So would you, presumably."
+
+Howard tier voice (practical, unsentimental):
+- tier_1: "Good. Every one you put down is one less I need a plan for."
+- tier_2: "You keep this up, the Hollow pressure on Duskhollow drops. That matters."
+- tier_3: "Don't come to me expecting gratitude. This is what the job looks like."
+
+Sparks tier voice (morally curious, unsettling):
+- tier_1: "You smell like you've been busy. How many?"
+- tier_2: "Do you enjoy it? You can tell me. I won't judge. I am genuinely asking."
+- tier_3: "Most people who kill at your rate either stop entirely or can't stop at all.
+  Which one are you?"
+
+- Files: data/dialogueTrees.ts (Lev, Howard, Sparks subtrees only)
+- Tests: each NPC shows tier-appropriate node; no corruption of H13's Cross/Patch nodes
+- Depends on: H13 merged
+- Effort: S
+- Pre-mortem: Same as H13 — file size trap. Grep for three NPC IDs only.
+
+---
+
+### Optional (ship if time allows)
+
+**H15 — Optional Durability (default OFF)**
+
+Add durability?: number (0.0-1.0) to InventoryItem in types/game.ts. Decay 0.05 per hit
+received. At 0.0 apply -2 to item's effective damage or defense. Add 2 repair recipes to
+data/recipes.ts. Gate entire system behind player.questFlags.durability_enabled (default
+unset = system inactive).
+
+Before writing a line of logic: verify whether player_inventory has per-row DB columns
+or is jsonb. If per-row columns are used, a migration for durability column is required
+before any code change. Check supabase/migrations/ for player_inventory schema.
+
+- Files: types/game.ts, lib/actions/combat.ts, data/recipes.ts
+- Depends on: all Wave 2 content merged
+- Effort: M (migration risk elevates from S)
+- Pre-mortem: DB schema question is the blocker. Resolve it before writing logic.
+
+---
+
+## 5. Wave Sequencing
+
+```
+TYPE FREEZE PRE-PASS (manual, ~1 hour)
+  One commit to types/game.ts adding all 9 type fields listed above.
+  No logic. Safe to do by hand.
+  |
+  v
+WAVE 1 (parallel — 5 Howlers after type freeze)
+  H1 (rarity backfill)
+  H2 (affix system)        -- H2 needs H1 merged to read rarity on items
+  H3 (loot count)
+  H5 (AoE primitive)
+  H6 (armor slot expansion)
+  -- H4 (stat bonus on equip) drops AFTER H6 merges --
+  |
+  v (merge all Wave 1 to feature branch, run pnpm test)
+WAVE 2 (partial parallel)
+  H7 (7 new enemies, data only)    -- then H8 drops after H7 merges
+  H9 (60+ gear items)              -- parallel with H7/H8
+  -- H10 drops after H9 merges --
+  |
+  v (merge all Wave 2 to feature branch, run pnpm test)
+WAVE 3 (H11 + H12 parallel; H13 then H14 sequential)
+  H11 (gear lore)      -- parallel with H12
+  H12 (boss intros)    -- parallel with H11
+  H13 (Cross + Patch)  -- then H14 after H13 merges
+  H14 (Lev + Howard + Sparks)
+  |
+  v
+White + Gray quality gate on full convoy diff
+  |
+  v
+Optional: H15 (durability)
+```
+
+Wave 1 note: H2 nominally depends on H1 (needs rarity set) but H2's rollAffix function
+can be written against the type definition alone and tested with mock rarity values. Drop
+H2 in parallel with H1; merge order matters less than coding order here.
+
+---
+
+## 6. Type Dependencies
+
+| Type / Interface | File | Used by |
+|---|---|---|
+| Item.rarity | types/game.ts | H1, H2, H9, H11 |
+| Item.armorSlot | types/game.ts | H6, H9 |
+| Item.setId | types/game.ts | H10 |
+| LootEntry.count | types/game.ts | H3, H7 |
+| AoEDamage / Enemy.onDeath | types/game.ts | H5, H7 |
+| Enemy.bossIntro / Enemy.combatIntro | types/game.ts | H12 |
+| AffixEntry | types/game.ts | H2 |
+| GearSet (new interface) | data/sets.ts or types/game.ts | H10 |
+
+All must be in place before the respective Howler is dropped. Type freeze pre-pass handles this.
 
 ---
 
 ## 7. Acceptance Criteria (Convoy Level)
 
-White + Gray quality gate must clear all of the following before Copper opens the PR.
-
-### Regression
-- [ ] All 1475 existing tests pass (1 skip, 1 todo acceptable — no new failures)
-- [ ] `tsc --noEmit` clean — zero TypeScript errors
-
-### M1 (partial) — Combat density
-- [ ] Cycle-1 mid-game walk through Salt Creek, Breaks, or Dust yields ≥10 encounters per 50-room traverse, verified via playtest harness with `forceSpawn:false`. Full M1 target (18–25) is gated on Convoy 2.
-
-### M2 — Enemy variety
-- [ ] No zone has a single enemy type above 70% of total threat-pool weight. Verify by summing `weight` fields per zone's `threatPool` entries and asserting `max_weight / total_weight ≤ 0.70`.
-
-### M5 (partial) — Narrative coherence
-- [ ] Death prose has ≥7 distinct variants, each reachable by different cause/cycle/zone inputs
-- [ ] Marshal Cross, Patch, Vesper, and Lev each have ≥3 kill-count-triggered dialogue lines
-- [ ] ≥8 new combat world events exist in `data/worldEvents/` with correct interval and act settings
-
-### Enemy roster
-- [ ] 7 new enemies defined with valid stats, loot tables, and resistanceProfile
-- [ ] `frenzy` and `apex_screamer` absent from Crossroads and Covenant threat pools
-
-### Behavioral hooks
-- [ ] ≥5 enemies have `critChance` or `fleeThreshold` populated
-- [ ] Enemy crit produces `ceil(baseDamage * 1.5)` damage (test verifiable)
-- [ ] Enemy flee exits combat, no loot drop (test verifiable)
-
-### Loot currency
-- [ ] All 16 original enemy loot tables include at least one `ammo_22lr` entry
-
-### Cycle gate
-- [ ] `grep "cycleGate: 3" data/rooms/the_scar.ts` returns no results
-- [ ] `grep "cycleGate: 3" data/rooms/the_pens.ts` returns no results
-
-### Spawn tuning
-- [ ] `pressureModifier(1)` returns 1.10
-- [ ] `ENEMY_RESPAWN_ACTIONS` is 80 (grep `lib/gameEngine.ts`)
-
-### No engine regressions
-- [ ] Wanderer tick does not cause infinite loop or stack overflow on room traversal tests
-- [ ] World events do not fire when `state.combat !== null`
+- [ ] All 182 existing items have rarity field set
+- [ ] rollAffix() callable; uncommon+ drops have >=60% chance of one affix; legendary unchanged
+- [ ] LootEntry.count rolls correctly; ammo_22lr drops from >=10 enemy types
+- [ ] Equipping item with statBonus: { vigor: 1 } raises player.vigor by 1; unequip reverses it
+- [ ] 4 armor slots equip independently; defense in combat = sum of all equipped armor defense
+- [ ] Frenzy death triggers AoE damage message to player
+- [ ] All 7 new enemies exist in data/enemies.ts with stat blocks and loot tables
+- [ ] All 7 new enemies appear in at least one zone threat pool
+- [ ] data/items.ts has >=240 total items
+- [ ] Every new armor item has armorSlot set
+- [ ] Every boss-tier enemy (xp >= 200) has >=1 loot entry not shared with any non-boss enemy
+- [ ] >=3 gear sets exist; 2-piece and 4-piece bonuses apply and revert correctly
+- [ ] Every item with rarity 'rare' or higher has loreText.length > 0
+- [ ] >=8 boss enemies have bossIntro and combatIntro populated
+- [ ] Cross and Patch each have 3 hollowKills-gated dialogue nodes
+- [ ] Lev, Howard, and Sparks each have 3 hollowKills-gated dialogue nodes
+- [ ] pnpm test passes (all existing tests plus new tests for changed logic)
+- [ ] npx tsc --noEmit reports 0 errors
 
 ---
 
 ## 8. Risks
 
 | # | Risk | Probability | Impact | Mitigation |
-|---|------|-------------|--------|------------|
-| R1 | Scar/Pens cycleGate 3→2 exposes cycle-3 narrative in room `extras`, `descriptionPool`, or `narrativeNotes` to cycle-2 players | Medium | Medium | H1 must audit both zone files for any content referencing cycle-3 plot events before flipping the gate value. Grep for `cycle` in the narrative fields of both files. |
-| R2 | Wanderer cap not enforced causes performance degradation at high pressure | Low | High | Hard-cap enforced in `spawnWanderer()` before adding to state. Unit test at cycle 6 asserts no wanderer spawns when already at cap. |
-| R3 | Faction reactivity dialogue leaks ending spoilers | Low | Medium | H7's new dialogue nodes must not reference ending-specific events (Cure/Weapon/Seal/Throne flags). Kill-count triggers only; no ending-state checks. |
-| R4 | Combat world events fire during active combat (concurrency hazard) | Low | Medium | H8 verifies `getScheduledEvents()` call site is outside `combatState` block in `gameEngine.ts`. Test: world event check with `state.combat !== null` returns empty array. |
-| R5 | `frenzy` explode-on-death mechanic missing from combat (flavor text only) | Low-Medium | Low | Explicitly scoped as flavor text for Convoy 1. Mechanical AoE is Convoy 2. H3 adds a `narrativeNotes` field on the enemy noting this deferral. |
-| R6 | `convoy-contracts.d.ts` freeze constraint blocks H8's type extension | Medium | Medium | H8 fallback: define `CombatWorldEvent` in `lib/worldEvents.ts` as a separate type extending `WorldEvent`. No need to touch `convoy-contracts.d.ts`. |
-| R7 | H4's optional `Enemy` fields break TypeScript strict-mode in test mocks | Medium | Medium | Optional fields with `?:` syntax should not break existing code. However, test mocks that use `as Enemy` casts or `Partial<Enemy>` may behave differently. H4 runs `tsc --noEmit` after the interface change before touching `data/enemies.ts`. |
-| R8 | H1's respawn timer cut (160→80) makes cleared rooms feel insecure for narrative-heavy sequences | Low | Low | This is the desired effect for a battle-MUD. If playtesting reveals it breaks specific narrative sequences (e.g., a puzzle room that requires dwelling), those rooms can get `noCombat: true` flag — which already exists in the type. |
+|---|---|---|---|---|
+| R1 | Another Howler stalls in research | High | High | Hard rule: every Howler owns <=2 files. Explicit "do NOT read X" note in each spec. Gold enforces at drop. If a Howler requests files outside its matrix, stop and re-scope. |
+| R2 | types/game.ts merge conflicts from Wave 1 parallel edits | High | Medium | Resolved by type freeze pre-pass. All type changes land in one commit before any Howler is dropped. |
+| R3 | H6 armor slot expansion breaks existing equip tests | Medium | Medium | Explicit in H6 pre-mortem. Run pnpm test after H6. Fix failures before merging. Expected scope. |
+| R4 | H9 items have inconsistent stat bands — same tier, wildly different power | Medium | Medium | Stat band table provided in H9 spec. Balance tuning is Convoy 3 — rough bands are sufficient here. |
+| R5 | statBonus accumulates on repeated equip/unequip cycles | Medium | High | H4 spec requires an equip-cycle test: equip, unequip, re-equip — stat must return to base, not accumulate. This test is mandatory before H4 merges. |
+| R6 | Set bonuses double-apply with H4 statBonus on same equip event | Medium | Medium | H10 tracks set bonuses via activeBuffs (existing GameState field), not direct stat mutation. Same reversal pattern as H4. Keep the two systems separate. |
+| R7 | data/dialogueTrees.ts corruption from H13/H14 if NPCs share node ID namespace | Medium | High | H13 uses node IDs prefixed 'cross_' and 'patch_'. H14 uses 'lev_', 'howard_', 'sparks_'. No overlap. H14 depends on H13 so no simultaneous writes. |
+| R8 | player_inventory unique constraint prevents multiple equipped armor rows | Low | High | Verify 20260327000004_fix_inventory_unique.sql constrains on (player_id, item_id) not on equipped flag. If equipped is constrained to one row per player, migration needed before H6 ships. |
 
 ---
 
-## 9. Out of Scope (Deferred to Convoys 2–4)
+## 9. Out of Scope (Deferred to Convoy 3 / 4)
 
-**Convoy 2 (Gear Overhaul):**
-- Random affixes (prefix/suffix system on drops)
-- Gear rarity tiers (Common/Uncommon/Rare/Epic/Legendary)
-- Rarity color coding in item names
-- Boss-unique drop tables
-- New armor slots (head/chest/legs/feet)
-- `statBonus` field on items
-- Initiative system
-- Durability (opt-in)
-- Auto-loot UX and `loot all` / `loot <type>` verbs
-- Loot summary line after combat
-- Faction-flavored gear items
-- Gear lore (E2 — all Rare+ items)
+Convoy 3:
+- Class-specific combat verbs (D3)
+- 4 active abilities + 1 passive per class (D2)
+- New status conditions: Marked, Silenced, Bound, Exposed (D6)
+- 18 weapon traits / 10 armor traits expansion (D7)
+- Build path documentation and class-gated gear sets (D9)
+- Loadout quick-equip system (D10)
+- Auto-loot UX parser verbs (C9)
+- Round summary line, status icon prefix, combat log toggle (F1/F2/F3)
+- Zone-signature mini-bosses as full encounters (B4)
+- Resistance reveal on hit messaging (B9/F6)
 
-**Convoy 3 (Class Identity):**
-- Class active abilities (slam, vanish, garrote, etc.)
-- Class-specific combat verbs registered in parser
-- New status conditions (Marked, Silenced, Bound, Exposed)
-- Build paths (3 per class)
-- Loadouts
-- Set bonuses
-- Boss intros (E3)
+Convoy 4:
+- 4 ending-specific final bosses (B7, G1-G4)
+- Echo boss — Revenant's prior self as an enemy (B8)
+- Currency sink services (C8) beyond basic stubs
+- Durability as a mandatory mechanic (C7 non-optional)
+- Junk-salvage-to-materials crafting pipeline beyond H3 stubs
+- Boss phase mechanics / enraged states (B5)
 
-**Convoy 4 (Endings and Apex):**
-- Ending-specific final bosses (Hollow Avatar, Lord of Cups, Sealed One, The Throne)
-- Echo boss (prior-cycle self)
-- Zone-signature mini-bosses (Canyon Sentinel, Wildfire Guardian, etc. — PRD B4)
-- Swarm mechanics (Plague Carrier, Hive Worker — PRD B3)
-- Boss phase mechanics with HP thresholds (PRD B5)
-- Remaining faction reactivity NPCs beyond the 4 priority ones
-- Resistance reveal on first hit (PRD B9/F6)
-- Round summary line per combat round (PRD F1)
-- Verbose/terse combat log toggle (PRD F3)
-- Faction color coding in combat output (PRD F4)
+Indefinitely deferred:
+- Socket / rune system (flagged in battle-mud-design.md as post-gear-count-expansion)
 - Rebirth tree / permanent upgrade system
+- New character classes (confirmed non-goal in PRD Section 3)
 
 ---
 
 ## Open Questions
 
-- [ ] **Frozen `convoy-contracts.d.ts`:** Can H8 add an optional field to `WorldEvent` in this file, or does the `FROZEN AT DISPATCH` header require a formal amendment process? — Blocks: H8 type extension path only (fallback available). Default if unresolved: H8 uses the `CombatWorldEvent` fallback type in `lib/worldEvents.ts`.
+- [ ] Does lib/loot.ts already exist from Convoy 1? H2 and H3 both reference it. Default
+  if unresolved: H2 creates it if absent, H3 extends it. Verify at dispatch time before
+  dropping Wave 1. Blocks: nothing (pre-check at dispatch).
 
-- [ ] **`frenzy` mechanical death:** Is flavor-text-only "explodes on death" acceptable for Convoy 1, or does the glass-cannon archetype require a mechanical death effect to be viable? — Blocks: H3 if the answer is "mechanical effect required." Default: flavor text only for Convoy 1, mechanical AoE deferred to Convoy 2.
+- [ ] Does data/dialogueTrees.ts use a single export with all NPC trees as keys, or
+  separate exports per NPC? H13 and H14 need to know the file structure before writing.
+  Default if unresolved: grep for npcId: 'cross' in the file before starting.
+  Blocks: H13, H14.
+
+- [ ] Is player.hollowKills being incremented in the combat handler after Convoy 1?
+  H13 and H14 depend on this field being live. Verify in lib/actions/combat.ts before
+  dropping H13. Default if not wired: H13 adds the increment as part of its scope.
+  Blocks: H13 (need to verify before drop, not before Wave 3).
 
 ---
 
 ## Definition of Done
 
-- [ ] All Wave 1 and Wave 2 Howlers complete with no open blockers
-- [ ] All 1475 existing tests pass; new tests pass; `tsc --noEmit` clean
-- [ ] White + Gray quality gate passes on merged result
-- [ ] All convoy-level acceptance criteria checked green
-- [ ] PR description notes any coverage gaps as warnings (not blockers)
+- [ ] Code written and self-reviewed by each Howler
+- [ ] Tests written for all changed logic (equip invariants, affix rolling, defense sum,
+  AoE damage, loot count, set bonus application, dialogue tier gates)
+- [ ] pnpm test passes with all existing and new tests
+- [ ] npx tsc --noEmit reports 0 errors
+- [ ] Supabase migration file created for any new player-level save fields (even if
+  migration body is structural confirmation only)
+- [ ] White + Gray quality gate passed on full convoy diff post-merge
+- [ ] PR opened with coverage gaps noted in description

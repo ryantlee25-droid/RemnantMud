@@ -9,6 +9,7 @@ import type {
   Item,
   CheckResult,
   Room,
+  AoEDamage,
 } from '@/types/game'
 import type { ConditionId } from '@/types/traits'
 import { roll1d10, rollCheck, rollDamage, statModifier, DC } from '@/lib/dice'
@@ -1076,7 +1077,10 @@ export function playerCalledShot(
 
 /**
  * Roll against each entry in the enemy's loot table.
- * Returns an array of item IDs that dropped.
+ * Returns an array of item IDs that dropped (one entry per unit).
+ *
+ * Respects LootEntry.count: [min, max] — defaults to [1, 1] when absent.
+ * The chance roll still gates the whole entry; count only controls quantity.
  */
 export function rollLoot(enemy: Enemy): string[] {
   const dropped: string[] = []
@@ -1084,7 +1088,11 @@ export function rollLoot(enemy: Enemy): string[] {
     if (Math.random() < entry.chance) {
       // Validate that the item actually exists before adding to drops
       if (getItem(entry.itemId)) {
-        dropped.push(entry.itemId)
+        const [min, max] = entry.count ?? [1, 1]
+        const qty = min + Math.floor(Math.random() * (max - min + 1))
+        for (let i = 0; i < qty; i++) {
+          dropped.push(entry.itemId)
+        }
       }
     }
   }
@@ -1142,4 +1150,96 @@ export function compressLog(messages: GameMessage[]): GameMessage[] {
   }
 
   return result
+}
+
+// ------------------------------------------------------------
+// AoE Resolution (H5, Convoy 2)
+// ------------------------------------------------------------
+
+export interface AoEResolveResult {
+  damageToPlayer: number
+  damageToEnemiesByIndex: Record<number, number>  // index in additionalEnemies array
+  conditionsApplied: ConditionId[]
+  messages: GameMessage[]
+}
+
+/**
+ * Resolve area-of-effect damage from a source AoEDamage shape.
+ * Pure function — returns a damage delta + messages; the CALLER mutates state.
+ *
+ * radius: 'adjacent' — damages player + first additionalEnemy (if any). Half damage per target.
+ * radius: 'room'     — damages player + ALL additionalEnemies. Full damage per target.
+ *
+ * If condition is present, it is applied to all targets that took damage.
+ * rng defaults to Math.random.
+ */
+export function resolveAoE(
+  source: AoEDamage,
+  player: Player,
+  combatState: CombatState,
+  rng: () => number = Math.random,
+): AoEResolveResult {
+  const messages: GameMessage[] = []
+  const conditionsApplied: ConditionId[] = []
+  const damageToEnemiesByIndex: Record<number, number> = {}
+
+  const additionalEnemies = combatState.additionalEnemies ?? []
+
+  // Roll base damage using provided rng
+  const [min, max] = source.damage
+  const baseRoll = Math.floor(rng() * (max - min + 1)) + min
+
+  // Determine targets and per-target damage
+  let playerDamage: number
+  let enemyTargetIndices: number[]
+
+  if (source.radius === 'adjacent') {
+    // Half damage, rolled twice (one roll per target)
+    playerDamage = Math.max(1, Math.ceil(baseRoll / 2))
+    // Only first additionalEnemy
+    enemyTargetIndices = additionalEnemies.length > 0 ? [0] : []
+  } else {
+    // 'room': full damage per target
+    playerDamage = baseRoll
+    enemyTargetIndices = additionalEnemies.map((_, i) => i)
+  }
+
+  // Damage player
+  if (playerDamage > 0) {
+    messages.push(msg(`The explosion catches you in the blast. [${playerDamage} AoE damage]`, 'combat'))
+    if (source.condition) {
+      conditionsApplied.push(source.condition)
+      messages.push(msg(`[AoE] You are afflicted with ${source.condition}.`, 'combat'))
+    }
+  }
+
+  // Damage additional enemies
+  for (const idx of enemyTargetIndices) {
+    const targetEnemy = additionalEnemies[idx]!
+    // For adjacent, re-roll for the second target (half damage, separate roll)
+    let enemyDamage: number
+    if (source.radius === 'adjacent') {
+      const enemyRoll = Math.floor(rng() * (max - min + 1)) + min
+      enemyDamage = Math.max(1, Math.ceil(enemyRoll / 2))
+    } else {
+      // room: full damage per target — roll fresh per target
+      const enemyRoll = Math.floor(rng() * (max - min + 1)) + min
+      enemyDamage = enemyRoll
+    }
+    damageToEnemiesByIndex[idx] = enemyDamage
+    messages.push(msg(`${targetEnemy.name} is caught in the blast. [${enemyDamage} AoE damage]`, 'combat'))
+    if (source.condition) {
+      if (!conditionsApplied.includes(source.condition)) {
+        conditionsApplied.push(source.condition)
+      }
+      messages.push(msg(`[AoE] ${targetEnemy.name} is afflicted with ${source.condition}.`, 'combat'))
+    }
+  }
+
+  return {
+    damageToPlayer: playerDamage,
+    damageToEnemiesByIndex,
+    conditionsApplied,
+    messages,
+  }
 }

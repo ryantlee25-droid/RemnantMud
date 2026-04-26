@@ -209,6 +209,16 @@ tests/          Vitest test suite
 
 ## Release Notes
 
+### 2026-04-26 — Battle-MUD pivot, Convoy 2A: Gear Foundation (Wave 1)
+
+- Item rarity tiers (common / uncommon / rare / epic / legendary) backfilled across all 202 items
+- Diablo-style affix system: 12 prefixes + 12 suffixes; rolled at drop time with rarity-gated probabilities
+- Loot drops now respect quantity ranges (the "every drop is exactly 1" issue from C1 H5 is fixed)
+- Item stat bonuses now apply on equip (and reverse on unequip) — gear can grant +vigor / +reflex / etc.
+- 4 armor slots: head, chest, legs, feet — independent equipping; defense sums across all four
+- AoE damage primitive — enemies can carry an `onDeath.aoe` payload (Frenzy in Wave 2 will use it)
+- 1585 main-suite tests passing (+47 from baseline 1538; includes 100-cycle equip-cycle stress test)
+
 ### 2026-04-26 — Battle-MUD pivot, Convoy 1: Combat Spine (Wave 1)
 
 - Spawn density rebalanced across all 13 zones; day-time modifier softened; enemy respawn timer cut in half

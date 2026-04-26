@@ -25,7 +25,7 @@ export const ENEMIES: Record<string, Enemy> = {
     fleeThreshold: 0.0,
     loot: [
       { itemId: 'scrap_metal', chance: 0.20 },
-      { itemId: 'ammo_22lr', chance: 0.15 },
+      { itemId: 'ammo_22lr', chance: 0.40 },
       { itemId: 'scrap_vest', chance: 0.12 },
     ],
     flavorText: [
@@ -63,6 +63,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'ammo_9mm', chance: 0.15 },
       { itemId: 'bandages', chance: 0.20 },
       { itemId: 'leather_jacket', chance: 0.12 },
+      { itemId: 'ammo_22lr', chance: 0.40 },
     ],
     flavorText: [
       'It reaches for something at its hip that isn\'t there, then reaches for you.',
@@ -95,7 +96,8 @@ export const ENEMIES: Record<string, Enemy> = {
     fleeThreshold: 0.5,
     loot: [
       { itemId: 'scrap_metal', chance: 0.20 },
-      { itemId: 'ammo_22lr', chance: 0.15 },
+      { itemId: 'ammo_22lr', chance: 0.50 },
+      { itemId: 'bandages', chance: 0.10 },
     ],
     flavorText: [
       'It opens its mouth and the sound that comes out is not a human sound.',
@@ -131,6 +133,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'ammo_9mm', chance: 0.15 },
       { itemId: 'leather_jacket', chance: 0.12 },
       { itemId: 'reinforced_coat', chance: 0.08 },
+      { itemId: 'ammo_22lr', chance: 0.50 },
     ],
     flavorText: [
       'It was behind the door. It was always behind the door.',
@@ -166,11 +169,12 @@ export const ENEMIES: Record<string, Enemy> = {
     critChance: 0.10,
     fleeThreshold: 0.0,
     loot: [
-      { itemId: 'scrap_metal', chance: 0.60 },
+      { itemId: 'scrap_metal', chance: 0.20 },
       { itemId: 'pipe_wrench', chance: 0.25 },
       { itemId: 'bandages', chance: 0.20 },
       { itemId: 'reinforced_coat', chance: 0.10 },
       { itemId: 'kevlar_vest', chance: 0.06 },
+      { itemId: 'ammo_22lr', chance: 0.50 },
     ],
     flavorText: [
       'It charges — not fast, but with the inevitability of falling stone.',
@@ -206,7 +210,7 @@ export const ENEMIES: Record<string, Enemy> = {
     critChance: 0.0,
     fleeThreshold: 0.4,
     loot: [
-      { itemId: 'ammo_22lr', chance: 0.30 },
+      { itemId: 'ammo_22lr', chance: 0.40 },
       { itemId: 'quiet_drops', chance: 0.10 },
       { itemId: 'scrap_metal', chance: 0.20 },
     ],
@@ -245,6 +249,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'sanguine_blood_vial', chance: 0.05 },
       { itemId: 'hazmat_suit', chance: 0.08 },
       { itemId: 'scrap_metal', chance: 0.20 },
+      { itemId: 'ammo_22lr', chance: 0.80 },
     ],
     flavorText: [
       'The Hollow around it move in patterns — coordinated, geometric, wrong.',
@@ -282,7 +287,7 @@ export const ENEMIES: Record<string, Enemy> = {
     loot: [
       { itemId: 'sanguine_blood_vial', chance: 0.40 },
       { itemId: 'scrap_metal', chance: 0.20 },
-      { itemId: 'ammo_22lr', chance: 0.15 },
+      { itemId: 'ammo_22lr', chance: 0.80 },
     ],
     flavorText: [
       'It moves like something that does not need to explain itself to physics.',
@@ -319,6 +324,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'combat_knife', chance: 0.20 },
       { itemId: 'ammo_9mm', chance: 0.25 },
       { itemId: 'kevlar_vest', chance: 0.08 },
+      { itemId: 'ammo_22lr', chance: 0.70 },
     ],
     flavorText: [
       'It circles left, cutting off the eastern approach without appearing to notice you.',
@@ -356,6 +362,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'silver_knife', chance: 0.06 },
       { itemId: 'meridian_keycard', chance: 0.06 },
       { itemId: 'kevlar_vest', chance: 0.08 },
+      { itemId: 'ammo_22lr', chance: 0.95 },
     ],
     flavorText: [
       'It has been watching you since you entered the zone. You are only now realizing this.',
@@ -396,6 +403,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'electronics_salvage', chance: 0.50 },
       { itemId: 'ammo_9mm', chance: 0.30 },
       { itemId: 'scrap_metal', chance: 0.20 },
+      { itemId: 'ammo_22lr', chance: 0.90 },
     ],
     flavorText: [
       'The barrel traverses at a speed that does not correspond to any mechanism you can see.',
@@ -433,6 +441,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'chemicals_basic', chance: 0.35 },
       { itemId: 'bandages', chance: 0.20 },
       { itemId: 'scrap_metal', chance: 0.20 },
+      { itemId: 'ammo_22lr', chance: 0.60 },
     ],
     flavorText: [
       'It turns toward you with a precision that no other Hollow has demonstrated. Seven years of refinement.',
@@ -472,6 +481,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'sanguine_blood_vial', chance: 0.90 },
       { itemId: 'silver_knife', chance: 0.15 },
       { itemId: 'meridian_keycard', chance: 0.08 },
+      { itemId: 'ammo_22lr', chance: 0.95 },
     ],
     flavorText: [
       'It does not move first. It has never needed to move first.',
@@ -509,7 +519,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'chemicals_basic', chance: 0.45 },
       { itemId: 'sanguine_blood_vial', chance: 0.10 },
       { itemId: 'scrap_metal', chance: 0.20 },
-      { itemId: 'ammo_22lr', chance: 0.15 },
+      { itemId: 'ammo_22lr', chance: 0.80 },
     ],
     flavorText: [
       'The tunnels change when it moves. The other Hollow reorient.',
@@ -544,6 +554,7 @@ export const ENEMIES: Record<string, Enemy> = {
       { itemId: 'scrap_metal', chance: 0.50 },
       { itemId: 'pipe_wrench', chance: 0.20 },
       { itemId: 'bandages', chance: 0.20 },
+      { itemId: 'ammo_22lr', chance: 0.50 },
     ],
     flavorText: [
       'It fills the tunnel in a way that suggests the tunnel was not built for something this wide.',
@@ -580,7 +591,7 @@ export const ENEMIES: Record<string, Enemy> = {
     loot: [
       { itemId: 'bandages', chance: 0.20 },
       { itemId: 'scrap_metal', chance: 0.20 },
-      { itemId: 'ammo_22lr', chance: 0.15 },
+      { itemId: 'ammo_22lr', chance: 0.40 },
     ],
     flavorText: [
       'The headlamp casts moving shadows as it turns. For a moment you cannot tell which shadow is real.',

@@ -617,6 +617,15 @@ export interface Player {
   hollowKills?: number
   /** Most recent death cause; informs next-cycle prose selection. */
   lastDeathCause?: DeathCause
+  // --------------------------------------------------------
+  // Armor slot fields (Convoy 2 H6 — slot-aware equip system)
+  // Each holds an inventoryItemId (InventoryItem.id, not itemId).
+  // Four independent slots replace the old single-armor-equipped model.
+  // --------------------------------------------------------
+  equippedArmorHead?: string    // inventoryItemId of equipped head armor
+  equippedArmorChest?: string   // inventoryItemId of equipped chest armor
+  equippedArmorLegs?: string    // inventoryItemId of equipped legs armor
+  equippedArmorFeet?: string    // inventoryItemId of equipped feet armor
 }
 
 // ------------------------------------------------------------

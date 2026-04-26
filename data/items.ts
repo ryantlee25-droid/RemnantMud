@@ -1715,6 +1715,7 @@ export const ITEMS: Record<string, Item> = {
     defense: 1,
     value: 6,
     tier: 1,
+    armorSlot: 'chest',
   },
 
   leather_jacket: {
@@ -1726,6 +1727,7 @@ export const ITEMS: Record<string, Item> = {
     defense: 2,
     value: 18,
     tier: 2,
+    armorSlot: 'chest',
   },
 
   reinforced_coat: {
@@ -1738,6 +1740,7 @@ export const ITEMS: Record<string, Item> = {
     value: 45,
     armorTraits: ['fortified'],
     tier: 3,
+    armorSlot: 'chest',
   },
 
   kevlar_vest: {
@@ -1750,6 +1753,7 @@ export const ITEMS: Record<string, Item> = {
     value: 80,
     armorTraits: ['fortified', 'reactive'],
     tier: 4,
+    armorSlot: 'chest',
   },
 
   hazmat_suit: {
@@ -1762,6 +1766,7 @@ export const ITEMS: Record<string, Item> = {
     value: 35,
     armorTraits: ['insulated', 'reactive'],
     tier: 3,
+    armorSlot: 'chest',
   },
 
   // ----------------------------------------------------------
@@ -1777,6 +1782,7 @@ export const ITEMS: Record<string, Item> = {
     defense: 2,
     value: 20,
     tier: 2,
+    armorSlot: 'chest',
   },
 
   militia_vest: {
@@ -1789,6 +1795,7 @@ export const ITEMS: Record<string, Item> = {
     value: 28,
     armorTraits: ['fortified'],
     tier: 2,
+    armorSlot: 'chest',
   },
 
   // ----------------------------------------------------------
@@ -1805,6 +1812,7 @@ export const ITEMS: Record<string, Item> = {
     value: 100,
     armorTraits: ['fortified'],
     tier: 4,
+    armorSlot: 'chest',
   },
 
   // ----------------------------------------------------------
@@ -2203,6 +2211,7 @@ export const ITEMS: Record<string, Item> = {
     value: 20,
     tier: 2,
     armorTraits: ['fortified'],
+    armorSlot: 'chest',
   },
 
   crafted_pipe_weapon_improved: {
@@ -2316,6 +2325,7 @@ export const ITEMS: Record<string, Item> = {
     value: 180,
     tier: 5,
     armorTraits: ['fortified', 'reactive'],
+    armorSlot: 'chest',
   },
 
   // ----------------------------------------------------------
@@ -2331,6 +2341,7 @@ export const ITEMS: Record<string, Item> = {
     defense: 0,
     value: 35,
     usable: false,
+    armorSlot: 'head',
   },
 
   cold_gear: {
@@ -2343,6 +2354,7 @@ export const ITEMS: Record<string, Item> = {
     value: 40,
     usable: false,
     armorTraits: ['insulated'],
+    armorSlot: 'chest',
   },
 }
 

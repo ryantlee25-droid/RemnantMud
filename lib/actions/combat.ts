@@ -15,6 +15,7 @@ import {
   getEnvironmentNarration,
   computeEnvironmentEffects,
   computeArmorReduction,
+  resolveAoE,
 } from '@/lib/combat'
 import { getItem } from '@/data/items'
 import { getEnemy } from '@/data/enemies'
@@ -23,7 +24,7 @@ import { fearCheck } from '@/lib/fear'
 import { rt } from '@/lib/richText'
 import { rollCheck } from '@/lib/dice'
 import { getClassSkillBonus } from '@/lib/skillBonus'
-import { cureCondition, tickConditions, tryShakeFrightened } from '@/lib/conditions'
+import { cureCondition, tickConditions, tryShakeFrightened, applyCondition } from '@/lib/conditions'
 import { buildAnalyzeMessages } from '@/lib/abilities'
 import { removeItem, getInventory } from '@/lib/inventory'
 import { msg, systemMsg, combatMsg, errorMsg } from '@/lib/messages'
@@ -246,8 +247,19 @@ async function doAttackRound(engine: EngineCore): Promise<void> {
   if (!player || !currentRoom || !combatState) return
 
   const equippedWeapon = inventory.find((ii) => ii.equipped && ii.item.type === 'weapon')
-  const equippedArmor = inventory.find((ii) => ii.equipped && ii.item.type === 'armor')
-  const armorDefense = equippedArmor?.item.defense ?? 0
+  // Primary armor used for trait resolution (chest slot preferred, else first equipped armor)
+  const equippedArmor = inventory.find((ii) => ii.id === player.equippedArmorChest)
+    ?? inventory.find((ii) => ii.equipped && ii.item.type === 'armor')
+  // ── Defense slot sum (H6) ──
+  let armorDefense = 0
+  for (const slot of ['Head', 'Chest', 'Legs', 'Feet'] as const) {
+    const equippedId = player[`equippedArmor${slot}` as keyof typeof player] as string | undefined
+    if (equippedId) {
+      const inv = inventory.find((i) => i.id === equippedId)
+      if (inv) armorDefense += inv.item.defense ?? 0
+    }
+  }
+  // ── End defense slot sum ──
 
   // ── Round start: reset defendingThisTurn ──
   let activeCombat: CombatState = { ...combatState, defendingThisTurn: false }
@@ -499,6 +511,55 @@ async function handleEnemyDefeated(
 
   engine._checkLevelUp()
 
+  // ── AoE on enemy death (H5) ──
+  const _onDeathAoE = afterPlayer.enemy.onDeath?.aoe
+  if (_onDeathAoE) {
+    const defeatedEnemy = afterPlayer.enemy
+    const latestPlayerForAoE = engine.getState().player!
+    const aoeResult = resolveAoE(_onDeathAoE, latestPlayerForAoE, afterPlayer)
+
+    // Apply damageToPlayer
+    if (aoeResult.damageToPlayer > 0) {
+      const newHp = Math.max(0, latestPlayerForAoE.hp - aoeResult.damageToPlayer)
+      engine._setState({ player: { ...latestPlayerForAoE, hp: newHp } })
+    }
+
+    // Apply damageToEnemiesByIndex to additionalEnemies hp
+    if (afterPlayer.additionalEnemies && afterPlayer.additionalEnemies.length > 0) {
+      const updatedAdditional = afterPlayer.additionalEnemies.map((e, idx) => {
+        const dmg = aoeResult.damageToEnemiesByIndex[idx]
+        if (dmg !== undefined) {
+          return { ...e, hp: Math.max(0, e.hp - dmg) }
+        }
+        return e
+      })
+      // We don't have active combatState here (it was cleared), so just log the damage
+      engine._appendMessages([combatMsg(`AoE ripples through the room.`)])
+      // Patch additionalEnemies back if we need them later — in practice,
+      // handleEnemyDefeated immediately starts the next fight below using
+      // afterPlayer.additionalEnemies. Mutate local copy for that path.
+      ;(afterPlayer as { additionalEnemies: typeof updatedAdditional }).additionalEnemies = updatedAdditional
+    }
+
+    // Append AoE messages to log
+    engine._appendMessages(aoeResult.messages)
+
+    // Apply conditions via applyCondition helper
+    for (const condId of aoeResult.conditionsApplied) {
+      const currentPlayerState = engine.getState().player!
+      const currentCombat = engine.getState().combatState
+      const currentConditions = currentCombat?.playerConditions ?? []
+      const condResult = applyCondition(currentConditions, condId, defeatedEnemy.name)
+      if (condResult.applied && currentCombat) {
+        engine._setState({
+          combatState: { ...currentCombat, playerConditions: condResult.conditions },
+        })
+      }
+      engine._appendMessages([combatMsg(`[AoE CONDITION] ${condId} applied by ${defeatedEnemy.name}'s death explosion.`)])
+    }
+  }
+  // ── End AoE on enemy death ──
+
   // Roll and add loot to room
   const loot: string[] = []
   for (const entry of afterPlayer.enemy.loot) {
@@ -619,8 +680,18 @@ export async function handleFlee(engine: EngineCore): Promise<void> {
 
   // Failed flee: enemy gets a free attack
   if (freeAttack) {
-    const equippedArmor = engine.getState().inventory.find((ii) => ii.equipped && ii.item.type === 'armor')
-    const armorDefense = equippedArmor?.item.defense ?? 0
+    const fleeInventory = engine.getState().inventory
+    const fleePlayer = engine.getState().player!
+    // ── Defense slot sum (H6) ──
+    let armorDefense = 0
+    for (const slot of ['Head', 'Chest', 'Legs', 'Feet'] as const) {
+      const equippedId = fleePlayer[`equippedArmor${slot}` as keyof typeof fleePlayer] as string | undefined
+      if (equippedId) {
+        const inv = fleeInventory.find((i) => i.id === equippedId)
+        if (inv) armorDefense += inv.item.defense ?? 0
+      }
+    }
+    // ── End defense slot sum ──
     // Armor reduction via shared utility (15% per defense point, capped 60%, minimum 1 damage)
     const actualDamage = computeArmorReduction(freeAttack.damage, armorDefense)
 
@@ -736,8 +807,19 @@ async function doEnemyTurn(engine: EngineCore): Promise<void> {
   const { player, currentRoom, combatState, inventory } = engine.getState()
   if (!player || !combatState) return
 
-  const equippedArmor = inventory.find((ii) => ii.equipped && ii.item.type === 'armor')
-  const armorDefense = equippedArmor?.item.defense ?? 0
+  // Primary armor used for trait resolution (chest slot preferred, else first equipped armor)
+  const equippedArmor = inventory.find((ii) => ii.id === player.equippedArmorChest)
+    ?? inventory.find((ii) => ii.equipped && ii.item.type === 'armor')
+  // ── Defense slot sum (H6) ──
+  let armorDefense = 0
+  for (const slot of ['Head', 'Chest', 'Legs', 'Feet'] as const) {
+    const equippedId = player[`equippedArmor${slot}` as keyof typeof player] as string | undefined
+    if (equippedId) {
+      const inv = inventory.find((i) => i.id === equippedId)
+      if (inv) armorDefense += inv.item.defense ?? 0
+    }
+  }
+  // ── End defense slot sum ──
 
   // Apply hollow round effects
   const { messages: hollowMsgs, newState: afterHollow } = applyHollowRoundEffects(combatState, player)

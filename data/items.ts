@@ -106,6 +106,8 @@ export const ITEMS: Record<string, Item> = {
     weaponTraits: ['blessed', 'keen'],
     tier: 5,
     rarity: 'epic',
+  
+    loreText: 'The alloy was tested at the Salt Creek armory using a method the Salters do not publish. The result came back positive — enough real silver in the mix to matter. Briggs had it logged under \'specialized ordnance\' rather than \'edged weapon,\' which is the kind of bureaucratic precision that becomes important when Sanguine are involved. The Salters made four of these. This is not the one that was lost.',
   },
 
   // ----------------------------------------------------------
@@ -123,6 +125,8 @@ export const ITEMS: Record<string, Item> = {
     weaponTraits: ['precise'],
     tier: 2,
     rarity: 'epic',
+  
+    loreText: 'The serial number on the receiver is scratched out — not filed, scratched, which suggests the person who did it was in a hurry or did not have the right tool. The Salter armorers taped the stock because the wood was still good and the barrel was true. They will tell you the rifle is functional. They will not tell you it was recovered from a Drifter outpost that stopped answering calls in 2034.',
   },
 
   '22_rifle': {
@@ -136,6 +140,8 @@ export const ITEMS: Record<string, Item> = {
     weaponTraits: ['quick', 'silenced'],
     tier: 3,
     rarity: 'rare',
+  
+    loreText: 'The Drifter Council voted in 2035 to adopt the 10/22 as the standard road arm. The minutes say the reason was logistics: .22 is the most common round in the Four Corners, available in every market and most ruins. Nobody argued. The rifle is not impressive. The ammunition supply is. That distinction has kept more Drifters alive than any other single decision the Council ever made.',
   },
 
   '9mm_pistol': {
@@ -149,6 +155,8 @@ export const ITEMS: Record<string, Item> = {
     weaponTraits: ['precise', 'quick'],
     tier: 3,
     rarity: 'rare',
+  
+    loreText: 'The forty-round drum is not factory — somebody machined that in a garage outside Crossroads, and the Accord bought thirty of them in the spring of 2036. The modification doubles your odds in a running fight. It also doubles the weight. The tradeoff was debated at the armory meeting. The vote was 7-3 in favor. The three dissenters were all smaller people, which probably explains their position.',
   },
 
   shotgun: {
@@ -162,6 +170,8 @@ export const ITEMS: Record<string, Item> = {
     weaponTraits: ['heavy', 'vicious'],
     tier: 4,
     rarity: 'legendary',
+  
+    loreText: 'The factory proof mark on the barrel reads MOSSBERG, NORTH HAVEN CT. The date stamp underneath is 2027 — made after the Collapse, which means a factory was still running somewhere when this was built. Nobody at Salt Creek has been able to confirm that. The Salters found it in a transport crate in 2031. The transport had not made its delivery. Whatever was waiting for this shipment is still waiting.',
   },
 
   // ----------------------------------------------------------
@@ -385,6 +395,8 @@ export const ITEMS: Record<string, Item> = {
     weight: 0,
     value: 0,
     rarity: 'epic',
+  
+    loreText: 'MERIDIAN CLEARANCE / TIER 3 / ACCESS: SUBLEVEL B AND BELOW. No name. No photo. No agency designation. The MERIDIAN facility was officially demolished in 2031. The card reader in the facility wall still responds to this card. The facility has been producing a thermal signature consistent with active power systems for seven years. These facts have not been reconciled in any official report.',
   },
 
   courthouse_archive_key: {
@@ -395,6 +407,8 @@ export const ITEMS: Record<string, Item> = {
     weight: 0,
     value: 0,
     rarity: 'rare',
+  
+    loreText: 'Three Marshals have carried this key. The first Marshal logged it into the Covenant record system in 2031, one week after the Collapse, in handwriting that was still steady. The second Marshal lost the tag in 2034 and had a replacement made at the Crossroads workshop. The third Marshal is whoever is holding it now. The archive behind the door has not been opened in fourteen months.',
   },
 
   cold_storage_key: {
@@ -405,6 +419,8 @@ export const ITEMS: Record<string, Item> = {
     weight: 0,
     value: 0,
     rarity: 'rare',
+  
+    loreText: 'The Stacks research wing ran cold storage for biological samples as recently as 2033 — the access log shows entries through September of that year, then nothing. The samples behind this door were catalogued as \'CHARON-7 sequencing archive, phase two.\' The catalogue entry is the last thing written in the research log. The log has no final entry. It simply stops.',
   },
 
   red_court_key: {
@@ -415,6 +431,8 @@ export const ITEMS: Record<string, Item> = {
     weight: 0,
     value: 0,
     rarity: 'rare',
+  
+    loreText: 'The blood-drop seal is pressed into the metal, not applied — the Red Court uses a hydraulic stamp that was custom-made for this purpose, which tells you something about how seriously they regard their own authority. Possession of this key implies clearance at the administration level. The Court does not give this key to anyone it is not prepared to trust completely, or answer for completely if the trust fails.',
   },
 
   bunker_access_badge: {
@@ -425,6 +443,8 @@ export const ITEMS: Record<string, Item> = {
     weight: 0,
     value: 0,
     rarity: 'rare',
+  
+    loreText: 'SALT CREEK COMPACT / INNER VAULT AUTHORIZATION / TIER 2. The code in the corner is printed in 8-point font. You need to hold it to the light to read it. The Salters do this deliberately — if you need to squint to find the code, someone watching from across the room cannot read it off your badge. The person who lost this badge has not reported it missing. That is either reassuring or the opposite.',
   },
 
   deep_mine_rope: {
@@ -435,6 +455,8 @@ export const ITEMS: Record<string, Item> = {
     weight: 4,
     value: 0,
     rarity: 'rare',
+  
+    loreText: 'The Accord purchased this from a climbing supply cache recovered from a sporting goods warehouse in the Dust. Static kern-mantle, rated to eight hundred pounds, sixty feet of it wound onto a spool. The Drifter who found the cache brought it in and logged it as \'vertical access equipment\' in the salvage ledger. The ledger note adds: \'The vertical in question is not a cliff.\' That is all it says.',
   },
 
   sanguine_biometric_slide: {
@@ -445,6 +467,8 @@ export const ITEMS: Record<string, Item> = {
     weight: 0,
     value: 0,
     rarity: 'rare',
+  
+    loreText: 'The Cold Touch is not a malfunction — the Covenant of Dusk engineered it. The slide reads Vesper\'s genetic signature and will only respond to the authorized sequence. The Red Court has been trying to duplicate this technology for two years and has not succeeded. The slide is not electronic. The Covenant does not explain how it works. The Red Court finds the absence of explanation more unsettling than the technology itself.',
   },
 
   purified_stims: {
@@ -1354,6 +1378,8 @@ export const ITEMS: Record<string, Item> = {
     damage: 6,
     value: 4,
     rarity: 'rare',
+  
+    loreText: 'The Accord militia logged this as \'salvage implement\' in the supply manifest, which is the kind of paperwork honesty that survives in a community that still does paperwork. Before the Collapse it held up a parking structure in the Covenant district. The structure came down in the second winter. The rebar did not.',
   },
 
   // ----------------------------------------------------------
@@ -1893,6 +1919,8 @@ export const ITEMS: Record<string, Item> = {
     tier: 3,
     armorSlot: 'chest',
     rarity: 'rare',
+  
+    loreText: 'The Crossroads Accord maintains a small workshop behind the trading circle where three people work full-time modifying scavenged gear. This coat came out of that workshop. The rivet pattern in the lining is their signature — two rows, staggered, each head filed flush so they do not catch on fabric. They produce about eight coats a year. There is always a waiting list.',
   },
 
   kevlar_vest: {
@@ -1907,6 +1935,7 @@ export const ITEMS: Record<string, Item> = {
     tier: 4,
     armorSlot: 'chest',
     rarity: 'epic',
+    loreText: 'The trauma plate is cracked at the lower left quadrant — one round, stopped. The carrier has been through two owners at minimum: the name tape on the collar has been removed and the hook-and-loop backing is worn through where a second tape was applied and taken off. Whoever wore this last was careful with their kit. The blood on the collar is not from a wound the vest could have stopped. That is information.',
   },
 
   hazmat_suit: {
@@ -1921,6 +1950,8 @@ export const ITEMS: Record<string, Item> = {
     tier: 3,
     armorSlot: 'chest',
     rarity: 'rare',
+  
+    loreText: 'MERIDIAN SUBSIDIARY / FIELD UNIT / ENVIRONMENTAL CERTIFICATION: LEVEL B. The certification date is 2029. The Collapse was 2031. Someone was still certifying equipment two years before everything stopped. The third-generation filter replacements were manufactured in 2034 by a Reclaimer workshop using MERIDIAN specifications from a recovered technical manual. The specifications were followed exactly. The manual did not explain why Level B was deemed sufficient.',
   },
 
   // ----------------------------------------------------------
@@ -1970,6 +2001,8 @@ export const ITEMS: Record<string, Item> = {
     tier: 4,
     armorSlot: 'chest',
     rarity: 'epic',
+  
+    loreText: 'MERIDIAN SUBSIDIARY / SALT CREEK DEPOT / LOT 14-A. The stencil on the back plate is still readable through the finish wear. The Salters took the depot in 2032 and maintained it since. The ceramic panels in this carrier were replaced in 2035 — the Salter armorer\'s initials are on the replacement label: J.H. The original panels are in a bin somewhere. They stopped rifle rounds until they did not.',
   },
 
   // ----------------------------------------------------------
@@ -1987,6 +2020,8 @@ export const ITEMS: Record<string, Item> = {
     weaponTraits: ['precise'],
     tier: 4,
     rarity: 'legendary',
+  
+    loreText: 'The furniture is civilian aftermarket. The receiver is not. Someone pulled the mil-spec lower from a different rifle and married it to a commercial upper, which is either very clever or very expensive depending on what parts were available. The trigger work is professional — four pounds, glass-rod break, no creep. A Salter armorer did this. The trigger alone is a signature.',
   },
 
   sniper_rifle: {
@@ -2000,6 +2035,8 @@ export const ITEMS: Record<string, Item> = {
     weaponTraits: ['precise', 'keen'],
     tier: 4,
     rarity: 'legendary',
+  
+    loreText: 'The scope is first-focal-plane, which means the reticle subtensions are accurate at every magnification. Civilian hunters did not typically buy FFP optics before the Collapse. Military personnel did. The stock has no unit markings — they were removed before this rifle changed hands. The bore is clean and the crown is perfect. Whatever happened to the shooter, the rifle was maintained until the end.',
   },
 
   military_sidearm: {
@@ -2013,6 +2050,8 @@ export const ITEMS: Record<string, Item> = {
     weaponTraits: ['precise', 'quick'],
     tier: 3,
     rarity: 'epic',
+  
+    loreText: 'Salter officer issue, standard compact. The night sights still glow — they do not expire for another three years, which tells you how recently the armory restocked. The proof stamp on the frame is Salt Creek, Year 3. This pistol has been in the Salter supply chain since it was made. The fact that it is here, outside that supply chain, means someone made a decision they have not explained.',
   },
 
   accord_issue_rifle: {
@@ -2026,6 +2065,8 @@ export const ITEMS: Record<string, Item> = {
     weaponTraits: ['precise'],
     tier: 3,
     rarity: 'rare',
+  
+    loreText: 'AMA-stamp on the receiver — Accord Militia Armory, batch number three. Cross pushed the standardization through in 2034 over objections from two council members who wanted to keep individual loadouts. Her argument was maintenance: one caliber, one cleaning kit, one parts pool. When someone goes down, you field-strip their rifle and keep moving. The council members who objected have both since changed their position.',
   },
 
   accord_issue_pistol: {
@@ -2403,6 +2444,8 @@ export const ITEMS: Record<string, Item> = {
     armorTraits: ['fortified'],
     armorSlot: 'chest',
     rarity: 'rare',
+  
+    loreText: 'The blue paint ghost is from a 2029 Ford Ranger door panel. The shelf steel is from a warehouse in what used to be the industrial district. The Accord workshop keeps a log of materials — not because it matters, but because the council decided that tracking where things come from is worth doing even when no one will ever look at the record. The record now fills six notebooks.',
   },
 
   crafted_pipe_weapon_improved: {
@@ -2416,6 +2459,8 @@ export const ITEMS: Record<string, Item> = {
     tier: 2,
     weaponTraits: ['keen'],
     rarity: 'rare',
+  
+    loreText: 'The longer barrel started as a refrigerant pipe from a commercial HVAC unit. The threading at the muzzle was cut by hand with a tap and die set found at the Covenant hardware cache. The Accord workshop logs note it as \'rifle variant, second attempt\' — the first attempt is not mentioned anywhere, which is its own kind of documentation.',
   },
 
   crafted_incendiary_charge: {
@@ -2484,6 +2529,8 @@ export const ITEMS: Record<string, Item> = {
     usable: true,
     useText: 'You unroll the canvas and select the pick by touch -- the right gauge for the keyway, the tension wrench seated at the bottom of the cylinder. Rake, set, feel for the pins. One. Two. The third pin resists, then gives with a soft click. The lock turns. Patience is the only skill this requires, and patience is the one thing the wastes teach everyone eventually.',
     rarity: 'rare',
+  
+    loreText: 'The Accord distributed schematics for these in 2034, folded into a two-page handout passed at the third quarterly market. The handout says at the top: \'A locked door is a problem that does not require breaking.\' The Drifters adapted the design within six months. The Accord considers imitation the most straightforward form of agreement.',
   },
 
   crafted_antiviral_compound: {
@@ -2526,6 +2573,8 @@ export const ITEMS: Record<string, Item> = {
     armorTraits: ['fortified', 'reactive'],
     armorSlot: 'chest',
     rarity: 'legendary',
+  
+    loreText: 'The sleeping bag foam in the collar came from the Covenant medical supply — Marta donated four bags to the workshop after the armory expansion freed up storage space. She documented the donation in the community log. The entry reads: \'Four sleeping bags, repurposed for armor padding. No one should sleep on the floor anymore anyway. The floor is no longer safe.\' The workshop kept the note.',
   },
 
   // ----------------------------------------------------------
@@ -2640,6 +2689,8 @@ export const ITEMS: Record<string, Item> = {
     rarity: 'legendary',
     weaponTraits: ['blessed', 'keen'],
     statBonus: { reflex: 1 },
+  
+    loreText: 'The moonlit finish is applied at the Covenant of Dusk in a ceremony that takes three days. The silver wash is not decorative — the Lucid adapted the process from MERIDIAN-era metallurgy research, and the alloy penetration is deep enough to matter against what they were. The blade was made by someone who understood what they were building it against, because they had been that thing, and they remembered.',
   },
 
   // ----------------------------------------------------------
@@ -2713,6 +2764,8 @@ export const ITEMS: Record<string, Item> = {
     tier: 3,
     rarity: 'rare',
     weaponTraits: ['precise'],
+  
+    loreText: 'The walnut stock is still in good shape — someone has been oiling it. The bore shows honest use but no neglect: even fouling, light copper wash, clean crown. Before the Collapse this was a deer rifle, carried into the mountains every fall. After the Collapse, nothing changed about what it could do. Only what it was pointed at changed.',
   },
 
   salter_rifle: {
@@ -2726,6 +2779,8 @@ export const ITEMS: Record<string, Item> = {
     tier: 3,
     rarity: 'rare',
     weaponTraits: ['precise'],
+  
+    loreText: 'SALT CREEK COMPACT / ARMORY 7 / PROOF 2036. The brine treatment is visible under the finish — a light patina that other rifles do not have. The Salters developed the process to protect against coastal humidity in the creek district. The rifle has been carried enough that the grip tape is worn through in two places. It has not been turned in for replacement. Someone decided to keep working with what they had.',
   },
 
   accord_carbine: {
@@ -2739,6 +2794,8 @@ export const ITEMS: Record<string, Item> = {
     tier: 3,
     rarity: 'rare',
     weaponTraits: ['precise'],
+  
+    loreText: 'Faith-mark is pressed into the stock, not stamped — someone at the Accord armory does the marking by hand with a heated iron. The carbine went through two armorers before the trigger was right. The Accord considers a two-pound pull the standard. Anything heavier and your hands shake at the wrong moment. They know because they tested it. They did not enjoy what the test required.',
   },
 
   kindling_torchgun: {
@@ -2752,6 +2809,8 @@ export const ITEMS: Record<string, Item> = {
     tier: 4,
     rarity: 'epic',
     weaponTraits: ['scorching', 'precise'],
+  
+    loreText: 'The incendiary conversion kit was developed by the Ember\'s gunsmiths after the third purification season, when the purifiers started facing Hollows in the outer zones that did not respond to standard fire. Harrow approved the modification. The ash mark on the barrel is pressed before the first round is chambered. The gun has been through fire. So has every hand that carried it.',
   },
 
   reclaimer_railgun: {
@@ -2765,6 +2824,8 @@ export const ITEMS: Record<string, Item> = {
     tier: 4,
     rarity: 'epic',
     weaponTraits: ['precise', 'disrupting'],
+  
+    loreText: 'STACKS ENGINEERING / ACCELERATOR ASSEMBLY / BUILD 4 / SEE SCHEMATIC R-44. The Reclaimers stamped their build number into the housing because they ran four versions before this one held charge without venting. Builds 1 through 3 are documented in the technical archive. The documentation for Build 3 ends mid-sentence. Build 4 does not vent. The Reclaimers consider this sufficient improvement to resume testing.',
   },
 
   // ----------------------------------------------------------
@@ -2782,6 +2843,8 @@ export const ITEMS: Record<string, Item> = {
     tier: 3,
     rarity: 'rare',
     weaponTraits: ['vicious'],
+  
+    loreText: 'The barrel was cut with a hacksaw — you can tell from the slight angle on the muzzle crown, which a proper gunsmith would have squared. At ten feet it does not matter. At twenty feet it starts to matter. The person who cut this barrel understood the tradeoff and accepted it, which means they planned to fight at ten feet. In most places out here, that is the correct plan.',
   },
 
   breaching_shotgun: {
@@ -2795,6 +2858,8 @@ export const ITEMS: Record<string, Item> = {
     tier: 4,
     rarity: 'epic',
     weaponTraits: ['heavy', 'vicious'],
+  
+    loreText: 'The folding stock was a field modification — the militia found the original pump in a National Guard locker without a stock and fabricated the folder from scavenged aluminum bar stock. The door-breaching choke was already fitted. Whoever set that shotgun up knew what they expected it to do. The Accord militia issued it anyway, because the expectation turned out to be correct.',
   },
 
   kindling_pyre: {
@@ -2808,6 +2873,8 @@ export const ITEMS: Record<string, Item> = {
     tier: 4,
     rarity: 'epic',
     weaponTraits: ['scorching', 'heavy'],
+  
+    loreText: 'The shells are loaded at the Ember in a ritual that predates the weapon itself — the Kindling adapted the loading ceremony from the purification rite, because Harrow holds that the intent matters as much as the tool. Each shell is marked with a burned circle before it goes into the tube. The circle means the fire knows its purpose. Whether the fire actually knows anything is a question the Kindling does not ask in front of outsiders.',
   },
 
   // ----------------------------------------------------------
@@ -2882,6 +2949,8 @@ export const ITEMS: Record<string, Item> = {
     rarity: 'legendary',
     weaponTraits: ['precise', 'disrupting'],
     statBonus: { reflex: 1 },
+  
+    loreText: 'MERIDIAN RESEARCH / ELECTROMAGNETIC SIDEARM / PROTOTYPE SERIES 7 / DO NOT FIELD-TEST WITHOUT AUTHORIZATION. The authorization sticker on the grip frame is still in place, number 001, signed by a project director whose name is redacted on the sticker itself. Prototype Series 7 never reached production. The Series 6 prototypes are unaccounted for. The MERIDIAN facility records do not include a Series 8.',
   },
 
   kindling_torch_of_dawn: {
@@ -2896,6 +2965,8 @@ export const ITEMS: Record<string, Item> = {
     rarity: 'legendary',
     weaponTraits: ['scorching', 'blessed'],
     statBonus: { vigor: 1 },
+  
+    loreText: 'The purifiers call it the Torch because the name Harrow gave it — the Instrument of Evident Mercy — was too long to shout across a burning room. The wick at the hilt burns throughout a purification. When it goes out, the work is done. If it goes out early, something went wrong. The wick has gone out early three times. On two of those occasions, the purifier survived to report it.',
   },
 
   pre_collapse_combat_knife: {
@@ -2910,6 +2981,8 @@ export const ITEMS: Record<string, Item> = {
     rarity: 'legendary',
     weaponTraits: ['keen', 'quick'],
     statBonus: { reflex: 1 },
+  
+    loreText: 'CIVILIAN PROOF MARK / GOVERNMENT TESTING PROGRAM / DO NOT DISTRIBUTE. The stamp is on the ricasso, small enough that you need to look for it. Government testing programs did not produce civilian-marked blades. The civilian marking on a government program knife means one of two things: the program was deniable, or the knife was. The finish is pristine. Someone kept this in controlled storage until very recently.',
   },
 
   red_court_executioner_blade: {
@@ -2923,6 +2996,8 @@ export const ITEMS: Record<string, Item> = {
     tier: 4,
     rarity: 'epic',
     weaponTraits: ['vicious', 'heavy'],
+  
+    loreText: 'The broken-key stamp on the pommel is the Court\'s authorization mark for terminal enforcement. A broken key means the subject\'s clearance has been revoked permanently. The bearer does not require a hearing to act — the stamp is the hearing\'s conclusion. The Court issues this blade to one officer per quarter, who carries it for three months and then returns it for re-issuance. The blade itself is never reconditioned. The Court considers its history part of its authority.',
   },
 
   // ----------------------------------------------------------
@@ -3053,6 +3128,8 @@ export const ITEMS: Record<string, Item> = {
     rarity: 'rare',
     armorSlot: 'head',
     armorTraits: [],
+  
+    loreText: 'The ember-tempered insert is forge-work from the Kindling\'s metal shop — they heat the steel in censer coals and let it cool slowly under ash, which they believe changes the grain structure in ways that instruments cannot measure. They may be right. The cap\'s wearers report that it sits differently than other helmets, with a weight that settles rather than presses. The gunsmiths have no technical explanation for this. They stopped looking for one.',
   },
 
   drifter_cap: {
@@ -3081,6 +3158,8 @@ export const ITEMS: Record<string, Item> = {
     rarity: 'rare',
     armorSlot: 'head',
     armorTraits: ['reactive'],
+  
+    loreText: 'The welding shield was rated for UV-A exposure up to 200 joules per square centimeter. The Stacks workshop added the skull frame and padding from recovered EVA foam — the same foam used in pre-Collapse electronics packaging. The combination meets no recognized safety standard. The Reclaimers tested it against field conditions rather than specifications. It passed. The standard they applied was survival, which is the only standard that currently has data.',
   },
 
   lucid_circlet: {
@@ -3097,6 +3176,8 @@ export const ITEMS: Record<string, Item> = {
     armorTraits: ['warded'],
     setId: 'lucid_courtier',
     statBonus: { wits: 1 },
+  
+    loreText: 'The silver was drawn from pre-Collapse dental supply — the Covenant of Dusk found a dental clinic in the Duskhollow district whose supply room had not been touched. Pure sterling, enough for six circlets. Each one was shaped by a Lucid who had come through the conversion — who knew what the silver was for, because they remembered what they had been afraid of in the dark. The dusk curing process takes one full night, from last light to first. No one works through it. The night does the work.',
   },
 
   // ----------------------------------------------------------
@@ -3115,6 +3196,8 @@ export const ITEMS: Record<string, Item> = {
     rarity: 'rare',
     armorSlot: 'chest',
     armorTraits: ['fortified'],
+  
+    loreText: 'The halite curing process takes four days. The Salter armory does not skip steps. The proof stamp on the inside of the breastplate is the armory seal and a date code that encodes batch number, curing time, and the name of the armorer who signed off. The armorer who signed off on this piece retired last year. Her name is still on every plate that came through her hands. The Salters consider that a form of accountability.',
   },
 
   accord_tabard: {
@@ -3129,6 +3212,8 @@ export const ITEMS: Record<string, Item> = {
     rarity: 'rare',
     armorSlot: 'chest',
     armorTraits: ['fortified'],
+  
+    loreText: 'The seal on the chest is the Crossroads Accord mark — a wagon wheel over a handshake, designed by a twelve-year-old during the first community assembly in 2033. The council voted to adopt it. The kid who drew it is now twenty-one and works in the armory. She finds the whole thing embarrassing and refuses to discuss it.',
   },
 
   kindling_vestment: {
@@ -3143,6 +3228,8 @@ export const ITEMS: Record<string, Item> = {
     rarity: 'rare',
     armorSlot: 'chest',
     armorTraits: ['insulated'],
+  
+    loreText: 'The chest plate is treated with censer oil before each ritual season — not for protection, the Kindling say, but for recognition. The fire should know who wears this. The process blackens the metal at the edges over time, and the blackening is considered a record of how many seasons the vestment has survived. This one has been through six seasons. The plate carries the marks.',
   },
 
   reclaimer_longcoat: {
@@ -3157,6 +3244,8 @@ export const ITEMS: Record<string, Item> = {
     rarity: 'epic',
     armorSlot: 'chest',
     armorTraits: ['reactive'],
+  
+    loreText: 'The ceramic panels came from floor tiles in the Stacks lower laboratory. Laboratory-grade ceramic, rated for thermal shock and impact. The Reclaimers cut them to fit and bonded them to the duster lining with a polymer adhesive synthesized in the chemistry workshop. The adhesive compound does not appear in any pre-Collapse chemical database. The Reclaimers derived the formula from first principles over eight months. They have not published the process.',
   },
 
   drifter_road_coat: {
@@ -3185,6 +3274,8 @@ export const ITEMS: Record<string, Item> = {
     rarity: 'epic',
     armorSlot: 'chest',
     armorTraits: ['fortified'],
+  
+    loreText: 'PEN-MARKED / WARDEN ISSUE / AUTHORIZED PERSONNEL ONLY. The stamp is on the inside collar, where the warden can see it but subjects cannot. The Red Court considers the marking a reminder rather than an advertisement. The vest is heavier than it looks because the padding between the outer shell and the ceramic insert is not foam — it is compacted fiber from the Pens\' textile operation. The Court uses what it has.',
   },
 
   salter_enforcer_plate: {
@@ -3201,6 +3292,8 @@ export const ITEMS: Record<string, Item> = {
     armorTraits: ['fortified', 'reactive'],
     setId: 'salter_executioner',
     statBonus: { grit: 1 },
+  
+    loreText: 'Enforcer issue. The set took six weeks to produce — four of those weeks were the hardening process, which the Salter armory considers too important to accelerate. The grit bonus is not metaphor: the extra plate weight conditions the wearer. Briggs wore enforcer kit before he made officer. He says you do not understand what the Salters are prepared to do until you have felt what they are prepared to carry.',
   },
 
   accord_inquisitor_plate: {
@@ -3217,6 +3310,8 @@ export const ITEMS: Record<string, Item> = {
     armorTraits: ['fortified', 'warded'],
     setId: 'accord_inquisitor',
     statBonus: { grit: 1 },
+  
+    loreText: 'The inquisitor\'s armor is blessed at the Covenant chapel before it is issued — a ceremony that Cross instituted in 2036, and that she attends personally each time. The inquisitor who wears this is trusted with the hardest judgments the Accord makes: expulsion, testimony, accusation. The armor is heavy. Cross says the weight is intentional. You should feel what you carry.',
   },
 
   kindling_purifier_robe: {
@@ -3233,6 +3328,8 @@ export const ITEMS: Record<string, Item> = {
     armorTraits: ['insulated', 'warded'],
     setId: 'kindling_purifier',
     statBonus: { wits: 1 },
+  
+    loreText: 'The purifier\'s robe is made only for those who have completed the deep purification — the walk through the Ember\'s central flame, which 67% of initiates survive. The survivors say the fire knows them now. The robe is made afterward, not before, which is Harrow\'s way of saying the flame decides, not the Kindling. The warded lining came from a MERIDIAN material that the Kindling recovered from the Scar. They do not know what it was designed to do. They know what it does now.',
   },
 
   meridian_field_suit: {
@@ -3247,6 +3344,8 @@ export const ITEMS: Record<string, Item> = {
     rarity: 'rare',
     armorSlot: 'chest',
     armorTraits: ['reactive'],
+  
+    loreText: 'MERIDIAN SUBSIDIARY / FIELD OPERATIONS / OFF-SITE TRIAL / SUBJECT ID: REDACTED. The civilian marking designates a controlled trial outside the facility perimeter. Off-site trials required a non-disclosure agreement, a medical baseline, and a contact number for next of kin. The locker this came from had twelve suits, all still sealed. The contact numbers on the intake forms are no longer in service.',
   },
 
   // ----------------------------------------------------------
@@ -3307,6 +3406,8 @@ export const ITEMS: Record<string, Item> = {
     rarity: 'rare',
     armorSlot: 'legs',
     armorTraits: [],
+  
+    loreText: 'The segmented plate is scavenged from pre-Collapse shin guards — the kind used in riot control. The Accord militia found four crates of them in a National Guard depot outside the Covenant district. The canvas backing was made in the Crossroads workshop. The design is not elegant. It has not needed to be elegant. It has needed to work, and it has worked, which is a different requirement and a harder one to meet.',
   },
 
   kindling_robe_lower: {
@@ -3321,6 +3422,8 @@ export const ITEMS: Record<string, Item> = {
     rarity: 'rare',
     armorSlot: 'legs',
     armorTraits: ['insulated'],
+  
+    loreText: 'The knee guards are tempered in the same process as the skullcap insert — censer coal heat, ash cooling, a slow process done without rushing because the Kindling believe time in the fire is what the metal requires. The ash-marking on the hem is renewed each season by whoever wears the robe. If the marks fade between seasons, it is considered a sign that the wearer drifted from the flame. Nobody asks what that means. Everyone understands.',
   },
 
   drifter_trousers: {
@@ -3409,6 +3512,8 @@ export const ITEMS: Record<string, Item> = {
     rarity: 'rare',
     armorSlot: 'feet',
     armorTraits: [],
+  
+    loreText: 'Ground contact is intentional. The Kindling do not insulate the sole beyond what walking requires because Harrow teaches that the ground beneath the Ember is warm — not with fire, but with what the fire has done to the earth over four years of purification. The mark on the strap is the Kindling seal: a circle, open at the top. The opening means the fire is still burning. A closed circle means the wearer did not come back.',
   },
 
   drifter_treads: {

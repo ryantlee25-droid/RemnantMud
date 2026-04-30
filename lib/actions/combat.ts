@@ -114,6 +114,7 @@ export async function checkNoiseEncounter(engine: EngineCore, isLoud: boolean): 
     ? `A ${rt.enemy(enemy.name)} emerges from the shadows. You react first.`
     : `A ${rt.enemy(enemy.name)} emerges from the shadows. It's already moving.`
   engine._appendMessages([combatMsg(initLine)])
+  if (enemy.combatIntro) engine._appendMessages([combatMsg(enemy.combatIntro)])
 
   if (!combatWithRoom.playerGoesFirst) {
     const { damage, messages, newState } = enemyAttack(player, combatWithRoom)
@@ -210,6 +211,7 @@ export async function handleAttack(engine: EngineCore, noun: string | undefined)
     ? `Combat begins. You face the ${rt.enemy(enemy.name)}. You move first.`
     : `Combat begins. You face the ${rt.enemy(enemy.name)}. It moves first.`
   engine._appendMessages([combatMsg(initMsg)])
+  if (enemy.combatIntro) engine._appendMessages([combatMsg(enemy.combatIntro)])
 
   // Environment modifier narration at combat start
   const envModTypes = getEnvironmentModifiers(currentRoom)

@@ -209,6 +209,33 @@ tests/          Vitest test suite
 
 ## Release Notes
 
+### 2026-04-30 — Convoy 2C (Wave 3) + Release Hardening
+
+Closes out the gear convoy and hardens the silent-failure paths flagged in the 2026-04-01 release audit. Single-PR bundle covering 9 Howler scopes.
+
+**Convoy 2C (Wave 3) — gear & dialogue polish:**
+- **Gear lore** on 53 rare/epic/legendary items across 4 voice batches (Drifter/Accord, Red Court/Salter, MERIDIAN/Pre-Collapse, Kindling/Lucid). No more bare item names at the top of the rarity ladder.
+- **Boss intros** for 8 required + 4 bonus bosses (`elder_sanguine`, `elder_sanguine_deep`, `hive_mother`, `hive_mother_the_deep`, `meridian_automated_turret`, `meridian_ancient_hollow`, `frenzy`, `drifter_road_warden`, `lucid_thrall`, `sanguine_feral`, `red_court_enforcer`, `kindling_zealot`). Display wired on first room entry (`bossIntro`) and at combat start (`combatIntro`).
+- **hollowKills reactivity** — 5 NPCs (Cross, Patch, Lev, Howard, Sparks) gained 3 dialogue tiers each (15 nodes), gated on `hollow_kills_tier_1/2/3` quest flags set at 5/20/50 kills. The world starts noticing what you've become.
+
+**Release hardening:**
+- **Silent persist failures fixed** in `lib/gameEngine.ts`: `adjustReputation`, `setQuestFlag`, `charon_choice` snapshot, `_handlePlayerDeath`, `rebirthCharacter`, `rebirthWithStats`. Each now retries with a session refresh and surfaces a user-visible warning if persistence fails — no more silently lost rep changes, dead cycle history, or borked rebirths.
+- **Middleware fail-closed** — `middleware.ts` now redirects to `/login` when Supabase env is missing instead of silently passing the request through.
+- **Prologue prompt clarity** — the dead "press ENTER to continue" branch has been removed (it was unreachable due to the input-wrapper trim guard); prompt text now points players to `SKIP`.
+- **`.env.example` documents `SUPABASE_SERVICE_ROLE_KEY`** as currently unused.
+
+**Test coverage:**
+- 7 new integration test files: silent-failures, movement-zones, crafting-recipes, death-db-persist, save-retry, narrative-modules-deep, ending-db-persist.
+- 4 new unit/integration files for items lore, boss intros, middleware, terminal-flows.
+- 2 new dialogue test files (Cross/Patch + Lev/Howard/Sparks).
+- Suite: **1602 → 1729 passing** (+127), 1 skip, 1 todo.
+
+**Manual follow-ups (operator):**
+- Set Vercel env: `vercel env add NEXT_PUBLIC_DEV_MODE production <<< "false"` and same for `preview` (closes B11 from the audit).
+- If unused, remove `SUPABASE_SERVICE_ROLE_KEY` from your local `.env.local` (B13).
+
+**Deferred:** multi-tab corruption warning (needs design), `discovered_room_ids` write-path (needs design), H15 durability (optional).
+
 ### 2026-04-26 — Battle-MUD pivot, Convoy 2B: Gear Content (Wave 2)
 
 - 7 new enemies: Frenzy (glass cannon that explodes on death), Apex Screamer, plus 5 faction enforcers (Drifter / Salter / Accord / Kindling / Lucid)

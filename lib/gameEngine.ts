@@ -587,26 +587,57 @@ export class GameEngine implements EngineCore {
 
     // Persist death + cycle history to DB; also null out the mid-session state columns.
     const supabase = createSupabaseBrowserClient()
-    const { error: deathError } = await supabase
+    const deathPayload = {
+      hp: 0,
+      is_dead: true,
+      total_deaths: (player.totalDeaths ?? 0) + 1,
+      active_dialogue: null,
+      combat_state: null,
+    }
+    let { error: deathError } = await supabase
       .from('players')
-      .update({
-        hp: 0,
-        is_dead: true,
-        total_deaths: (player.totalDeaths ?? 0) + 1,
-        active_dialogue: null,
-        combat_state: null,
-      })
+      .update(deathPayload)
       .eq('id', player.id)
-    if (deathError) console.error('Failed to persist death:', deathError.message)
 
+    if (deathError) {
+      console.error('Failed to persist death:', deathError.message)
+      // One shared session refresh before retrying both writes (matches _savePlayer pattern)
+      await supabase.auth.refreshSession()
+      const { error: deathRetryError } = await supabase
+        .from('players')
+        .update(deathPayload)
+        .eq('id', player.id)
+      if (deathRetryError) {
+        console.error('Death persist retry failed:', deathRetryError.message)
+        this._appendMessages([systemMsg('⚠ Death could not be saved. Your progress may not persist — try reloading.')])
+      }
+      // Assign retry result so ledger path knows whether players update succeeded
+      deathError = deathRetryError
+    }
+
+    const ledgerPayload = {
+      cycle_history: cycleHistory,
+      discovered_enemies: this.state.ledger?.discoveredEnemies ?? [],
+    }
     const { error: ledgerError } = await supabase
       .from('player_ledger')
-      .update({
-        cycle_history: cycleHistory,
-        discovered_enemies: this.state.ledger?.discoveredEnemies ?? [],
-      })
+      .update(ledgerPayload)
       .eq('player_id', player.id)
-    if (ledgerError) console.error('Failed to persist cycle history:', ledgerError.message)
+
+    if (ledgerError) {
+      console.error('Failed to persist cycle history:', ledgerError.message)
+      const { error: ledgerRetryError } = await supabase
+        .from('player_ledger')
+        .update(ledgerPayload)
+        .eq('player_id', player.id)
+      if (ledgerRetryError) {
+        console.error('Ledger persist retry failed:', ledgerRetryError.message)
+        if (!deathError) {
+          // Only show this warning if the players update succeeded (avoid double-warning)
+          this._appendMessages([systemMsg('⚠ Cycle history could not be saved. Echo stats may be lost on next cycle.')])
+        }
+      }
+    }
 
     // first_death tutorial hint — fires once per player's lifetime
     await this.attemptTutorialHint('first_death')
@@ -1109,7 +1140,7 @@ export class GameEngine implements EngineCore {
     const hasInheritedRep = Object.keys(inheritedRep).length > 0
 
     // Reset player row — clear dialogue/combat state on rebirth (they don't survive a cycle)
-    await supabase
+    const { error: rebirthPlayerError } = await supabase
       .from('players')
       .update({
         hp: newHp,
@@ -1127,6 +1158,12 @@ export class GameEngine implements EngineCore {
         combat_state: null,
       })
       .eq('id', player.id)
+    if (rebirthPlayerError) {
+      console.error('Failed to reset player on rebirth:', rebirthPlayerError.message)
+      this._appendMessages([systemMsg('⚠ Rebirth failed — could not reset your character. Please reload and try again.')])
+      this._setState({ loading: false })
+      return
+    }
 
     // Update or create player_ledger
     const { data: ledgerData } = await supabase
@@ -1136,7 +1173,7 @@ export class GameEngine implements EngineCore {
       .maybeSingle()
 
     if (ledgerData) {
-      await supabase
+      const { error: ledgerUpdateError } = await supabase
         .from('player_ledger')
         .update({
           current_cycle: newCycle,
@@ -1144,8 +1181,14 @@ export class GameEngine implements EngineCore {
           pressure_level: pressure,
         })
         .eq('player_id', player.id)
+      if (ledgerUpdateError) {
+        console.error('Failed to update player_ledger on rebirth:', ledgerUpdateError.message)
+        this._appendMessages([systemMsg('⚠ Rebirth failed — could not update cycle record. Please reload and try again.')])
+        this._setState({ loading: false })
+        return
+      }
     } else {
-      await supabase
+      const { error: ledgerInsertError } = await supabase
         .from('player_ledger')
         .insert({
           player_id: player.id,
@@ -1154,10 +1197,22 @@ export class GameEngine implements EngineCore {
           total_deaths: newTotalDeaths,
           pressure_level: pressure,
         })
+      if (ledgerInsertError) {
+        console.error('Failed to insert player_ledger on rebirth:', ledgerInsertError.message)
+        this._appendMessages([systemMsg('⚠ Rebirth failed — could not create cycle record. Please reload and try again.')])
+        this._setState({ loading: false })
+        return
+      }
     }
 
     // Clear inventory (items are lost on death)
-    await supabase.from('player_inventory').delete().eq('player_id', player.id)
+    const { error: inventoryError } = await supabase.from('player_inventory').delete().eq('player_id', player.id)
+    if (inventoryError) {
+      console.error('Failed to clear inventory on rebirth:', inventoryError.message)
+      this._appendMessages([systemMsg('⚠ Rebirth failed — could not clear inventory. Please reload and try again.')])
+      this._setState({ loading: false })
+      return
+    }
 
     // Reload the player fresh
     const found = await this.loadPlayer(player.id)
@@ -1229,7 +1284,7 @@ export class GameEngine implements EngineCore {
     if (typeof localStorage !== 'undefined') {
       localStorage.removeItem('remnant_tutorial_combat_count')
     }
-    await supabase
+    const { error: rebirthWithStatsPlayerError } = await supabase
       .from('players')
       .update({
         name,
@@ -1251,6 +1306,12 @@ export class GameEngine implements EngineCore {
         combat_state: null,
       })
       .eq('id', player.id)
+    if (rebirthWithStatsPlayerError) {
+      console.error('Failed to reset player on rebirthWithStats:', rebirthWithStatsPlayerError.message)
+      this._appendMessages([systemMsg('⚠ Rebirth failed — could not reset your character. Please reload and try again.')])
+      this._setState({ loading: false })
+      return
+    }
 
     // Upsert ledger
     const { data: ledgerData } = await supabase
@@ -1260,12 +1321,18 @@ export class GameEngine implements EngineCore {
       .maybeSingle()
 
     if (ledgerData) {
-      await supabase
+      const { error: rwsLedgerUpdateError } = await supabase
         .from('player_ledger')
         .update({ current_cycle: newCycle, total_deaths: newTotalDeaths, pressure_level: pressure, discovered_enemies: this.state.ledger?.discoveredEnemies ?? [] })
         .eq('player_id', player.id)
+      if (rwsLedgerUpdateError) {
+        console.error('Failed to update player_ledger on rebirthWithStats:', rwsLedgerUpdateError.message)
+        this._appendMessages([systemMsg('⚠ Rebirth failed — could not update cycle record. Please reload and try again.')])
+        this._setState({ loading: false })
+        return
+      }
     } else {
-      await supabase.from('player_ledger').insert({
+      const { error: rwsLedgerInsertError } = await supabase.from('player_ledger').insert({
         player_id: player.id,
         world_seed: player.worldSeed,
         current_cycle: newCycle,
@@ -1273,9 +1340,21 @@ export class GameEngine implements EngineCore {
         pressure_level: pressure,
         discovered_enemies: this.state.ledger?.discoveredEnemies ?? [],
       })
+      if (rwsLedgerInsertError) {
+        console.error('Failed to insert player_ledger on rebirthWithStats:', rwsLedgerInsertError.message)
+        this._appendMessages([systemMsg('⚠ Rebirth failed — could not create cycle record. Please reload and try again.')])
+        this._setState({ loading: false })
+        return
+      }
     }
 
-    await supabase.from('player_inventory').delete().eq('player_id', player.id)
+    const { error: rwsInventoryError } = await supabase.from('player_inventory').delete().eq('player_id', player.id)
+    if (rwsInventoryError) {
+      console.error('Failed to clear inventory on rebirthWithStats:', rwsInventoryError.message)
+      this._appendMessages([systemMsg('⚠ Rebirth failed — could not clear inventory. Please reload and try again.')])
+      this._setState({ loading: false })
+      return
+    }
 
     const found = await this.loadPlayer(player.id)
     if (!found) {
@@ -1344,7 +1423,10 @@ export class GameEngine implements EngineCore {
       .from('players')
       .update({ faction_reputation: newFactionRep })
       .eq('id', player.id)
-    if (error) console.error('Failed to persist reputation:', error.message)
+    if (error) {
+      console.error('Failed to persist reputation:', error.message)
+      this._appendMessages([systemMsg('⚠ Reputation change could not be saved. It may be lost on reload.')])
+    }
 
     // Display name for the faction
     const FACTION_NAMES: Record<string, string> = {
@@ -1405,7 +1487,10 @@ export class GameEngine implements EngineCore {
       .from('players')
       .update({ quest_flags: newFlags })
       .eq('id', player.id)
-    if (flagError) console.error('Failed to persist quest flag:', flagError.message)
+    if (flagError) {
+      console.error('Failed to persist quest flag:', flagError.message)
+      this._appendMessages([systemMsg('⚠ Quest progress could not be saved. It may be lost on reload.')])
+    }
 
     // Detect act transitions and fire narrator voice for them
     if (flag === 'act1_complete' && value) {
@@ -1430,21 +1515,29 @@ export class GameEngine implements EngineCore {
       this._setState({ cycleHistory })
 
       const supabase2 = createSupabaseBrowserClient()
-      const { error: snapshotError } = await supabase2
+      const snapshotPayload = {
+        cycle_history: cycleHistory,
+        discovered_enemies: this.state.ledger?.discoveredEnemies ?? [],
+      }
+      let { error: snapshotError } = await supabase2
         .from('player_ledger')
-        .update({
-          cycle_history: cycleHistory,
-          discovered_enemies: this.state.ledger?.discoveredEnemies ?? [],
-        })
+        .update(snapshotPayload)
         .eq('player_id', player.id)
       if (snapshotError) {
         console.error('Failed to persist ending snapshot:', snapshotError.message)
-        this._appendMessages([{
-          id: crypto.randomUUID(),
-          text: 'Failed to save your journey — try again. Your progress has not been lost.',
-          type: 'error' as const,
-        }])
-        return
+        // Refresh session and retry once — expired token is common cause at ending
+        await supabase2.auth.refreshSession()
+        const { error: snapshotRetryError } = await supabase2
+          .from('player_ledger')
+          .update(snapshotPayload)
+          .eq('player_id', player.id)
+        if (snapshotRetryError) {
+          console.error('Ending snapshot retry failed:', snapshotRetryError.message)
+          this._appendMessages([systemMsg('⚠ Failed to save your journey. Try again — your progress has not been lost.')])
+          return
+        }
+        // Retry succeeded — clear error so ending proceeds
+        snapshotError = null
       }
 
       if (choice === 'seal') {

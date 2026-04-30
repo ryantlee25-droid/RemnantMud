@@ -313,6 +313,12 @@ export async function handleMove(engine: EngineCore, direction: string | undefin
 
   if (!nextRoom.visited) {
     messages.push(msg(getRoomDescription(nextRoom, tod)))
+    for (const enemyId of nextRoom.enemies) {
+      const bossEnemy = getEnemy(enemyId)
+      if (bossEnemy?.bossIntro && (bossEnemy.xp ?? 0) >= 150) {
+        messages.push(msg(bossEnemy.bossIntro))
+      }
+    }
     await markVisited(nextRoomId, player.id)
     // Increment rooms explored counter
     const currentState = engine.getState()

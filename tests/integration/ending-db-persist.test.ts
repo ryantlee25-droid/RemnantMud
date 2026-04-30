@@ -323,10 +323,9 @@ describe('ending DB persist — retry path (R1 dependency)', () => {
     })
   })
 
-  // REQUIRES R1 — re-enable after R1 merges the retry logic into setQuestFlag.
-  // R1 adds: on snapshotError, call supabase.auth.refreshSession() then retry
-  // the player_ledger update once. On retry success, ending proceeds normally.
-  it.skip('on first call fail + retry success, refreshSession is called', async () => {
+  // R1: on snapshotError, supabase.auth.refreshSession() runs, then the
+  // player_ledger update retries once. On retry success, ending proceeds.
+  it('on first call fail + retry success, refreshSession is called', async () => {
     // First call fails, second call (retry) succeeds
     firstLedgerUpdateError = { message: 'expired token' }
     secondLedgerUpdateError = null
@@ -339,10 +338,9 @@ describe('ending DB persist — retry path (R1 dependency)', () => {
     expect(ledgerUpdateCallCount).toBe(2)
   })
 
-  // REQUIRES R1 — re-enable after R1 merges the retry logic into setQuestFlag.
-  // After retry success, endingTriggered must remain false immediately (setTimeout
-  // still controls the final transition) — but the error message must NOT appear.
-  it.skip('on first call fail + retry success, no error message is appended', async () => {
+  // After retry success, endingTriggered remains false immediately (setTimeout
+  // controls the final transition) — but no error message must appear.
+  it('on first call fail + retry success, no error message is appended', async () => {
     firstLedgerUpdateError = { message: 'expired token' }
     secondLedgerUpdateError = null
 
@@ -355,10 +353,8 @@ describe('ending DB persist — retry path (R1 dependency)', () => {
     expect(hasErrorMsg).toBe(false)
   })
 
-  // REQUIRES R1 — re-enable after R1 merges the retry logic into setQuestFlag.
-  // When both calls fail (persistent failure), endingTriggered must stay false
-  // and a warning message must appear.
-  it.skip('on both calls failing (persistent failure), endingTriggered stays false', async () => {
+  // Persistent failure: endingTriggered stays false and a warning message appears.
+  it('on both calls failing (persistent failure), endingTriggered stays false', async () => {
     firstLedgerUpdateError = { message: 'connection refused' }
     secondLedgerUpdateError = { message: 'connection refused' }
 

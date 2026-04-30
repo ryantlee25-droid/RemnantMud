@@ -176,16 +176,8 @@ describe('_savePlayer — retry path', () => {
 
   // ----------------------------------------------------------
   // Test 3: both attempts fail → systemMsg warning in log
-  //
-  // REQUIRES R1 (release-hardening) — re-enable after R1 merges.
-  // R1 adds the systemMsg('⚠ Save failed...') path inside _savePlayer.
-  // The logic IS present in main already (line ~506 of gameEngine.ts),
-  // but this test is skipped to confirm it's wired as part of R1's
-  // explicit retry-warning contract rather than assuming the current
-  // implementation matches. Remove the .skip() after R1 lands and the
-  // exact warning text is confirmed.
   // ----------------------------------------------------------
-  it.skip('appends a systemMsg warning when both save attempts fail', async () => {
+  it('appends a systemMsg warning when both save attempts fail', async () => {
     mockPlayersUpdate
       .mockReturnValueOnce(makeEqChain({ error: { message: 'JWT expired', code: 'PGRST301' } }))
       .mockReturnValueOnce(makeEqChain({ error: { message: 'Still failing', code: '500' } }))

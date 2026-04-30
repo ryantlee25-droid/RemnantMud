@@ -61,6 +61,22 @@ const levTree: DialogueTree = {
           targetNode: 'lev_keycard_gate',
           requiresFlag: 'discovered_field_station_echo',
         },
+        // ---- Hollow-kills reactivity (H14) ----
+        {
+          label: '"Tell me about your survival projections."',
+          targetNode: 'lev_hollow_t3',
+          requiresFlag: 'hollow_kills_tier_3',
+        },
+        {
+          label: '"Tell me about your survival projections."',
+          targetNode: 'lev_hollow_t2',
+          requiresFlag: 'hollow_kills_tier_2',
+        },
+        {
+          label: '"Tell me about your survival projections."',
+          targetNode: 'lev_hollow_t1',
+          requiresFlag: 'hollow_kills_tier_1',
+        },
         {
           label: '"I should go."',
           targetNode: 'lev_leave',
@@ -342,6 +358,103 @@ const levTree: DialogueTree = {
       speaker: 'Lev',
       text: `"I have work to do." ${rt.npc('Lev')} is already reading before you've turned away. The dismissal is efficient, like everything else about them.`,
     },
+
+    // ---- Hollow-kills reactivity (H14) ----
+    lev_hollow_t1: {
+      id: 'lev_hollow_t1',
+      speaker: 'Lev',
+      text: `${rt.npc('Lev')} sets the tablet flat on the desk. "Cycle N, [K] Hollow eliminated. You're trending above the mortality curve." A pause — not dramatic, just the natural space between a data point and its interpretation. "I track every confirmed kill in the region. Your output is a meaningful outlier. I thought you should know."`,
+      branches: [
+        {
+          label: '"What does that mean for the survival rate?"',
+          targetNode: 'lev_hollow_t1_detail',
+        },
+        {
+          label: '"Just doing what needs doing."',
+          targetNode: 'lev_leave',
+        },
+      ],
+    },
+
+    lev_hollow_t1_detail: {
+      id: 'lev_hollow_t1_detail',
+      speaker: 'Lev',
+      text: `"Statistically, every five Hollow cleared from River Road corridor extends the average supply run by eleven minutes. That doesn't sound like much." ${rt.npc('Lev')} picks the tablet back up. "It compounds. Eleven minutes is whether Marta's cart makes it or doesn't. I am not, generally speaking, given to gratitude. But I notice data."`,
+      branches: [
+        {
+          label: '"I\'ll keep the numbers moving."',
+          targetNode: 'lev_leave',
+        },
+      ],
+    },
+
+    lev_hollow_t2: {
+      id: 'lev_hollow_t2',
+      speaker: 'Lev',
+      text: `${rt.npc('Lev')} looks up before you speak. "You're becoming a data point. I mean that as a compliment." They turn the tablet toward you — a chart, dense with figures. "This line is you. This other line is expected attrition. You're diverging. In the favorable direction." They pull the tablet back. "I find this interesting."`,
+      branches: [
+        {
+          label: '"How long does the trend hold?"',
+          targetNode: 'lev_hollow_t2_trend',
+        },
+        {
+          label: '"Glad to be a useful data point."',
+          targetNode: 'lev_leave',
+        },
+      ],
+    },
+
+    lev_hollow_t2_trend: {
+      id: 'lev_hollow_t2_trend',
+      speaker: 'Lev',
+      text: `"Empirically, twelve to twenty cycles. After that the Hollow adapt — not intelligently, but through attrition. The ones that survive you become the ones that pass your traits on." ${rt.npc('Lev')} says this the way someone might discuss weather patterns. "So: stay effective for as long as you can. Don't waste the lead."`,
+      branches: [
+        {
+          label: '"I wasn\'t planning to."',
+          targetNode: 'lev_leave',
+        },
+      ],
+    },
+
+    lev_hollow_t3: {
+      id: 'lev_hollow_t3',
+      speaker: 'Lev',
+      text: `${rt.npc('Lev')} sets the tablet down entirely. That is unusual. "The data is clear. You're going to die in the field. I'd rather it happened later. So would you, presumably." No editorializing. Just the facts as they exist. "I've modeled your output against regional Hollow density. You're winning that engagement on current trajectory. The problem is trajectory, in the field, eventually bends."`,
+      branches: [
+        {
+          label: '"What do you recommend?"',
+          targetNode: 'lev_hollow_t3_recommend',
+        },
+        {
+          label: '"I know the odds."',
+          targetNode: 'lev_hollow_t3_acknowledge',
+        },
+      ],
+    },
+
+    lev_hollow_t3_recommend: {
+      id: 'lev_hollow_t3_recommend',
+      speaker: 'Lev',
+      text: `"Rest cycles. Rotation. Don't fight the same corridor two days running — the Hollow start anticipating routes after sustained contact." ${rt.npc('Lev')} picks up the tablet. "I'm not sentimental. I am, however, aware that you provide value, and value is inefficient to replace. So." A pause. "Don't die yet."`,
+      branches: [
+        {
+          label: '"I\'ll try."',
+          targetNode: 'lev_leave',
+        },
+      ],
+    },
+
+    lev_hollow_t3_acknowledge: {
+      id: 'lev_hollow_t3_acknowledge',
+      speaker: 'Lev',
+      text: `"Good." ${rt.npc('Lev')} resumes reading. "Knowing the odds and working within them is the correct approach. Most people either ignore probability or let it paralyze them." A beat. "You have not done either. That is noted."`,
+      branches: [
+        {
+          label: '"Back to it, then."',
+          targetNode: 'lev_leave',
+        },
+      ],
+    },
   },
 }
 
@@ -380,6 +493,22 @@ const sparksTree: DialogueTree = {
         {
           label: `"I need a ${rt.item('signal receiver')} for the field."`,
           targetNode: 'sparks_equipment',
+        },
+        // ---- Hollow-kills reactivity (H14) ----
+        {
+          label: '"You wanted to ask about something."',
+          targetNode: 'sparks_hollow_t3',
+          requiresFlag: 'hollow_kills_tier_3',
+        },
+        {
+          label: '"You wanted to ask about something."',
+          targetNode: 'sparks_hollow_t2',
+          requiresFlag: 'hollow_kills_tier_2',
+        },
+        {
+          label: '"You wanted to ask about something."',
+          targetNode: 'sparks_hollow_t1',
+          requiresFlag: 'hollow_kills_tier_1',
         },
         {
           label: '"I\'ll let you work."',
@@ -579,6 +708,115 @@ const sparksTree: DialogueTree = {
       id: 'sparks_leave',
       speaker: 'Sparks',
       text: `${rt.npc('Sparks')} is already back to her equipment before you finish speaking. The soldering iron hums. A burst of static cuts through the radio and she lunges for the dial, adjusting, listening, writing. You are no longer in the room as far as she's concerned.`,
+    },
+
+    // ---- Hollow-kills reactivity (H14) ----
+    sparks_hollow_t1: {
+      id: 'sparks_hollow_t1',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} sets down the soldering iron. Not because she's finished — just because she looked at you and something stopped her. "You smell like you've been busy. How many?" The question is flat, direct. Not judgmental — just a number. She's the kind of person who counts things.`,
+      branches: [
+        {
+          label: '"A few. Hollow, outside the wire."',
+          targetNode: 'sparks_hollow_t1_count',
+        },
+        {
+          label: '"Does it matter?"',
+          targetNode: 'sparks_leave',
+        },
+      ],
+    },
+
+    sparks_hollow_t1_count: {
+      id: 'sparks_hollow_t1_count',
+      speaker: 'Sparks',
+      text: `"It matters." ${rt.npc('Sparks')} picks the iron back up — almost, then sets it down again. "The signal I track, the Hollow density, the patterns — they're all connected. Every one you put down changes the noise floor out there. I'm not asking to judge you." A pause. "I just like knowing what the data means."`,
+      branches: [
+        {
+          label: '"Fair enough."',
+          targetNode: 'sparks_leave',
+        },
+      ],
+    },
+
+    sparks_hollow_t2: {
+      id: 'sparks_hollow_t2',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} doesn't look up from the radio. But her hands stop. "Do you enjoy it? You can tell me. I won't judge. I am genuinely asking." She still doesn't look at you. "I think about this. What it takes to keep doing it. Whether the doing changes you or you change the doing."`,
+      branches: [
+        {
+          label: '"Sometimes. Is that wrong?"',
+          targetNode: 'sparks_hollow_t2_honest',
+        },
+        {
+          label: '"It\'s necessary. That\'s enough."',
+          targetNode: 'sparks_hollow_t2_practical',
+        },
+      ],
+    },
+
+    sparks_hollow_t2_honest: {
+      id: 'sparks_hollow_t2_honest',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} nods once, like she expected that. "No. I don't think it's wrong. I think it means you're built for the world as it is, not the world as it was." She picks the iron back up. "That's not nothing."`,
+      branches: [
+        {
+          label: '"Back to the signal."',
+          targetNode: 'sparks_leave',
+        },
+      ],
+    },
+
+    sparks_hollow_t2_practical: {
+      id: 'sparks_hollow_t2_practical',
+      speaker: 'Sparks',
+      text: `"That's the answer people give when they've thought about it and decided not to think about it anymore." ${rt.npc('Sparks')} says it without cruelty. "Which is also valid. The signal doesn't care either way."`,
+      branches: [
+        {
+          label: '"No, it doesn\'t."',
+          targetNode: 'sparks_leave',
+        },
+      ],
+    },
+
+    sparks_hollow_t3: {
+      id: 'sparks_hollow_t3',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} looks at you — really looks, the frequency chart still in hand. "Most people who kill at your rate either stop entirely or can't stop at all. Which one are you?" She asks it the way she asks about signal patterns: genuinely curious, no safe answer expected, no punishment for the truth.`,
+      branches: [
+        {
+          label: '"I can stop. I choose not to."',
+          targetNode: 'sparks_hollow_t3_choose',
+        },
+        {
+          label: '"I don\'t know yet."',
+          targetNode: 'sparks_hollow_t3_unknown',
+        },
+      ],
+    },
+
+    sparks_hollow_t3_choose: {
+      id: 'sparks_hollow_t3_choose',
+      speaker: 'Sparks',
+      text: `"That's the best answer." ${rt.npc('Sparks')} makes a note on the frequency chart — something small, in the margin. "The people who can't stop are the dangerous ones. Not to the Hollow." She caps the pen. "To us."`,
+      branches: [
+        {
+          label: '"I\'m not that."',
+          targetNode: 'sparks_leave',
+        },
+      ],
+    },
+
+    sparks_hollow_t3_unknown: {
+      id: 'sparks_hollow_t3_unknown',
+      speaker: 'Sparks',
+      text: `${rt.npc('Sparks')} writes something on the chart. Doesn't show you. "Most honest thing I've heard this week." She looks up. "Come back and tell me when you figure it out. I actually want to know."`,
+      branches: [
+        {
+          label: '"I will."',
+          targetNode: 'sparks_leave',
+        },
+      ],
     },
   },
 }
@@ -1934,6 +2172,22 @@ const howardTree: DialogueTree = {
           skillCheck: { skill: 'negotiation', dc: 10 },
           failNode: 'howard_negotiate_fail',
         },
+        // ---- Hollow-kills reactivity (H14) ----
+        {
+          label: '"The Hollow out there. I\'ve been dealing with them."',
+          targetNode: 'howard_hollow_t3',
+          requiresFlag: 'hollow_kills_tier_3',
+        },
+        {
+          label: '"The Hollow out there. I\'ve been dealing with them."',
+          targetNode: 'howard_hollow_t2',
+          requiresFlag: 'hollow_kills_tier_2',
+        },
+        {
+          label: '"The Hollow out there. I\'ve been dealing with them."',
+          targetNode: 'howard_hollow_t1',
+          requiresFlag: 'hollow_kills_tier_1',
+        },
       ],
     },
 
@@ -2024,6 +2278,94 @@ const howardTree: DialogueTree = {
       id: 'howard_closure',
       speaker: 'Howard',
       text: `${rt.npc('Howard')} nods once. "Be careful north of the fork. Something's changed."`,
+    },
+
+    // ---- Hollow-kills reactivity (H14) ----
+    howard_hollow_t1: {
+      id: 'howard_hollow_t1',
+      speaker: 'Howard',
+      text: `${rt.npc('Howard')} looks at you flat. "Good. Every one you put down is one less I need a plan for." He means it — no ceremony, no thanks. Just a calculation confirmed. "They've been moving closer to the bridge. Anything you clear on River Road keeps the flow open. That matters to everyone who crosses."`,
+      branches: [
+        {
+          label: '"I\'ll keep at it."',
+          targetNode: 'howard_closure',
+        },
+        {
+          label: '"What do they want with the bridge?"',
+          targetNode: 'howard_hollow_t1_bridge',
+        },
+      ],
+    },
+
+    howard_hollow_t1_bridge: {
+      id: 'howard_hollow_t1_bridge',
+      speaker: 'Howard',
+      text: `"They don't want anything. That's the problem." ${rt.npc('Howard')} looks north, toward the water. "They're not organized. They move on heat and noise. The bridge has both. People use it, I maintain the lanterns." A pause. "You want to help, keep them busy away from here."`,
+      branches: [
+        {
+          label: '"Understood."',
+          targetNode: 'howard_closure',
+        },
+      ],
+    },
+
+    howard_hollow_t2: {
+      id: 'howard_hollow_t2',
+      speaker: 'Howard',
+      text: `${rt.npc('Howard')} uncrosses his arms. Not a big gesture — just a loosening. "You keep this up, the Hollow pressure on Duskhollow drops. That matters." He doesn't say why it matters to him specifically. He doesn't have to. "I've been counting the crossings. More people making it through. Less nervous when they hit the bridge. That's because of what you've been doing south of the ford."`,
+      branches: [
+        {
+          label: '"Happy to hear it\'s helping."',
+          targetNode: 'howard_hollow_t2_response',
+        },
+        {
+          label: '"The work\'s not done."',
+          targetNode: 'howard_closure',
+        },
+      ],
+    },
+
+    howard_hollow_t2_response: {
+      id: 'howard_hollow_t2_response',
+      speaker: 'Howard',
+      text: `"It's helping." ${rt.npc('Howard')} says it like it's a weight being placed on one side of a scale. "You don't get told that often enough, probably. Here it is: it's helping." He looks back toward the water. That's all he's giving.`,
+      branches: [
+        {
+          label: '"Thanks, Howard."',
+          targetNode: 'howard_closure',
+        },
+      ],
+    },
+
+    howard_hollow_t3: {
+      id: 'howard_hollow_t3',
+      speaker: 'Howard',
+      text: `${rt.npc('Howard')} looks you over — the way someone does when they're trying to decide how honest to be. He decides. "Don't come to me expecting gratitude. This is what the job looks like." He's not dismissing what you've done. He's framing it. "I've watched a lot of people come through this bridge carrying something they'll never put down. You've got that look. Not bad. Just — know what you're carrying."`,
+      branches: [
+        {
+          label: '"I know."',
+          targetNode: 'howard_hollow_t3_know',
+        },
+        {
+          label: '"I\'m fine."',
+          targetNode: 'howard_closure',
+        },
+      ],
+    },
+
+    howard_hollow_t3_know: {
+      id: 'howard_hollow_t3_know',
+      speaker: 'Howard',
+      text: `${rt.npc('Howard')} nods once. Slow. "Good. Most people who say that are lying to themselves. You sound like you're not." He turns back to the bridge rail. "Cross for free, this time. I won't make a habit of it."`,
+      onEnter: {
+        setFlag: 'howard_waived_fee',
+      },
+      branches: [
+        {
+          label: '"Appreciate it."',
+          targetNode: 'howard_closure',
+        },
+      ],
     },
   },
 }

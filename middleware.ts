@@ -30,8 +30,8 @@ export default async function middleware(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('[proxy] Missing Supabase env vars — skipping auth check')
-    return NextResponse.next()
+    console.error('[proxy] Missing Supabase env vars — redirecting to /login')
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 
   let response = NextResponse.next({ request: { headers: request.headers } })

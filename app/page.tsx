@@ -319,7 +319,7 @@ export default function GamePage() {
     // ── Prologue phase ─────────────────────────────────────
     if (gameFlow === 'prologue') {
       const upper = trimmed.toUpperCase()
-      if (upper === 'SKIP' || upper === 'ENTER' || upper === '') {
+      if (upper === 'SKIP' || upper === 'ENTER') {
         if (typeof window !== 'undefined') localStorage.setItem(PROLOGUE_KEY, '1')
         setGameFlow('playing')
 
@@ -345,7 +345,7 @@ export default function GamePage() {
         } else {
           engine._appendMessages([{
             id: crypto.randomUUID(),
-            text: 'Type <keyword>SKIP</keyword> to bypass, or ENTER to continue.',
+            text: 'Type <keyword>SKIP</keyword> to continue.',
             type: 'system' as const,
           }])
         }

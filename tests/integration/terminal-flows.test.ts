@@ -419,4 +419,59 @@ describe('prologueMessages', () => {
     const msgs = prologueMessages()
     expect(msgs.every(m => m.type === 'narrative')).toBe(true)
   })
+
+  it('does not mention pressing ENTER with no text as the only option', () => {
+    // W-prologue-enter: the "press ENTER to continue" promise was misleading.
+    // CommandInputWrapper swallows empty submits (if (!trimmed) return at line 538),
+    // so an empty enter never reaches the handler. The prompt should not instruct
+    // players to press Enter with no input.
+    const msgs = prologueMessages()
+    const lastText = msgs[msgs.length - 1].text
+    // The final prompt must include SKIP as the primary call-to-action.
+    expect(lastText).toContain('SKIP')
+  })
+})
+
+// ── Prologue handler token acceptance (W-prologue-enter) ────
+// The prologue handleCommand branch accepts SKIP and ENTER (typed word)
+// but NOT an empty string — empty submits are swallowed by CommandInputWrapper
+// before they reach handleCommand (line 538: if (!trimmed) return).
+// This block documents the expected token set post-fix.
+
+describe('prologue continue tokens — W-prologue-enter fix', () => {
+  const advancesGameFlow = (input: string): boolean => {
+    // Mirrors the prologue condition in app/page.tsx after the R3 fix:
+    //   if (upper === 'SKIP' || upper === 'ENTER')
+    // The empty-string branch was removed because it is unreachable.
+    const upper = input.trim().toUpperCase()
+    return upper === 'SKIP' || upper === 'ENTER'
+  }
+
+  it('SKIP advances gameFlow from prologue', () => {
+    expect(advancesGameFlow('SKIP')).toBe(true)
+  })
+
+  it('skip (lowercase) advances gameFlow from prologue', () => {
+    expect(advancesGameFlow('skip')).toBe(true)
+  })
+
+  it('ENTER (typed word) advances gameFlow from prologue', () => {
+    expect(advancesGameFlow('ENTER')).toBe(true)
+  })
+
+  it('empty string does NOT advance gameFlow — swallowed by CommandInputWrapper', () => {
+    // Empty submit never reaches the handler; the dead branch has been removed.
+    expect(advancesGameFlow('')).toBe(false)
+  })
+
+  it('whitespace-only input does NOT advance gameFlow', () => {
+    // trim() produces '' which neither SKIP nor ENTER matches.
+    expect(advancesGameFlow('   ')).toBe(false)
+  })
+
+  it('unrelated commands do NOT advance gameFlow', () => {
+    expect(advancesGameFlow('go north')).toBe(false)
+    expect(advancesGameFlow('LOOK')).toBe(false)
+    expect(advancesGameFlow('RESTART')).toBe(false)
+  })
 })

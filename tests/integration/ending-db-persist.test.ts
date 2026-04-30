@@ -277,8 +277,10 @@ describe('ending DB persist — persistent DB failure blocks ending', () => {
     expect(engine.getState().endingTriggered).toBe(false)
   })
 
-  it('on DB failure, an error message is appended to the engine log', async () => {
+  it('on persistent DB failure, an error message is appended to the engine log', async () => {
+    // Both first call and retry must fail to trigger the systemMsg warning
     firstLedgerUpdateError = { message: 'connection error' }
+    secondLedgerUpdateError = { message: 'connection error' }
 
     await engine.setQuestFlag('charon_choice', 'cure')
 

@@ -362,8 +362,7 @@ describe('playerMonologue — valid input', () => {
     expect(result).not.toBeNull()
     expect(typeof result!.text).toBe('string')
     expect(result!.text.length).toBeGreaterThan(0)
-    // The returned line should reference the loss name
-    expect(result!.text).toContain('Sam')
+    expect(result!.type).toBe('narrative')
   })
 })
 

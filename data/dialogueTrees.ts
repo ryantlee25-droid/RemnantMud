@@ -747,6 +747,22 @@ const crossTree: DialogueTree = {
           targetNode: 'cross_expedition_gate',
           requiresFlag: 'patch_mentioned_scar',
         },
+        // ---- Hollow-kills reactivity (H13) ----
+        {
+          label: '"You wanted to talk about the Hollow."',
+          targetNode: 'cross_hollow_t3',
+          requiresFlag: 'hollow_kills_tier_3',
+        },
+        {
+          label: '"You wanted to talk about the Hollow."',
+          targetNode: 'cross_hollow_t2',
+          requiresFlag: 'hollow_kills_tier_2',
+        },
+        {
+          label: '"You wanted to talk about the Hollow."',
+          targetNode: 'cross_hollow_t1',
+          requiresFlag: 'hollow_kills_tier_1',
+        },
         {
           label: '"I should go."',
           targetNode: 'cross_leave',
@@ -1099,6 +1115,91 @@ const crossTree: DialogueTree = {
       id: 'cross_leave',
       speaker: 'Marshal Cross',
       text: `${rt.npc('Cross')} nods once. She is already reading the next report before you reach the door.`,
+    },
+
+    // ---- Hollow-kills reactivity (H13) ----
+    cross_hollow_t1: {
+      id: 'cross_hollow_t1',
+      speaker: 'Marshal Cross',
+      text: `${rt.npc('Cross')} sets the report down. One look at you — the way you carry yourself after a fight, the hands, the eyes. "You've been busy outside the wire." She doesn't ask if you're all right. That question left her vocabulary a long time ago. "The Hollow on River Road — you're one of the reasons the count's lower. I've noticed. Keep it up."`,
+      branches: [
+        {
+          label: '"It needed doing."',
+          targetNode: 'cross_leave',
+        },
+        {
+          label: '"I\'ll keep at it."',
+          targetNode: 'cross_leave',
+        },
+      ],
+    },
+
+    cross_hollow_t2: {
+      id: 'cross_hollow_t2',
+      speaker: 'Marshal Cross',
+      text: `"The Hollow count on River Road dropped. I noticed. Was that you?" She doesn't wait for confirmation — the question is already answered. A pause. Measured. "You understand what that stretch of road means to our supply lines. Every Hollow you clear is a run that makes it through. I don't track individual contributions as a habit. I'm tracking yours."`,
+      branches: [
+        {
+          label: '"Understood, Marshal."',
+          targetNode: 'cross_leave',
+        },
+        {
+          label: '"They keep coming back."',
+          targetNode: 'cross_hollow_t2_response',
+        },
+      ],
+    },
+
+    cross_hollow_t2_response: {
+      id: 'cross_hollow_t2_response',
+      speaker: 'Marshal Cross',
+      text: `"They do." She picks the report back up. "Everything worth protecting requires maintenance. That's not pessimism — it's the operational reality of eight hundred people staying alive." She meets your eyes once more. "Keep at it."`,
+      branches: [
+        {
+          label: '"Yes, Marshal."',
+          targetNode: 'cross_leave',
+        },
+      ],
+    },
+
+    cross_hollow_t3: {
+      id: 'cross_hollow_t3',
+      speaker: 'Marshal Cross',
+      text: `${rt.npc('Cross')} looks at you for a long moment. Not the standard assessment — something longer. Something that doesn't have a form. "Stop." The word lands flat. "I'm not concerned about the Hollow. I'm concerned about what it takes to kill that many and feel nothing." She doesn't accuse. It's not an accusation. "I've been in the field. I know what that number does to a person. I'm asking — not as Marshal, as someone who's been where you are — are you still in there?"`,
+      branches: [
+        {
+          label: '"I\'m fine."',
+          targetNode: 'cross_hollow_t3_fine',
+        },
+        {
+          label: '"I don\'t know anymore."',
+          targetNode: 'cross_hollow_t3_honest',
+        },
+      ],
+    },
+
+    cross_hollow_t3_fine: {
+      id: 'cross_hollow_t3_fine',
+      speaker: 'Marshal Cross',
+      text: `"That's what they all say." She holds your gaze. Not hard — just steady. "Take a day. Not an order. A suggestion from someone who made the same mistake of not taking one." She picks up the report. "Dismissed."`,
+      branches: [
+        {
+          label: '"Understood."',
+          targetNode: 'cross_leave',
+        },
+      ],
+    },
+
+    cross_hollow_t3_honest: {
+      id: 'cross_hollow_t3_honest',
+      speaker: 'Marshal Cross',
+      text: `${rt.npc('Cross')} is quiet for a moment. That answer she didn't expect — or expected and hoped she wouldn't hear. "That's the right answer to give. The honest one." She sets the report aside. Fully, this time. "Patch is at the market. Not an order. Go."`,
+      branches: [
+        {
+          label: '"Thank you, Marshal."',
+          targetNode: 'cross_leave',
+        },
+      ],
     },
   },
 }
@@ -1531,6 +1632,22 @@ const patchTree: DialogueTree = {
           label: 'What do you know about the factions out here?',
           targetNode: 'patch_faction_talk',
         },
+        // ---- Hollow-kills reactivity (H13) ----
+        {
+          label: '"I\'ve been dealing with the Hollow."',
+          targetNode: 'patch_hollow_t3',
+          requiresFlag: 'hollow_kills_tier_3',
+        },
+        {
+          label: '"I\'ve been dealing with the Hollow."',
+          targetNode: 'patch_hollow_t2',
+          requiresFlag: 'hollow_kills_tier_2',
+        },
+        {
+          label: '"I\'ve been dealing with the Hollow."',
+          targetNode: 'patch_hollow_t1',
+          requiresFlag: 'hollow_kills_tier_1',
+        },
       ],
     },
 
@@ -1688,6 +1805,107 @@ const patchTree: DialogueTree = {
       id: 'patch_closure_empty',
       speaker: 'Patch',
       text: `${rt.npc('Patch')} shrugs — one shoulder, economical. "That's what I've got. Come back with something worth trading."`,
+    },
+
+    // ---- Hollow-kills reactivity (H13) ----
+    patch_hollow_t1: {
+      id: 'patch_hollow_t1',
+      speaker: 'Patch',
+      text: `${rt.npc('Patch')} looks up. Actually looks — not the transactional glance, the real one. Takes in the hands, the stance, the particular weight of someone who has been in it. "Another one. Sit down before you fall down." The suture kit is already moving. "You've been outside the wire. I can tell without asking. Sit."`,
+      branches: [
+        {
+          label: '"I\'m fine."',
+          targetNode: 'patch_hollow_t1_fine',
+        },
+        {
+          label: '"All right."',
+          targetNode: 'patch_closure',
+        },
+      ],
+    },
+
+    patch_hollow_t1_fine: {
+      id: 'patch_hollow_t1_fine',
+      speaker: 'Patch',
+      text: `"Everyone says that." ${rt.npc('Patch')} doesn't look up. "Sit anyway. You're bleeding somewhere you haven't noticed yet. Always are."`,
+      branches: [
+        {
+          label: '"Fair enough."',
+          targetNode: 'patch_closure',
+        },
+      ],
+    },
+
+    patch_hollow_t2: {
+      id: 'patch_hollow_t2',
+      speaker: 'Patch',
+      text: `${rt.npc('Patch')} sets the suture kit down. "I've stopped asking what happened. The body tells me." One look — methodical, clinical. "How many this time?" The question isn't curious. It's intake. Triage. "You're going to want to sit for this next part."`,
+      branches: [
+        {
+          label: '"Too many to count."',
+          targetNode: 'patch_hollow_t2_count',
+        },
+        {
+          label: '"I\'m managing."',
+          targetNode: 'patch_closure',
+        },
+      ],
+    },
+
+    patch_hollow_t2_count: {
+      id: 'patch_hollow_t2_count',
+      speaker: 'Patch',
+      text: `"That's what I thought." ${rt.npc('Patch')} makes a note. Small, economical. Then: "You're not the first person I've patched up who lost count. Won't be the last." The note goes away. "But here's what I've noticed — the ones who stop counting are usually the ones who need to start paying attention to something else."`,
+      branches: [
+        {
+          label: '"Like what?"',
+          targetNode: 'patch_closure',
+        },
+        {
+          label: '"Understood."',
+          targetNode: 'patch_closure',
+        },
+      ],
+    },
+
+    patch_hollow_t3: {
+      id: 'patch_hollow_t3',
+      speaker: 'Patch',
+      text: `${rt.npc('Patch')} doesn't say anything for a moment. Just looks. Then: "I patched the last one who fought like you. She didn't come back from her next run. I'm not saying you will too. I'm saying I remember their names." The suture kit is in hand. No question. This is already happening. "What I'm asking — and this is the only time I'll ask — is whether you want to be remembered, or whether you want to survive long enough to not need remembering."`,
+      branches: [
+        {
+          label: '"I want to survive."',
+          targetNode: 'patch_hollow_t3_survive',
+        },
+        {
+          label: '"I just need to keep going."',
+          targetNode: 'patch_hollow_t3_keep_going',
+        },
+      ],
+    },
+
+    patch_hollow_t3_survive: {
+      id: 'patch_hollow_t3_survive',
+      speaker: 'Patch',
+      text: `"Good." ${rt.npc('Patch')} finishes the work without ceremony. "Then start making decisions that reflect that." The kit snaps shut. "Come back before the next run. Not after."`,
+      branches: [
+        {
+          label: '"I will."',
+          targetNode: 'patch_closure',
+        },
+      ],
+    },
+
+    patch_hollow_t3_keep_going: {
+      id: 'patch_hollow_t3_keep_going',
+      speaker: 'Patch',
+      text: `${rt.npc('Patch')} is quiet for a moment. Sets down the kit. "I know." No argument, no push. "They all say that, before." A pause. "You're not wrong. I'm just — keeping the file open." They go back to work. "Come back when you're ready to close it on your own terms."`,
+      branches: [
+        {
+          label: '"I hear you."',
+          targetNode: 'patch_closure',
+        },
+      ],
     },
   },
 }

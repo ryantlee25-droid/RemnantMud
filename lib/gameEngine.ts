@@ -2209,11 +2209,20 @@ export class GameEngine implements EngineCore {
 
       // Increment hollowKills when the defeated enemy was a Hollow (has hollowType set).
       // H7 (Wave 2) reads this counter for faction-reactivity dialogue.
+      // H13 (Wave 3) also sets tier flags used by Cross + Patch dialogue gating.
       if (preCombatEnemy?.hollowType) {
         const currentPlayer = this.state.player
+        const newKills = (currentPlayer.hollowKills ?? 0) + 1
+        const updatedFlags: Record<string, string | boolean | number> = {
+          ...(currentPlayer.questFlags ?? {}),
+        }
+        if (newKills >= 5)  updatedFlags['hollow_kills_tier_1'] = true
+        if (newKills >= 20) updatedFlags['hollow_kills_tier_2'] = true
+        if (newKills >= 50) updatedFlags['hollow_kills_tier_3'] = true
         const updatedPlayer: Player = {
           ...currentPlayer,
-          hollowKills: (currentPlayer.hollowKills ?? 0) + 1,
+          hollowKills: newKills,
+          questFlags: updatedFlags,
         }
         this._setState({ player: updatedPlayer })
       }

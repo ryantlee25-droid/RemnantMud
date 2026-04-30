@@ -267,6 +267,8 @@ export const ENEMIES: Record<string, Enemy> = {
       resistances: {},
       conditionImmunities: [],
     },
+    bossIntro: 'The Hollow stopped moving when you entered the block. All of them, at once.\nThey are facing the same direction — not toward you, toward the chamber ahead.\nWhen you step through, you understand. Low-set, wide, something that has reorganized itself around a different function.\nThe air is thick with a signal you cannot name but your hindbrain is already processing as a threat.\nEvery Hollow in a hundred meters is an extension of what is in front of you.\nIt does not look at you as prey. It processes you as a variable in an ongoing equation.',
+    combatIntro: 'A sound below hearing shifts, and every Hollow in range turns toward you simultaneously.',
   },
 
   // ----------------------------------------------------------
@@ -308,6 +310,8 @@ export const ENEMIES: Record<string, Enemy> = {
       },
       conditionImmunities: [],
     },
+    bossIntro: 'The room was empty a second ago. You are certain of this.\nNow it is not. Something is standing in the shadow near the far wall, and it has been there longer than you have been in the room.\nNo faction. No coordination. Whatever it was before CHARON-7 selected it for something else is gone.\nThe speed is not supernatural — you know that. It is biological, optimized, seven years refined.\nIt has not moved yet. It is watching you with the flat attention of pure predation, processing range and angle.\nOne in ten thousand. You are the one.\nYou are standing in front of the one.',
+    combatIntro: 'It crosses the room before you have processed that it moved.',
   },
 
   red_court_enforcer: {
@@ -348,6 +352,8 @@ export const ENEMIES: Record<string, Enemy> = {
       },
       conditionImmunities: ['frightened'],
     },
+    bossIntro: 'The tactical gear fits. That is the first thing you notice — it fits, tailored or close enough to it.\nA Red Court Enforcer, standing at the choke point of the room like they drew a diagram first.\nThe exit behind you is already covered. You realize this two seconds after you realize they want you to realize it.\nThey are watching you with the patient attention of something that knows it will win and is not in a hurry about it.\nThere is a signal somewhere in this room you did not see. Something outside just heard that signal.\nThe Red Court does not improvise. Everything about this encounter was planned before you arrived.',
+    combatIntro: 'They shift left to cut your angle before your weight has moved, and you understand: they have done this before.',
   },
 
   elder_sanguine: {
@@ -389,6 +395,8 @@ export const ENEMIES: Record<string, Enemy> = {
       },
       conditionImmunities: [],
     },
+    bossIntro: 'It stands at the far end of the room, perfectly still, watching the doorway you just came through.\nThe coat it wears is clean. You notice that first — clean, in a world where nothing is clean.\nSeven years of CHARON-7 refinement. The virus has had seven years to decide what this body should be.\nIt turns its head toward you with the slow precision of something that has waited longer than you have been alive.\nIts eyes have changed — not silver like the Hollow, something else, something that still looks back.\nYou get the feeling it has been expecting you for longer than you have been in this zone.',
+    combatIntro: 'It moves the moment you move, and it was already closer than you thought.',
   },
 
   // ----------------------------------------------------------
@@ -432,6 +440,8 @@ export const ENEMIES: Record<string, Enemy> = {
       },
       conditionImmunities: ['bleeding', 'burning', 'stunned', 'frightened', 'poisoned', 'weakened'],
     },
+    bossIntro: 'The room is quiet in the way that MERIDIAN rooms are quiet — HVAC hum, distant server tone, sealed air.\nThen you see the housing mounted in the corner, barrel traversed three degrees toward the door.\nThe red indicator light on its chassis pulses once. It was already tracking before you registered it.\nPre-Collapse hardware. The targeting firmware has not degraded. Nothing has degraded.\nThe authorization record it is checking expired seven years ago. It reached a conclusion seven years ago.\nIt has been waiting for something to walk through this door ever since.',
+    combatIntro: 'The light goes solid red and the barrel swings to center on your chest.',
   },
 
   meridian_ancient_hollow: {
@@ -470,6 +480,8 @@ export const ENEMIES: Record<string, Enemy> = {
       resistances: {},
       conditionImmunities: ['frightened'],
     },
+    bossIntro: 'The lab coat is still buttoned. The badge is still clipped to the lapel, though the name has worn to a smear.\nIt stands in the center of the corridor, facing away from you, motionless.\nSeven years inside MERIDIAN. Seven years with the virus and the silence and whatever happened here.\nThe joints are calcified wrong — you can see the angles from here, the way the shoulders sit too high.\nThen it turns. The silver eyes find you instantly, without a search sweep, without hesitation.\nWhatever it was researching before the Collapse, it has spent seven years becoming the result.',
+    combatIntro: 'It advances without sound, the calcified joints moving with a precision that has no right to work.',
   },
 
   // ----------------------------------------------------------
@@ -514,6 +526,8 @@ export const ENEMIES: Record<string, Enemy> = {
       },
       conditionImmunities: [],
     },
+    bossIntro: 'You have been in The Deep for hours. It has known you were here since the first tunnel.\nIt is seated when you find it, in a chair that has no business being in a place like this.\nThe oldest Sanguine in the region. Pre-Collapse converted — not post. The CHARON-7 variant it carries no longer exists anywhere else.\nIt does not stand when you enter. It does not need to.\nThe thing it says is quiet and entirely calm and directed at you specifically, not at whoever might be standing in this doorway.\nYou were not the first to reach this room. That is not a comfort.',
+    combatIntro: 'It unfolds from the chair in a single motion and covers half the distance before you can breathe.',
   },
 
   hive_mother_the_deep: {
@@ -551,6 +565,8 @@ export const ENEMIES: Record<string, Enemy> = {
       resistances: {},
       conditionImmunities: [],
     },
+    bossIntro: 'The tunnel ahead goes quiet in a way tunnels should not go quiet.\nAll the distant sound you have been moving through — the shuffling, the dragging — stops.\nAt the chamber\'s center, low and wide, something crouches in the dark. It is not hiding.\nThe air changes when it breathes. Something below hearing shifts and you feel it in your back teeth.\nEvery Hollow in these tunnels just reoriented. You know this without knowing how you know.\nIt has not looked at you yet. The network already knows exactly where you are.',
+    combatIntro: 'It raises one hand and points at you, and the walls begin to move.',
   },
 
   hollow_brute_deep: {
@@ -655,6 +671,8 @@ export const ENEMIES: Record<string, Enemy> = {
       conditionImmunities: [],
     },
     onDeath: { aoe: { radius: 'adjacent', damage: [1, 4] } },
+    bossIntro: 'It is already moving when you see it — fast, erratic, wrong.\nThe chemical sheen on bare skin catches the light. You smell it from here: synthetic, sharp, wrong in the same way the Hollow are wrong but faster.\nThe vials strapped to its chest are all empty except one. It holds that one in its fist.\nThe eyes are bloodshot to the iris. It has not slept in what you estimate is days.\nIt is looking at you the way something looks at the last obstacle between itself and whatever it is running toward.\nYou are not the threat here. The thing driving it forward is the threat, and it is already inside.',
+    combatIntro: 'It crushes the last vial in its palm and charges before the chemical hits its blood.',
   },
 
   apex_screamer: {
@@ -708,6 +726,8 @@ export const ENEMIES: Record<string, Enemy> = {
       },
       conditionImmunities: [],
     },
+    bossIntro: 'The road stretches behind you. This one has been watching it longer than you have been on it.\nA Drifter, road-leathered and still, with a hand resting near a holstered .38 with the ease of someone who has drawn it fast before.\nThe eyes are calm. Not peaceful — calm. The way things are calm when the decision is already made.\nThere is a list somewhere of the wagons that did not come back. You can tell by looking at them that they remember every name.\nThey let you get this far because they wanted to see what came through. Now they have seen.\nYou recognize the look. You have been the thing that did not come back, once, and may be again.',
+    combatIntro: 'The .38 clears the holster before your hand has finished moving.',
   },
 
   salter_scout: {
@@ -788,6 +808,8 @@ export const ENEMIES: Record<string, Enemy> = {
       },
       conditionImmunities: ['burning'],
     },
+    bossIntro: 'The torch is already lit. It was lit before you arrived.\nThe fire-marking on the skin is old — deliberate scarring over weeks or months, a language written in permanent ink.\nThey are speaking when you enter, not to you, to the flame, in the flat cadence of a litany learned by repetition.\nThe tone is not ecstatic. It is professional. This is not faith at its height; this is faith past the point of doubt.\nThey know you are here. They have not stopped the recitation. The fire in their hand tracks your position anyway.\nYou are not a surprise. You are an expected conclusion to a very old argument.',
+    combatIntro: 'The litany ends mid-word as they turn and close with the torch held low and certain.',
   },
 
   lucid_thrall: {
@@ -817,6 +839,8 @@ export const ENEMIES: Record<string, Enemy> = {
       },
       conditionImmunities: ['frightened'],
     },
+    bossIntro: 'It is dressed in clean black and standing in the center of the room like it was waiting for a meeting.\nThe smile is intact, full and patient, the kind of smile that has been practiced in mirrors that no longer exist.\nIt is not Hollow. The eyes track with volition, with recognition, with something that reads as presence.\nThat is the wrong thing to be relieved about.\nThe hunger underneath the composure is not hidden — it is just controlled, and control is a choice it is making in this moment.\nIt has been watching you long enough to make certain you noticed it noticing.',
+    combatIntro: 'The smile does not change as it closes the distance, which is somehow the worst part.',
   },
 }
 

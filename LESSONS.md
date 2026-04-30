@@ -398,3 +398,65 @@ Gold must create ARCHITECTURE.md at the start of the next muster if it does not 
    - Every `exits: { north: 'room_id' }` must have a matching room definition with that exact ID
    - Verify bidirectional navigation — if A exits to B, B must have exit back to A (or justified one-way)
    - Check zone consistency — adjacent rooms should have matching zone prefix or justified boundaries
+
+---
+
+## Spectrum: wave3-release-0430 (Convoy 2C + Release Hardening)
+
+**Run summary:** 9 Howlers across two phases (7 parallel + H13 + H14). One Phase-1 cluster
+(H11/H12 + R1–R5) plus two sequential dialogue Howlers. Result: 1602 → 1729 tests, all green.
+
+**1. Worktree isolation silently failed for 2 of 7 parallel Howlers.**
+- H12 and R3 ran in the **main worktree** instead of an isolated `.claude/worktrees/agent-*` dir.
+- H12 changed the current branch on disk (`parallel/wave3/h12-boss-intros`) and left staged work
+  uncommitted. R3 then ran on the same dirty main worktree and committed *to H12's branch*. After
+  the parallel batch returned, the main worktree was on the wrong branch with mixed staged state.
+- Recovery: cherry-pick R3's commit onto its proper branch, soft-reset H12's branch, surgically
+  stage only H12's owned files, recommit. Took ~5 careful minute. Could have lost work if rushed.
+- **Fix forward**: don't trust `isolation: "worktree"` to hold for every parallel agent — spot-check
+  `git worktree list` after the first round of returns. If any agent reports its worktree path
+  inside the main repo (no `.claude/worktrees/agent-*`), assume the main worktree is poisoned.
+
+**2. Vitest globs across `.claude/worktrees/**`, polluting test runs.**
+- H12 ran `pnpm test --run` and saw `tests/integration/silent-failures.test.ts` "fail" — but that
+  file only existed in **R1's** worktree (`.claude/worktrees/agent-a9ad6530.../tests/integration/...`).
+  The vitest config doesn't exclude nested worktree paths, so the runner found and tried to execute
+  R1's in-flight test against H12's branch (which lacked R1's `gameEngine` changes).
+- H12 misread this as "pre-existing failure on main" and skipped its own commit. The real failure
+  was that vitest was reaching into another agent's worktree.
+- **Fix**: add `.claude/worktrees/**` (and `.claude/parallel/**`) to `vitest.config.ts` exclude.
+  Until then, any Howler whose pre-commit hook fails on a "stale" file should `find .claude/worktrees`
+  before assuming it's a real regression.
+
+**3. Audit docs go stale — verify before reopening items.**
+- `TODO-RELEASE.md` was 4 weeks old. Blue's freshness pass found **8 of 26 items already fixed**
+  (B6 stash, B7/B8 schema drops, B9 dev-room guard, B10, B12 save/load test, W-hsts headers,
+  W-game_log mock, W-input-maxlength). Without that pass we would have re-fixed each one and likely
+  introduced regressions or noise PRs.
+- **Rule**: any audit doc more than ~2 weeks old gets a freshness pass before being broken into
+  Howler scopes. Cheap, high-value.
+
+**4. R5's tests made assumptions about R1's exact warning text and the randomness of
+`getPersonalLossEcho`.** Two tests failed in the integration run:
+- `ending-db-persist.test.ts` expected a warning message after a single ledger failure — but R1's
+  retry path *succeeds* on the second call by design, so no warning fires. Fix: set both first +
+  retry errors so the test exercises the actual persistent-failure branch.
+- `narrative-modules-deep.test.ts` asserted `result.text.includes('Sam')` for a 1-of-3 random
+  pick where only one variant interpolates the `lossName`. Fix: drop the name-substring assertion
+  and check `result.type === 'narrative'`.
+- **Pattern**: when one Howler writes tests that depend on another Howler's behavior, the test
+  Howler should consume the dependency Howler's *contract* (acceptance criteria), not its assumed
+  implementation. R5's prompt should have specified "test the persistent-failure path" rather than
+  "test the failure path".
+
+**5. Cross-Howler shared-file edits worked when the contract was explicit.**
+- H13 added `hollow_kills_tier_1/2/3` flag-setting in `lib/gameEngine.ts` (a CODEOWNERS file
+  R1 had already modified). Merged cleanly because: (a) H13's edit was in a different region
+  (the kill-counting block, not the persist paths R1 hardened), and (b) H14 was given an explicit
+  "do not modify gameEngine, the flags are already wired" instruction in its prompt.
+- The cure for `lib/gameEngine.ts` conflicts is not "no Howler may touch it" — it's "only one
+  Howler per region per wave, and downstream Howlers consume the contract".
+
+**6. Non-required boss intros were a free win.** H12's prompt mentioned "4 bonus bosses if time
+allows". The Howler delivered 4, and they cost almost nothing on top of the required 8. Worth
+keeping the "if time allows" pattern for content tasks where unit cost is low but coverage matters.

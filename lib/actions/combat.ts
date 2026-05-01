@@ -16,6 +16,7 @@ import {
   computeEnvironmentEffects,
   computeArmorReduction,
   resolveAoE,
+  rollLoot,
 } from '@/lib/combat'
 import { getItem } from '@/data/items'
 import { getEnemy } from '@/data/enemies'
@@ -562,15 +563,8 @@ async function handleEnemyDefeated(
   }
   // ── End AoE on enemy death ──
 
-  // Roll and add loot to room
-  const loot: string[] = []
-  for (const entry of afterPlayer.enemy.loot) {
-    if (Math.random() < entry.chance) {
-      if (getItem(entry.itemId)) {
-        loot.push(entry.itemId)
-      }
-    }
-  }
+  // Roll and add loot to room (respects LootEntry.count via rollLoot utility)
+  const loot: string[] = rollLoot(afterPlayer.enemy)
 
   if (loot.length > 0) {
     const newItems = [...updatedRoom.items, ...loot]

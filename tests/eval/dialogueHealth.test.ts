@@ -127,6 +127,10 @@ const EXTERNALLY_SET_FLAGS: Set<string> = new Set([
   'red_court_contact',                 // world/quest system
   // Companion system flags (set by lib/companionSystem.ts / addCompanion for the_dog)
   'companion_the_dog_active',          // set when addCompanion fires for the_dog — see tests/integration/dogAdoption.test.ts
+  // hollowKills tier flags (set by lib/gameEngine.ts:2219-2221 when hollowKills reaches 5/20/50)
+  'hollow_kills_tier_1',               // set at 5 hollow kills
+  'hollow_kills_tier_2',               // set at 20 hollow kills
+  'hollow_kills_tier_3',               // set at 50 hollow kills
 ])
 
 // ============================================================

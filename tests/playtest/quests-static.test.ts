@@ -61,10 +61,8 @@ describe('PT-QUEST static — every quest completionFlag has at least one setter
   // When a setter is added for one of these, flip to `it(...)` and ship.
   const KNOWN_ORPHANS = new Set([
     'broadcaster_found',
-    'fault_entity_observed',
     'fault_scar_connection_confirmed',
     'hollow_origin_understood',
-    'sanguine_origin_understood',
   ])
 
   for (const flag of completionFlags) {

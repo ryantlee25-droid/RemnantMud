@@ -613,7 +613,9 @@ export const RIVER_ROAD_ROOMS: Room[] = [
       west: {
         destination: 'ps_01_tree_line',
         descriptionVerbose: 'a faint trail climbing west into dense forest',
-        hidden: true,
+        // hidden: true removed — exit is now listed in exits.west above so canMove() finds it.
+        // The trail exists but is overgrown; cycleGate: 2 guards it so only cycle-2+ players
+        // can take it. discoverSkill still fires on room search to reveal lore about the path.
         discoverSkill: 'survival',
         discoverDc: 12,
         discoverMessage: 'You spot an overgrown trail climbing into the mountains. The Pine Sea.',

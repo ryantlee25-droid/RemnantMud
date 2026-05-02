@@ -584,11 +584,8 @@ describe('PT-NAV 4: locked-door behavior', () => {
   // Locked exits that have ADDITIONAL gates beyond the locked check
   // (hidden richExit only — no matching exits entry, no exits[dir] at all)
   // These are playability blockers: key alone is not sufficient.
-  const COMPOUND_LOCKED_EXITS = new Set([
-    // em_18_cooling_towers:north — hidden richExit only, canMove returns false (no exits.north)
-    // The exit is discovery-gated (discoverSkill: mechanics) before key use is possible.
-    'em_18_cooling_towers:north',
-  ])
+  // F1 fix: exits.north added to em_18_cooling_towers + hidden removed, so this set is now empty.
+  const COMPOUND_LOCKED_EXITS = new Set<string>([])
 
   for (const { roomId, dir, lockedBy } of (() => {
     // Eagerly collect so the test titles are stable at describe-time
@@ -749,20 +746,26 @@ describe('PT-NAV 5: cycleGate behavior', () => {
   // approach exit has additional requirements (locked key, reputation, richExit cycleGate override).
   // These are playability blockers surfaced in the report.
   const COMPOUND_GATE_ROOMS = new Set([
-    // ps_08_scar_overlook:north richExit has cycleGate:3 (overrides room's cycleGate:2)
-    // Room cycleGate:2 but approach exit richExit.cycleGate:3 — MISMATCH
-    'scar_01_crater_rim',
-    // scar_02_main_entrance:east requires meridian_keycard item to reach scar_03
-    'scar_03_decontamination',
-    // dp_12_sealed_door:east requires keycard to reach scar_04_level1_corridor
-    'scar_04_level1_corridor',
-    // scar_14:east richExit is hidden (exit not in exits map without discovery)
-    'scar_15_the_exit',
-    // rr_07:north → ps_01 (pine sea first room) — the pine sea entry is blocked by something
-    'ps_01_tree_line',
-    // ps_09 → ps_10 has additional gate
+    // F1 fix: scar_01_crater_rim — cycleGate aligned to 3 (room + approach exit now match).
+    // Removed from COMPOUND_GATE_ROOMS; positive it() test now runs with cycle=3.
+    //
+    // F1 fix: scar_03 / scar_04 — cycleGate aligned to 3. Still require meridian_keycard,
+    // but CYCLE_GATE_ITEM_KEYS provides it for the positive it() test. Removed from compound.
+    //
+    // F1 fix: scar_15_the_exit — hidden: true removed from scar_14.richExits.east.
+    // page.tsx intercepts all commands after game_ending triggers (gameFlow='ending'),
+    // so 'go east' is never player-typed after the ending choice.
+    //
+    // F1 fix: ps_01_tree_line — hidden: true removed from rr_07.richExits.west.
+    // cycleGate: 2 on that exit now gates entry correctly without the hidden blocker.
+    //
+    // KNOWN REMAINING: ps_10 and ps_20 are gated by skillGates on their approach exits:
+    //   ps_09:north → ps_10 has skillGate(tracking DC 13) — test player tracking=6, blocked.
+    //   ps_18:south / ps_19:east → ps_20 has skillGate(stealth DC 12 / survival DC 11).
+    // These are intentional design choices (deep camp + hollow nest reward skill investment).
+    // F1 punts them: they stay it.fails until a follow-up pass raises the test player stats
+    // or the skill gates are explicitly redesigned.
     'ps_10_hermit_deep_camp',
-    // ps_18 → ps_20 has additional gate
     'ps_20_hollow_nest',
   ])
 
@@ -903,33 +906,34 @@ describe('PT-NAV 5: cycleGate behavior', () => {
   // but the actual data has cycleGate === 2.
   // -------------------------------------------------------
 
-  it.fails(
-    'STALE-EVAL: scar_14_the_core cycleGate is 3 (eval expects 3; data says 2)',
+  // F1 fix: both Scar rooms now have cycleGate: 3 — flipped from it.fails to it.
+  it(
+    'scar_14_the_core cycleGate is 3 (aligned with eval test + Act III narrative)',
     () => {
       const roomMap = toMap(ALL_ROOMS)
       const core = roomMap.get('scar_14_the_core')
       expect(core, 'scar_14_the_core not found').toBeDefined()
       expect(
         core?.cycleGate,
-        'scar_14_the_core.cycleGate should be 3 per eval test — actual value is ' + core?.cycleGate
+        'scar_14_the_core.cycleGate should be 3'
       ).toBe(3)
     }
   )
 
-  it.fails(
-    'STALE-EVAL: scar_01_crater_rim cycleGate is 3 (eval expects 3; data says 2)',
+  it(
+    'scar_01_crater_rim cycleGate is 3 (aligned with eval test + Act III narrative)',
     () => {
       const roomMap = toMap(ALL_ROOMS)
       const rim = roomMap.get('scar_01_crater_rim')
       expect(rim, 'scar_01_crater_rim not found').toBeDefined()
       expect(
         rim?.cycleGate,
-        'scar_01_crater_rim.cycleGate should be 3 per eval test — actual value is ' + rim?.cycleGate
+        'scar_01_crater_rim.cycleGate should be 3'
       ).toBe(3)
     }
   )
 
-  it('DESIGN-DOC: actual cycleGate values for scar entry rooms', () => {
+  it('DESIGN-DOC: confirmed cycleGate values for scar entry rooms', () => {
     const roomMap = toMap(ALL_ROOMS)
     const core = roomMap.get('scar_14_the_core')
     const rim = roomMap.get('scar_01_crater_rim')
@@ -937,9 +941,9 @@ describe('PT-NAV 5: cycleGate behavior', () => {
     console.info(`[PT-NAV DESIGN] scar_14_the_core.cycleGate = ${core?.cycleGate}`)
     console.info(`[PT-NAV DESIGN] scar_01_crater_rim.cycleGate = ${rim?.cycleGate}`)
 
-    // Document what's actually in the data
-    expect(core?.cycleGate).toBe(2)
-    expect(rim?.cycleGate).toBe(2)
+    // F1: cycleGate: 3 confirmed after B1 alignment fix
+    expect(core?.cycleGate).toBe(3)
+    expect(rim?.cycleGate).toBe(3)
   })
 })
 

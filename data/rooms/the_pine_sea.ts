@@ -582,7 +582,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
       },
       ambientCount: { min: 1, max: 2, distribution: 'flat' },
     },
-    narrativeNotes: 'Act 3 beauty-and-dread room. The Hollow here are old and strange — not aggressive by default. The dark flag means players without light sources are at a disadvantage. The hidden north exit to the hermit\'s deep camp rewards tracking skill. Tone: awe edging toward unease.',
+    narrativeNotes: 'Act 3 beauty-and-dread room. The Hollow here are old and strange — not aggressive by default. The dark flag means players without light sources are at a disadvantage. The hidden north exit to the hermit\'s deep camp rewards tracking skill. Tone: awe edging toward unease. NOTE: ps_10_hermit_deep_camp (cycleGate: 3) is further gated by a skillGate on this approach exit (tracking DC 13) — cycle-3 players with low wits/tracking cannot enter ps_10. This is intentional design: the deep camp is a reward for skill investment.',
   },
 
   {
@@ -1246,7 +1246,7 @@ export const THE_PINE_SEA_ROOMS: Room[] = [
         { line: 'The wear track in the stone is beneath your feet. You are walking it without having decided to.', chance: 0.25, time: null },
       ],
     },
-    narrativeNotes: 'The root cathedral is the Pine Sea\'s climax room for the contamination thread. The survival check reveals that CHARON-7 is not just infecting but building — using the fungal network to reorganize living trees into structures. The perception check on the vibration is the zone\'s biggest revelation: the entire forest is becoming a single organism. The south exit to the hollow nest is skill-gated to control difficulty progression.',
+    narrativeNotes: 'The root cathedral is the Pine Sea\'s climax room for the contamination thread. The survival check reveals that CHARON-7 is not just infecting but building — using the fungal network to reorganize living trees into structures. The perception check on the vibration is the zone\'s biggest revelation: the entire forest is becoming a single organism. The south exit to the hollow nest is skill-gated (stealth DC 12) to control difficulty progression. NOTE: ps_20_hollow_nest (cycleGate: 3) is further gated by this skillGate — cycle-3 players with low shadow/stealth cannot enter ps_20 via this route. ps_19_windbreak_ruin also has a skillGate (survival DC 11) to ps_20. Both are intentional design.',
   },
 
   {

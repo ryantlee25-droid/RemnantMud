@@ -582,7 +582,9 @@ const sparksTree: DialogueTree = {
       text: `"Shortwave, repeating loop, been running for — I don't know, years? Everyone thinks it's automated." ${rt.npc('Sparks')} pulls a notebook from under a pile of capacitors. "I've decoded maybe forty percent. The modulation shifts. Automated systems don't shift." She taps the notebook hard enough to dent the page. "Someone is down there. In the ${rt.keyword('Scar')}. Broadcasting." She slides the notebook toward you. "Frequency's 4.127 megahertz. Interval variance keyed to a scaled twelve-tone. If you find a terminal that wants authentication, try that."`,
       onEnter: {
         setFlag: 'sparks_shared_decode',
-        grantNarrativeKey: 'crossroads_signal_source',
+        // S4: crossroads_signal_source grant removed — no ROOM_EXIT_GATES consumer exists
+        // and the gate cannot be added without editing room files. Quest progression is
+        // handled via the signal_triangulated quest flag instead.
       },
       branches: [
         {
@@ -4083,7 +4085,7 @@ const elderSanguineTree: DialogueTree = {
       speaker: 'The Elder',
       text: `${rt.npc('The Elder')} is still for a very long time. "I know who designed it." The words are quiet. Heavy with duration. "I was one of the first subjects. Volunteer batch, before the field release. I read the documentation while the fever was burning through me." They close their eyes. "${rt.keyword('File 47-B')}. The deepest archive in the ${rt.keyword('MERIDIAN')} sub-facility. The designer's name, the authorization chain, the original population models. Everything the world needs to understand what was done to it." They open their eyes. "If you can reach it."`,
       onEnter: {
-        setFlag: 'elder_lore_tier_3',
+        setFlag: { elder_lore_tier_3: true, fault_entity_observed: true },
       },
       branches: [
         {
@@ -4302,7 +4304,7 @@ const vesperTree: DialogueTree = {
       speaker: 'Vesper',
       text: `${rt.npc('Vesper')} closes the book on her lap. Not angrily — with the care of someone putting down a thing she has been holding for a long time. "I have known this. Not in the clinical terms you are using. But I have known. When I walked out of my office that first night, what I chose was not to feed. What I did not choose was to be capable of feeding. Someone designed me to be capable. Someone else could have run the trial and produced a different Vesper, one who ate her graduate students and called it breakfast. I am an outcome. The outcome had a specification." A breath that is almost a laugh, with no pleasure in it. "My ethics are the part I added. The rest is catalog."`,
       onEnter: {
-        setFlag: { vesper_admitted_engineered: true },
+        setFlag: { vesper_admitted_engineered: true, sanguine_origin_understood: true },
       },
       branches: [
         {

@@ -1444,11 +1444,18 @@ export const EMBER_ROOMS: Room[] = [
     shortDescription: 'Two concrete cooling towers — one colonized by Hollow in its collapsed fill media, one welded shut by someone with a reason.',
     exits: {
       south: 'em_13_chemical_tank_farm',
+      // exits.north is required for canMove() to find the direction; the richExit below
+      // applies the discovery-then-lock flow. Players see the welded door and can attempt
+      // to go north, but need hand_tools_basic to open it. Discovery via mechanics DC 14
+      // (search action) reveals the weak weld point before the attempt.
+      north: 'em_19_rail_yard',
     },
     richExits: {
       north: {
         destination: 'em_19_rail_yard',
-        hidden: true,
+        // hidden removed: canMove() now finds exits.north above. The discoverSkill/discoverDc
+        // still fires on room search (social.ts), giving the mechanics lore reveal. The locked
+        // flag below enforces hand_tools_basic as the key once the player attempts go north.
         locked: true,
         lockedBy: 'hand_tools_basic',
         discoverSkill: 'mechanics',

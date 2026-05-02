@@ -209,6 +209,40 @@ tests/          Vitest test suite
 
 ## Release Notes
 
+### 2026-05-01 — Comprehensive playtest + playability fixes
+
+Triggered by a tester report ("couldn't navigate or talk to people") after the Convoy 2C ship. Spawned a 4-Howler parallel playtest spanning navigation, dialogue, quests, and combat/items, plus a runtime-simulation Howler that booted the actual GameEngine and fired `talk`/`go` commands per NPC. The static-analysis sweep was clean; the runtime sweep found the real bug.
+
+**The smoking gun** — `cr_03_market_south` referenced `npcId: 'food_vendor_marta'` and `dialogueTree: 'cr_marta_intro'`, but the NPCS dictionary keys it as `marta_food_vendor` and DIALOGUE_TREES keys it as `cr_marta_food`. Every `talk marta` at the South Market produced *"That person has nothing to say."* The same shape of bug affected three more NPCs game-wide. All four are now fixed:
+
+- `food_vendor_marta` → `marta_food_vendor` (also `cr_marta_intro` → `cr_marta_food`) in `data/rooms/crossroads.ts`
+- `lucid_sanguine_osei` → `dr_ama_osei` (also `br_osei_grotto_encounter` and `lucid_sanguine_osei_garden` → `br_osei_lab`) in `data/rooms/the_breaks.ts` and `data/rooms/the_deep.ts`
+- Added missing NPC entry for `covenant_wall_child` (river_road watchtower observer)
+- Added missing NPC entry for `pens_scheduling_officer` (Red Court admin desk)
+
+After the fixes, every NPC ID referenced by any room resolves to a real NPCS entry, and every `dialogueTree` field resolves to a real tree.
+
+**Other playability fixes shipped in the same PR (3-Howler dispatch off the playtest base)**:
+
+- **Cycle gates**: aligned all Scar-zone rooms to `cycleGate: 3` (was a mix of 2 and 3 — left players blocked at the overlook by an approach-exit/destination mismatch); cleared the `hidden: true` flag on the river_road approach to Pine Sea so cycle-2 players can actually enter the zone.
+- **Ember rail yard**: `em_18_cooling_towers:north` now has a real `exits.north` entry, so the locked-door check on `hand_tools_basic` actually fires (the path was previously gated entirely behind a discoverSkill check before any lock check could run).
+- **Post-ending exit**: `scar_15_the_exit` is no longer hidden behind a discovery flag.
+- **3 main-arc quest completions wired** in Scar examines: `broadcaster_found` (scar_13 transmitter), `hollow_origin_understood` (scar_17 lab archive), `fault_scar_connection_confirmed` (scar_28 geology log). 2 more wired via dialogue: `sanguine_origin_understood` on Vesper's `engineered_admission` node, `fault_entity_observed` on Elder's tier-3 lore node. All 5 main-arc journal entries now mark complete.
+- **Loot count respected**: `lib/actions/combat.ts` now calls the `rollLoot()` utility instead of the inline loop, so `LootEntry.count: [min, max]` ranges actually drop in the right quantity.
+- **Eval false-positive cleared**: `hollow_kills_tier_1/2/3` added to `EXTERNALLY_SET_FLAGS` allowlist (set in `lib/gameEngine.ts:2219-2221`, not in dialogue trees).
+
+**New playtest infrastructure**:
+- `tests/playtest/navigation-full.test.ts` — 161 tests, BFS reachability + exit consistency + locked-door + cycleGate behavior
+- `tests/playtest/dialogue-full.test.ts` — 156 tests, every NPC dialogue tree walked
+- `tests/playtest/quests-static.test.ts` — every quest start/completion flag must have at least one setter in code
+- `tests/playtest/combat-items-full.test.ts` — 88 combat scenarios + item invariants (slot exclusivity, statBonus drift, stash race)
+- `tests/playtest/runtime-chat.test.ts` — boots GameEngine and dispatches actual `talk`/`go` commands per NPC; catches what static analysis can't
+- `docs/playtest/` — five domain reports + master synthesis
+
+Suite total: **2490 passing, 2 expected fail (intentional skillGate hard-mode rooms in deep Pine Sea), 1 skipped, 1 todo** (was 1729 before this branch — net +761 from playtest scaffolding).
+
+**Out of scope / open questions called out by the playtest**: multi-tab corruption warning, `discovered_room_ids` write-path, H15 durability, and the `ps_10_hermit_deep_camp` / `ps_20_hollow_nest` skillGate-vs-cycleGate question (currently left as "intentional skill gates"; revisit if accessibility feedback says otherwise).
+
 ### 2026-04-30 — Convoy 2C (Wave 3) + Release Hardening
 
 Closes out the gear convoy and hardens the silent-failure paths flagged in the 2026-04-01 release audit. Single-PR bundle covering 9 Howler scopes.

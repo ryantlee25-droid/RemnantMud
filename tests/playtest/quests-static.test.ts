@@ -64,10 +64,8 @@ describe('PT-QUEST static — every quest completionFlag has at least one setter
   // Removed from KNOWN_ORPHANS — the it() path below will confirm the setters exist.
   // Remaining orphans (fault_entity_observed, sanguine_origin_understood) are F2's scope
   // (dialogue-set flags in data/dialogueTrees.ts).
-  const KNOWN_ORPHANS = new Set([
-    'fault_entity_observed',
-    'sanguine_origin_understood',
-  ])
+  // After F1 + F2 fixes all 5 setters are wired. Set is empty.
+  const KNOWN_ORPHANS = new Set<string>([])
 
   for (const flag of completionFlags) {
     if (KNOWN_ORPHANS.has(flag)) {

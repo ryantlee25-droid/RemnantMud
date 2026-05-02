@@ -266,7 +266,7 @@ export const CROSSROADS_ROOMS: Room[] = [
     ],
     npcSpawns: [
       {
-        npcId: 'food_vendor_marta',
+        npcId: 'marta_food_vendor',
         spawnChance: 0.85,
         spawnType: 'anchored',
         quantity: { min: 1, max: 1, distribution: 'single' },
@@ -276,7 +276,7 @@ export const CROSSROADS_ROOMS: Room[] = [
           { desc: 'Marta is feeding a scrap of meat to a scrawny cat that lives under her stall. She sees you watching and shrugs. \'Earns its keep. Mice.\'', weight: 1 },
         ],
         tradeInventory: ['boiled_rations', 'elk_jerky', 'purification_tabs', 'salt_1kg'],
-        dialogueTree: 'cr_marta_intro',
+        dialogueTree: 'cr_marta_food',
         dispositionRoll: { friendly: 0.5, neutral: 0.4, wary: 0.1 },
       },
       {

@@ -200,19 +200,19 @@ describe('PT-RUNTIME: Crossroads start-zone NPCs', () => {
   // The comment in npcs.ts line 2032 says "food_vendor_marta removed".
   // This is the suspected smoking gun.
 
-  it.fails('Marta — talk succeeds (food_vendor_marta should resolve to NPC data)', async () => {
+  it('Marta — talk succeeds (regression: marta_food_vendor + cr_marta_food)', async () => {
     const room = ALL_ROOMS.find(r => r.id === 'cr_03_market_south')!
     expect(room, 'cr_03_market_south must exist').toBeDefined()
-    const engine = buildEngineWithNpc(room, 'food_vendor_marta', 'cr_marta_intro')
+    const engine = buildEngineWithNpc(room, 'marta_food_vendor', 'cr_marta_food')
     const result = await talkTo(engine, 'marta')
     expect(result.hasError).toBe(false)
     expect(result.messages.some(m => m.text.toLowerCase().includes('marta')
       || m.text.toLowerCase().includes('food') || m.text.toLowerCase().includes('stew'))).toBe(true)
   })
 
-  it.fails('Marta — talk to marta (preposition form) works', async () => {
+  it('Marta — talk to marta (preposition form) works', async () => {
     const room = ALL_ROOMS.find(r => r.id === 'cr_03_market_south')!
-    const engine = buildEngineWithNpc(room, 'food_vendor_marta', 'cr_marta_intro')
+    const engine = buildEngineWithNpc(room, 'marta_food_vendor', 'cr_marta_food')
     // Parser strips "to " prefix so 'talk to marta' => noun='marta'
     const result = await talkTo(engine, 'to marta')
     expect(result.hasError).toBe(false)
@@ -230,12 +230,14 @@ describe('PT-RUNTIME: Crossroads start-zone NPCs', () => {
     expect(NPCS['marta_food_vendor']!.name).toBe('Marta')
   })
 
-  it('Marta — room cr_03_market_south references food_vendor_marta (the broken ID)', () => {
+  it('Marta — room cr_03_market_south references the correct id (regression)', () => {
     const room = ALL_ROOMS.find(r => r.id === 'cr_03_market_south')!
     expect(room).toBeDefined()
-    const marterSpawn = room.npcSpawns?.find(s => s.npcId === 'food_vendor_marta')
-    // This PASSES — confirming the room uses the wrong ID
-    expect(marterSpawn).toBeDefined()
+    const martaSpawn = room.npcSpawns?.find(s => s.npcId === 'marta_food_vendor')
+    expect(martaSpawn).toBeDefined()
+    expect(martaSpawn!.dialogueTree).toBe('cr_marta_food')
+    // The pre-fix typo must NOT reappear:
+    expect(room.npcSpawns?.find(s => s.npcId === 'food_vendor_marta')).toBeUndefined()
   })
 
   it('Marta — talk with correct key marta_food_vendor succeeds', async () => {
@@ -457,47 +459,44 @@ describe('PT-RUNTIME: Parser — preposition stripping', () => {
 describe('PT-RUNTIME: NPC data integrity — room references vs NPCS data', () => {
   const npcRoomIndex = buildNpcRoomIndex()
 
-  it('food_vendor_marta is referenced in a room but missing from NPCS', () => {
-    // Documents the confirmed bug
+  it('food_vendor_marta is no longer referenced by any room (regression)', () => {
+    // The pre-fix typo: rooms used food_vendor_marta. Fixed to marta_food_vendor.
     const placements = npcRoomIndex.get('food_vendor_marta')
-    expect(placements).toBeDefined()
-    expect(placements!.length).toBeGreaterThan(0)
-    expect(NPCS['food_vendor_marta']).toBeUndefined()
+    expect(placements).toBeUndefined()
   })
 
   it('marta_food_vendor (correct key) exists in NPCS', () => {
     expect(NPCS['marta_food_vendor']).toBeDefined()
   })
 
-  it.fails('lucid_sanguine_osei is referenced in a room but missing from NPCS', () => {
-    // If this test passes (is NOT failing), lucid_sanguine_osei was added to NPCS
-    // Current state: comment in npcs.ts says it was removed as a duplicate of dr_ama_osei
-    expect(NPCS['lucid_sanguine_osei']).toBeDefined()
+  it('lucid_sanguine_osei is no longer referenced in any room (replaced with dr_ama_osei)', () => {
+    // The_breaks and the_deep used to reference 'lucid_sanguine_osei'; both were
+    // updated to 'dr_ama_osei' in the chat-fix pass. lucid_sanguine_osei was always
+    // a duplicate of dr_ama_osei — we don't add it back, we just stop using the typo.
+    const stillRefs: string[] = []
+    for (const [npcId] of npcRoomIndex) {
+      if (npcId === 'lucid_sanguine_osei') stillRefs.push(npcId)
+    }
+    expect(stillRefs).toEqual([])
   })
 
-  it.fails('covenant_wall_child is referenced in a room but missing from NPCS', () => {
+  it('covenant_wall_child resolves (regression — added in chat-fix pass)', () => {
     expect(NPCS['covenant_wall_child']).toBeDefined()
   })
 
-  it.fails('pens_scheduling_officer is in static npcs[] but missing from NPCS', () => {
+  it('pens_scheduling_officer resolves (regression — added in chat-fix pass)', () => {
     expect(NPCS['pens_scheduling_officer']).toBeDefined()
   })
 
-  it('All NPC IDs in room npcSpawns that DO exist in NPCS resolve correctly', () => {
+  it('Every NPC ID referenced in any room resolves to an NPCS entry', () => {
     const failures: string[] = []
     for (const [npcId] of npcRoomIndex) {
       if (!NPCS[npcId]) {
         failures.push(npcId)
       }
     }
-    // We expect exactly the 4 known broken IDs:
-    // food_vendor_marta — room cr_03_market_south uses wrong key (should be marta_food_vendor)
-    // lucid_sanguine_osei — removed as duplicate of dr_ama_osei
-    // covenant_wall_child — no NPCS entry
-    // pens_scheduling_officer — static npcs[] in the_pens has no matching NPCS entry
-    expect(failures.sort()).toEqual(
-      ['covenant_wall_child', 'food_vendor_marta', 'lucid_sanguine_osei', 'pens_scheduling_officer'].sort()
-    )
+    // After the chat-fix pass, no broken refs should remain anywhere in the game.
+    expect(failures).toEqual([])
   })
 })
 

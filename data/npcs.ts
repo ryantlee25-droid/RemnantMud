@@ -2434,6 +2434,39 @@ export const NPCS: Record<string, RichNPC> = {
     ],
   },
 
+  // Covenant wall sentry-child — observer on the river_road approach to Covenant.
+  covenant_wall_child: {
+    id: 'covenant_wall_child',
+    name: 'Wall Child',
+    description: "A child of nine or ten perched on the Covenant wall between the watchtowers. Covenant raises its children pragmatic — this one has been given a job and intends to keep it. They evaluate strangers by how they walk and report up the chain in fingers raised toward the sentry.",
+    dialogue: "Sentry business. You can talk to the grown-ups at the gate.",
+    zone: 'covenant',
+    spawnChance: 0.20,
+    dispositionRoll: { friendly: 0.10, neutral: 0.55, wary: 0.30, hostile: 0.05 },
+    activityPool: [
+      { activity: 'is sitting on the wall counting something on her fingers, watching the road', weight: 3 },
+      { activity: 'is sorting pebbles into piles by some system only she understands', weight: 2 },
+      { activity: 'is drawing in a notebook, looking up at the road and back at the page', weight: 2 },
+    ],
+  },
+
+  // The Pens scheduling officer — Red Court administrator at the admin desk.
+  pens_scheduling_officer: {
+    id: 'pens_scheduling_officer',
+    name: 'Scheduling Officer',
+    description: "A Red Court officer responsible for the yield schedule. They speak in scheduling vocabulary — windows, intervals, rotations — and avoid words like 'donor' or 'subject' as if any specific noun would break the work. The board behind them is full three months out.",
+    dialogue: "Schedule changes go through the duty officer. I just keep the board.",
+    faction: 'red_court',
+    zone: 'the_pens',
+    spawnChance: 0.65,
+    dispositionRoll: { friendly: 0.05, neutral: 0.60, wary: 0.25, hostile: 0.10 },
+    activityPool: [
+      { activity: 'is updating the scheduling board, sliding colored markers from one column to the next', weight: 3 },
+      { activity: 'is on a hand-cranked phone confirming an intake window, voice flat and procedural', weight: 2 },
+      { activity: 'is reviewing the yield grid against a clipboard, marking small notations in the margins', weight: 2 },
+    ],
+  },
+
   // --- [RIDER A: remnant-story-0329] Echo — Named Hollow ---
   echo_hollow: {
     id: 'echo_hollow',

@@ -919,14 +919,14 @@ export const BREAKS_ROOMS: Room[] = [
     },
     npcSpawns: [
       {
-        npcId: 'lucid_sanguine_osei',
+        npcId: 'dr_ama_osei',
         spawnChance: 0.25,
         spawnType: 'event',
         activityPool: [
           { desc: 'A woman sits at the far end of the grotto with a notebook in her lap and a pen in one hand, writing by the light of a chemical glow stick. She doesn\'t startle when you come through the gap. She was already listening.', weight: 3 },
         ],
         dispositionRoll: { friendly: 0.1, neutral: 0.4, wary: 0.4, hostile: 0.1 },
-        dialogueTree: 'br_osei_grotto_encounter',
+        dialogueTree: 'br_osei_lab',
         narrativeNotes: 'Dr. Ama Osei. Lucid Sanguine virologist. Optional encounter. Her questline connects to the cure ending.',
       },
     ],

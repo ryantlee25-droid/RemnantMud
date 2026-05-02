@@ -807,10 +807,10 @@ export const THE_DEEP_ROOMS: Room[] = [
     },
     items: [],
     enemies: [],
-    npcs: ['lucid_sanguine_osei'],
+    npcs: ['dr_ama_osei'],
     npcSpawns: [
       {
-        npcId: 'lucid_sanguine_osei',
+        npcId: 'dr_ama_osei',
         spawnChance: 0.60,
         spawnType: 'anchored',
         quantity: { min: 1, max: 1, distribution: 'single' },
@@ -820,7 +820,7 @@ export const THE_DEEP_ROOMS: Room[] = [
           { desc: 'Dr. Osei stands at the water channel junction, making a small adjustment to the stone lip that routes the flow. They look up when you approach — calm, curious, assessing.', weight: 1 },
         ],
         dispositionRoll: { friendly: 0.3, neutral: 0.5, wary: 0.2 },
-        dialogueTree: 'lucid_sanguine_osei_garden',
+        dialogueTree: 'br_osei_lab',
         questGiver: ['sanguine_biology_survey', 'garden_sample_collection'],
         narrativeNotes: 'Dr. Osei is the bridge figure — Sanguine who thinks like a scientist. They can explain the garden\'s function and the faction\'s broader relationship to CHARON-7 biology.',
       },

@@ -59,11 +59,13 @@ describe('PT-QUEST static — every quest completionFlag has at least one setter
 
   // Known-orphan completion flags (documented in PT-QUEST-REPORT.md).
   // When a setter is added for one of these, flip to `it(...)` and ship.
+  // F1 fix: broadcaster_found, fault_scar_connection_confirmed, hollow_origin_understood
+  // now have setters in data/rooms/the_scar.ts (scar_13, scar_28, scar_17 respectively).
+  // Removed from KNOWN_ORPHANS — the it() path below will confirm the setters exist.
+  // Remaining orphans (fault_entity_observed, sanguine_origin_understood) are F2's scope
+  // (dialogue-set flags in data/dialogueTrees.ts).
   const KNOWN_ORPHANS = new Set([
-    'broadcaster_found',
     'fault_entity_observed',
-    'fault_scar_connection_confirmed',
-    'hollow_origin_understood',
     'sanguine_origin_understood',
   ])
 

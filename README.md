@@ -209,6 +209,31 @@ tests/          Vitest test suite
 
 ## Release Notes
 
+### 2026-05-03 — Complete interaction-coverage spectrum + 5 chat fixes
+
+Five-Howler parallel sweep covering every player-facing interaction surface — chat (exhaustive runtime walk), examine, items, parser commands, and crafting + trade. Goal: every interaction works where expected, every character is chattable. Suite grew from 2490 → 6199 tests; 5 dialogue-tree key mismatches and 1 examine-keyword collision found and fixed.
+
+**Chat fixes — same shape as the prior Marta bug.** Five rooms referenced a `dialogueTree` key that didn't exist in `DIALOGUE_TREES`, so every `talk` to those NPCs fell through to a generic greeting even though full multi-node trees were written for each character. All five fixed by adding aliases to `DIALOGUE_TREES`:
+
+- `vane_broadcast_room_main` → `vaneTree` (Elias Vane the Broadcaster — 28-node tree was unreachable)
+- `elder_sanguine_deep_diplomacy` → `elderSanguineTree` (Elder Sanguine, the_deep — 24 nodes)
+- `elder_sanguine_sanctum_diplomacy` → `elderSanguineTree` (Elder Sanguine, sanctum)
+- `rr_howard_bridge_keeper` → `howardTree` (Howard the bridge keeper — 20 nodes)
+- `cv_prisoner_dell` → `dellTree` (Dell in Covenant jail)
+
+**Examine fix — keyword shadowing in the endgame room.** Four extras in `scar_14_the_core` (`cure aftermath`, `weapon aftermath`, `seal aftermath`, `throne aftermath`) were unreachable because a sibling extra had the bare keyword `'after'`, and `handleExamine` matches by `string.includes(...)`. Removed the bare keyword; the offending extra still resolves via `'result'`, `'done'`, `'chosen'`.
+
+**Per-Howler results**:
+- **PT-CHAT-ALL** — 285 tests, walked all 25 dialogue trees / 335 nodes / 619 branches; 0 dead `targetNode` references; **5 key mismatches caught + fixed**.
+- **PT-EXAMINE-ALL** — 951 extras tested across all 268 rooms; **4 keyword-collision blockers in scar_14 caught + fixed**.
+- **PT-ITEMS-ALL** — 1048 tests over 271 items / 48 weapons / 42 armor / 42 consumables / 10 keys; **0 blockers**. Confirmed slot exclusivity (H6), statBonus drift (H4), stash race (B6) all clean.
+- **PT-COMMANDS-ALL** — 266 tests over 43 verbs and 78 surface aliases; **0 silent-drop verbs**, **0 broken aliases**.
+- **PT-CRAFT-TRADE** — 36 tests over 15 recipes and 20 vendors; **0 broken ingredient/output/trade refs**.
+
+**Catalogued for follow-up (not blockers)**: 82 `dialogueTree` IDs in room data have no matching `DIALOGUE_TREES` entry — most are minor-NPC flavor cases that fall through to the NPC-ID fallback per `lib/actions/social.ts:462`; spot-check before adding new dialogue trees to confirm nothing important is silently going through the fallback path. Trade verb has no in-dialogue-tree entry point — players must type `trade <vendor>` directly (discoverability gap, not a bug).
+
+**Suite**: **6199 passing**, 3 expected fail (82-missing-trees catalogue + the 2 ps_10/ps_20 skillGate punts), 3 skipped, 1 todo.
+
 ### 2026-05-01 — Comprehensive playtest + playability fixes
 
 Triggered by a tester report ("couldn't navigate or talk to people") after the Convoy 2C ship. Spawned a 4-Howler parallel playtest spanning navigation, dialogue, quests, and combat/items, plus a runtime-simulation Howler that booted the actual GameEngine and fired `talk`/`go` commands per NPC. The static-analysis sweep was clean; the runtime sweep found the real bug.

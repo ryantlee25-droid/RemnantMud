@@ -6217,12 +6217,14 @@ export const DIALOGUE_TREES: Record<string, DialogueTree> = {
 
   // Howard at River Road bridge
   rr_howard_bridge: howardTree,
+  rr_howard_bridge_keeper: howardTree, // alias — river_road.ts references this ID
 
   // Marta at Crossroads
   cr_marta_food: martaTree,
 
   // Dell in Covenant jail
   cv_dell_prisoner: dellTree,
+  cv_prisoner_dell: dellTree, // alias — covenant.ts references this ID
 
   // Dr. Osei in the Breaks / Pine Sea lab
   br_osei_lab: oseiTree,
@@ -6251,9 +6253,12 @@ export const DIALOGUE_TREES: Record<string, DialogueTree> = {
 
   // Elias Vane (The Broadcaster) at The Scar broadcast room
   scar_vane_broadcast: vaneTree,
+  vane_broadcast_room_main: vaneTree, // alias — the_scar.ts references this ID
 
   // Elder Sanguine (Lucid Elder) at The Deep sanctum
   dp_elder_sanguine_sanctum: elderSanguineTree,
+  elder_sanguine_deep_diplomacy: elderSanguineTree,    // alias — the_deep.ts (deep room)
+  elder_sanguine_sanctum_diplomacy: elderSanguineTree, // alias — the_deep.ts (sanctum room)
 
   // --- [RIDER A: remnant-story-0329] Echo + Act 1 Climax ---
   echo_tree: echoTree,

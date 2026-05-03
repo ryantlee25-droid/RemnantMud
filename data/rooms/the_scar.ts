@@ -819,7 +819,10 @@ export const THE_SCAR_ROOMS: Room[] = [
         description: 'You stand at the center of the four terminals and hold three cycles of learning in your hands. The factions. The people. The Sanguine who have been alive longer than this country. The Hollow who were people and aren\'t and might be again. The survivors who built something from nothing and are building still. Everything you know is in this room with you. The game is not going to tell you which terminal to choose. It is not going to tell you that any of them are right. It is going to let you choose, and live with it.',
       },
       {
-        keywords: ['result', 'after', 'done', 'chosen'],
+        // Note: bare 'after' / 'aftermath' removed because they shadow the per-ending
+        // 'cure aftermath' / 'weapon aftermath' / 'seal aftermath' / 'throne aftermath'
+        // extras via substring match in handleExamine.
+        keywords: ['result', 'done', 'chosen'],
         description: 'You look at the terminals. If you have already made your choice, the room knows. If you haven\'t, it waits.',
         questGate: 'charon_choice',
       },

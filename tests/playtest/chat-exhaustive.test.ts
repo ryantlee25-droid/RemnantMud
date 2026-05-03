@@ -326,12 +326,12 @@ describe('PT-CHAT-ALL: Missing tree audit', () => {
     expect(unique, `${unique.length} dialogueTree IDs referenced in rooms but not defined in DIALOGUE_TREES:\n${unique.join('\n')}`).toHaveLength(0)
   })
 
-  // Spot-check the most important named NPCs
-  it.fails('cv_prisoner_dell is defined in DIALOGUE_TREES (Dell\'s covenant room uses it)', () => {
+  // Spot-check the most important named NPCs (fixed: aliases added to DIALOGUE_TREES)
+  it('cv_prisoner_dell is defined in DIALOGUE_TREES (Dell\'s covenant room uses it)', () => {
     expect(DIALOGUE_TREES['cv_prisoner_dell']).toBeDefined()
   })
 
-  it.fails('rr_howard_bridge_keeper is defined in DIALOGUE_TREES (Howard river road)', () => {
+  it('rr_howard_bridge_keeper is defined in DIALOGUE_TREES (Howard river road)', () => {
     expect(DIALOGUE_TREES['rr_howard_bridge_keeper']).toBeDefined()
   })
 
@@ -353,19 +353,23 @@ describe('PT-CHAT-ALL: Missing tree audit', () => {
     expect(DIALOGUE_TREES['vesper_philosophy_main']).toBeDefined()
   })
 
-  it('scar_vane_broadcast — room uses vane_broadcast_room_main, DIALOGUE_TREES has scar_vane_broadcast (MISMATCH)', () => {
-    // rooms reference 'vane_broadcast_room_main'
+  // Vane fix: alias vane_broadcast_room_main → vaneTree added to DIALOGUE_TREES
+  it('scar_vane_broadcast and vane_broadcast_room_main both resolve to Vane\'s tree (regression)', () => {
     const roomRef = roomTreeIndex.get('vane_broadcast_room_main')
     expect(roomRef, 'vane_broadcast_room_main should be referenced in rooms').toBeDefined()
-    // DIALOGUE_TREES defines scar_vane_broadcast not vane_broadcast_room_main
-    expect(DIALOGUE_TREES['vane_broadcast_room_main'], 'vane_broadcast_room_main should NOT be in DIALOGUE_TREES (it is a missing tree)').toBeUndefined()
-    expect(DIALOGUE_TREES['scar_vane_broadcast'], 'scar_vane_broadcast IS in DIALOGUE_TREES (orphaned — room does not use this key)').toBeDefined()
+    expect(DIALOGUE_TREES['vane_broadcast_room_main']).toBeDefined()
+    expect(DIALOGUE_TREES['scar_vane_broadcast']).toBeDefined()
+    // Both keys point at the same tree
+    expect(DIALOGUE_TREES['vane_broadcast_room_main']).toBe(DIALOGUE_TREES['scar_vane_broadcast'])
   })
 
-  it('dp_elder_sanguine_sanctum — rooms reference elder_sanguine_* variants, DIALOGUE_TREES has dp_ version (MISMATCH)', () => {
+  // Elder Sanguine fix: aliases elder_sanguine_*_diplomacy → elderSanguineTree added
+  it('dp_elder_sanguine_sanctum + the deep/sanctum diplomacy aliases all resolve (regression)', () => {
     expect(DIALOGUE_TREES['dp_elder_sanguine_sanctum']).toBeDefined()
-    expect(DIALOGUE_TREES['elder_sanguine_deep_diplomacy']).toBeUndefined()
-    expect(DIALOGUE_TREES['elder_sanguine_sanctum_diplomacy']).toBeUndefined()
+    expect(DIALOGUE_TREES['elder_sanguine_deep_diplomacy']).toBeDefined()
+    expect(DIALOGUE_TREES['elder_sanguine_sanctum_diplomacy']).toBeDefined()
+    expect(DIALOGUE_TREES['elder_sanguine_deep_diplomacy']).toBe(DIALOGUE_TREES['dp_elder_sanguine_sanctum'])
+    expect(DIALOGUE_TREES['elder_sanguine_sanctum_diplomacy']).toBe(DIALOGUE_TREES['dp_elder_sanguine_sanctum'])
   })
 
   it('Total missing tree count is captured', () => {
@@ -932,8 +936,8 @@ describe('PT-CHAT-ALL: Multi-turn arcs — top-5 dialogue-heavy NPCs', () => {
     expect(tree.nodes[tree.startNode]).toBeDefined()
   })
 
-  it('Vane: room uses vane_broadcast_room_main — this tree ID is NOT in DIALOGUE_TREES (key mismatch bug)', () => {
-    expect(DIALOGUE_TREES['vane_broadcast_room_main']).toBeUndefined()
+  it('Vane: vane_broadcast_room_main resolves (alias added to DIALOGUE_TREES — regression)', () => {
+    expect(DIALOGUE_TREES['vane_broadcast_room_main']).toBeDefined()
     expect(DIALOGUE_TREES['scar_vane_broadcast']).toBeDefined()
   })
 
@@ -949,8 +953,8 @@ describe('PT-CHAT-ALL: Multi-turn arcs — top-5 dialogue-heavy NPCs', () => {
     expect(tree.nodes[tree.startNode]).toBeDefined()
   })
 
-  it('Elder Sanguine: room uses elder_sanguine_sanctum_diplomacy — NOT in DIALOGUE_TREES (key mismatch bug)', () => {
-    expect(DIALOGUE_TREES['elder_sanguine_sanctum_diplomacy']).toBeUndefined()
+  it('Elder Sanguine: elder_sanguine_sanctum_diplomacy resolves (alias added — regression)', () => {
+    expect(DIALOGUE_TREES['elder_sanguine_sanctum_diplomacy']).toBeDefined()
     expect(DIALOGUE_TREES['dp_elder_sanguine_sanctum']).toBeDefined()
   })
 })

@@ -1,0 +1,2248 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`deathProse — DEATH_PROSE_VARIANTS > all variants — template renders match their IDs 1`] = `
+[
+  {
+    "id": "combat_specific_killer",
+    "lineCount": 3,
+  },
+  {
+    "id": "combat_veteran",
+    "lineCount": 4,
+  },
+  {
+    "id": "combat_overwhelmed",
+    "lineCount": 3,
+  },
+  {
+    "id": "environment_collapse",
+    "lineCount": 4,
+  },
+  {
+    "id": "infection_hollow",
+    "lineCount": 4,
+  },
+  {
+    "id": "faction_execution",
+    "lineCount": 4,
+  },
+  {
+    "id": "cycle_aware_late",
+    "lineCount": 4,
+  },
+  {
+    "id": "default_fallback",
+    "lineCount": 2,
+  },
+]
+`;
+
+exports[`deathProse — DEATH_PROSE_VARIANTS > variant: combat_overwhelmed (cycle 1, <5 kills) 1`] = `
+[
+  {
+    "text": "You wanted more time. The Hollow didn't ask.",
+    "type": "death",
+  },
+  {
+    "text": "It wasn't supposed to go like this. You had a pack. You had a plan. You had the specific weight of intention that feels like readiness until the moment it isn't.",
+    "type": "death",
+  },
+  {
+    "text": "CHARON-7 is not surprised. It has been through this before. It will reconstruct something that can pass for you. It will be a little smaller than you were.",
+    "type": "death",
+  },
+]
+`;
+
+exports[`deathProse — DEATH_PROSE_VARIANTS > variant: combat_specific_killer 1`] = `
+[
+  {
+    "text": "You wanted more time. The Hollow didn't ask.",
+    "type": "death",
+  },
+  {
+    "text": "It wasn't supposed to go like this. You had a pack. You had a plan. You had the specific weight of intention that feels like readiness until the moment it isn't.",
+    "type": "death",
+  },
+  {
+    "text": "CHARON-7 is not surprised. It has been through this before. It will reconstruct something that can pass for you. It will be a little smaller than you were.",
+    "type": "death",
+  },
+]
+`;
+
+exports[`deathProse — DEATH_PROSE_VARIANTS > variant: combat_veteran (cycle 2, 20+ kills) 1`] = `
+[
+  {
+    "text": "You've killed 20 of them. They've finally returned the favor.",
+    "type": "death",
+  },
+  {
+    "text": "The math was always going to catch up. You knew that. Every revenant who's been through more than one cycle knows that. You just kept hoping the math was wrong.",
+    "type": "death",
+  },
+  {
+    "text": "It wasn't.",
+    "type": "death",
+  },
+  {
+    "text": "CHARON-7 will rebuild the scaffolding it calls you. The scars it left last time are still there. It will add new ones.",
+    "type": "death",
+  },
+]
+`;
+
+exports[`deathProse — DEATH_PROSE_VARIANTS > variant: cycle_aware_late (cycle 5+) 1`] = `
+[
+  {
+    "text": "5 cycles. The radio is still calling. You wonder if it ever cared.",
+    "type": "death",
+  },
+  {
+    "text": "You have died enough times to know the shape of this. The specific quality of darkness before the reconstruction. The way CHARON-7 feels when it starts -- not painful, exactly, just the absolute certainty that you are not the original and have not been for some time.",
+    "type": "death",
+  },
+  {
+    "text": "The Scar is still there. The broadcaster is still there. The signal is still there. You keep going back. You haven't decided yet if that means something or if it only feels like it does.",
+    "type": "death",
+  },
+  {
+    "text": "CHARON-7 will rebuild you. Again.",
+    "type": "death",
+  },
+]
+`;
+
+exports[`deathProse — DEATH_PROSE_VARIANTS > variant: default_fallback (unknown cause, no other matches) 1`] = `
+[
+  {
+    "text": "The Revenant effect is not resurrection. That word implies something sacred. What happens to you is more like a document being restored from an older backup — some edits lost, some corruptions introduced, the file a little smaller each time. CHARON-7 does not bring you back. It reconstructs something that can pass for you.",
+    "type": "death",
+  },
+  {
+    "text": "Each cycle you are a little less certain which memories are yours. Each cycle the violence comes a little more naturally. The virus is not keeping you alive out of mercy. It is keeping you alive because you are useful to it, and it has not finished deciding what for.",
+    "type": "death",
+  },
+]
+`;
+
+exports[`deathProse — DEATH_PROSE_VARIANTS > variant: environment_collapse (the_deep zone) 1`] = `
+[
+  {
+    "text": "The earth was always going to win.",
+    "type": "death",
+  },
+  {
+    "text": "This place existed before CHARON-7. Before the Hollow. Before anyone thought to give it a name or map its edges or believe they understood what it was. It will exist after you too.",
+    "type": "death",
+  },
+  {
+    "text": "You are very small. You were very small. The world didn't need to try.",
+    "type": "death",
+  },
+  {
+    "text": "CHARON-7 will reconstruct you. You will not remember how big the silence was, or the specific texture of what swallowed you. That is a mercy of a kind.",
+    "type": "death",
+  },
+]
+`;
+
+exports[`deathProse — DEATH_PROSE_VARIANTS > variant: environment_collapse (the_scar zone) 1`] = `
+[
+  {
+    "text": "The earth was always going to win.",
+    "type": "death",
+  },
+  {
+    "text": "This place existed before CHARON-7. Before the Hollow. Before anyone thought to give it a name or map its edges or believe they understood what it was. It will exist after you too.",
+    "type": "death",
+  },
+  {
+    "text": "You are very small. You were very small. The world didn't need to try.",
+    "type": "death",
+  },
+  {
+    "text": "CHARON-7 will reconstruct you. You will not remember how big the silence was, or the specific texture of what swallowed you. That is a mercy of a kind.",
+    "type": "death",
+  },
+]
+`;
+
+exports[`deathProse — DEATH_PROSE_VARIANTS > variant: faction_execution 1`] = `
+[
+  {
+    "text": "They knew your name. They wanted you to know that, before.",
+    "type": "death",
+  },
+  {
+    "text": "This was not random. This was a decision made in a room, by people who weighed the cost of letting you continue and decided the math didn't work in your favor. Someone signed something. Someone gave an order.",
+    "type": "death",
+  },
+  {
+    "text": "The world has opinions about you. You have made yourself legible to it. That is both the thing that got you killed and the thing that might eventually keep you alive.",
+    "type": "death",
+  },
+  {
+    "text": "CHARON-7 will rebuild you. The faction will still have your name on a list.",
+    "type": "death",
+  },
+]
+`;
+
+exports[`deathProse — DEATH_PROSE_VARIANTS > variant: infection_hollow 1`] = `
+[
+  {
+    "text": "You can hear yourself thinking. Soon you won't be able to.",
+    "type": "death",
+  },
+  {
+    "text": "The Hollow don't know they're the Hollow. That's the part nobody likes to say out loud. They're still in there, processing, moving through patterns that used to mean something. The hunger is just louder than everything else.",
+    "type": "death",
+  },
+  {
+    "text": "CHARON-7 is intercepting the turn. It doesn't do this out of mercy. It does this because what you were becoming was no longer useful to it.",
+    "type": "death",
+  },
+  {
+    "text": "You will wake up yourself. Mostly.",
+    "type": "death",
+  },
+]
+`;
+
+exports[`hollowPressure — getPressureNarration > clamps above 10 to level 10 1`] = `
+[
+  {
+    "text": "The world holds its breath.",
+    "type": "narrative",
+  },
+  {
+    "text": "Then screams.",
+    "type": "narrative",
+  },
+]
+`;
+
+exports[`hollowPressure — getPressureNarration > clamps below 0 to level 0 1`] = `
+[
+  {
+    "text": "Quiet. The ordinary quiet of a world that still works.",
+    "type": "narrative",
+  },
+  {
+    "text": "Birds somewhere. Wind. Nothing watching.",
+    "type": "narrative",
+  },
+]
+`;
+
+exports[`hollowPressure — getPressureNarration > pressure level 0 1`] = `
+[
+  {
+    "text": "Quiet. The ordinary quiet of a world that still works.",
+    "type": "narrative",
+  },
+  {
+    "text": "Birds somewhere. Wind. Nothing watching.",
+    "type": "narrative",
+  },
+]
+`;
+
+exports[`hollowPressure — getPressureNarration > pressure level 1 1`] = `
+[
+  {
+    "text": "Stillness. Almost peaceful. Almost.",
+    "type": "narrative",
+  },
+  {
+    "text": "The light is good. The air tastes like nothing at all.",
+    "type": "narrative",
+  },
+]
+`;
+
+exports[`hollowPressure — getPressureNarration > pressure level 2 1`] = `
+[
+  {
+    "text": "Distant sounds carry where they shouldn't.",
+    "type": "narrative",
+  },
+  {
+    "text": "Wind from the east, and something riding it you can't name.",
+    "type": "narrative",
+  },
+]
+`;
+
+exports[`hollowPressure — getPressureNarration > pressure level 3 1`] = `
+[
+  {
+    "text": "A sound from the wrong direction. You stop. It stops.",
+    "type": "narrative",
+  },
+  {
+    "text": "Somewhere behind you, something shifted. You did not see it.",
+    "type": "narrative",
+  },
+]
+`;
+
+exports[`hollowPressure — getPressureNarration > pressure level 4 1`] = `
+[
+  {
+    "text": "Something at the edge of hearing. Movement where there shouldn't be.",
+    "type": "narrative",
+  },
+  {
+    "text": "The hairs on your arms have been standing for two minutes.",
+    "type": "narrative",
+  },
+  {
+    "text": "You keep almost hearing your name.",
+    "type": "narrative",
+  },
+]
+`;
+
+exports[`hollowPressure — getPressureNarration > pressure level 5 1`] = `
+[
+  {
+    "text": "The quality of the silence has changed. It has weight now.",
+    "type": "narrative",
+  },
+  {
+    "text": "Your footsteps sound too loud. Everything else sounds too quiet.",
+    "type": "narrative",
+  },
+  {
+    "text": "You count the shadows out of habit. One of them is wrong.",
+    "type": "narrative",
+  },
+]
+`;
+
+exports[`hollowPressure — getPressureNarration > pressure level 6 1`] = `
+[
+  {
+    "text": "Your heartbeat fills the silence. Every shadow has weight.",
+    "type": "narrative",
+  },
+  {
+    "text": "You realize you've been holding your breath. You don't remember starting.",
+    "type": "narrative",
+  },
+  {
+    "text": "The dark between things looks back.",
+    "type": "narrative",
+  },
+]
+`;
+
+exports[`hollowPressure — getPressureNarration > pressure level 7 1`] = `
+[
+  {
+    "text": "The air is thick with it. Waiting. Something is waiting.",
+    "type": "narrative",
+  },
+  {
+    "text": "Your hands have found weapons without you asking them to.",
+    "type": "narrative",
+  },
+  {
+    "text": "You hear your own pulse in your ears. It is faster than it should be.",
+    "type": "narrative",
+  },
+]
+`;
+
+exports[`hollowPressure — getPressureNarration > pressure level 8 1`] = `
+[
+  {
+    "text": "Breathing is difficult. The air tastes like copper and something older.",
+    "type": "narrative",
+  },
+  {
+    "text": "Your vision has narrowed to a tunnel. The edges are moving.",
+    "type": "narrative",
+  },
+  {
+    "text": "Your mouth is dry. Your hands are shaking. Your body is already running.",
+    "type": "narrative",
+  },
+]
+`;
+
+exports[`hollowPressure — getPressureNarration > pressure level 9 1`] = `
+[
+  {
+    "text": "Fear has become a physical thing, a pressure behind your eyes.",
+    "type": "narrative",
+  },
+  {
+    "text": "Every breath is a decision. Every step is a choice not to run.",
+    "type": "narrative",
+  },
+  {
+    "text": "The dark is full and the full dark is full of sound you almost recognize.",
+    "type": "narrative",
+  },
+]
+`;
+
+exports[`hollowPressure — getPressureNarration > pressure level 10 1`] = `
+[
+  {
+    "text": "The world holds its breath.",
+    "type": "narrative",
+  },
+  {
+    "text": "Then screams.",
+    "type": "narrative",
+  },
+]
+`;
+
+exports[`hollowPressure — getSilenceNarration > returns one of the known silence lines (seeded) 1`] = `
+{
+  "text": "The ambient world switches off. The silence is absolute.",
+  "type": "narrative",
+}
+`;
+
+exports[`narratorVoice — act transition lines (deterministic) > act 1 → 2 transition 1`] = `
+[
+  {
+    "text": "*"A voice not your own: The world shifts. Not the ground —*
+*the ground was always unstable. The certainty.*
+*The things you believed when you arrived have*
+*rearranged, and their new shape is uncomfortable.*
+*You are no longer a newcomer. You are a factor.*
+*The factions have adjusted their calculations.*
+*You are in the equation now, and equations*
+*have a way of demanding solutions."*",
+    "type": "echo",
+  },
+]
+`;
+
+exports[`narratorVoice — act transition lines (deterministic) > act 2 → 3 transition 1`] = `
+[
+  {
+    "text": "*"A voice not your own: Something breaks. Not loud —*
+*the opposite of loud. A quiet breaking, like a bone*
+*fractured for years finally giving way.*
+*The world has been holding its breath since MERIDIAN,*
+*since the Collapse, since someone opened a door*
+*that should have stayed closed.*
+*The breath is running out.*
+*What happens next happens to you.*
+*There is no time to wonder if you are ready.*
+*You are not ready. No one is. Go anyway."*",
+    "type": "echo",
+  },
+]
+`;
+
+exports[`narratorVoice — act transition lines (deterministic) > invalid transition returns empty array 1`] = `[]`;
+
+exports[`narratorVoice — generateNarratorVoice (seeded) > priority 1: pressure pool (pressure >= 7) 1`] = `
+{
+  "text": "*"A voice not your own: Stay still. Moving is*
+*what gets them to notice you. Stay very still."*",
+  "type": "echo",
+}
+`;
+
+exports[`narratorVoice — generateNarratorVoice (seeded) > priority 1: recent death (pressure=0 but recentDeath=true) 1`] = `
+{
+  "text": "*"A voice not your own: Stay still. Moving is*
+*what gets them to notice you. Stay very still."*",
+  "type": "echo",
+}
+`;
+
+exports[`narratorVoice — generateNarratorVoice (seeded) > priority 2: personal loss pool (pressure < 7, loss present) 1`] = `
+{
+  "text": "*"A voice not your own: You are not ready for*
+*what you will find. No one has ever been ready."*",
+  "type": "echo",
+}
+`;
+
+exports[`narratorVoice — generateNarratorVoice (seeded) > priority 3: cycle pool (cycle >= 2) 1`] = `
+{
+  "text": "*"A voice not your own: This world has rules.*
+*They are not the rules you think they are."*",
+  "type": "echo",
+}
+`;
+
+exports[`narratorVoice — generateNarratorVoice (seeded) > priority 4: act-specific pool (act 2) 1`] = `
+{
+  "text": "*"A voice not your own: You have already made an enemy*
+*you have not recognized as one yet."*",
+  "type": "echo",
+}
+`;
+
+exports[`narratorVoice — generateNarratorVoice (seeded) > priority 5: general pool fallback (act 1, no specials) 1`] = `
+{
+  "text": "*"A voice not your own: You have more time than you think.*
+*You have less than you need."*",
+  "type": "echo",
+}
+`;
+
+exports[`narratorVoice — pool content snapshots (deterministic) > CYCLE_WHISPERS pool — all IDs and texts 1`] = `
+[
+  {
+    "id": "cycle_001",
+    "text": "*"A voice not your own: You have done this before.*
+*The world remembers, even when you do not."*",
+  },
+  {
+    "id": "cycle_002",
+    "text": "*"A voice not your own: The scars that carried over*
+*are not on your skin."*",
+  },
+  {
+    "id": "cycle_003",
+    "text": "*"A voice not your own: Last time, you trusted them.*
+*How did that work out."*",
+  },
+  {
+    "id": "cycle_004",
+    "text": "*"A voice not your own: This is the room where you died.*
+*The air still tastes like it."*",
+  },
+  {
+    "id": "cycle_005",
+    "text": "*"A voice not your own: The echo of your previous self*
+*is louder here. It disagrees with your current choice."*",
+  },
+  {
+    "id": "cycle_006",
+    "text": "*"A voice not your own: You keep coming back. The world*
+*has stopped being surprised. It has started being afraid."*",
+  },
+  {
+    "id": "cycle_007",
+    "text": "*"A voice not your own: This time is different.*
+*You know that is not true. Keep going anyway."*",
+  },
+  {
+    "id": "cycle_008",
+    "text": "*"A voice not your own: The factions remember you.*
+*Not the way you remember them."*",
+  },
+  {
+    "id": "cycle_009",
+    "text": "*"A voice not your own: The mistake you made last time*
+*is approaching from a different direction."*",
+  },
+  {
+    "id": "cycle_010",
+    "text": "*"A voice not your own: Something in this world knows*
+*exactly how many times you have failed."*",
+  },
+  {
+    "id": "cycle_011",
+    "text": "*"A voice not your own: The people who died in your*
+*previous cycle died for choices you made. New choices now."*",
+  },
+  {
+    "id": "cycle_012",
+    "text": "*"A voice not your own: The Hollow remember you.*
+*That is not a metaphor. They actually remember."*",
+  },
+]
+`;
+
+exports[`narratorVoice — pool content snapshots (deterministic) > NARRATOR_WHISPER_POOL — total count and all IDs 1`] = `
+{
+  "count": 116,
+  "ids": [
+    "gen_001",
+    "gen_002",
+    "gen_003",
+    "gen_004",
+    "gen_005",
+    "gen_006",
+    "gen_007",
+    "gen_008",
+    "gen_009",
+    "gen_010",
+    "gen_011",
+    "gen_012",
+    "gen_013",
+    "gen_014",
+    "gen_015",
+    "gen_016",
+    "gen_017",
+    "gen_018",
+    "gen_019",
+    "gen_020",
+    "gen_021",
+    "gen_022",
+    "gen_023",
+    "gen_024",
+    "gen_025",
+    "gen_026",
+    "gen_027",
+    "gen_028",
+    "gen_029",
+    "gen_030",
+    "gen_031",
+    "gen_032",
+    "gen_033",
+    "gen_034",
+    "gen_035",
+    "act1_001",
+    "act1_002",
+    "act1_003",
+    "act1_004",
+    "act1_005",
+    "act1_006",
+    "act1_007",
+    "act1_008",
+    "act1_009",
+    "act1_010",
+    "act1_011",
+    "act1_012",
+    "act1_013",
+    "act1_014",
+    "act1_015",
+    "act2_001",
+    "act2_002",
+    "act2_003",
+    "act2_004",
+    "act2_005",
+    "act2_006",
+    "act2_007",
+    "act2_008",
+    "act2_009",
+    "act2_010",
+    "act2_011",
+    "act2_012",
+    "act2_013",
+    "act2_014",
+    "act2_015",
+    "act3_001",
+    "act3_002",
+    "act3_003",
+    "act3_004",
+    "act3_005",
+    "act3_006",
+    "act3_007",
+    "act3_008",
+    "act3_009",
+    "act3_010",
+    "act3_011",
+    "act3_012",
+    "act3_013",
+    "act3_014",
+    "act3_015",
+    "cycle_001",
+    "cycle_002",
+    "cycle_003",
+    "cycle_004",
+    "cycle_005",
+    "cycle_006",
+    "cycle_007",
+    "cycle_008",
+    "cycle_009",
+    "cycle_010",
+    "cycle_011",
+    "cycle_012",
+    "pressure_001",
+    "pressure_002",
+    "pressure_003",
+    "pressure_004",
+    "pressure_005",
+    "pressure_006",
+    "pressure_007",
+    "pressure_008",
+    "pressure_009",
+    "pressure_010",
+    "pressure_011",
+    "pressure_012",
+    "loss_001",
+    "loss_002",
+    "loss_003",
+    "loss_004",
+    "loss_005",
+    "loss_006",
+    "loss_007",
+    "loss_008",
+    "loss_009",
+    "loss_010",
+    "loss_011",
+    "loss_012",
+  ],
+}
+`;
+
+exports[`narratorVoice — pool content snapshots (deterministic) > PERSONAL_LOSS_WHISPERS pool — all IDs and texts 1`] = `
+[
+  {
+    "id": "loss_001",
+    "text": "*"A voice not your own: You will find what you*
+*are looking for. You will wish you had not."*",
+  },
+  {
+    "id": "loss_002",
+    "text": "*"A voice not your own: The name you carry*
+*weighs more than your pack."*",
+  },
+  {
+    "id": "loss_003",
+    "text": "*"A voice not your own: They would not recognize*
+*what you have become. That is not a judgment."*",
+  },
+  {
+    "id": "loss_004",
+    "text": "*"A voice not your own: Somewhere in this world there*
+*is proof of what happened to them."*",
+  },
+  {
+    "id": "loss_005",
+    "text": "*"A voice not your own: The grief you carry is not*
+*a weakness. It is the only honest thing left."*",
+  },
+  {
+    "id": "loss_006",
+    "text": "*"A voice not your own: You are not looking for*
+*them. You are looking for the version of you*
+*that had them."*",
+  },
+  {
+    "id": "loss_007",
+    "text": "*"A voice not your own: They are not dead.*
+*What happened to them is worse."*",
+  },
+  {
+    "id": "loss_008",
+    "text": "*"A voice not your own: Grief does not make you*
+*soft. It makes you specific. That is useful here."*",
+  },
+  {
+    "id": "loss_009",
+    "text": "*"A voice not your own: The reason you came here*
+*is still the reason. Do not let the world*
+*replace it with a different reason."*",
+  },
+  {
+    "id": "loss_010",
+    "text": "*"A voice not your own: You are not ready for*
+*what you will find. No one has ever been ready."*",
+  },
+  {
+    "id": "loss_011",
+    "text": "*"A voice not your own: The choice that led to their*
+*loss was not yours. The choice you make now is."*",
+  },
+  {
+    "id": "loss_012",
+    "text": "*"A voice not your own: Carrying a loss this long*
+*changes how the world looks. You see things others miss."*",
+  },
+]
+`;
+
+exports[`narratorVoice — pool content snapshots (deterministic) > PRESSURE_WHISPERS pool — all IDs and texts 1`] = `
+[
+  {
+    "id": "pressure_001",
+    "text": "*"A voice not your own: Your body knows something*
+*your mind does not. Listen to your body."*",
+  },
+  {
+    "id": "pressure_002",
+    "text": "*"A voice not your own: The heartbeat you hear*
+*is yours. Probably."*",
+  },
+  {
+    "id": "pressure_003",
+    "text": "*"A voice not your own: Run. Now. Do not look.*
+*Do not think. Run."*",
+  },
+  {
+    "id": "pressure_004",
+    "text": "*"A voice not your own: It is closer than you think."*",
+  },
+  {
+    "id": "pressure_005",
+    "text": "*"A voice not your own: The next room is the wrong room.*
+*You are going to enter it anyway."*",
+  },
+  {
+    "id": "pressure_006",
+    "text": "*"A voice not your own: The thing that is following you*
+*knows you have noticed it. It does not care."*",
+  },
+  {
+    "id": "pressure_007",
+    "text": "*"A voice not your own: Your hands are shaking.*
+*That is a signal, not a weakness. Receive it."*",
+  },
+  {
+    "id": "pressure_008",
+    "text": "*"A voice not your own: Stay still. Moving is*
+*what gets them to notice you. Stay very still."*",
+  },
+  {
+    "id": "pressure_009",
+    "text": "*"A voice not your own: You have been in danger before.*
+*This is a different kind."*",
+  },
+  {
+    "id": "pressure_010",
+    "text": "*"A voice not your own: The silence just changed.*
+*Something entered it."*",
+  },
+  {
+    "id": "pressure_011",
+    "text": "*"A voice not your own: Everything you do now matters*
+*more than everything you did before. Move carefully."*",
+  },
+  {
+    "id": "pressure_012",
+    "text": "*"A voice not your own: Fear is information.*
+*Your fear is telling you something specific. Listen."*",
+  },
+]
+`;
+
+exports[`playerMonologue — getPersonalLossEcho > child × examining_loss_item 1`] = `
+{
+  "text": "*"For a second, in the bad light, you almost called out. You didn't. You never do."*",
+  "type": "narrative",
+}
+`;
+
+exports[`playerMonologue — getPersonalLossEcho > child × witnessing_children 1`] = `
+{
+  "text": "*"For a second, in the bad light, you almost called out. You didn't. You never do."*",
+  "type": "narrative",
+}
+`;
+
+exports[`playerMonologue — getPersonalLossEcho > community × safe_rest 1`] = `
+{
+  "text": "*"You sit at the edge of their fire. You're not part of it. But you remember being part of one."*",
+  "type": "narrative",
+}
+`;
+
+exports[`playerMonologue — getPersonalLossEcho > identity × discovery 1`] = `
+{
+  "text": "*"The name surfaces again. Maren. You don't know if it's yours or someone else's."*",
+  "type": "narrative",
+}
+`;
+
+exports[`playerMonologue — getPersonalLossEcho > identity × examining_loss_item 1`] = `
+{
+  "text": "*"The name surfaces again. Maren. You don't know if it's yours or someone else's."*",
+  "type": "narrative",
+}
+`;
+
+exports[`playerMonologue — getPersonalLossEcho > partner × examining_loss_item 1`] = `
+{
+  "text": "*"Two cups set out on the table. Someone is still setting two cups. You understand that."*",
+  "type": "narrative",
+}
+`;
+
+exports[`playerMonologue — getPersonalLossEcho > partner × witnessing_community 1`] = `
+{
+  "text": "*"Two cups set out on the table. Someone is still setting two cups. You understand that."*",
+  "type": "narrative",
+}
+`;
+
+exports[`playerMonologue — getPersonalLossEcho > promise × examining_loss_item 1`] = `
+{
+  "text": "*"Some promises shouldn't be kept. That's never stopped you."*",
+  "type": "narrative",
+}
+`;
+
+exports[`playerMonologue — getPersonalLossEcho > promise × safe_rest 1`] = `
+{
+  "text": "*"Some promises shouldn't be kept. That's never stopped you."*",
+  "type": "narrative",
+}
+`;
+
+exports[`playerMonologue — getPhysicalStateNarration > exhausted (50+ actions since rest) 1`] = `
+{
+  "text": "*"You've been moving too long. Your body is sending messages you keep ignoring."*",
+  "type": "narrative",
+}
+`;
+
+exports[`playerMonologue — getPhysicalStateNarration > high cycle (cycle 5+) 1`] = `
+{
+  "text": "*"The fifth time changes you. You're not sure if it's refinement or erosion."*",
+  "type": "narrative",
+}
+`;
+
+exports[`playerMonologue — getPhysicalStateNarration > low HP (<25%) 1`] = `
+{
+  "text": "*"You blink. The world swims. Stay moving."*",
+  "type": "narrative",
+}
+`;
+
+exports[`playerMonologue — getPhysicalStateNarration > poisoned condition 1`] = `
+{
+  "text": "*"Your fingers are numb. You need to think about that. Later."*",
+  "type": "narrative",
+}
+`;
+
+exports[`playerMonologue — getPhysicalStateNarration > post-rebirth (cycle 2, actionsTaken <= 20) 1`] = `
+{
+  "text": "*"You've been here. The exact quality of the light. You've been here."*",
+  "type": "narrative",
+}
+`;
+
+exports[`playerMonologue — getReputationVoice > accord rep >= 2 (seeded to fire) 1`] = `null`;
+
+exports[`playerMonologue — getReputationVoice > cycle >= 3 reputation line (seeded to fire) 1`] = `null`;
+
+exports[`playerMonologue — getReputationVoice > kindling rep >= 2 (seeded to fire) 1`] = `null`;
+
+exports[`playerMonologue — getReputationVoice > salters rep <= -2 (seeded to fire) 1`] = `null`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > broker × act_transition (loss: child) 1`] = `
+[
+  "*"The deal changed. You renegotiate. That's what you do."*",
+  "*"New terms. You read the new terms. You find the leverage in the new terms."*",
+  "*"The room shifted. You read the new power map. The edge is in a different place now. Find it."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > broker × examining_loss_item (loss: child) 1`] = `
+[
+  "*"You read it the way you read a contract you can't back out of. Every clause. Every cost."*",
+  "*"You hold it and remember exactly what it cost. The ledger has this entry, but not a balance."*",
+  "*"You've traded in everything. You didn't know you were trading until you'd already traded."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > broker × in_danger (loss: child) 1`] = `
+[
+  "*"You read the room. The room is hostile. You've worked with hostile rooms before."*",
+  "*"Something's wrong here. You start calculating the cost of being wrong."*",
+  "*"You've walked into bad deals. You can walk out. Find the exit clause."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > broker × low_hp (loss: child) 1`] = `
+[
+  "*"Every negotiation has a bottom line. You're approaching yours."*",
+  "*"You've talked your way out of worse. This one isn't talking."*",
+  "*"The leverage here is: you're still breathing. Use it."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > broker × post_combat (loss: child) 1`] = `
+[
+  "*"You read the fear in their eyes before the end. You'll use that information. You always do."*",
+  "*"Post-encounter analysis: leverage extracted, threat neutralized. The ledger updated."*",
+  "*"You note what worked. You note what didn't. The next negotiation will be better."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > broker × pressure_spike (loss: child) 1`] = `
+[
+  "*"The power balance shifted. You read it before it announced itself."*",
+  "*"Something changed in the dynamic. Find the new leverage point."*",
+  "*"The tells changed. Someone is about to make a move they've been planning for a while. Read them first."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > broker × safe_rest (loss: child) 1`] = `
+[
+  "*"You think about who you owe and who owes you. The ledger is never balanced."*",
+  "*"You rest. You keep one part of your mind on the current accounts. Force of habit."*",
+  "*"Safe. You inventory the debts. You inventory the assets. You sleep anyway."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > enforcer × act_transition (loss: child) 1`] = `
+[
+  "*"The situation has escalated. You adjust. That's all adjustment is."*",
+  "*"New threat parameters. Same operator. You've worked with worse odds."*",
+  "*"New parameters. You count the exits again. The number changed. Recalculate."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > enforcer × examining_loss_item (loss: child) 1`] = `
+[
+  "*"You put it down. You pick it back up. Tactical assessment: you can't afford this right now."*",
+  "*"You were supposed to protect them. You know exactly where the failure point was."*",
+  "*"Intel. File it. Keep moving."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > enforcer × in_danger (loss: child) 1`] = `
+[
+  "*"You count exits before you count threats. Always exits first."*",
+  "*"Something's wrong. You catalog the angles before you figure out what."*",
+  "*"Your hand finds the weapon before your brain sends the order. Good."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > enforcer × low_hp (loss: child) 1`] = `
+[
+  "*"Pain is information. It says: you're still alive. Act accordingly."*",
+  "*"You've taken worse. Think about when you took worse. Get up."*",
+  "*"Not here. You don't get to stop here."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > enforcer × post_combat (loss: child) 1`] = `
+[
+  "*"You count the rounds you used. Too many. You're getting sloppy."*",
+  "*"Threat neutralized. You replay it anyway. Third strike was inefficient."*",
+  "*"Clean enough. Next one will be cleaner."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > enforcer × pressure_spike (loss: child) 1`] = `
+[
+  "*"Something in the air. Your body logged it before you did."*",
+  "*"Threat density increasing. You can feel it in the pattern."*",
+  "*"Your count is off. Someone changed the room while you weren't watching. Recount. Move."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > enforcer × safe_rest (loss: child) 1`] = `
+[
+  "*"You check the perimeter. Then you check it again. Then you sleep with one eye open."*",
+  "*"Safe is a word other people use. You sit with your back to the wall."*",
+  "*"You can sleep when this is over. This isn't over."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > reclaimer × act_transition (loss: child) 1`] = `
+[
+  "*"Parameters updated. You rebuild the model with the new inputs."*",
+  "*"The system changed. You read the new architecture. You adapt the process."*",
+  "*"New error state. You've debugged harder systems than this. Find the root cause."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > reclaimer × examining_loss_item (loss: child) 1`] = `
+[
+  "*"The input was there all along. You just couldn't parse the format in time."*",
+  "*"You run every diagnostic subroutine you have. The analysis returns: insufficient. That's a new error."*",
+  "*"Some inputs are not processable. You've been running this one through the parser for a long time. No output."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > reclaimer × in_danger (loss: child) 1`] = `
+[
+  "*"System failure in progress. Locate the breach. Isolate it."*",
+  "*"Error state detected. Run the diagnostic before the system crashes completely."*",
+  "*"The environment is throwing errors. Read the log before it overwrites."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > reclaimer × low_hp (loss: child) 1`] = `
+[
+  "*"Systems failing. Core functionality compromised. You need maintenance."*",
+  "*"You run diagnostics on your current state. The output is bad. Run the repair subroutine anyway."*",
+  "*"Critical failure is not an option. Reconfigure. Continue."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > reclaimer × post_combat (loss: child) 1`] = `
+[
+  "*"Encounter closed. Bug report: you took more damage than the threat profile suggested. Update the threat model."*",
+  "*"Post-action log: efficiency suboptimal. Acceptable. Optimize next iteration."*",
+  "*"You survived. Write the entry. Move to the next process."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > reclaimer × pressure_spike (loss: child) 1`] = `
+[
+  "*"Anomaly detected. The system state is degrading. Log it and respond before cascade failure."*",
+  "*"Something in the ambient architecture is wrong. Read the error log carefully."*",
+  "*"Exception thrown. The subroutine that handles this is active. Execute it."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > reclaimer × safe_rest (loss: child) 1`] = `
+[
+  "*"The quiet used to have more in it. The archive is smaller now."*",
+  "*"Maintenance window. You run diagnostics. You note the subsystems that need attention."*",
+  "*"Safe. You allocate the downtime correctly. Rest is a system requirement."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > scout × act_transition (loss: child) 1`] = `
+[
+  "*"The pattern shifted. You log the new variables. The map needs updating."*",
+  "*"Everything you knew about this territory just changed. Start building new models."*",
+  "*"New terrain. You read it the way you read every room — exits first, threats second, everything else after."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > scout × examining_loss_item (loss: child) 1`] = `
+[
+  "*"The pattern is there. You just need more data points."*",
+  "*"You catalogue it. Date it. Place it on a mental timeline. The clinical approach is the only one that doesn't break you."*",
+  "*"You've been collecting evidence of what happened. You don't know why. You keep collecting."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > scout × in_danger (loss: child) 1`] = `
+[
+  "*"You map exits in your head before you move. Three ways out. Pick the best one."*",
+  "*"The pattern is wrong. You feel it before you see it. That's worth something."*",
+  "*"You've read this terrain. Something's changed. Find the change first."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > scout × low_hp (loss: child) 1`] = `
+[
+  "*"Your vision narrows. That's the adrenaline leaving. Stay focused."*",
+  "*"Running out of margin. Calculate what's necessary. Cut everything else."*",
+  "*"The data says: not good. The data also says: still viable. Trust the data."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > scout × post_combat (loss: child) 1`] = `
+[
+  "*"You replay it in your head. The opening was at second three. You took it at second five. Slow."*",
+  "*"Threat catalogued, processed, neutralized. The efficiency rating is acceptable."*",
+  "*"You note what you could have done better. You always note it. You're always right."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > scout × pressure_spike (loss: child) 1`] = `
+[
+  "*"The sign is wrong. Something moved through here that doesn't belong here."*",
+  "*"You've tracked enough threats to read the terrain. The terrain is reading badly."*",
+  "*"The exits you mapped are no longer exits you'd trust. Someone changed this space."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > scout × safe_rest (loss: child) 1`] = `
+[
+  "*"You map exits in your head before you close your eyes. Three ways out. Always three."*",
+  "*"You'll sleep for four hours. Your internal clock is calibrated. You'll wake up."*",
+  "*"The silence is informative. You listen to it for a while before you trust it."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > shepherd × act_transition (loss: child) 1`] = `
+[
+  "*"The scope of the wound got bigger. You treat what you can reach."*",
+  "*"More people need help now. You can't help everyone. You start with whoever is closest."*",
+  "*"Mass-casualty framing. Your hands already know the triage order. They've known it longer than this child has been gone."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > shepherd × examining_loss_item (loss: child) 1`] = `
+[
+  "*"You could have done more. You've run through what more would have looked like. It still wasn't enough."*",
+  "*"The diagnosis wasn't what you expected. It rarely is."*",
+  "*"Your hands knew. They knew and it wasn't enough. That's the part you can't treat."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > shepherd × in_danger (loss: child) 1`] = `
+[
+  "*"You read bodies for a living. This one is about to cause harm. You read it correctly."*",
+  "*"The treatment for this is distance. Create distance."*",
+  "*"You've triaged worse. This is a threat assessment, not a diagnosis. Treat it accordingly."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > shepherd × low_hp (loss: child) 1`] = `
+[
+  "*"You could treat this. If it were anyone else, you'd know exactly what to do."*",
+  "*"You've kept people alive with less. Apply that knowledge to yourself. Now."*",
+  "*"Physician, heal thyself. That's the part they left out of the training."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > shepherd × post_combat (loss: child) 1`] = `
+[
+  "*"Your hands check for a pulse before your brain tells them not to bother."*",
+  "*"You treat the wounds you can reach. You've gotten good at not thinking about the ones you can't."*",
+  "*"You survive. You catalog the damage. You move on. It's not complicated. It's just all you have."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > shepherd × pressure_spike (loss: child) 1`] = `
+[
+  "*"Something is wrong here. The same way a room full of sick people is wrong — in the air."*",
+  "*"You read suffering. This place is saturated with it."*",
+  "*"The atmosphere here is wrong in the way a patient is wrong before they code. Move carefully."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > shepherd × safe_rest (loss: child) 1`] = `
+[
+  "*"Your hands stop shaking. They always stop eventually."*",
+  "*"You rest. You catalog the patients you couldn't save. You don't sleep during that part."*",
+  "*"Safe. You still check the exits. You still check for pulses. Some habits."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > warden × act_transition (loss: child) 1`] = `
+[
+  "*"The line got longer. You extend your reach. This is what you do."*",
+  "*"Everything escalated. You widen your stance. You hold more ground."*",
+  "*"The line you couldn't hold then — you hold every other line twice as hard because of it."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > warden × examining_loss_item (loss: child) 1`] = `
+[
+  "*"Someone tried to keep this safe. They failed. You understand that."*",
+  "*"You hold it. The weight is exact. You know the weight of what you couldn't protect."*",
+  "*"A guardian who loses what they guard. You've been running from that word for a while."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > warden × in_danger (loss: child) 1`] = `
+[
+  "*"Something's wrong. You step forward. That's what you do when something's wrong."*",
+  "*"Threat detected. You stand between it and — you stand between it."*",
+  "*"Your body has already taken the defensive posture. You let it."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > warden × low_hp (loss: child) 1`] = `
+[
+  "*"You can't protect anyone if you're dead. That's not wisdom. That's math."*",
+  "*"You've taken hits for people who weren't worth it. You can take this."*",
+  "*"Stand. You've stood on worse ground."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > warden × post_combat (loss: child) 1`] = `
+[
+  "*"You held the line. There's no one behind you to protect, but you held it anyway."*",
+  "*"It's done. You assess the field. You check for wounded. Old habit, no one to find."*",
+  "*"Another line held. The lines are getting longer. You are the only one walking them."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > warden × pressure_spike (loss: child) 1`] = `
+[
+  "*"Something is coming. You face it. That's the job."*",
+  "*"The danger increased. You don't take a step back. You don't do that."*",
+  "*"Threat increased. You set your feet. The line you failed to hold once — you don't fail it twice."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > warden × safe_rest (loss: child) 1`] = `
+[
+  "*"You face the door while you rest. Old habit. The thing you're guarding is yourself now."*",
+  "*"You rest with your back to the wall. You've been doing this since before you had to."*",
+  "*"Safe. You don't fully believe it. You rest anyway, one eye on the entrance."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > wraith × act_transition (loss: child) 1`] = `
+[
+  "*"The world changed. You were already in the shadow when it did."*",
+  "*"Everything escalated. You operate the same in any temperature."*",
+  "*"The stakes grew. You are already operating beneath the stakes. That doesn't change."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > wraith × examining_loss_item (loss: child) 1`] = `
+[
+  "*"You hold it and something in you cracks open. Not much. Enough to see light."*",
+  "*"You hold it for a long time. The feeling that comes is unfamiliar. You are cautious with it."*",
+  "*"Something in you is not cold. You wish you could guarantee it stays hidden."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > wraith × in_danger (loss: child) 1`] = `
+[
+  "*"You don't think about the approach. You're already approaching."*",
+  "*"Something is wrong. You become still. Stillness is your language."*",
+  "*"The dark parts of you surface. You let them. This is what they're for."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > wraith × low_hp (loss: child) 1`] = `
+[
+  "*"Shadows don't bleed. But you're not a shadow. Not yet."*",
+  "*"You're losing too much. The parts of you that remain don't include this option."*",
+  "*"Don't. Not yet. There's still something unfinished."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > wraith × post_combat (loss: child) 1`] = `
+[
+  "*"It was over before they knew you were there. You don't feel anything about that. You used to."*",
+  "*"You check yourself for evidence. There's never much evidence. That's the craft of it."*",
+  "*"The absence of feeling is information too. You note it. You move on."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > wraith × pressure_spike (loss: child) 1`] = `
+[
+  "*"Something in the dark recognizes you. You're not sure you want to know what."*",
+  "*"The wrongness has weight. You've felt this weight before."*",
+  "*"Something in the dark has patience. You have more."*",
+]
+`;
+
+exports[`playerMonologue — pool-level snapshots (class × trigger) > wraith × safe_rest (loss: child) 1`] = `
+[
+  "*"You don't sleep. You just stop moving for a while."*",
+  "*"Safe. You file the concept. You don't entirely believe in it."*",
+  "*"The quiet is comfortable. That's one good thing."*",
+]
+`;
+
+exports[`terminalCreation — creationPrompt > step: class 1`] = `
+[
+  {
+    "text": "",
+    "type": "creation",
+  },
+  {
+    "text": "Select your class:",
+    "type": "creation",
+  },
+  {
+    "text": "  [1] Enforcer   -- Overwhelm. Pure force.",
+    "type": "creation",
+  },
+  {
+    "text": "  [2] Scout      -- Mark Target. Precision.",
+    "type": "creation",
+  },
+  {
+    "text": "  [3] Wraith     -- Shadowstrike. From nothing.",
+    "type": "creation",
+  },
+  {
+    "text": "  [4] Shepherd   -- Mend. Your hands remember.",
+    "type": "creation",
+  },
+  {
+    "text": "  [5] Reclaimer  -- Analyze. Know your enemy.",
+    "type": "creation",
+  },
+  {
+    "text": "  [6] Warden     -- Brace. Nothing moves you.",
+    "type": "creation",
+  },
+  {
+    "text": "  [7] Broker     -- Intimidate. Words cut deeper.",
+    "type": "creation",
+  },
+  {
+    "text": "",
+    "type": "creation",
+  },
+  {
+    "text": "Enter number (1-7):",
+    "type": "creation",
+  },
+]
+`;
+
+exports[`terminalCreation — creationPrompt > step: done (returns empty array) 1`] = `[]`;
+
+exports[`terminalCreation — creationPrompt > step: loss_confirm 1`] = `
+[
+  {
+    "text": "",
+    "type": "creation",
+  },
+  {
+    "text": "═══════════════════════════════════════",
+    "type": "creation",
+  },
+  {
+    "text": "  Name: TestPlayer",
+    "type": "creation",
+  },
+  {
+    "text": "  Class: Enforcer",
+    "type": "creation",
+  },
+  {
+    "text": "  Stats: VIG:4 GRT:2 REF:2 WIT:2 PRE:2 SHD:2",
+    "type": "creation",
+  },
+  {
+    "text": "  Loss: A child -- Alice",
+    "type": "creation",
+  },
+  {
+    "text": "═══════════════════════════════════════",
+    "type": "creation",
+  },
+  {
+    "text": "",
+    "type": "creation",
+  },
+  {
+    "text": "Type CONFIRM to begin, or RESTART to start over.",
+    "type": "creation",
+  },
+]
+`;
+
+exports[`terminalCreation — creationPrompt > step: loss_detail (child loss) 1`] = `
+[
+  {
+    "text": "",
+    "type": "creation",
+  },
+  {
+    "text": "What was their name?",
+    "type": "creation",
+  },
+]
+`;
+
+exports[`terminalCreation — creationPrompt > step: loss_type 1`] = `
+[
+  {
+    "text": "",
+    "type": "creation",
+  },
+  {
+    "text": "One more thing. The thing that matters most.",
+    "type": "creation",
+  },
+  {
+    "text": "",
+    "type": "creation",
+  },
+  {
+    "text": "What did CHARON-7 take from you?",
+    "type": "creation",
+  },
+  {
+    "text": "  [1] A child",
+    "type": "creation",
+  },
+  {
+    "text": "  [2] A partner",
+    "type": "creation",
+  },
+  {
+    "text": "  [3] A community",
+    "type": "creation",
+  },
+  {
+    "text": "  [4] Your identity",
+    "type": "creation",
+  },
+  {
+    "text": "  [5] A promise",
+    "type": "creation",
+  },
+  {
+    "text": "",
+    "type": "creation",
+  },
+  {
+    "text": "Enter number (1-5):",
+    "type": "creation",
+  },
+]
+`;
+
+exports[`terminalCreation — creationPrompt > step: name 1`] = `
+[
+  {
+    "text": "═══════════════════════════════════════",
+    "type": "creation",
+  },
+  {
+    "text": "  THE REMNANT -- CHARACTER INITIALIZATION",
+    "type": "creation",
+  },
+  {
+    "text": "═══════════════════════════════════════",
+    "type": "creation",
+  },
+  {
+    "text": "",
+    "type": "creation",
+  },
+  {
+    "text": "Enter your name:",
+    "type": "creation",
+  },
+]
+`;
+
+exports[`terminalCreation — creationPrompt > step: stats (enforcer class, default allocation) 1`] = `
+[
+  {
+    "text": "",
+    "type": "creation",
+  },
+  {
+    "text": "Allocate 4 points across your stats.",
+    "type": "creation",
+  },
+  {
+    "text": "Current: VIG:4 GRT:2 REF:2 WIT:2 PRE:2 SHD:2",
+    "type": "creation",
+  },
+  {
+    "text": "Points remaining: 10",
+    "type": "creation",
+  },
+  {
+    "text": "",
+    "type": "creation",
+  },
+  {
+    "text": "Stat reference:",
+    "type": "creation",
+  },
+  {
+    "text": "  Vigor:    HP, melee damage       (Brawling, Survival, Climbing)",
+    "type": "creation",
+  },
+  {
+    "text": "  Grit:     HP, endurance          (Resilience, Field Medicine, Composure)",
+    "type": "creation",
+  },
+  {
+    "text": "  Reflex:   dodge, ranged accuracy  (Marksmanship, Bladework, Mechanics)",
+    "type": "creation",
+  },
+  {
+    "text": "  Wits:     lore, deduction         (Lore, Tracking, Electronics)",
+    "type": "creation",
+  },
+  {
+    "text": "  Presence: faction influence       (Negotiation, Intimidation, Mesmerize)",
+    "type": "creation",
+  },
+  {
+    "text": "  Shadow:   stealth, subtlety       (Stealth, Daystalking, Lockpicking)",
+    "type": "creation",
+  },
+  {
+    "text": "",
+    "type": "creation",
+  },
+  {
+    "text": "Type: ADD VIG (or ADD VIGOR) to increase.",
+    "type": "creation",
+  },
+  {
+    "text": "Type: REM VIG (or REMOVE VIGOR) to decrease.",
+    "type": "creation",
+  },
+  {
+    "text": "Type: DONE when finished.",
+    "type": "creation",
+  },
+]
+`;
+
+exports[`terminalCreation — creationPrompt > step: stats (wraith class — shadow-boosted) 1`] = `
+[
+  {
+    "text": "",
+    "type": "creation",
+  },
+  {
+    "text": "Allocate 4 points across your stats.",
+    "type": "creation",
+  },
+  {
+    "text": "Current: VIG:2 GRT:2 REF:2 WIT:2 PRE:2 SHD:4",
+    "type": "creation",
+  },
+  {
+    "text": "Points remaining: 10",
+    "type": "creation",
+  },
+  {
+    "text": "",
+    "type": "creation",
+  },
+  {
+    "text": "Stat reference:",
+    "type": "creation",
+  },
+  {
+    "text": "  Vigor:    HP, melee damage       (Brawling, Survival, Climbing)",
+    "type": "creation",
+  },
+  {
+    "text": "  Grit:     HP, endurance          (Resilience, Field Medicine, Composure)",
+    "type": "creation",
+  },
+  {
+    "text": "  Reflex:   dodge, ranged accuracy  (Marksmanship, Bladework, Mechanics)",
+    "type": "creation",
+  },
+  {
+    "text": "  Wits:     lore, deduction         (Lore, Tracking, Electronics)",
+    "type": "creation",
+  },
+  {
+    "text": "  Presence: faction influence       (Negotiation, Intimidation, Mesmerize)",
+    "type": "creation",
+  },
+  {
+    "text": "  Shadow:   stealth, subtlety       (Stealth, Daystalking, Lockpicking)",
+    "type": "creation",
+  },
+  {
+    "text": "",
+    "type": "creation",
+  },
+  {
+    "text": "Type: ADD VIG (or ADD VIGOR) to increase.",
+    "type": "creation",
+  },
+  {
+    "text": "Type: REM VIG (or REMOVE VIGOR) to decrease.",
+    "type": "creation",
+  },
+  {
+    "text": "Type: DONE when finished.",
+    "type": "creation",
+  },
+]
+`;
+
+exports[`terminalDeath — MEMORY_POOL > memory pool is stable (all 18 fragments) 1`] = `
+[
+  "The smell of rust and rain through a cracked ventilation shaft.",
+  "A voice saying your name, from someone whose face you can't keep.",
+  "The weight of the pack on your shoulders. The specific ache of it.",
+  "A door you meant to open. You never went back.",
+  "Something small and three-eyed watching you from a wall.",
+  "The sound of a child's shoe scraping concrete somewhere ahead.",
+  "Your own handwriting on a wall, in a language you no longer speak.",
+  "A moment of warmth that had no source.",
+  "The exact shade of sky the morning before everything changed.",
+  "Someone calling out a name that might be yours.",
+  "The weight of a promise you made and the specific way you broke it.",
+  "Blood that wasn't yours on your hands and the memory of how it got there.",
+  "A radio still playing in an empty house. The song almost familiar.",
+  "The last time you laughed. You can't recover what was funny.",
+  "A staircase you descended in the dark, counting steps that weren't all there.",
+  "Someone's handprint in dust on a window. Smaller than yours.",
+  "The feeling of running toward something rather than away from it. Brief.",
+  "A map you drew that was wrong in exactly one place. That was the place.",
+]
+`;
+
+exports[`terminalDeath — deathMessages > cause: combat, cycle 1, first death 1`] = `
+[
+  {
+    "text": "══════════════════════════════════════
+  YOU ARE DEAD
+══════════════════════════════════════",
+    "type": "death",
+  },
+  {
+    "text": "KILLED IN COMBAT",
+    "type": "death",
+  },
+  {
+    "text": "You wanted more time. The Hollow didn't ask.",
+    "type": "death",
+  },
+  {
+    "text": "It wasn't supposed to go like this. You had a pack. You had a plan. You had the specific weight of intention that feels like readiness until the moment it isn't.",
+    "type": "death",
+  },
+  {
+    "text": "CHARON-7 is not surprised. It has been through this before. It will reconstruct something that can pass for you. It will be a little smaller than you were.",
+    "type": "death",
+  },
+  {
+    "text": "Cycle: 1  |  Rooms: 12  |  XP: 450",
+    "type": "death",
+  },
+  {
+    "text": "Your stats become echoes. A fraction of every stat you ended this cycle with carries forward — roughly 70% by default, more if your Grit was high. When you create your next character, you will have those echoes pre-allocated, plus fresh points to spend. Each cycle you live longer, you start stronger. The world remembers what you did. So do you.",
+    "type": "death",
+  },
+  {
+    "text": "The world is not finished with you.",
+    "type": "death",
+  },
+  {
+    "text": "Type BEGIN to start a new cycle.
+══════════════════════════════════════",
+    "type": "death",
+  },
+]
+`;
+
+exports[`terminalDeath — deathMessages > cause: environment, cycle 1, the_scar zone 1`] = `
+[
+  {
+    "text": "══════════════════════════════════════
+  YOU ARE DEAD
+══════════════════════════════════════",
+    "type": "death",
+  },
+  {
+    "text": "CLAIMED BY THE ENVIRONMENT",
+    "type": "death",
+  },
+  {
+    "text": "The earth was always going to win.",
+    "type": "death",
+  },
+  {
+    "text": "This place existed before CHARON-7. Before the Hollow. Before anyone thought to give it a name or map its edges or believe they understood what it was. It will exist after you too.",
+    "type": "death",
+  },
+  {
+    "text": "You are very small. You were very small. The world didn't need to try.",
+    "type": "death",
+  },
+  {
+    "text": "CHARON-7 will reconstruct you. You will not remember how big the silence was, or the specific texture of what swallowed you. That is a mercy of a kind.",
+    "type": "death",
+  },
+  {
+    "text": "Cycle: 1  |  Rooms: 5  |  XP: 200",
+    "type": "death",
+  },
+  {
+    "text": "Your stats become echoes. A fraction of every stat you ended this cycle with carries forward — roughly 70% by default, more if your Grit was high. When you create your next character, you will have those echoes pre-allocated, plus fresh points to spend. Each cycle you live longer, you start stronger. The world remembers what you did. So do you.",
+    "type": "death",
+  },
+  {
+    "text": "The world is not finished with you.",
+    "type": "death",
+  },
+  {
+    "text": "Type BEGIN to start a new cycle.
+══════════════════════════════════════",
+    "type": "death",
+  },
+]
+`;
+
+exports[`terminalDeath — deathMessages > cause: faction, cycle 3 1`] = `
+[
+  {
+    "text": "══════════════════════════════════════
+  YOU ARE DEAD
+══════════════════════════════════════",
+    "type": "death",
+  },
+  {
+    "text": "EXECUTED",
+    "type": "death",
+  },
+  {
+    "text": "They knew your name. They wanted you to know that, before.",
+    "type": "death",
+  },
+  {
+    "text": "This was not random. This was a decision made in a room, by people who weighed the cost of letting you continue and decided the math didn't work in your favor. Someone signed something. Someone gave an order.",
+    "type": "death",
+  },
+  {
+    "text": "The world has opinions about you. You have made yourself legible to it. That is both the thing that got you killed and the thing that might eventually keep you alive.",
+    "type": "death",
+  },
+  {
+    "text": "CHARON-7 will rebuild you. The faction will still have your name on a list.",
+    "type": "death",
+  },
+  {
+    "text": "Cycle: 3  |  Rooms: 60  |  XP: 3,000",
+    "type": "death",
+  },
+  {
+    "text": "The world is not finished with you.",
+    "type": "death",
+  },
+  {
+    "text": "Type BEGIN to start a new cycle.
+══════════════════════════════════════",
+    "type": "death",
+  },
+]
+`;
+
+exports[`terminalDeath — deathMessages > cause: infection, cycle 2, with echo stats 1`] = `
+[
+  {
+    "text": "══════════════════════════════════════
+  YOU ARE DEAD
+══════════════════════════════════════",
+    "type": "death",
+  },
+  {
+    "text": "CONSUMED BY INFECTION",
+    "type": "death",
+  },
+  {
+    "text": "You can hear yourself thinking. Soon you won't be able to.",
+    "type": "death",
+  },
+  {
+    "text": "The Hollow don't know they're the Hollow. That's the part nobody likes to say out loud. They're still in there, processing, moving through patterns that used to mean something. The hunger is just louder than everything else.",
+    "type": "death",
+  },
+  {
+    "text": "CHARON-7 is intercepting the turn. It doesn't do this out of mercy. It does this because what you were becoming was no longer useful to it.",
+    "type": "death",
+  },
+  {
+    "text": "You will wake up yourself. Mostly.",
+    "type": "death",
+  },
+  {
+    "text": "Cycle: 2  |  Rooms: 30  |  XP: 1,200",
+    "type": "death",
+  },
+  {
+    "text": "What carries forward:
+  Echo stats: VIG +1, GRT +2
+  Stash: 3 items preserved
+  2 milestones remembered",
+    "type": "death",
+  },
+  {
+    "text": "The world is not finished with you.",
+    "type": "death",
+  },
+  {
+    "text": "Type BEGIN to start a new cycle.
+══════════════════════════════════════",
+    "type": "death",
+  },
+]
+`;
+
+exports[`terminalDeath — deathMessages > cause: unknown, cycle 5+ (cycle_aware_late variant) 1`] = `
+[
+  {
+    "text": "══════════════════════════════════════
+  YOU ARE DEAD
+══════════════════════════════════════",
+    "type": "death",
+  },
+  {
+    "text": "CAUSE UNKNOWN",
+    "type": "death",
+  },
+  {
+    "text": "5 cycles. The radio is still calling. You wonder if it ever cared.",
+    "type": "death",
+  },
+  {
+    "text": "You have died enough times to know the shape of this. The specific quality of darkness before the reconstruction. The way CHARON-7 feels when it starts -- not painful, exactly, just the absolute certainty that you are not the original and have not been for some time.",
+    "type": "death",
+  },
+  {
+    "text": "The Scar is still there. The broadcaster is still there. The signal is still there. You keep going back. You haven't decided yet if that means something or if it only feels like it does.",
+    "type": "death",
+  },
+  {
+    "text": "CHARON-7 will rebuild you. Again.",
+    "type": "death",
+  },
+  {
+    "text": "Cycle: 5  |  Rooms: 100  |  XP: 5,000",
+    "type": "death",
+  },
+  {
+    "text": "The world is not finished with you.",
+    "type": "death",
+  },
+  {
+    "text": "Type BEGIN to start a new cycle.
+══════════════════════════════════════",
+    "type": "death",
+  },
+]
+`;
+
+exports[`terminalDeath — endingMessages > ending: cure 1`] = `
+[
+  {
+    "text": "══════════════════════════════════════
+  THE CURE
+══════════════════════════════════════",
+    "type": "ending",
+  },
+  {
+    "text": "The choice is made. The world responds.",
+    "type": "ending",
+  },
+  {
+    "text": "The modified R-1 compound moves through the atmosphere like a rumor -- invisible, inevitable, touching everything it reaches. Within weeks, the Hollow begin to stir. Not violently. Slowly. Like sleepers surfacing from a dream they cannot name. They blink. They look at their hands. Some of them remember their names. Most do not.",
+    "type": "ending",
+  },
+  {
+    "text": "The Sanguine feel it first as a numbness in the extremities, then as a narrowing of the senses they had grown to trust. Night vision dims. The preternatural hearing flattens to merely human. The Covenant of Dusk holds an emergency conclave and the vote is split: half call it liberation, half call it murder by another name. The Red Court calls it war, but by the time they mobilize, the war is already over. You cannot fight a cure.",
+    "type": "ending",
+  },
+  {
+    "text": "The Accord deploys medical teams to the regions where the Hollow are waking -- thousands of people with seven years of absence behind their eyes, standing in a world that moved on without them. The Reclaimers build shelters. The Kindling hold vigils. The Salters, for once, open their gates.",
+    "type": "ending",
+  },
+  {
+    "text": "Years from now, someone will write the history of what you did. They will call it a mercy. You will call it something else. The name doesn't matter anymore. You made it because you believed it was right, and you will never be certain, and that uncertainty is the price of having been the one who decided. The world heals. The scars remain. The silence of consent never given settles over everything -- the Hollow waking into lives they did not choose to leave, the Sanguine diminished by a formula they never agreed to. The world wakes different. Whether it wakes better is not yours to say.",
+    "type": "ending",
+  },
+  {
+    "text": "CYCLES: 3  |  DEATHS: 2  |  ROOMS: 75  |  XP: 8,500",
+    "type": "ending",
+  },
+  {
+    "text": "THE END",
+    "type": "ending",
+  },
+  {
+    "text": "Thank you for playing The Remnant.",
+    "type": "ending",
+  },
+  {
+    "text": "What's left is what matters.",
+    "type": "ending",
+  },
+  {
+    "text": "Type BEGIN to initialize a new session.
+══════════════════════════════════════
+Each ending tells a different story. There are four.",
+    "type": "ending",
+  },
+]
+`;
+
+exports[`terminalDeath — endingMessages > ending: seal 1`] = `
+[
+  {
+    "text": "══════════════════════════════════════
+  THE SEAL
+══════════════════════════════════════",
+    "type": "ending",
+  },
+  {
+    "text": "The choice is made. The world responds.",
+    "type": "ending",
+  },
+  {
+    "text": "The shaped charges fire in sequence -- a controlled cascade that turns MERIDIAN into calcium powder and slag in ninety seconds. The data dies. The samples die. The formula that could have cured or killed or ruled dies with them. The broadcaster stays inside. They do not run. They knew, when they gave you the choice, what SEAL meant for them.",
+    "type": "ending",
+  },
+  {
+    "text": "The crater fills with new rubble. The chemical haze thickens for a week, then thins. The Scar heals the way scars do -- slowly, imperfectly, leaving a mark that tells the story of what happened there. The factions learn, eventually, that MERIDIAN is gone. The Accord sends an expedition. They find nothing usable.",
+    "type": "ending",
+  },
+  {
+    "text": "The Hollow remain what they are. The Sanguine remain what they are. The world remains exactly as broken as it was the day you walked into the Scar, and must find its own way from here -- the slow, grinding, human way, without shortcuts or silver bullets or someone else's formula to solve it for them.",
+    "type": "ending",
+  },
+  {
+    "text": "You chose to trust the world with its own problems. Some will call it cowardice. Some will call it wisdom. The broadcaster called it "the quietest option" and they were right -- it is the choice that makes the least noise and changes the least, and asks the most of everyone who comes after. The world continues. It does not thank you. The rubble settles. The mountain closes its mouth. Somewhere beneath a thousand tons of calcium powder and silence, the formula that could have changed everything becomes geology.",
+    "type": "ending",
+  },
+  {
+    "text": "CYCLES: 3  |  DEATHS: 2  |  ROOMS: 75  |  XP: 8,500",
+    "type": "ending",
+  },
+  {
+    "text": "THE END",
+    "type": "ending",
+  },
+  {
+    "text": "Thank you for playing The Remnant.",
+    "type": "ending",
+  },
+  {
+    "text": "What's left is what matters.",
+    "type": "ending",
+  },
+  {
+    "text": "Type BEGIN to initialize a new session.
+══════════════════════════════════════
+Each ending tells a different story. There are four.",
+    "type": "ending",
+  },
+]
+`;
+
+exports[`terminalDeath — endingMessages > ending: throne 1`] = `
+[
+  {
+    "text": "══════════════════════════════════════
+  THE THRONE
+══════════════════════════════════════",
+    "type": "ending",
+  },
+  {
+    "text": "The choice is made. The world responds.",
+    "type": "ending",
+  },
+  {
+    "text": "MERIDIAN locks around you like a second skin. The facility's systems recognize your biometrics, your neural pattern, the specific signature of your CHARON-7 strain. You are the gatekeeper now. The data is yours. The formula is yours. The leverage is absolute.",
+    "type": "ending",
+  },
+  {
+    "text": "The factions learn within weeks. The Accord sends diplomats first, then soldiers, then diplomats again when the soldiers do not return. The Salters offer trade agreements written in language so careful it takes three readings to find the threats. The Covenant of Dusk sends a single emissary -- an old Sanguine who looks at you for a long time and says nothing, then leaves.",
+    "type": "ending",
+  },
+  {
+    "text": "You hold the cure that could heal the Hollow and strip the Sanguine. You hold the weapon that could end CHARON-7 and most of its carriers. You hold the seal that could destroy it all. You hold all four options in your hands, and every day you do not choose is a choice in itself -- the choice to remain the gatekeeper, to keep the world balanced on the edge of your decision.",
+    "type": "ending",
+  },
+  {
+    "text": "Power is not what you expected. It is not dramatic. It is the specific weight of being the person everyone needs something from, and knowing that whatever you give them will be wrong in some way you cannot predict. The broadcaster watches from the next room and says nothing. They have seen this before. The world orbits you now, and you orbit the data, and the data does not care. You hold a key that opens everything. The room it locks you in is the loneliest in the world.",
+    "type": "ending",
+  },
+  {
+    "text": "CYCLES: 3  |  DEATHS: 2  |  ROOMS: 75  |  XP: 8,500",
+    "type": "ending",
+  },
+  {
+    "text": "THE END",
+    "type": "ending",
+  },
+  {
+    "text": "Thank you for playing The Remnant.",
+    "type": "ending",
+  },
+  {
+    "text": "What's left is what matters.",
+    "type": "ending",
+  },
+  {
+    "text": "Type BEGIN to initialize a new session.
+══════════════════════════════════════
+Each ending tells a different story. There are four.",
+    "type": "ending",
+  },
+]
+`;
+
+exports[`terminalDeath — endingMessages > ending: weapon 1`] = `
+[
+  {
+    "text": "══════════════════════════════════════
+  THE WEAPON
+══════════════════════════════════════",
+    "type": "ending",
+  },
+  {
+    "text": "The choice is made. The world responds.",
+    "type": "ending",
+  },
+  {
+    "text": "The pathogen is elegant in its cruelty. It finds CHARON-7 wherever it hides -- in the neural tissue of the Hollow, in the enhanced blood of the Sanguine, in the subclinical traces carried by sixty percent of the surviving human population. Thirty days. The timeline is precise. The dying is not.",
+    "type": "ending",
+  },
+  {
+    "text": "The Hollow go first, and no one mourns them because no one knew they were still in there. The Sanguine go next, and the Covenant of Dusk burns its own archives rather than let the Accord find them. The carriers -- the farmers, the traders, the children who played too close to the wrong water source -- they go last, and by then the world has stopped counting.",
+    "type": "ending",
+  },
+  {
+    "text": "The Accord inherits a continent emptied of its most dangerous elements and most of its people. Marshal Cross calls it "the hard peace." The Salters close their gates and do not open them for a year. The Kindling stop lighting their signal fires. The Drifters, who were everywhere and nowhere, are mostly nowhere now.",
+    "type": "ending",
+  },
+  {
+    "text": "You did the math. The math was correct. The weapon worked exactly as described, and the silence it left behind is the specific quiet of absence, not peace. Historians will call you a monster or a savior depending on which side of the population curve they stand on. You will call yourself nothing, because you do not owe the dead an explanation. The world survives. It is quieter than it should be. The quiet that follows is not the quiet of a wound healing. It is the quiet of a room where someone was, and then was not.",
+    "type": "ending",
+  },
+  {
+    "text": "CYCLES: 3  |  DEATHS: 2  |  ROOMS: 75  |  XP: 8,500",
+    "type": "ending",
+  },
+  {
+    "text": "THE END",
+    "type": "ending",
+  },
+  {
+    "text": "Thank you for playing The Remnant.",
+    "type": "ending",
+  },
+  {
+    "text": "What's left is what matters.",
+    "type": "ending",
+  },
+  {
+    "text": "Type BEGIN to initialize a new session.
+══════════════════════════════════════
+Each ending tells a different story. There are four.",
+    "type": "ending",
+  },
+]
+`;
+
+exports[`terminalDeath — prologueMessages > prologue (deterministic — no RNG) 1`] = `
+[
+  {
+    "text": "THE REMNANT -- Transmission Log",
+    "type": "narrative",
+  },
+  {
+    "text": "You don't remember the exact day the world ended. Nobody does.",
+    "type": "narrative",
+  },
+  {
+    "text": "It wasn't a bomb. It wasn't a war. It wasn't the kind of catastrophe that announces itself with fire and thunder and gives you the dignity of knowing, in the moment, that everything has changed.",
+    "type": "narrative",
+  },
+  {
+    "text": "It was a cough.",
+    "type": "narrative",
+  },
+  {
+    "text": "Someone coughed in a hallway in a building that didn't officially exist, in a mountain range in southwestern Colorado, and within six weeks, sixty percent of the human race had stopped being human in any way that mattered.",
+    "type": "narrative",
+  },
+  {
+    "text": "They called the pathogen CHARON-7. The ferryman. The thing that carries you across.",
+    "type": "narrative",
+  },
+  {
+    "text": "Most of the infected became the Hollow -- stripped down to hunger and reflex, walking through the ruins of their own lives with just enough memory to make them terrible. Your neighbor fumbling with his car keys forever. A teacher still standing at a chalkboard in an empty school, writing the same word over and over. You can still see who they were.",
+    "type": "narrative",
+  },
+  {
+    "text": "One in ten thousand didn't become Hollow. They became something faster, stronger, dependent on human blood to stay that way. People call them vampires. They call themselves the Sanguine.",
+    "type": "narrative",
+  },
+  {
+    "text": "That was seven years ago. The highways are rivers of weeds. The cities are tombs. What's left is us -- the Unturned -- here in the Four Corners, where the mountains and the desert and the canyons gave us something to put our backs against.",
+    "type": "narrative",
+  },
+  {
+    "text": "You have a pack. A knife. No faction, no reputation, no allegiance. No one owns you. No one is hunting you.",
+    "type": "narrative",
+  },
+  {
+    "text": "Not yet.",
+    "type": "narrative",
+  },
+  {
+    "text": "Somewhere in the mountains to the north, buried under rock and silence and seven years of secrets, there is a place called the Scar -- the place where CHARON-7 was born -- and someone, somewhere, believes that what was made there can be unmade.",
+    "type": "narrative",
+  },
+  {
+    "text": "You don't know if that's true. Nobody does.",
+    "type": "narrative",
+  },
+  {
+    "text": "But you're going to find out. Because that's what survivors do. They move forward. Even when forward is dark. Even when forward is teeth.",
+    "type": "narrative",
+  },
+  {
+    "text": "Welcome to The Remnant.",
+    "type": "narrative",
+  },
+  {
+    "text": "What's left is what matters.",
+    "type": "narrative",
+  },
+  {
+    "text": "══════════════════════════════════════
+   TYPE SKIP TO BEGIN -- OR PRESS ENTER
+══════════════════════════════════════",
+    "type": "narrative",
+  },
+]
+`;
+
+exports[`terminalDeath — theBetweenMessages > cycle 2 (entering between for first time) 1`] = `
+[
+  {
+    "text": "CYCLE 2
+THE BETWEEN",
+    "type": "system",
+  },
+  {
+    "text": "You are not dead. You are not alive. CHARON-7 is rebuilding the scaffolding it calls you -- threading proteins back through collapsed tissue, rerouting signals around the damage, reconstructing the shape of your face from whatever record it keeps. It takes time. While it works, you drift.
+Some things surface. Most don't stay.",
+    "type": "system",
+  },
+  {
+    "text": "  "The smell of rust and rain through a cracked ventilation shaft."",
+    "type": "system",
+  },
+  {
+    "text": "  "Your own handwriting on a wall, in a language you no longer speak."",
+    "type": "system",
+  },
+  {
+    "text": "  "A map you drew that was wrong in exactly one place. That was the place."",
+    "type": "system",
+  },
+  {
+    "text": "Your stats become echoes. A fraction of every stat you ended that cycle with carries forward — roughly 70% by default, more if your Grit was high. When you create your next character, you will have those echoes pre-allocated, plus fresh points to spend. Each cycle you live longer, you start stronger. The world remembers what you did. So do you.",
+    "type": "system",
+  },
+  {
+    "text": "Echoes:
+  3 rooms mapped
+  2 items stashed
+  Factions remember you: accord, salters",
+    "type": "system",
+  },
+  {
+    "text": "You wake.",
+    "type": "system",
+  },
+  {
+    "text": "Tip: Use 'stash [item]' to preserve items across death. Stashed items survive the cycle.",
+    "type": "system",
+  },
+]
+`;
+
+exports[`terminalDeath — theBetweenMessages > cycle 3 (no factions, no stash) 1`] = `
+[
+  {
+    "text": "CYCLE 3
+THE BETWEEN",
+    "type": "system",
+  },
+  {
+    "text": "You are not dead. You are not alive. CHARON-7 is rebuilding the scaffolding it calls you -- threading proteins back through collapsed tissue, rerouting signals around the damage, reconstructing the shape of your face from whatever record it keeps. It takes time. While it works, you drift.
+Some things surface. Most don't stay.",
+    "type": "system",
+  },
+  {
+    "text": "  "The smell of rust and rain through a cracked ventilation shaft."",
+    "type": "system",
+  },
+  {
+    "text": "  "Your own handwriting on a wall, in a language you no longer speak."",
+    "type": "system",
+  },
+  {
+    "text": "  "A map you drew that was wrong in exactly one place. That was the place."",
+    "type": "system",
+  },
+  {
+    "text": "You wake.",
+    "type": "system",
+  },
+]
+`;

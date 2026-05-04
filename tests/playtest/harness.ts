@@ -13,6 +13,7 @@ import { vi } from 'vitest'
 import { GameEngine } from '@/lib/gameEngine'
 import { parseCommand } from '@/lib/parser'
 import { resetDevDb } from '@/lib/supabaseMock'
+import { ALL_ROOMS } from '@/data/rooms/index'
 import type {
   CharacterClass,
   Direction,
@@ -442,6 +443,56 @@ export class PlayerSession {
     if (!currentRoom) return
     const populated = engineAny._applyPopulation(currentRoom)
     this._engine._setState({ currentRoom: populated })
+  }
+
+  // ----------------------------------------------------------
+  // Teleport — scenario setup helper
+  // ----------------------------------------------------------
+
+  /**
+   * Moves the player directly to the given room, bypassing all movement
+   * logic (gates, direction checks, fear checks, etc.).
+   *
+   * Both `player.currentRoomId` and `state.currentRoom` are updated so
+   * subsequent state reads are consistent.  The room is taken from the
+   * static ALL_ROOMS table — no DB call is made.
+   *
+   * If `roomId` is not found in ALL_ROOMS an error is thrown so playtest
+   * authors get an immediate, readable failure rather than a silent no-op.
+   *
+   * Does NOT call `_savePlayer()`.
+   */
+  teleport(roomId: string): void {
+    const room = ALL_ROOMS.find(r => r.id === roomId)
+    if (!room) {
+      throw new Error(`PlayerSession.teleport: unknown roomId "${roomId}"`)
+    }
+    const player = this._engine.getState().player
+    if (!player) throw new Error('PlayerSession.teleport: no player — call create() first')
+    const updatedPlayer: Player = { ...player, currentRoomId: roomId }
+    this._engine._setState({ player: updatedPlayer, currentRoom: room })
+  }
+
+  // ----------------------------------------------------------
+  // Quest flag mutation — scenario setup helper
+  // ----------------------------------------------------------
+
+  /**
+   * Directly sets a quest/narrative flag on the player, bypassing any
+   * in-game triggers.  Useful for fast-forwarding past prerequisites in
+   * playtest scenarios (e.g., marking a quest as already accepted before
+   * testing its completion branch).
+   *
+   * Does NOT call `_savePlayer()`.
+   */
+  setQuestFlag(flag: string, value: boolean | string | number): void {
+    const player = this._engine.getState().player
+    if (!player) throw new Error('PlayerSession.setQuestFlag: no player — call create() first')
+    const updatedPlayer: Player = {
+      ...player,
+      questFlags: { ...(player.questFlags ?? {}), [flag]: value },
+    }
+    this._engine._setState({ player: updatedPlayer })
   }
 
   // ----------------------------------------------------------

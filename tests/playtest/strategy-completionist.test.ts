@@ -48,10 +48,15 @@ import {
 // Mock wiring — ALL vi.mock calls must precede module imports
 // ------------------------------------------------------------
 
-let _mockDb: ReturnType<typeof import('./harness').buildMockDb>
+// Wrapper object so the vi.mock factory closes over a stable reference
+// that's defined at module-load time. Tests reassign _mockState.db in
+// makeSession() to get a fresh mock per test. Avoids the let/undefined
+// timing hole where the factory could capture undefined if any module
+// reads supabase eagerly at import time.
+const _mockState: { db: ReturnType<typeof buildMockDb> } = { db: buildMockDb() }
 
 vi.mock('@/lib/supabase', () => ({
-  createSupabaseBrowserClient: () => _mockDb,
+  createSupabaseBrowserClient: () => _mockState.db,
 }))
 
 const _inventoryStore = new Map<string, number>()
@@ -281,7 +286,7 @@ const ALL_ZONE_NPC_IDS = [...new Set(Object.values(ZONE_NPC_IDS).flat())]
 // ============================================================
 
 function makeSession() {
-  _mockDb = buildMockDb()
+  _mockState.db = buildMockDb()
   _inventoryStore.clear()
   return new PlayerSession({ mockRandom: 0.5 })
 }

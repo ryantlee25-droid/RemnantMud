@@ -6194,6 +6194,2009 @@ const campfireStorytellerTree: DialogueTree = {
 }
 
 // ============================================================
+// CV_GATE_MILITIA — Covenant Gate Militiaman (Covenant zone, CV-01)
+// dialogueTree ID: 'cv_gate_militia_intro'
+// First NPC every player encounters entering Covenant.
+// Faction: Accord militia (Sanguine-aligned humans in Covenant's employ).
+// Tone: professional, procedural, not unkind. Rule-of-law without cruelty.
+// ============================================================
+
+const cvGateMilitiaTree: DialogueTree = {
+  npcId: 'accord_gate_militiaman',
+  startNode: 'militia_start',
+  nodes: {
+
+    militia_start: {
+      id: 'militia_start',
+      speaker: 'Gate Militiaman',
+      text: `The militiaman's eyes complete a full sweep — hands, waist, pack, posture — before they speak. The gate bar is down. "Papers, travel authorization, or trade documentation. If you've got none of those, eight pennies buys you a day pass. Any ${rt.keyword('weapons')} need to be declared and registered before you sleep inside the walls." A pause. "Not a threat. ${rt.keyword('Covenant')} policy. What are you bringing in?"`,
+      branches: [
+        {
+          label: '"I have papers." [Require Accord rep 1+]',
+          targetNode: 'militia_papers_accepted',
+          requiresRep: { faction: 'accord', min: 1 },
+        },
+        {
+          label: '"I\'ll pay the eight pennies."',
+          targetNode: 'militia_daypass',
+        },
+        {
+          label: '"I\'m here to trade."',
+          targetNode: 'militia_trade',
+        },
+        {
+          label: '"What are the rules here?"',
+          targetNode: 'militia_rules',
+        },
+        {
+          label: '"Who\'s in charge?"',
+          targetNode: 'militia_chain',
+        },
+        {
+          label: '"I\'m with the Accord." [Require Accord rep 2+]',
+          targetNode: 'militia_accord_member',
+          requiresRep: { faction: 'accord', min: 2 },
+        },
+      ],
+    },
+
+    militia_daypass: {
+      id: 'militia_daypass',
+      speaker: 'Gate Militiaman',
+      text: `The militiaman takes the pennies and makes a mark in a ledger without looking away from you for more than a half-second. "Day pass. Sundown curfew, inner residential after dark requires authorization. ${rt.keyword('Armory')} is east of the square for weapon registration." The gate bar lifts. "Don't make trouble. Everyone here is working too hard for trouble."`,
+      onEnter: {
+        setFlag: { covenant_entered: true, covenant_day_pass: true },
+        grantRep: { faction: 'accord', delta: 0 },
+      },
+      branches: [
+        {
+          label: '"Understood. Thank you."',
+          targetNode: 'militia_leave',
+        },
+        {
+          label: '"What\'s the armory for?"',
+          targetNode: 'militia_armory',
+        },
+      ],
+    },
+
+    militia_trade: {
+      id: 'militia_trade',
+      speaker: 'Gate Militiaman',
+      text: `"Traders come through the east checkpoint. Secondary inspection, cargo manifest required for anything over twenty kilos." The militiaman's posture doesn't change but the assessment does — a merchant gets a slightly longer look, more corners. "What are you carrying? And is it on the prohibited list?"`,
+      branches: [
+        {
+          label: '"Nothing prohibited. Standard goods."',
+          targetNode: 'militia_trade_cleared',
+        },
+        {
+          label: '"What\'s prohibited?"',
+          targetNode: 'militia_prohibited',
+        },
+      ],
+    },
+
+    militia_trade_cleared: {
+      id: 'militia_trade_cleared',
+      speaker: 'Gate Militiaman',
+      text: `"Then you're clear. East checkpoint will do a secondary once you're inside." The gate bar lifts. "Market's in the square. The assessor takes a four percent handling fee on all transactions — that's not a shakedown, that's how we keep the lights on. Literally. The generators cost something."`,
+      onEnter: {
+        setFlag: { covenant_entered: true },
+      },
+      branches: [
+        {
+          label: '"Four percent. Got it."',
+          targetNode: 'militia_leave',
+        },
+      ],
+    },
+
+    militia_prohibited: {
+      id: 'militia_prohibited',
+      speaker: 'Gate Militiaman',
+      text: `"Hollow biomatter in any form — teeth, blood samples, anything that could be infectious. Unlicensed modification rounds. Red Court documentation or insignia." A beat. "Sanguine are allowed entry on approved passes — Covenant has an arrangement with the ${rt.keyword('Covenant of Dusk')} — but they check in with the arbiter, not the gate. If you're Sanguine, I'll need to see your transit papers."`,
+      branches: [
+        {
+          label: '"None of that. Standard goods."',
+          targetNode: 'militia_trade_cleared',
+        },
+        {
+          label: '"I\'ll pay the day pass rate."',
+          targetNode: 'militia_daypass',
+        },
+      ],
+    },
+
+    militia_rules: {
+      id: 'militia_rules',
+      speaker: 'Gate Militiaman',
+      text: `"Three rules. Contribute labor or pay your way. Follow Accord arbitration if there's a dispute — no private resolution inside the walls. No unsanctioned violence, no exceptions." The militiaman says it with the flat cadence of something recited often. "Marshal Cross enforces personally when it's serious. Most of the time it doesn't get serious. People here are tired of serious."`,
+      onEnter: {
+        setFlag: { learned_covenant_rules: true },
+      },
+      branches: [
+        {
+          label: '"Makes sense. I\'ll pay the day pass."',
+          targetNode: 'militia_daypass',
+        },
+        {
+          label: '"Who is Marshal Cross?"',
+          targetNode: 'militia_chain',
+        },
+      ],
+    },
+
+    militia_chain: {
+      id: 'militia_chain',
+      speaker: 'Gate Militiaman',
+      text: `"${rt.npc('Marshal Cross')}. Former National Guard. She's been running ${rt.keyword('Covenant')} since year two — took over after the administrative collapse. If you need something that's above checkpoint level, she's in the courthouse, east side of the main square." The militiaman's tone is factual, not reverent. Cross is a bureaucratic fact. "She doesn't have open hours. You earn an appointment."`,
+      branches: [
+        {
+          label: '"How do you earn an appointment?"',
+          targetNode: 'militia_earn_appointment',
+        },
+        {
+          label: '"I\'ll pay the day pass."',
+          targetNode: 'militia_daypass',
+        },
+      ],
+    },
+
+    militia_earn_appointment: {
+      id: 'militia_earn_appointment',
+      speaker: 'Gate Militiaman',
+      text: `"Complete work. Do something for Covenant — a board job, a patrol support, a supply run. Or come in with information she doesn't have. Cross tracks outcomes, not faces. You put in the work, she knows who you are." A brief glance at the road behind you. "Or you can just pay the day pass and see what happens. Most people start that way."`,
+      branches: [
+        {
+          label: '"Day pass it is."',
+          targetNode: 'militia_daypass',
+        },
+        {
+          label: '"I have information for her."',
+          targetNode: 'militia_info_offer',
+        },
+      ],
+    },
+
+    militia_info_offer: {
+      id: 'militia_info_offer',
+      speaker: 'Gate Militiaman',
+      text: `The militiaman looks at you with the professional assessment that is their default expression. "Information. About what?" The clipboard is still in hand but they've stopped writing. "If it's about Hollow movement south of the river, you're the third one today. If it's about something else, I'll pass it up the chain and let the duty officer decide if it warrants her attention."`,
+      branches: [
+        {
+          label: '"Hollow movements — specifically the eastern approach."',
+          targetNode: 'militia_info_hollow',
+        },
+        {
+          label: '"Something else. I\'ll tell the duty officer directly."',
+          targetNode: 'militia_daypass',
+        },
+      ],
+    },
+
+    militia_info_hollow: {
+      id: 'militia_info_hollow',
+      speaker: 'Gate Militiaman',
+      text: `"East approach. That's the third report." The militiaman makes a mark. "Report detail goes to the watch commander, not me. Through the gate, right side, the building with the blue roof stripe. Ask for Duty Sergeant Hollister." The gate bar lifts. "Welcome to ${rt.keyword('Covenant')}."`,
+      onEnter: {
+        setFlag: { covenant_entered: true, reported_hollow_eastern: true },
+      },
+      branches: [
+        {
+          label: 'Head inside.',
+          targetNode: 'militia_leave',
+        },
+      ],
+    },
+
+    militia_papers_accepted: {
+      id: 'militia_papers_accepted',
+      speaker: 'Gate Militiaman',
+      text: `The militiaman checks the papers with the quick, thorough read of someone who knows exactly what they're looking at. "Accord authorization, valid." A stamp mark in the ledger. "You're registered. ${rt.keyword('Armory')} east of the square if you need to register weapons. Market opens at dawn, closes at dusk." The gate bar goes up. "Welcome back."`,
+      onEnter: {
+        setFlag: { covenant_entered: true },
+        grantRep: { faction: 'accord', delta: 0 },
+      },
+      branches: [
+        {
+          label: 'Enter Covenant.',
+          targetNode: 'militia_leave',
+        },
+      ],
+    },
+
+    militia_accord_member: {
+      id: 'militia_accord_member',
+      speaker: 'Gate Militiaman',
+      text: `The militiaman's posture shifts — not to friendliness, exactly, but to the easy recognition of a colleague. "Good. Secondary inspection waived on your gear. ${rt.keyword('Armory')} will have your weapon registration current if you haven't been through recently." A beat. "Marshal's in the courthouse. She'd want to know you're here if you've got a report."`,
+      onEnter: {
+        setFlag: { covenant_entered: true, accord_member_recognized: true },
+      },
+      branches: [
+        {
+          label: '"I\'ll check in with the Marshal."',
+          targetNode: 'militia_leave',
+        },
+        {
+          label: '"Just passing through."',
+          targetNode: 'militia_leave',
+        },
+      ],
+    },
+
+    militia_armory: {
+      id: 'militia_armory',
+      speaker: 'Gate Militiaman',
+      text: `"Everything you carry gets logged. Weapons you register can be carried openly inside the walls. Unregistered carry is a fine and a hold. Reyes runs the armory — she's thorough, fast, and charges two pennies for the processing." A practical nod. "Better to register first. Covenant residents get nervous when they see unregistered weapons. Nervous people make trouble."`,
+      branches: [
+        {
+          label: '"Makes sense. I\'ll go there first."',
+          targetNode: 'militia_leave',
+        },
+      ],
+    },
+
+    militia_leave: {
+      id: 'militia_leave',
+      speaker: 'Gate Militiaman',
+      text: `The gate bar stays up. The militiaman is already watching the road again — the same slow sweep, the professional distance, the gate held open with the impersonal courtesy of someone doing a job that matters. You step into ${rt.keyword('Covenant')}.`,
+    },
+  },
+}
+
+// ============================================================
+// SC_PERIMETER_CHALLENGE — Salter Outer Perimeter Guard (SC-01)
+// dialogueTree ID: 'sc_perimeter_challenge'
+// First Salter contact. Wary-to-hostile default. Clearance required.
+// Faction: Salters (militaristic Hollow-hunters, Briggs's operation).
+// Tone: terse, threat-aware, no wasted words. Respect earned, not assumed.
+// ============================================================
+
+const scPerimeterChallengeTree: DialogueTree = {
+  npcId: 'salter_perimeter_guard',
+  startNode: 'sc_outer_start',
+  nodes: {
+
+    sc_outer_start: {
+      id: 'sc_outer_start',
+      speaker: 'Perimeter Guard',
+      text: `The rifle barrel doesn't drop. "Name and purpose." Three words. The sentry at the berm crest is framed against the sky, and you are framed in the open with no cover and a very clear sight picture. "Slowly."`,
+      branches: [
+        {
+          label: '"I\'m here to trade. I heard ${rt.keyword(\'Salters\')} pay well for Hollow intel."',
+          targetNode: 'sc_outer_trade',
+        },
+        {
+          label: '"I need shelter. I\'ve been on the road three days."',
+          targetNode: 'sc_outer_shelter',
+        },
+        {
+          label: '"I\'m looking for work. Whatever you need done."',
+          targetNode: 'sc_outer_work',
+        },
+        {
+          label: '"I know ${rt.npc(\'Warlord Briggs\')}. He\'ll vouch for me." [Require Salters rep 1+]',
+          targetNode: 'sc_outer_vouch',
+          requiresRep: { faction: 'salters', min: 1 },
+        },
+        {
+          label: '"I\'ve been here before." [Cycle 2+]',
+          targetNode: 'sc_outer_echo',
+          requiresCycleMin: 2,
+        },
+      ],
+    },
+
+    sc_outer_trade: {
+      id: 'sc_outer_trade',
+      speaker: 'Perimeter Guard',
+      text: `"Trade." The rifle lowers by three degrees — not an invitation, just a reclassification from threat to unknown. "What kind of intel?" The sentry's eyes don't leave you. The second sentry, further along the berm, is also watching. "Hollow movement, pack behavior, den sighting — that's worth something. General road conditions, not so much."`,
+      branches: [
+        {
+          label: '"Den sighting. Eastern approach, past the salt flat."',
+          targetNode: 'sc_outer_den_intel',
+        },
+        {
+          label: '"Movement patterns — I came through from the south."',
+          targetNode: 'sc_outer_movement_intel',
+        },
+        {
+          label: '"I need to get inside to deliver it properly."',
+          targetNode: 'sc_outer_inside',
+        },
+      ],
+    },
+
+    sc_outer_den_intel: {
+      id: 'sc_outer_den_intel',
+      speaker: 'Perimeter Guard',
+      text: `"Den sighting." The sentry is interested now — the specific interest of a professional for whom this information has immediate operational meaning. "Location. How many. What type. Behavior." Each question comes in the flat staccato of a field report template being filled out in real time. "Give it to me correctly and I'll walk you to the intelligence officer myself."`,
+      onEnter: {
+        setFlag: { sc_perimeter_passed: true, salter_intel_provided: true },
+        grantRep: { faction: 'salters', delta: 1 },
+      },
+      branches: [
+        {
+          label: '"Four shufflers. East of the salt processing site. Active at dusk."',
+          targetNode: 'sc_outer_cleared',
+        },
+      ],
+    },
+
+    sc_outer_movement_intel: {
+      id: 'sc_outer_movement_intel',
+      speaker: 'Perimeter Guard',
+      text: `"South approach." The rifle comes to the sling position. "That's the route we've had least visibility on since the patrol rotation changed." The sentry drops off the berm and walks to the perimeter marker. "You'll talk to the intelligence officer. Not Briggs — he doesn't take unsolicited reports from outsiders. But if what you have is useful, the officer will bring it up." A gesture toward the kill zone. "You walk across that ground in a straight line at normal pace. You don't stop. You don't look at the walls. Clear?"`,
+      onEnter: {
+        setFlag: { sc_perimeter_passed: true },
+      },
+      branches: [
+        {
+          label: '"Clear."',
+          targetNode: 'sc_outer_cleared',
+        },
+      ],
+    },
+
+    sc_outer_shelter: {
+      id: 'sc_outer_shelter',
+      speaker: 'Perimeter Guard',
+      text: `"Three days." The sentry's expression doesn't shift but the rifle settles. "Salt Creek isn't a settlement. It's a military installation. We don't take refugees." A pause. "But Briggs doesn't want bodies on the perimeter either — bad for morale and questions about disposal." The rifle stays in the sling position now. "You want to sleep inside, you work for it. What can you do?"`,
+      branches: [
+        {
+          label: '"I can fight."',
+          targetNode: 'sc_outer_work_fight',
+        },
+        {
+          label: '"I can scout. Track. Move quiet."',
+          targetNode: 'sc_outer_work_scout',
+        },
+        {
+          label: '"Whatever you need — labor, maintenance, cooking."',
+          targetNode: 'sc_outer_work',
+        },
+      ],
+    },
+
+    sc_outer_work: {
+      id: 'sc_outer_work',
+      speaker: 'Perimeter Guard',
+      text: `"Labor." The sentry gives you the first real look — not a threat assessment, a utility assessment. "Duty sergeant is inside. You cross the kill zone at a walk, straight line, and you ask for Sergeant Hollis. He'll put you on a work roster." The gate indicator shifts. "You do the work, you eat and sleep inside for as long as it takes. You don't pull your weight, you're back at this berm before nightfall."`,
+      onEnter: {
+        setFlag: { sc_perimeter_passed: true },
+      },
+      branches: [
+        {
+          label: '"Understood. I\'ll do it."',
+          targetNode: 'sc_outer_cleared',
+        },
+      ],
+    },
+
+    sc_outer_work_fight: {
+      id: 'sc_outer_work_fight',
+      speaker: 'Perimeter Guard',
+      text: `"You can fight." Not skepticism — evaluation. "If that's true, the pit sergeant will confirm it. We run contact drills twice a day. You demonstrate capability, you're on the combat roster, and the combat roster gets fed, housed, and paid." The sentry's tone hasn't warmed, but it's moved into operational territory. "Briggs doesn't waste people who can fight. He also doesn't tolerate people who only think they can."`,
+      onEnter: {
+        setFlag: { sc_perimeter_passed: true },
+      },
+      branches: [
+        {
+          label: '"I\'ll prove it."',
+          targetNode: 'sc_outer_cleared',
+        },
+      ],
+    },
+
+    sc_outer_work_scout: {
+      id: 'sc_outer_work_scout',
+      speaker: 'Perimeter Guard',
+      text: `"Scout." The second sentry stirs. The first one holds up a fist — the second goes still again. "We've had scouting requests with the Accord, but our own outside capability is thin right now." The tone shifts to something careful. "If you've got real tracking capability, that's a conversation with the intelligence officer, not the duty sergeant. I'll walk you in myself." A different gate posture. "Don't make me regret it."`,
+      onEnter: {
+        setFlag: { sc_perimeter_passed: true },
+        grantRep: { faction: 'salters', delta: 1 },
+      },
+      branches: [
+        {
+          label: '"You won\'t."',
+          targetNode: 'sc_outer_cleared',
+        },
+      ],
+    },
+
+    sc_outer_vouch: {
+      id: 'sc_outer_vouch',
+      speaker: 'Perimeter Guard',
+      text: `"Briggs." The rifle stays slung. "Name." The sentry's expression is neutral but the attention has shifted — Briggs's name is not a casual thing to invoke. "If you're on a roster, I'll confirm it on the radio. If you're not, and you invoked his name, that's a conversation you'll have with him personally." A deliberate beat. "He won't like it. You sure?"`,
+      branches: [
+        {
+          label: '"I\'m sure."',
+          targetNode: 'sc_outer_vouch_confirm',
+        },
+        {
+          label: '"My mistake. I\'m here to work."',
+          targetNode: 'sc_outer_work',
+        },
+      ],
+    },
+
+    sc_outer_vouch_confirm: {
+      id: 'sc_outer_vouch_confirm',
+      speaker: 'Perimeter Guard',
+      text: `Radio crackle. A brief exchange — your description, the request, a wait. The sentry's face reveals nothing during it. When the response comes, the sentry clips the radio to the vest without comment. "You're expected. Straight line across the kill zone. Don't stop."`,
+      onEnter: {
+        setFlag: { sc_perimeter_passed: true, briggs_vouch_used: true },
+      },
+      branches: [
+        {
+          label: '"Moving now."',
+          targetNode: 'sc_outer_cleared',
+        },
+      ],
+    },
+
+    sc_outer_echo: {
+      id: 'sc_outer_echo',
+      speaker: 'Perimeter Guard',
+      text: `A pause. The sentry looks at you with the particular attention of someone who is checking something against a memory they're not sure they have. "Name. Last time you were here, what was your purpose." Not hostile. Procedural. "The rotation changes. I may not have been on post. But if you came through, there's a record."`,
+      onEnter: {
+        setFlag: { sc_echo_acknowledged: true },
+      },
+      branches: [
+        {
+          label: '"Intel delivery. I brought Hollow movement data."',
+          targetNode: 'sc_outer_echo_intel',
+          requiresFlag: 'salter_intel_provided',
+        },
+        {
+          label: '"Work roster. Labor detail."',
+          targetNode: 'sc_outer_echo_worker',
+          requiresFlag: 'sc_perimeter_passed',
+        },
+        {
+          label: '"It was a while ago. Things were different."',
+          targetNode: 'sc_outer_echo_unclear',
+        },
+      ],
+    },
+
+    sc_outer_echo_intel: {
+      id: 'sc_outer_echo_intel',
+      speaker: 'Perimeter Guard',
+      text: `"Intel delivery." The radio comes out. Thirty seconds. "Confirmed in the log. Your intel on the eastern den was accurate — we cleared it two days later." The rifle is fully at the sling. "You're on the accepted-sources list. That means you skip the kill zone challenge. Walk to the inner gate at normal pace." A short nod. "Good work."`,
+      onEnter: {
+        grantRep: { faction: 'salters', delta: 1 },
+        setFlag: { sc_perimeter_passed: true },
+      },
+      branches: [
+        {
+          label: '"I\'ll have more when I\'m inside."',
+          targetNode: 'sc_outer_cleared',
+        },
+      ],
+    },
+
+    sc_outer_echo_worker: {
+      id: 'sc_outer_echo_worker',
+      speaker: 'Perimeter Guard',
+      text: `"Worker. I'll put it on the radio." A pause. The response is brief. "You're on the open roster. Same terms as before — Hollis at the duty station. Straight line across."`,
+      onEnter: {
+        setFlag: { sc_perimeter_passed: true },
+      },
+      branches: [
+        {
+          label: 'Cross the kill zone.',
+          targetNode: 'sc_outer_cleared',
+        },
+      ],
+    },
+
+    sc_outer_echo_unclear: {
+      id: 'sc_outer_echo_unclear',
+      speaker: 'Perimeter Guard',
+      text: `"Things were different." The sentry says it without irony. "They always were." The rifle doesn't lift. "State your purpose this time. Whatever it was before doesn't carry forward on its own."`,
+      branches: [
+        {
+          label: '"Here to work."',
+          targetNode: 'sc_outer_work',
+        },
+        {
+          label: '"I have Hollow intel."',
+          targetNode: 'sc_outer_trade',
+        },
+      ],
+    },
+
+    sc_outer_inside: {
+      id: 'sc_outer_inside',
+      speaker: 'Perimeter Guard',
+      text: `"Inside." The rifle settles. "That's not how this works. You give me the intel here. I decide if it warrants walking you in." The sentry is watching you with the patience of someone who has done this many times and is not in a hurry. "What are you bringing in?"`,
+      branches: [
+        {
+          label: '"Den sighting. Eastern approach, past the salt flat."',
+          targetNode: 'sc_outer_den_intel',
+        },
+        {
+          label: '"Movement data from the south approach."',
+          targetNode: 'sc_outer_movement_intel',
+        },
+        {
+          label: '"I need to think about it."',
+          targetNode: 'sc_outer_cleared',
+        },
+      ],
+    },
+
+    sc_outer_cleared: {
+      id: 'sc_outer_cleared',
+      speaker: 'Perimeter Guard',
+      text: `"Straight line. Normal pace. Eyes forward." The sentry steps back to the berm position. The kill zone opens in front of you — a hundred meters of exposed ground with the inner wall at the far end. The distance markers are large. You are entirely visible. You begin to walk.`,
+    },
+  },
+}
+
+// ============================================================
+// SC_INNER_GATE_CHALLENGE — Salter Inner Gate Sentry (SC-03)
+// dialogueTree ID: 'sc_inner_gate_challenge'
+// Second checkpoint inside the Stronghold. Requires explicit authorization.
+// Faction: Salters. Tone: procedural, two-sentry precision. No improvisation.
+// ============================================================
+
+const scInnerGateTree: DialogueTree = {
+  npcId: 'salter_inner_gate_sentry',
+  startNode: 'sc_inner_start',
+  nodes: {
+
+    sc_inner_start: {
+      id: 'sc_inner_start',
+      speaker: 'Inner Gate Sentry',
+      text: `Two sentries. Two keys. The inner gate sentry closest to you holds eye contact without blinking. "Inner area is command access. Authorization required." The second sentry is equidistant on the other side, one hand on the second lock. "Name. Reason for entry. Who authorized your perimeter crossing."`,
+      branches: [
+        {
+          label: '"Outer sentry cleared me for the duty sergeant. Work roster."',
+          targetNode: 'sc_inner_work',
+        },
+        {
+          label: '"Intel delivery. Outer sentry radioed it in."',
+          targetNode: 'sc_inner_intel',
+          requiresFlag: 'salter_intel_provided',
+        },
+        {
+          label: '"Briggs is expecting me." [Require Salters rep 1+]',
+          targetNode: 'sc_inner_briggs',
+          requiresRep: { faction: 'salters', min: 1 },
+        },
+        {
+          label: '"I\'ve been here before. I\'m on the roster." [Cycle 2+]',
+          targetNode: 'sc_inner_echo',
+          requiresCycleMin: 2,
+        },
+        {
+          label: '"I\'m here to see the intelligence officer."',
+          targetNode: 'sc_inner_intel_officer',
+          requiresFlag: 'sc_perimeter_passed',
+        },
+      ],
+    },
+
+    sc_inner_work: {
+      id: 'sc_inner_work',
+      speaker: 'Inner Gate Sentry',
+      text: `The first sentry doesn't respond immediately. Radio check. Fifteen seconds that are quite long if you're standing in the open between two armed people. "Confirmed. Work roster." The two keys turn in sequence — not a word between the sentries, the choreography automatic. "Duty station is the building with the green stripe. Ask for Hollis. Don't wander."`,
+      onEnter: {
+        setFlag: { sc_inner_cleared: true },
+      },
+      branches: [
+        {
+          label: '"Green stripe. Hollis. Understood."',
+          targetNode: 'sc_inner_enter',
+        },
+      ],
+    },
+
+    sc_inner_intel: {
+      id: 'sc_inner_intel',
+      speaker: 'Inner Gate Sentry',
+      text: `"Intel delivery." Radio check — the same fifteen seconds, the same process. When the response comes, the sentry's posture shifts by a degree. "Log confirms. Intelligence officer is second floor, north building — the one with the antenna array. She'll be expecting you." Both keys turn. "State your full report to her. Not to anyone else on the way."`,
+      onEnter: {
+        setFlag: { sc_inner_cleared: true, salter_intel_officer_meeting: true },
+      },
+      branches: [
+        {
+          label: '"Second floor, north building. Got it."',
+          targetNode: 'sc_inner_enter',
+        },
+      ],
+    },
+
+    sc_inner_briggs: {
+      id: 'sc_inner_briggs',
+      speaker: 'Inner Gate Sentry',
+      text: `The sentry's expression doesn't change. "Briggs." Radio check. This one takes longer — two exchanges. When it's done, the sentry clips the radio to their vest without commenting on the content. "Confirmed. Command building, second floor. You don't go anywhere else. You don't stop. You don't interact with training operations." Both keys turn simultaneously. "Move."`,
+      onEnter: {
+        setFlag: { sc_inner_cleared: true, briggs_meeting_confirmed: true },
+      },
+      branches: [
+        {
+          label: 'Enter. Straight to the command building.',
+          targetNode: 'sc_inner_enter',
+        },
+      ],
+    },
+
+    sc_inner_echo: {
+      id: 'sc_inner_echo',
+      speaker: 'Inner Gate Sentry',
+      text: `"Roster." The sentry checks the log without looking away for more than a second. A pause. "You're listed. Previous clearance on file." The two keys move together. "You know the layout. Don't make me re-brief you." The gate opens. "Clean in and out."`,
+      onEnter: {
+        setFlag: { sc_inner_cleared: true },
+        grantRep: { faction: 'salters', delta: 0 },
+      },
+      branches: [
+        {
+          label: '"I know the way."',
+          targetNode: 'sc_inner_enter',
+        },
+      ],
+    },
+
+    sc_inner_intel_officer: {
+      id: 'sc_inner_intel_officer',
+      speaker: 'Inner Gate Sentry',
+      text: `"Intelligence officer request." Radio check. The sentry glances at the second sentry — one of those glances that carries a full conversation. "Outer gate cleared you, so you're verified for perimeter. Inner authorization requires specific intelligence content." A beat. "What are you bringing in?"`,
+      branches: [
+        {
+          label: '"Hollow den location, eastern approach."',
+          targetNode: 'sc_inner_intel',
+          requiresFlag: 'salter_intel_provided',
+        },
+        {
+          label: '"I was sent in for the work roster."',
+          targetNode: 'sc_inner_work',
+        },
+      ],
+    },
+
+    sc_inner_enter: {
+      id: 'sc_inner_enter',
+      speaker: 'Inner Gate Sentry',
+      text: `The gate closes behind you. The two-key procedure in reverse — simultaneous, automatic, the same choreography. The ${rt.keyword('Salt Creek')} compound opens up: training ground, barracks, the command building with its antenna array. The sounds of drills, counted repetitions, the economic language of people who take their survival seriously. You are inside.`,
+    },
+  },
+}
+
+// ============================================================
+// DUSKHOLLOW_ELDER — Duskhollow Settlement Elder (Tithe House, DH-13)
+// dialogueTree ID: 'duskhollow_elder_main'
+// The moral center of Duskhollow. Old, tired, honest. Quest giver.
+// Faction alignment: nominally Covenant of Dusk arrangement, independent.
+// Tone: direct, world-weary, not defeated. Speaks plainly about hard things.
+// ============================================================
+
+const duskhollowElderTree: DialogueTree = {
+  npcId: 'tithe_human_resident',
+  startNode: 'dh_elder_start',
+  nodes: {
+
+    dh_elder_start: {
+      id: 'dh_elder_start',
+      speaker: 'Settlement Elder',
+      text: `The elder sets down the cup. The movement is deliberate — everything about them is deliberate, the economy of someone who has been thinking carefully for a long time. "You're here for one of three reasons. Vesper sent you. The ${rt.keyword('Accord')} sent you. Or you're curious about the settlement on your own. Which is it?"`,
+      branches: [
+        {
+          label: '"I heard about Duskhollow. I wanted to see it for myself."',
+          targetNode: 'dh_elder_curious',
+        },
+        {
+          label: '"What can you tell me about the ${rt.keyword(\'blood tithe\')}?"',
+          targetNode: 'dh_elder_tithe',
+        },
+        {
+          label: '"I\'m looking for work. Or information."',
+          targetNode: 'dh_elder_quests',
+        },
+        {
+          label: '"How long has this settlement existed?"',
+          targetNode: 'dh_elder_history',
+        },
+        {
+          label: '"The cistern — something\'s wrong with the water."',
+          targetNode: 'dh_elder_cistern',
+          requiresFlag: 'duskhollow_cistern_contamination_identified',
+        },
+        {
+          label: '"I\'ve been here before." [Cycle 2+]',
+          targetNode: 'dh_elder_echo',
+          requiresCycleMin: 2,
+        },
+        {
+          label: '"I should go."',
+          targetNode: 'dh_elder_leave',
+        },
+      ],
+    },
+
+    dh_elder_curious: {
+      id: 'dh_elder_curious',
+      speaker: 'Settlement Elder',
+      text: `"Curious." The elder says it without judgment. "Most people who come here aren't curious. They're frightened or they're looking for something. Curiosity is better." They gesture at the chair across from them — a simple invitation, not pressed. "Sit if you have the time. What do you want to know about us?"`,
+      branches: [
+        {
+          label: '"What is Duskhollow, exactly?"',
+          targetNode: 'dh_elder_what_is',
+        },
+        {
+          label: '"How do people live here — under the tithe?"',
+          targetNode: 'dh_elder_tithe',
+        },
+        {
+          label: '"Are you safe here?"',
+          targetNode: 'dh_elder_safety',
+        },
+      ],
+    },
+
+    dh_elder_what_is: {
+      id: 'dh_elder_what_is',
+      speaker: 'Settlement Elder',
+      text: `"A compromise." The elder is direct about this — no preamble. "We needed protection. The ${rt.keyword('Hollow')} were coming from three directions in year two and we had nothing. The ${rt.keyword('Covenant of Dusk')} offered an arrangement. We provide blood — voluntary, structured, twice a month per person — and they protect our perimeter, supply our food shortfalls, provide medical care." A pause. "The Accord would not take us. We had nowhere else to go. The math worked out."`,
+      onEnter: {
+        setFlag: { learned_duskhollow_arrangement: true },
+      },
+      branches: [
+        {
+          label: '"How do people feel about the arrangement?"',
+          targetNode: 'dh_elder_feelings',
+        },
+        {
+          label: '"Has Vesper kept her side?"',
+          targetNode: 'dh_elder_vesper',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'dh_elder_start',
+        },
+      ],
+    },
+
+    dh_elder_feelings: {
+      id: 'dh_elder_feelings',
+      speaker: 'Settlement Elder',
+      text: `"How people feel is complicated." The elder sets hands flat on the table. "Some feel safer than they've been since before the Collapse. Some feel owned. Most feel both, depending on the day and how recently they gave." A flat look. "I feel responsible. Which is its own kind of complicated."`,
+      branches: [
+        {
+          label: '"Do you regret it?"',
+          targetNode: 'dh_elder_regret',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'dh_elder_start',
+        },
+      ],
+    },
+
+    dh_elder_regret: {
+      id: 'dh_elder_regret',
+      speaker: 'Settlement Elder',
+      text: `"Regret." The word lands differently than it usually does when someone says it. "I don't regret keeping the settlement alive. I regret the conditions that made this the best available option. Those are different things." The elder picks up the cup again. "If you're looking for someone to tell you this is wrong, I can't be that person. I'm too close to it. I know exactly how many people would have died if we'd said no."`,
+      branches: [
+        {
+          label: 'Back to other topics.',
+          targetNode: 'dh_elder_start',
+        },
+      ],
+    },
+
+    dh_elder_vesper: {
+      id: 'dh_elder_vesper',
+      speaker: 'Settlement Elder',
+      text: `"${rt.npc('Vesper')} has kept every term of the agreement for four years. Not because she's sentimental — because the arrangement is useful to her and she is precise about useful things." The elder's tone is measured admiration and clear-eyed assessment simultaneously. "She is the most consistent authority I've dealt with since the Collapse. That shouldn't be the measure. It is."`,
+      onEnter: {
+        setFlag: { learned_vesper_assessment: true },
+      },
+      branches: [
+        {
+          label: 'Back to other topics.',
+          targetNode: 'dh_elder_start',
+        },
+      ],
+    },
+
+    dh_elder_tithe: {
+      id: 'dh_elder_tithe',
+      speaker: 'Settlement Elder',
+      text: `"The tithe is voluntary. That's the most important thing to understand, and the most complicated." The elder speaks carefully — this is a sentence they've had to revise over the years. "Voluntary in the formal sense: no one is compelled. Not voluntary in the practical sense: the alternative is leaving, and leaving is hard, and most people have nowhere else to go." They meet your eyes. "I document the distinction. It matters that it's documented."`,
+      onEnter: {
+        setFlag: { learned_tithe_details: true },
+      },
+      branches: [
+        {
+          label: '"How is the tithe managed?"',
+          targetNode: 'dh_elder_tithe_logistics',
+        },
+        {
+          label: '"Have you ever had anyone refuse?"',
+          targetNode: 'dh_elder_tithe_refusal',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'dh_elder_start',
+        },
+      ],
+    },
+
+    dh_elder_tithe_logistics: {
+      id: 'dh_elder_tithe_logistics',
+      speaker: 'Settlement Elder',
+      text: `"Twice a month. The collection house has a schedule posted — no surprises, no emergency requests. Vesper has a physician, a ${rt.keyword('Covenant of Dusk')} doctor who handles the draws. Clean equipment, documented, capped at the agreed volume." A pause. "I negotiated those terms personally. Took three months. Vesper was — patient with the negotiation. She wanted a durable arrangement, not a crisis."`,
+      branches: [
+        {
+          label: 'Back to other topics.',
+          targetNode: 'dh_elder_start',
+        },
+      ],
+    },
+
+    dh_elder_tithe_refusal: {
+      id: 'dh_elder_tithe_refusal',
+      speaker: 'Settlement Elder',
+      text: `"Three people have refused in four years. All three left the settlement within a month." The elder says it plainly. "Not because anyone made them. Because staying under an arrangement you won't participate in — eating the food, sleeping inside the protected perimeter — has its own social weight. They left on their own." A breath. "I told them they could stay. I meant it. They chose."`,
+      branches: [
+        {
+          label: 'Back to other topics.',
+          targetNode: 'dh_elder_start',
+        },
+      ],
+    },
+
+    dh_elder_safety: {
+      id: 'dh_elder_safety',
+      speaker: 'Settlement Elder',
+      text: `"Safe." The elder seems to be testing the word. "From the Hollow — yes. The ${rt.keyword('Covenant of Dusk')} perimeter patrol has not lost a single person to a Hollow breach in four years. That's the safest settlement record in the Four Corners." A flat look. "Safe from hunger — mostly. Safe from political pressure — less so. The ${rt.keyword('Accord')} asks questions about us regularly. Vesper handles those conversations, which is either protective or concerning, depending on who you ask."`,
+      branches: [
+        {
+          label: '"What does the Accord want?"',
+          targetNode: 'dh_elder_accord_interest',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'dh_elder_start',
+        },
+      ],
+    },
+
+    dh_elder_accord_interest: {
+      id: 'dh_elder_accord_interest',
+      speaker: 'Settlement Elder',
+      text: `"What the ${rt.keyword('Accord')} always wants — oversight. Documentation. The ability to say they know what's happening. ${rt.npc('Marshal Cross')} has sent three delegations in two years. Each time, Vesper receives them at the settlement edge, provides the requested documentation, and escorts them out." The elder looks at the photographs on the wall. "Cross is thorough. She doesn't like things happening in the region she doesn't understand. Duskhollow is something she doesn't fully understand."`,
+      onEnter: {
+        setFlag: { learned_accord_duskhollow_tension: true },
+      },
+      branches: [
+        {
+          label: 'Back to other topics.',
+          targetNode: 'dh_elder_start',
+        },
+      ],
+    },
+
+    dh_elder_history: {
+      id: 'dh_elder_history',
+      speaker: 'Settlement Elder',
+      text: `"Duskhollow was a campsite first — thirty people who'd been pushed out of two other settlements by the end of year one. We had skills but no defenses. The ${rt.keyword('Hollow')} took five people in the first month." The elder's voice doesn't dramatize this. It's reported fact. "Vesper found us in month three. The negotiation took the better part of a season. We've been here four years now." A pause. "We have sixty-two people. We've lost three to disease, two to accidents. Nobody to the Hollow since the arrangement."`,
+      onEnter: {
+        setFlag: { learned_duskhollow_history: true },
+      },
+      branches: [
+        {
+          label: '"What did Vesper get out of it?"',
+          targetNode: 'dh_elder_vesper',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'dh_elder_start',
+        },
+      ],
+    },
+
+    dh_elder_quests: {
+      id: 'dh_elder_quests',
+      speaker: 'Settlement Elder',
+      text: `"Work or information." The elder looks at the papers on the table without pointing at them. "We have three ongoing problems. The patrol rotation on the north rim is wrong and I can't get anyone to fix it. The cistern has been tasting off — not dangerous yet, but I want to know why before it becomes dangerous. And there's a tithe arrears situation involving a family I'd rather resolve quietly than escalate to Vesper." A flat look. "Which of those sounds like your kind of work?"`,
+      onEnter: {
+        setFlag: { dh_elder_quests_offered: true },
+      },
+      branches: [
+        {
+          label: '"The patrol rotation. What\'s wrong with it?"',
+          targetNode: 'dh_elder_patrol_quest',
+        },
+        {
+          label: '"The cistern. I can look into it."',
+          targetNode: 'dh_elder_cistern_quest',
+        },
+        {
+          label: '"The tithe arrears. I can handle quiet."',
+          targetNode: 'dh_elder_arrears_quest',
+        },
+      ],
+    },
+
+    dh_elder_patrol_quest: {
+      id: 'dh_elder_patrol_quest',
+      speaker: 'Settlement Elder',
+      text: `"The north rim patrol runs from sunset to midnight. The Hollow are most active between two and four in the morning — that's documented, the patrol commander has the data. He won't change the rotation without authorization from Vesper's security officer, and the security officer hasn't responded in two weeks." The elder hands you a folded paper. "My written request, with the supporting data. Bring it to the security officer yourself. Her office is in the eastern house, the one with the blue lantern. She won't take a paper from me, but she might take it from a stranger."`,
+      onEnter: {
+        setFlag: { quest_rim_patrol_active: true },
+      },
+      branches: [
+        {
+          label: '"I\'ll bring it to her."',
+          targetNode: 'dh_elder_quest_accepted',
+        },
+        {
+          label: '"What if she won\'t take it from me either?"',
+          targetNode: 'dh_elder_patrol_alt',
+        },
+      ],
+    },
+
+    dh_elder_patrol_alt: {
+      id: 'dh_elder_patrol_alt',
+      speaker: 'Settlement Elder',
+      text: `"Then you have the data." The elder meets your eyes. "If you can make the patrol commander understand why the rotation is wrong without the authorization chain — if you can make the case directly to the people walking that rim at midnight — I'll take that outcome too. The goal is the patrol changes. The route it takes to get there is secondary."`,
+      branches: [
+        {
+          label: '"Understood. I\'ll handle it."',
+          targetNode: 'dh_elder_quest_accepted',
+        },
+      ],
+    },
+
+    dh_elder_cistern_quest: {
+      id: 'dh_elder_cistern_quest',
+      speaker: 'Settlement Elder',
+      text: `"The cistern is south of this house — you passed it coming in, the access hatch with the counterweight. The water has had a mineral taste for three weeks. Not dangerous — I've been monitoring the health effects and there are none yet." The elder doesn't lean forward, but their voice sharpens slightly. "But 'not dangerous yet' is not the same as 'not tampered with.' Someone has been in the cistern who shouldn't have. I want to know who and I want to know what they did."`,
+      onEnter: {
+        setFlag: { quest_cistern_active: true },
+      },
+      branches: [
+        {
+          label: '"I\'ll check it."',
+          targetNode: 'dh_elder_quest_accepted',
+        },
+      ],
+    },
+
+    dh_elder_cistern: {
+      id: 'dh_elder_cistern',
+      speaker: 'Settlement Elder',
+      text: `The elder's hands go flat on the table. "You found something." Not a question. "Tell me what you found and I'll tell you what I already know, and we'll see if the pieces fit." The deliberateness of their attention is complete — everything else in the room has stopped mattering.`,
+      onEnter: {
+        setFlag: { dh_elder_cistern_report: true },
+      },
+      branches: [
+        {
+          label: '"The taste is deliberate. Someone added something."',
+          targetNode: 'dh_elder_cistern_contamination',
+        },
+        {
+          label: '"I found signs of access. Someone was down there recently."',
+          targetNode: 'dh_elder_cistern_access',
+        },
+      ],
+    },
+
+    dh_elder_cistern_contamination: {
+      id: 'dh_elder_cistern_contamination',
+      speaker: 'Settlement Elder',
+      text: `"Deliberate." The elder is quiet for a moment. "I was hoping it was mineral drift. Natural. A geological thing." They stand and go to the window. The view is the cistern access hatch. "If it's deliberate, someone in this settlement is trying to make us sick, or trying to send a message, or is doing something I don't understand yet." A pause. "What kind of something?"`,
+      onEnter: {
+        setFlag: { dh_elder_knows_contamination: true },
+      },
+      branches: [
+        {
+          label: '"Kindling-associated compounds. Someone is testing something."',
+          targetNode: 'dh_elder_kindling_reveal',
+          requiresFlag: 'duskhollow_cistern_contamination_identified',
+        },
+        {
+          label: '"I don\'t know yet. I need more time."',
+          targetNode: 'dh_elder_quest_continue',
+        },
+      ],
+    },
+
+    dh_elder_kindling_reveal: {
+      id: 'dh_elder_kindling_reveal',
+      speaker: 'Settlement Elder',
+      text: `The elder turns from the window. "The ${rt.keyword('Kindling')}." The word is flat. Not surprised — confirming something they'd been working toward. "There's a small group in the settlement — I know who they are. I've been watching them for six months. I didn't have enough to confront them." The papers on the table make sudden sense. "Now I do." They sit back down. "What you found changes the conversation I'm going to have with Vesper. I need you to write down exactly what you saw. Not interpreted — exactly observed."`,
+      onEnter: {
+        setFlag: { dh_elder_kindling_confirmed: true },
+        grantRep: { faction: 'covenant_of_dusk', delta: 1 },
+      },
+      branches: [
+        {
+          label: '"I\'ll write it down."',
+          targetNode: 'dh_elder_leave',
+        },
+      ],
+    },
+
+    dh_elder_cistern_access: {
+      id: 'dh_elder_cistern_access',
+      speaker: 'Settlement Elder',
+      text: `"Access signs." The elder nods once. "The counterweight mechanism shows extra use — I check it weekly. Three weeks ago the wear pattern changed." They were already tracking this. "Who uses the cistern on a regular basis: the water attendant, me, one other. The others don't have reason to be down there." A careful look. "Describe what you found."`,
+      branches: [
+        {
+          label: '"Tool marks on the access pipe. Someone rigged something."',
+          targetNode: 'dh_elder_cistern_contamination',
+        },
+        {
+          label: '"Footprints that don\'t match the standard rotation."',
+          targetNode: 'dh_elder_quest_continue',
+        },
+      ],
+    },
+
+    dh_elder_quest_continue: {
+      id: 'dh_elder_quest_continue',
+      speaker: 'Settlement Elder',
+      text: `"Keep looking." No impatience in it. "What you've found is already more than I had. The picture is assembling itself." The elder returns to the papers. "When you know more, come back. The door is always open."`,
+      branches: [
+        {
+          label: '"I will."',
+          targetNode: 'dh_elder_leave',
+        },
+      ],
+    },
+
+    dh_elder_arrears_quest: {
+      id: 'dh_elder_arrears_quest',
+      speaker: 'Settlement Elder',
+      text: `"There's a family — three people. They've missed two tithe cycles. Not because they won't: the father is ill, the mother is the primary caregiver, and the adult child is too young to understand what's at stake." The elder is careful with this. "Vesper will escalate if the arrears continue. I need someone to speak with the family before that happens. Explain the options. Not threaten — explain. There are options. They don't know that."`,
+      onEnter: {
+        setFlag: { quest_tithe_arrears_active: true },
+      },
+      branches: [
+        {
+          label: '"What options do they have?"',
+          targetNode: 'dh_elder_arrears_options',
+        },
+        {
+          label: '"I\'ll talk to them."',
+          targetNode: 'dh_elder_quest_accepted',
+        },
+      ],
+    },
+
+    dh_elder_arrears_options: {
+      id: 'dh_elder_arrears_options',
+      speaker: 'Settlement Elder',
+      text: `"Three options. Medical deferral — I can apply for it on their behalf, but it requires documentation from the settlement physician, and she hasn't been willing to make house calls to the family's section. Labor substitution — if the able member works additional hours in the settlement's agricultural rotation, that can offset two cycles' arrears. Or community tithe pooling — six other residents have agreed to contribute a small additional volume to cover the family's obligation temporarily." A flat look. "They don't know any of those options exist. Tell them."`,
+      branches: [
+        {
+          label: '"I\'ll tell them. All three."',
+          targetNode: 'dh_elder_quest_accepted',
+        },
+      ],
+    },
+
+    dh_elder_quest_accepted: {
+      id: 'dh_elder_quest_accepted',
+      speaker: 'Settlement Elder',
+      text: `"Good." The elder returns to the papers on the table — not dismissively, but with the compressed efficiency of someone who has many things to manage. "Come back when you know something. My door doesn't lock." A brief, direct look. "And whatever you find out there — be honest with me about it. I don't have the capacity for comfortable versions of things."`,
+      branches: [
+        {
+          label: '"Understood."',
+          targetNode: 'dh_elder_leave',
+        },
+      ],
+    },
+
+    dh_elder_echo: {
+      id: 'dh_elder_echo',
+      speaker: 'Settlement Elder',
+      text: `The elder looks at you for a moment that is longer than the situation requires. "You've been here before." Not a question. "I remember faces. The settlement remembers faces." They gesture to the chair. "Sit. Tell me what happened after you left last time. We're still here. What about you?"`,
+      onEnter: {
+        setFlag: { dh_elder_echo_acknowledged: true },
+      },
+      branches: [
+        {
+          label: '"I\'m still figuring that out. Some things I remember, some I don\'t."',
+          targetNode: 'dh_elder_echo_revenant',
+        },
+        {
+          label: '"The settlement looks the same. That\'s good."',
+          targetNode: 'dh_elder_echo_stable',
+        },
+        {
+          label: '"I need to pick up where I left off. Which quest was I working on?"',
+          targetNode: 'dh_elder_quests',
+        },
+      ],
+    },
+
+    dh_elder_echo_revenant: {
+      id: 'dh_elder_echo_revenant',
+      speaker: 'Settlement Elder',
+      text: `"Some things you remember, some you don't." The elder studies you with the attention of someone who has been paying close attention to the world's new categories. "I've heard about people like you. The ones who come back." They don't say it with wonder or fear — with the same careful precision they bring to everything. "Is that what you are?" A pause. "You don't have to answer. But if it is — I have questions. Not about the science. About what it's like. What you carry forward."`,
+      branches: [
+        {
+          label: '"Yes. That\'s what I am."',
+          targetNode: 'dh_elder_revenant_confirm',
+        },
+        {
+          label: '"I don\'t know what I am. That\'s the honest answer."',
+          targetNode: 'dh_elder_revenant_uncertain',
+        },
+      ],
+    },
+
+    dh_elder_revenant_confirm: {
+      id: 'dh_elder_revenant_confirm',
+      speaker: 'Settlement Elder',
+      text: `"Then you know what it costs." The elder nods once, the acknowledgment of someone who has been carrying their own ledger for a long time. "What you carry matters. What you learn from it matters more." They meet your eyes. "I'm glad you came back. We need people who know the weight of things."`,
+      onEnter: {
+        grantRep: { faction: 'covenant_of_dusk', delta: 1 },
+      },
+      branches: [
+        {
+          label: '"What do you need from me?"',
+          targetNode: 'dh_elder_quests',
+        },
+        {
+          label: 'Thank the elder and take your leave.',
+          targetNode: 'dh_elder_leave',
+        },
+      ],
+    },
+
+    dh_elder_revenant_uncertain: {
+      id: 'dh_elder_revenant_uncertain',
+      speaker: 'Settlement Elder',
+      text: `"The honest answer." The elder almost smiles — the echo of something that happened to someone else's face. "In my experience, the people who say 'I don't know' are the ones who are actually paying attention." They look at the photographs. "None of us know exactly what we are anymore. We're just deciding what to do with it."`,
+      branches: [
+        {
+          label: '"What do you need from me?"',
+          targetNode: 'dh_elder_quests',
+        },
+        {
+          label: '"I should go."',
+          targetNode: 'dh_elder_leave',
+        },
+      ],
+    },
+
+    dh_elder_echo_stable: {
+      id: 'dh_elder_echo_stable',
+      speaker: 'Settlement Elder',
+      text: `"Same." The elder looks at the wall of photographs. "More or less. The photographs grow. The problems change shape but stay roughly the same weight." They return their attention to you. "Were you able to do what you came to do, last time?"`,
+      branches: [
+        {
+          label: '"Some of it. Not all."',
+          targetNode: 'dh_elder_quests',
+        },
+        {
+          label: '"That\'s what I\'m here to find out."',
+          targetNode: 'dh_elder_start',
+        },
+      ],
+    },
+
+    dh_elder_leave: {
+      id: 'dh_elder_leave',
+      speaker: 'Settlement Elder',
+      text: `"The door is open when you come back." The elder has already returned to the papers — the settlement's accounts, the numbers that don't add up yet, the calculations that keep sixty-two people alive. The work doesn't stop. It has never stopped.`,
+    },
+  },
+}
+
+// ============================================================
+// THE_DOG — A Stray Dog (companion; river_road, the_deep, the_scar)
+// dialogueTree IDs: 'rr_the_dog_encounter', 'dp_the_dog_crystal', 'sc_the_dog_scar'
+// Minimal tree. The dog does not speak. Presence, assessment, decision.
+// No faction. No lore. Pure emotional beat.
+// ============================================================
+
+const theDogTree: DialogueTree = {
+  npcId: 'the_dog',
+  startNode: 'dog_start',
+  nodes: {
+
+    dog_start: {
+      id: 'dog_start',
+      speaker: 'A Stray Dog',
+      text: `The dog doesn't come closer. It watches you from exactly the distance it chose. The notched left ear angles toward you. The eyes are calm and specific — this dog has made a thousand assessments and doesn't waste them. It is deciding now.`,
+      branches: [
+        {
+          label: '[Offer food]',
+          targetNode: 'dog_food_offered',
+          requiresItem: 'elk_jerky',
+        },
+        {
+          label: '[Crouch down. Be still. Let it decide.]',
+          targetNode: 'dog_patient_approach',
+        },
+        {
+          label: '[Make no sudden moves. Give it space.]',
+          targetNode: 'dog_neutral',
+        },
+        {
+          label: '[Walk away. Leave it alone.]',
+          targetNode: 'dog_leave',
+        },
+      ],
+    },
+
+    dog_food_offered: {
+      id: 'dog_food_offered',
+      speaker: 'A Stray Dog',
+      text: `You hold out the food. The dog looks at it. Then at you. Then at it again. The ears settle. It comes forward three steps — not all the way — and takes the food from your hand with a precision that suggests considerable practice. It doesn't run. It stands there, near you, chewing, and looks at you with an expression that could be called gratitude if you're the kind of person who extends such readings to dogs. You are, a little.`,
+      onEnter: {
+        setFlag: { dog_fed: true },
+        removeItem: ['elk_jerky'],
+      },
+      branches: [
+        {
+          label: '[Sit. Let it decide what happens next.]',
+          targetNode: 'dog_approaching',
+        },
+        {
+          label: '[Stand up. You have places to be.]',
+          targetNode: 'dog_leave_kind',
+        },
+      ],
+    },
+
+    dog_patient_approach: {
+      id: 'dog_patient_approach',
+      speaker: 'A Stray Dog',
+      text: `You crouch. The dog watches you change shape — less threatening at this height — and its ears shift forward by a fraction. It sniffs the air in your direction. Something it finds there is acceptable. It takes two steps toward you. Stops. Sniffs again. The tail moves once, not wagging, just acknowledging.`,
+      onEnter: {
+        setFlag: { dog_approach_attempted: true },
+      },
+      branches: [
+        {
+          label: '[Stay still. Don\'t push it.]',
+          targetNode: 'dog_approaching',
+        },
+        {
+          label: '[Extend a hand. Palm down.]',
+          targetNode: 'dog_hand_offer',
+        },
+      ],
+    },
+
+    dog_hand_offer: {
+      id: 'dog_hand_offer',
+      speaker: 'A Stray Dog',
+      text: `The dog sniffs your palm with a thoroughness that suggests it is reading an entire history. A long pause. Then: it presses its nose against the back of your hand, briefly, and looks up. The notched ear flicks. Whatever question it was asking, you've passed.`,
+      onEnter: {
+        setFlag: { dog_kindness: true },
+      },
+      branches: [
+        {
+          label: '[Sit with it for a moment. No agenda.]',
+          targetNode: 'dog_companion_moment',
+        },
+        {
+          label: '[Stand up slowly. You have to go.]',
+          targetNode: 'dog_leave_kind',
+        },
+      ],
+    },
+
+    dog_approaching: {
+      id: 'dog_approaching',
+      speaker: 'A Stray Dog',
+      text: `The dog closes the remaining distance and sits beside you. Not in front of you — beside, which is a different thing entirely. It smells like rain and old grass and something particular to itself. Its warmth is real. For a moment there is no calculation in either of you. Just two things alive at the same time in the same place.`,
+      onEnter: {
+        setFlag: { dog_kindness: true },
+      },
+      branches: [
+        {
+          label: '[Stay with it a while.]',
+          targetNode: 'dog_companion_moment',
+        },
+        {
+          label: '[Stand slowly and go. It watches you leave.]',
+          targetNode: 'dog_leave_kind',
+        },
+      ],
+    },
+
+    dog_companion_moment: {
+      id: 'dog_companion_moment',
+      speaker: 'A Stray Dog',
+      text: `The dog's attention shifts to the middle distance — something in the air, something on the wind. It looks at you once more, as if confirming you're still there. You are. That seems to be enough.`,
+    },
+
+    dog_neutral: {
+      id: 'dog_neutral',
+      speaker: 'A Stray Dog',
+      text: `You give it space. The dog watches you with the calm, measuring attention of something that has learned to read people well. The assessment continues. No conclusion yet.`,
+      branches: [
+        {
+          label: '[Crouch. Be still.]',
+          targetNode: 'dog_patient_approach',
+        },
+        {
+          label: '[Keep your distance and go.]',
+          targetNode: 'dog_leave',
+        },
+      ],
+    },
+
+    dog_leave: {
+      id: 'dog_leave',
+      speaker: 'A Stray Dog',
+      text: `The dog watches you go. The notched ear follows your movement. It doesn't follow. You walk away, and behind you, it is still watching.`,
+    },
+
+    dog_leave_kind: {
+      id: 'dog_leave_kind',
+      speaker: 'A Stray Dog',
+      text: `You stand slowly. The dog watches the movement but doesn't back away. When you begin to walk, it stays — not following, not fleeing. At the edge of your perception it is still sitting there. Maybe it will be there when you come back. Maybe it won't. Dogs decide on their own timeline.`,
+    },
+  },
+}
+
+// ============================================================
+// DORY — Blood Tithe Volunteer (Duskhollow, Tithe Collection House)
+// dialogueTree ID: 'dory_tithe_house'
+// Named NPC. Covenant of Dusk faction (tithe participant).
+// Tone: calm, analytical, unsentimental. Has done the math and stands by it.
+// ============================================================
+
+const doryTree: DialogueTree = {
+  npcId: 'dory',
+  startNode: 'dory_start',
+  nodes: {
+
+    dory_start: {
+      id: 'dory_start',
+      speaker: 'Dory',
+      text: `${rt.npc('Dory')} adjusts the compression bandage on her wrist — the post-draw wrap, practiced and automatic — and looks at you without particular surprise. "You're going to ask me if I'm all right. Or why I do this. Everyone who comes through asks one of those two." She sets her sleeve down. "Which one?"`,
+      branches: [
+        {
+          label: '"Are you all right?"',
+          targetNode: 'dory_alright',
+        },
+        {
+          label: '"Why do you do this?"',
+          targetNode: 'dory_why',
+        },
+        {
+          label: '"Neither. I\'m just observing."',
+          targetNode: 'dory_observing',
+        },
+        {
+          label: '"I wanted to understand what happens here."',
+          targetNode: 'dory_understand',
+        },
+        {
+          label: '"I\'ve talked to the elder. They described the arrangement."',
+          targetNode: 'dory_elder_reference',
+          requiresFlag: 'learned_tithe_details',
+        },
+      ],
+    },
+
+    dory_alright: {
+      id: 'dory_alright',
+      speaker: 'Dory',
+      text: `"Yes." No hesitation. "I have shelter. Medical care when I need it. Enough to eat. The Hollow haven't breached the perimeter in four years." She looks at the wrap on her wrist. "The draw takes about twenty minutes, twice a month. I spend three times that waiting in line at the old Accord checkpoint when I lived near Covenant." A flat pause. "Was that the version you were expecting?"`,
+      branches: [
+        {
+          label: '"Honestly — no."',
+          targetNode: 'dory_honesty',
+        },
+        {
+          label: '"I don\'t have a version I was expecting."',
+          targetNode: 'dory_why',
+        },
+        {
+          label: '"I\'m trying to understand what this place is."',
+          targetNode: 'dory_understand',
+        },
+      ],
+    },
+
+    dory_why: {
+      id: 'dory_why',
+      speaker: 'Dory',
+      text: `"Because I looked at the alternatives." ${rt.npc('Dory')} says it with the precision of someone who has run this calculation many times and arrived at the same answer. "I was outside the walls for eighteen months. Crossroads camp, then the river road, then a month in something calling itself a settlement that collapsed when the food ran out." She looks at her hands. "When Vesper offered the arrangement, I spent three weeks refusing it. Then I spent three weeks watching people I knew make worse decisions. Then I said yes." A pause. "The math works out."`,
+      onEnter: {
+        setFlag: { learned_dory_reasoning: true },
+      },
+      branches: [
+        {
+          label: '"Does it actually? Or is that what you tell yourself?"',
+          targetNode: 'dory_challenged',
+        },
+        {
+          label: '"Does anyone here regret it?"',
+          targetNode: 'dory_regret',
+        },
+        {
+          label: '"Do you trust Vesper?"',
+          targetNode: 'dory_vesper',
+        },
+      ],
+    },
+
+    dory_challenged: {
+      id: 'dory_challenged',
+      speaker: 'Dory',
+      text: `${rt.npc('Dory')} looks at you steadily. Not offended — considering. "Both. It's both, and knowing it's both doesn't make either one less true." She rolls her sleeve down over the wrap. "I have thought about it more than you have. Probably more than anyone who hasn't lived it has. The math holds. But yes: I also tell myself it holds. I think that's what all of us do with the things we have to keep doing."`,
+      branches: [
+        {
+          label: '"That\'s an honest answer."',
+          targetNode: 'dory_honesty_back',
+        },
+        {
+          label: '"Do you think you could leave?"',
+          targetNode: 'dory_leaving',
+        },
+      ],
+    },
+
+    dory_honesty_back: {
+      id: 'dory_honesty_back',
+      speaker: 'Dory',
+      text: `"Most people aren't." She picks up the piece of paper she'd been reading before you arrived — a list, or a letter, the kind of thing you carry when you need to remember why you're doing something. "The honest ones who've seen the worst of it tend to either leave or get very calm. I got calm." She doesn't look up. "I'm not done thinking about it. I'm just not panicking about it while I think."`,
+      branches: [
+        {
+          label: 'Give her space to think.',
+          targetNode: 'dory_leave',
+        },
+      ],
+    },
+
+    dory_regret: {
+      id: 'dory_regret',
+      speaker: 'Dory',
+      text: `"Three people left in four years." ${rt.npc('Dory')} says it factually. "There are always people adjusting to it — new arrivals, first draws. That's not regret, that's acclimation." She considers. "I know of two people who regret staying. I know of none who left and came back. Whether that's because leaving is hard or because it's the right call, I can't say." A flat look. "I'm not planning to leave."`,
+      branches: [
+        {
+          label: 'Back to other topics.',
+          targetNode: 'dory_start',
+        },
+      ],
+    },
+
+    dory_vesper: {
+      id: 'dory_vesper',
+      speaker: 'Dory',
+      text: `"Trust is a strong word." ${rt.npc('Dory')} considers it the way she considers everything — carefully. "I trust her to keep the terms. I trust her to want this arrangement to work because it's useful to her. I don't trust her to feel anything about it." A pause. "That's enough trust for a working relationship. It's not enough for anything more than that. She doesn't pretend otherwise. That actually helps."`,
+      onEnter: {
+        setFlag: { learned_dory_vesper_view: true },
+      },
+      branches: [
+        {
+          label: 'Back to other topics.',
+          targetNode: 'dory_start',
+        },
+      ],
+    },
+
+    dory_observing: {
+      id: 'dory_observing',
+      speaker: 'Dory',
+      text: `"Observing." She nods once, the acknowledgment of someone who has been observed many times and has stopped finding it strange. "The collection house is open to observation — Vesper's policy. Transparency is part of the arrangement. You're not the first person to come watch and not ask." She adjusts the bandage and sits back. "What do you see?"`,
+      branches: [
+        {
+          label: '"Someone who has made a decision and is at peace with it."',
+          targetNode: 'dory_peace_observation',
+        },
+        {
+          label: '"Someone doing a difficult thing."',
+          targetNode: 'dory_why',
+        },
+        {
+          label: '"I\'m not sure yet."',
+          targetNode: 'dory_why',
+        },
+      ],
+    },
+
+    dory_peace_observation: {
+      id: 'dory_peace_observation',
+      speaker: 'Dory',
+      text: `"That's accurate." ${rt.npc('Dory')} looks at the wrap one more time, then away. "Peace is the right word. Not happiness — those are different. I made the decision that I had to make and I made it as well as I could with the information I had. That's the best anyone does." She picks up the letter again. "I hope you find your version of that. It takes a while."`,
+      branches: [
+        {
+          label: '"Thank you."',
+          targetNode: 'dory_leave',
+        },
+      ],
+    },
+
+    dory_understand: {
+      id: 'dory_understand',
+      speaker: 'Dory',
+      text: `"What happens here is a structured arrangement between people who needed protection and a ${rt.keyword('Covenant of Dusk')} community that could provide it." ${rt.npc('Dory')} states it plainly. "Twice a month, each adult participant gives a calibrated volume of blood to Vesper's people. In return: perimeter defense, food supply supplementation, medical care. No one is compelled. The alternative is leaving." A pause. "Most of us have already done the leaving. It's why we're here."`,
+      onEnter: {
+        setFlag: { learned_tithe_details: true },
+      },
+      branches: [
+        {
+          label: '"And you\'re okay with it?"',
+          targetNode: 'dory_alright',
+        },
+        {
+          label: '"Why do you personally do it?"',
+          targetNode: 'dory_why',
+        },
+      ],
+    },
+
+    dory_elder_reference: {
+      id: 'dory_elder_reference',
+      speaker: 'Dory',
+      text: `"The elder is thorough." ${rt.npc('Dory')} says it without either warmth or edge. "They've been negotiating on our behalf since before most of us arrived. They got us three things that weren't in the original offer: the medical deferral clause, the physician requirement, and the pooling option for families who fall short." She looks at the compression bandage. "I don't agree with them on everything. I agree with them on this: we need better terms, not a different arrangement."`,
+      onEnter: {
+        setFlag: { dory_elder_connection_learned: true },
+      },
+      branches: [
+        {
+          label: '"What do you disagree with them on?"',
+          targetNode: 'dory_disagreement',
+        },
+        {
+          label: '"What would better terms look like?"',
+          targetNode: 'dory_better_terms',
+        },
+      ],
+    },
+
+    dory_disagreement: {
+      id: 'dory_disagreement',
+      speaker: 'Dory',
+      text: `"The patrol rotation." Immediate and specific. "They've been filing requests for six months. I think it requires a different approach. You can't file your way to a solution with the ${rt.keyword('Covenant of Dusk')} security officer. You have to be in the room." A flat look. "The elder trusts process. I trust presence. We haven't resolved this."`,
+      onEnter: {
+        setFlag: { dory_patrol_view: true },
+      },
+      branches: [
+        {
+          label: '"Have you talked to the security officer yourself?"',
+          targetNode: 'dory_direct_approach',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'dory_start',
+        },
+      ],
+    },
+
+    dory_direct_approach: {
+      id: 'dory_direct_approach',
+      speaker: 'Dory',
+      text: `"Once. She heard me out." ${rt.npc('Dory')} is quiet for a moment. "She said the rotation change requires authorization she doesn't have. I think that's true. I also think it's a bureaucratic buffer and someone needs to push through it directly." She adjusts the bandage again — the reflexive check of a person with a chronic small wound. "I'm not the right person. I have too much at stake here to be the one who makes the security officer uncomfortable."`,
+      branches: [
+        {
+          label: '"I might be."',
+          targetNode: 'dory_quest_offer',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'dory_start',
+        },
+      ],
+    },
+
+    dory_quest_offer: {
+      id: 'dory_quest_offer',
+      speaker: 'Dory',
+      text: `${rt.npc('Dory')} looks at you with the specific evaluation of someone who has been assessing things carefully for a long time. "Maybe." She picks up the letter. "The security officer's name is Maren. Eastern house, blue lantern. She's going to tell you the rotation can't be changed without authorization from Vesper herself. Push back — ask her what the authorization pathway requires. It exists. She knows it exists. She's hoping no one asks." A pause. "Don't let her hope."`,
+      onEnter: {
+        setFlag: { dory_quest_offered: true, quest_rim_patrol_active: true },
+      },
+      branches: [
+        {
+          label: '"I\'ll find Maren."',
+          targetNode: 'dory_leave',
+        },
+      ],
+    },
+
+    dory_better_terms: {
+      id: 'dory_better_terms',
+      speaker: 'Dory',
+      text: `"Reduced frequency in the third year. The first two years, twice a month makes sense — the community is establishing trust with Vesper's people. After that, monthly should be sufficient." She's clearly thought about this. "Also: independent physician access — not through Vesper's doctor. The arrangement gives us medical care, but currently it's delivered by a ${rt.keyword('Covenant of Dusk')} physician. I want that option supplemented." A brief, careful look. "These are three-year-horizon problems. The elder knows."`,
+      branches: [
+        {
+          label: 'Back to other topics.',
+          targetNode: 'dory_start',
+        },
+      ],
+    },
+
+    dory_leaving: {
+      id: 'dory_leaving',
+      speaker: 'Dory',
+      text: `"Yes." No hesitation. "I could walk out today. The arrangement is voluntary and Vesper has never prevented departure." ${rt.npc('Dory')} looks at the list or letter in her hands. "What I can't do is go back to what was before and call that better. I know too much about what that looks like now." She sets the paper down. "Leaving to somewhere better — that I'd consider. Leaving to nowhere in particular, I've already done that. I know how it ends."`,
+      branches: [
+        {
+          label: 'Back to other topics.',
+          targetNode: 'dory_start',
+        },
+      ],
+    },
+
+    dory_honesty: {
+      id: 'dory_honesty',
+      speaker: 'Dory',
+      text: `"No." She says it without apology. "Most people want either a victim or a collaborator. Someone to save or someone to judge." She looks at the wrap. "I'm neither. I'm a person who evaluated a situation and made a decision she can live with. Literally." A flat pause. "That's usually disappointing."`,
+      branches: [
+        {
+          label: '"It isn\'t."',
+          targetNode: 'dory_honesty_back',
+        },
+        {
+          label: '"I\'m still figuring out how I feel about it."',
+          targetNode: 'dory_why',
+        },
+      ],
+    },
+
+    dory_leave: {
+      id: 'dory_leave',
+      speaker: 'Dory',
+      text: `${rt.npc('Dory')} returns to the letter or list — the thing she carries to remember why. The collection house is quiet except for the small sounds of maintenance and preparation. She doesn't watch you leave. She has already decided you're not a problem, which is its own kind of acknowledgment.`,
+    },
+  },
+}
+
+// ============================================================
+// LEATHERWORKER_VIN — Leatherworker & Vendor (Crossroads Market)
+// dialogueTree ID: 'cr_vin_intro'
+// Named NPC. Drifters faction. Vendor + light quest gate.
+// Tone: terse, precise, transactional. Respects competence. Distrusts flourish.
+// ============================================================
+
+const vinTree: DialogueTree = {
+  npcId: 'leatherworker_vin',
+  startNode: 'vin_start',
+  nodes: {
+
+    vin_start: {
+      id: 'vin_start',
+      speaker: 'Vin',
+      text: `${rt.npc('Vin')} doesn't look up from the leather work. The awl drives through the belt blank with the precise confidence of someone who has done this ten thousand times. "Tell me what you need. I don't make decorative items. I make things that function." He sets the awl down and looks at you — a full assessment, the same way he reads leather: looking for weaknesses, stress points, where the thing might fail. "What functions do you need?"`,
+      branches: [
+        {
+          label: '"Show me what you have."',
+          targetNode: 'vin_inventory',
+        },
+        {
+          label: '"I need something custom."',
+          targetNode: 'vin_custom',
+        },
+        {
+          label: '"Tell me about your work."',
+          targetNode: 'vin_craft',
+        },
+        {
+          label: '"You were a leatherworker before the Collapse?"',
+          targetNode: 'vin_before',
+        },
+        {
+          label: '"I need a repair."',
+          targetNode: 'vin_repair',
+        },
+        {
+          label: '"I\'ve got a quest I need help with — involves your contacts." [Require reputation 1+ with Accord]',
+          targetNode: 'vin_contacts_gate',
+          requiresRep: { faction: 'accord', min: 1 },
+        },
+        {
+          label: '"I should move on."',
+          targetNode: 'vin_leave',
+        },
+      ],
+    },
+
+    vin_inventory: {
+      id: 'vin_inventory',
+      speaker: 'Vin',
+      text: `${rt.npc('Vin')} stands and gestures at the rack behind him. "Belt. Holsters — I can fit them to the specific weapon, takes an hour. Scrap vest: steel plate between the leather, stops edged weapons and deflects rounds below rifle caliber. Runner's kit — light harness with twelve attachment points, built for people who move fast." He sits back down. "Prices are posted. I don't negotiate on quality, I negotiate on volume."`,
+      branches: [
+        {
+          label: `[Browse trade inventory]`,
+          targetNode: 'vin_trade',
+        },
+        {
+          label: '"Tell me about the scrap vest."',
+          targetNode: 'vin_vest_detail',
+        },
+        {
+          label: '"The holster — how custom are we talking?"',
+          targetNode: 'vin_holster_detail',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'vin_start',
+        },
+      ],
+    },
+
+    vin_trade: {
+      id: 'vin_trade',
+      speaker: 'Vin',
+      text: `"Rounds up front." ${rt.npc('Vin')} turns back to the belt work. "If you're buying, the price is on the tag. I don't talk while I'm stitching. Questions wait until I reach a break point."`,
+    },
+
+    vin_vest_detail: {
+      id: 'vin_vest_detail',
+      speaker: 'Vin',
+      text: `"Three-millimeter salvaged steel between two layers of full-grain leather. The outer layer is waterproofed — I do that myself, neat's-foot oil and beeswax. The stitching is double-reinforced at every stress point." ${rt.npc('Vin')} picks up a square of material from the bench and demonstrates the compression between his hands. "Won't stop a rifle round at close range. Will stop most edged weapons and deflect a pistol round at anything past twenty meters. The price reflects the steel, not the labor." He sets it down. "Labor comes free when you know what you're doing."`,
+      branches: [
+        {
+          label: '"I\'ll take one."',
+          targetNode: 'vin_trade',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'vin_start',
+        },
+      ],
+    },
+
+    vin_holster_detail: {
+      id: 'vin_holster_detail',
+      speaker: 'Vin',
+      text: `"Bring your weapon. I build the holster around it — not around a generic template, around that specific firearm. Draw weight, retention angle, body position." He looks at your hip. "If you're carrying something now, I can take measurements in fifteen minutes. If it's something I've built for before, I can do it from memory." A flat look. "Either way: one hour, materials on hand. If you come back tomorrow with a different weapon and want it adjusted, that's a separate charge."`,
+      branches: [
+        {
+          label: '"I\'ll bring it by."',
+          targetNode: 'vin_leave',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'vin_start',
+        },
+      ],
+    },
+
+    vin_custom: {
+      id: 'vin_custom',
+      speaker: 'Vin',
+      text: `"Deposit upfront. Half the agreed price before I cut the first piece of leather." ${rt.npc('Vin')} looks up from the work. "Not because I don't trust you — because custom means I lose the material if you don't come back. I've been left holding three custom pieces in two years. I learned." A direct look. "Tell me what you need. I'll tell you if I can build it and what it'll cost."`,
+      branches: [
+        {
+          label: '"A carry rig — specific config."',
+          targetNode: 'vin_custom_carry',
+        },
+        {
+          label: '"Something for armor — I want extra coverage."',
+          targetNode: 'vin_custom_armor',
+        },
+        {
+          label: '"I\'ll come back when I have the specifics."',
+          targetNode: 'vin_leave',
+        },
+      ],
+    },
+
+    vin_custom_carry: {
+      id: 'vin_custom_carry',
+      speaker: 'Vin',
+      text: `"Carry configuration." ${rt.npc('Vin')} pulls out a paper and a stub of pencil. "Strong side, cross-draw, or shoulder? One weapon or two? What else are you carrying — magazines, blades, medical kit?" He is already writing. "I build for function, which means I build for the specific way you move. Walk me through what you actually do in a day. Don't edit it for something you wish you did."`,
+      branches: [
+        {
+          label: '"Strong side. One weapon. Blade on the off hand."',
+          targetNode: 'vin_custom_accepted',
+        },
+        {
+          label: '"I\'ll come back when I\'ve thought about it."',
+          targetNode: 'vin_leave',
+        },
+      ],
+    },
+
+    vin_custom_armor: {
+      id: 'vin_custom_armor',
+      speaker: 'Vin',
+      text: `"Additional coverage. Where's your current weak point?" ${rt.npc('Vin')} looks at whatever you're wearing with the evaluative eye of someone who thinks about body geometry professionally. "Forearms are the most common request — people who get into close-range encounters. Throat guard second. I can do reinforced bracers, a gorget, or a modified vest with extended coverage." He doesn't wait for indecision. "Where did the last cut land that made you think about this?"`,
+      branches: [
+        {
+          label: '"Forearms. Knife fight, close range."',
+          targetNode: 'vin_custom_accepted',
+        },
+        {
+          label: '"I\'ll think about it and come back."',
+          targetNode: 'vin_leave',
+        },
+      ],
+    },
+
+    vin_custom_accepted: {
+      id: 'vin_custom_accepted',
+      speaker: 'Vin',
+      text: `${rt.npc('Vin')} finishes the note. "Deposit. When you're ready." He goes back to the belt work — the awl driving through leather in the same precise, automatic rhythm. "I'll have it in three days from when the deposit clears. I put my name on it. That means it holds."`,
+      onEnter: {
+        setFlag: { vin_custom_commissioned: true },
+      },
+      branches: [
+        {
+          label: 'Leave the deposit and come back in three days.',
+          targetNode: 'vin_leave',
+        },
+      ],
+    },
+
+    vin_craft: {
+      id: 'vin_craft',
+      speaker: 'Vin',
+      text: `"I work full-grain leather. Not split, not bonded — full-grain, which means the natural surface, which means it lasts." ${rt.npc('Vin')} holds up the piece he's working on. "This belt will outlast the person wearing it if they don't do something catastrophic to it. Pre-Collapse, this work would have cost four hundred dollars and been called artisanal. Now it costs what it's worth, which is the same thing from a different direction."`,
+      branches: [
+        {
+          label: '"You learned this before the Collapse?"',
+          targetNode: 'vin_before',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'vin_start',
+        },
+      ],
+    },
+
+    vin_before: {
+      id: 'vin_before',
+      speaker: 'Vin',
+      text: `"YouTube." ${rt.npc('Vin')} says it without irony but also without nostalgia. "I was a warehouse supervisor. The internet had an enormous amount of leatherworking content. I watched approximately six hundred hours of it over two years as a hobby." He drives the awl through the leather. "When the internet died, I had the skill and no longer had the warehouse. The new economy turned out to be more interested in the skill." A pause. "I find it personally inconvenient that the apocalypse validated a hobby."`,
+      onEnter: {
+        setFlag: { vin_background_learned: true },
+      },
+      branches: [
+        {
+          label: '"Did you keep anything from before?"',
+          targetNode: 'vin_before_kept',
+        },
+        {
+          label: '"Fair trade for a viable career, maybe."',
+          targetNode: 'vin_before_fair',
+        },
+        {
+          label: 'Back to other topics.',
+          targetNode: 'vin_start',
+        },
+      ],
+    },
+
+    vin_before_kept: {
+      id: 'vin_before_kept',
+      speaker: 'Vin',
+      text: `"The tools." Short. "The initial kit I bought — swivel knife, awl, stitching chisels — I had them in a case in the car when it happened. Everything else I've rebuilt or sourced since." He checks the awl tip and continues. "Tools are the only things worth keeping that don't go bad. That's the lesson from the warehouse. Everything else depreciates. Tools accumulate."`,
+      branches: [
+        {
+          label: 'Back to other topics.',
+          targetNode: 'vin_start',
+        },
+      ],
+    },
+
+    vin_before_fair: {
+      id: 'vin_before_fair',
+      speaker: 'Vin',
+      text: `"Possibly." ${rt.npc('Vin')} doesn't elaborate. He's a person who considers brevity a virtue and doesn't dilute things that are already complete. He returns to the belt, the awl moving in the same rhythm. You have been acknowledged. That's something.`,
+      branches: [
+        {
+          label: 'Back to other topics.',
+          targetNode: 'vin_start',
+        },
+      ],
+    },
+
+    vin_repair: {
+      id: 'vin_repair',
+      speaker: 'Vin',
+      text: `"Repair." He holds out a hand without looking up. "Let me see what you've got." When you hand the item over, he examines it with a thoroughness that is slightly uncomfortable — the same complete attention he'd give to a patient with a wound. "This is — " he identifies the failure point in a few seconds — "stress fracture at the stitching. Not the leather. The thread gave out before the material did. Two hours. Costs what a quarter of the item would cost new."`,
+      branches: [
+        {
+          label: '"Do it."',
+          targetNode: 'vin_repair_accepted',
+        },
+        {
+          label: '"I\'ll think about it."',
+          targetNode: 'vin_leave',
+        },
+      ],
+    },
+
+    vin_repair_accepted: {
+      id: 'vin_repair_accepted',
+      speaker: 'Vin',
+      text: `"Come back in two hours. It'll be here." ${rt.npc('Vin')} sets the item on the repair bench — a designated space, already organized. "If it's not right, I fix it again. That's what my name on it means." He returns to the belt work. "Two hours."`,
+    },
+
+    vin_contacts_gate: {
+      id: 'vin_contacts_gate',
+      speaker: 'Vin',
+      text: `${rt.npc('Vin')} stops the awl. Sets it down. Gives you a full, unhurried assessment. "Contacts." He says the word the way he'd say 'measurements' — as a thing he's decided to engage with. "What do you need and why do you think I have them?"`,
+      branches: [
+        {
+          label: '"You\'ve been at this crossroads longer than most. You see everyone who passes."',
+          targetNode: 'vin_contacts_explain',
+        },
+        {
+          label: '"Someone told me you know people outside the settlements."',
+          targetNode: 'vin_contacts_sourced',
+        },
+      ],
+    },
+
+    vin_contacts_explain: {
+      id: 'vin_contacts_explain',
+      speaker: 'Vin',
+      text: `"Three years at this stall." He acknowledges the math. "Everyone who comes through Crossroads needs a belt or a holster eventually. You're not wrong that I see them." A pause. "What do you need." Not a question. Statement.`,
+      branches: [
+        {
+          label: '"Someone who knows the Scar approach routes."',
+          targetNode: 'vin_contacts_scar',
+        },
+        {
+          label: '"Trade contacts outside normal faction channels."',
+          targetNode: 'vin_contacts_trade',
+        },
+      ],
+    },
+
+    vin_contacts_scar: {
+      id: 'vin_contacts_scar',
+      speaker: 'Vin',
+      text: `${rt.npc('Vin')} is quiet for three seconds. "The ${rt.keyword('Scar')}." He picks up the awl and turns it over once. "I know two people who've been that direction and came back. One of them is the map seller — Reno. The other one I'm not telling you where to find." He looks at you with the direct, evaluative attention he gives to leather he's deciding to work with. "Reno's honest about what they know and what they don't. Start there."`,
+      onEnter: {
+        setFlag: { vin_reno_contact_provided: true },
+        grantNarrativeKey: 'crossroads_scar_route_contact',
+      },
+      branches: [
+        {
+          label: '"Thank you."',
+          targetNode: 'vin_leave',
+        },
+      ],
+    },
+
+    vin_contacts_trade: {
+      id: 'vin_contacts_trade',
+      speaker: 'Vin',
+      text: `"Outside normal channels." ${rt.npc('Vin')} resumes work. "That's every Drifter with a route. Come back with a specific need — material type, volume, geographic constraint — and I'll tell you whether I know someone. I don't give out names speculatively." He doesn't look up. "When you know what you actually need, tell me."`,
+      branches: [
+        {
+          label: 'Back to other topics.',
+          targetNode: 'vin_start',
+        },
+      ],
+    },
+
+    vin_contacts_sourced: {
+      id: 'vin_contacts_sourced',
+      speaker: 'Vin',
+      text: `"Someone told you." He looks up. "Who." Not hostile — genuinely wants to know who's making that kind of referral. When you tell him, the assessment updates by a fraction. "All right." He returns to the leather. "What do you need."`,
+      branches: [
+        {
+          label: '"Scar approach routes."',
+          targetNode: 'vin_contacts_scar',
+        },
+        {
+          label: '"Trade contacts."',
+          targetNode: 'vin_contacts_trade',
+        },
+      ],
+    },
+
+    vin_leave: {
+      id: 'vin_leave',
+      speaker: 'Vin',
+      text: `${rt.npc('Vin')} nods once — the economical acknowledgment of someone who doesn't waste movement. The awl goes back to the leather. The stall smells of hide and neat's-foot oil and woodsmoke. He was doing this when you arrived. He will be doing it when you come back.`,
+    },
+  },
+}
+
+// ============================================================
 
 export const DIALOGUE_TREES: Record<string, DialogueTree> = {
   // Lev has two spawn points referencing different tree IDs,
@@ -6275,4 +8278,17 @@ export const DIALOGUE_TREES: Record<string, DialogueTree> = {
   // drifters_storyteller_tree: alias used by task spec and room metadata
   cr_campfire_lore: campfireStorytellerTree,
   drifters_storyteller_tree: campfireStorytellerTree,
+
+  // --- Tier-1 missing trees (issue #17) ---
+  cv_gate_militia_intro: cvGateMilitiaTree,
+  sc_perimeter_challenge: scPerimeterChallengeTree,
+  sc_inner_gate_challenge: scInnerGateTree,
+  duskhollow_elder_main: duskhollowElderTree,
+
+  // --- Named NPC trees ---
+  rr_the_dog_encounter: theDogTree,
+  dp_the_dog_crystal: theDogTree,
+  sc_the_dog_scar: theDogTree,
+  dory_tithe_house: doryTree,
+  cr_vin_intro: vinTree,
 }

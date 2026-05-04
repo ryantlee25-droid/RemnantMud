@@ -14,7 +14,7 @@ export default defineConfig({
     },
     setupFiles: ['./tests/setup.ts'],
     include: ['tests/eval/**/*.test.ts'],
-    exclude: ['**/node_modules/**', '**/dist/**'],
+    exclude: ['**/node_modules/**', '**/dist/**', '.claude/worktrees/**', '.claude/parallel/**'],
   },
   resolve: {
     alias: {

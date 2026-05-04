@@ -3,7 +3,8 @@
 // tests/integration/mapIntegrity.test.ts
 //
 // Checks: full reachability, bidirectionality, target validity,
-// gate reference validity, ending reachability, zone cohesion.
+// gate reference validity, ending reachability, zone cohesion,
+// spawn reference validity, room field invariants.
 //
 // Read-only analysis: does NOT modify any production data.
 // Violations are reported with specific room IDs so the
@@ -13,7 +14,7 @@
 import { describe, it, expect } from 'vitest'
 import { ALL_ROOMS } from '@/data/rooms/index'
 import { QUEST_DESCRIPTIONS } from '@/data/questDescriptions'
-import type { Room, Direction, FactionType } from '@/types/game'
+import type { Room, Direction, FactionType, ZoneType, SkillType, HollowType } from '@/types/game'
 
 // ------------------------------------------------------------
 // Constants
@@ -72,6 +73,71 @@ const VALID_FACTIONS: Set<FactionType> = new Set([
   'red_court',
   'ferals',
   'lucid',
+])
+
+/** Valid zone types per types/game.ts ZoneType */
+const VALID_ZONES: Set<ZoneType> = new Set([
+  'crossroads',
+  'river_road',
+  'covenant',
+  'salt_creek',
+  'the_ember',
+  'the_breaks',
+  'the_dust',
+  'the_stacks',
+  'duskhollow',
+  'the_deep',
+  'the_pine_sea',
+  'the_scar',
+  'the_pens',
+])
+
+/** Valid SkillType values per types/game.ts */
+const VALID_SKILLS: Set<SkillType> = new Set([
+  'survival',
+  'marksmanship',
+  'brawling',
+  'bladework',
+  'scavenging',
+  'field_medicine',
+  'mechanics',
+  'tracking',
+  'negotiation',
+  'intimidation',
+  'stealth',
+  'lockpicking',
+  'electronics',
+  'lore',
+  'climbing',
+  'blood_sense',
+  'daystalking',
+  'mesmerize',
+  'perception',
+  'endurance',
+  'resilience',
+  'composure',
+  'vigor',
+  'presence',
+])
+
+/** Valid HollowType values per types/game.ts */
+const VALID_HOLLOW_TYPES: Set<HollowType> = new Set([
+  'shuffler',
+  'remnant',
+  'stalker',
+  'screamer',
+  'brute',
+  'whisperer',
+  'hive_mother',
+  'elder_sanguine',
+  'sanguine_feral',
+  'frenzy',
+  'apex_screamer',
+  'drifter_road_warden',
+  'salter_scout',
+  'accord_peacekeeper',
+  'kindling_zealot',
+  'lucid_thrall',
 ])
 
 // ------------------------------------------------------------
@@ -557,5 +623,589 @@ describe('zone cohesion', () => {
       const actual = zoneCounts[zone] ?? 0
       expect(actual, `Zone '${zone}' has ${actual} rooms but expected at least ${min}`).toBeGreaterThanOrEqual(min)
     }
+  })
+
+  it('every room.zone is a valid ZoneType', () => {
+    // Catches typos in zone strings that TypeScript might not catch at runtime
+    // (e.g., if zone is cast through a loose type or loaded from data).
+    const invalid: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (!VALID_ZONES.has(room.zone)) {
+        invalid.push(`${room.id}.zone = '${room.zone}' (not a valid ZoneType)`)
+      }
+    }
+
+    if (invalid.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] INVALID ZONE TYPES (${invalid.length}):\n  ` +
+        invalid.join('\n  ')
+      )
+    }
+
+    expect(invalid, `Invalid zone types: ${invalid.join('; ')}`).toHaveLength(0)
+  })
+
+  it('all 13 canonical zones are represented in ALL_ROOMS', () => {
+    // Catches zone files accidentally omitted from data/rooms/index.ts.
+    const zonesPresent = new Set(ALL_ROOMS.map((r) => r.zone))
+    const missingZones: ZoneType[] = []
+
+    for (const zone of VALID_ZONES) {
+      if (!zonesPresent.has(zone)) {
+        missingZones.push(zone)
+      }
+    }
+
+    if (missingZones.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] ZONES WITH NO ROOMS (${missingZones.length}): ${missingZones.join(', ')}`
+      )
+    }
+
+    expect(missingZones, `Zones not represented in ALL_ROOMS: ${missingZones.join(', ')}`).toHaveLength(0)
+  })
+})
+
+// ------------------------------------------------------------
+// 7. Room ID Uniqueness
+// ------------------------------------------------------------
+
+describe('room id uniqueness', () => {
+  it('no room ID appears more than once across all zones', () => {
+    // Duplicated IDs cause silent data corruption: the second definition
+    // overwrites the first in any Map or Set, leading to unreachable rooms
+    // and broken cross-zone exit references.
+    const seen = new Map<string, string[]>()
+
+    for (const room of ALL_ROOMS) {
+      const existing = seen.get(room.id) ?? []
+      seen.set(room.id, [...existing, room.zone])
+    }
+
+    const duplicates: string[] = []
+    for (const [id, zones] of seen) {
+      if (zones.length > 1) {
+        duplicates.push(`'${id}' appears in zones: ${zones.join(', ')}`)
+      }
+    }
+
+    if (duplicates.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] DUPLICATE ROOM IDs (${duplicates.length}):\n  ` +
+        duplicates.join('\n  ')
+      )
+    }
+
+    expect(duplicates, `Duplicate room IDs: ${duplicates.join('; ')}`).toHaveLength(0)
+  })
+
+  it('every room has a non-empty id, name, description, and shortDescription', () => {
+    // Guards against accidentally undefined or blank required fields that
+    // would cause empty output in the terminal or broken save/load.
+    const violations: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (!room.id || room.id.trim() === '') {
+        violations.push(`room with zone='${room.zone}' has empty id`)
+      }
+      if (!room.name || room.name.trim() === '') {
+        violations.push(`${room.id}: name is empty`)
+      }
+      if (!room.description || room.description.trim() === '') {
+        violations.push(`${room.id}: description is empty`)
+      }
+      if (!room.shortDescription || room.shortDescription.trim() === '') {
+        violations.push(`${room.id}: shortDescription is empty`)
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] MISSING REQUIRED FIELDS (${violations.length}):\n  ` +
+        violations.join('\n  ')
+      )
+    }
+
+    expect(violations, `Rooms with empty required fields: ${violations.join('; ')}`).toHaveLength(0)
+  })
+})
+
+// ------------------------------------------------------------
+// 8. Room Field Invariants
+// ------------------------------------------------------------
+
+describe('room field invariants', () => {
+  it('every room difficulty is in range [1, 5]', () => {
+    const violations: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (room.difficulty < 1 || room.difficulty > 5) {
+        violations.push(`${room.id}: difficulty=${room.difficulty} (expected 1–5)`)
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] DIFFICULTY OUT OF RANGE (${violations.length}):\n  ` +
+        violations.join('\n  ')
+      )
+    }
+
+    expect(violations, `Rooms with difficulty outside [1,5]: ${violations.join('; ')}`).toHaveLength(0)
+  })
+
+  it('every room act (when present) is 1, 2, or 3', () => {
+    const violations: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (room.act !== undefined && ![1, 2, 3].includes(room.act)) {
+        violations.push(`${room.id}: act=${room.act} (expected 1, 2, or 3)`)
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] INVALID ACT VALUES (${violations.length}):\n  ` +
+        violations.join('\n  ')
+      )
+    }
+
+    expect(violations, `Rooms with invalid act: ${violations.join('; ')}`).toHaveLength(0)
+  })
+
+  it('every room cycleGate (when present) is a positive integer', () => {
+    const violations: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (room.cycleGate !== undefined) {
+        if (!Number.isInteger(room.cycleGate) || room.cycleGate < 1) {
+          violations.push(`${room.id}: cycleGate=${room.cycleGate} (expected positive integer)`)
+        }
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] INVALID CYCLE GATES (${violations.length}):\n  ` +
+        violations.join('\n  ')
+      )
+    }
+
+    expect(violations, `Rooms with invalid cycleGate: ${violations.join('; ')}`).toHaveLength(0)
+  })
+
+  it('every richExits cycleGate (when present) is a positive integer', () => {
+    const violations: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (!room.richExits) continue
+      for (const dir of DIRECTIONS) {
+        const richExit = room.richExits[dir]
+        if (!richExit) continue
+        if (richExit.cycleGate !== undefined) {
+          if (!Number.isInteger(richExit.cycleGate) || richExit.cycleGate < 1) {
+            violations.push(
+              `${room.id}.richExits[${dir}].cycleGate=${richExit.cycleGate} (expected positive integer)`
+            )
+          }
+        }
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] INVALID RICHEXITS CYCLE GATES (${violations.length}):\n  ` +
+        violations.join('\n  ')
+      )
+    }
+
+    expect(violations, `RichExits with invalid cycleGate: ${violations.join('; ')}`).toHaveLength(0)
+  })
+
+  it('every richExits reputationGate.minLevel is in range [-3, 3]', () => {
+    const violations: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (!room.richExits) continue
+      for (const dir of DIRECTIONS) {
+        const richExit = room.richExits[dir]
+        if (!richExit?.reputationGate) continue
+        const { minLevel } = richExit.reputationGate
+        if (minLevel < -3 || minLevel > 3) {
+          violations.push(
+            `${room.id}.richExits[${dir}].reputationGate.minLevel=${minLevel} (expected -3 to 3)`
+          )
+        }
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] REPUTATION GATE minLevel OUT OF RANGE (${violations.length}):\n  ` +
+        violations.join('\n  ')
+      )
+    }
+
+    expect(violations, `reputationGate minLevel out of range: ${violations.join('; ')}`).toHaveLength(0)
+  })
+
+  it('every richExits skillGate.skill is a valid SkillType', () => {
+    const violations: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (!room.richExits) continue
+      for (const dir of DIRECTIONS) {
+        const richExit = room.richExits[dir]
+        if (!richExit?.skillGate) continue
+        if (!VALID_SKILLS.has(richExit.skillGate.skill)) {
+          violations.push(
+            `${room.id}.richExits[${dir}].skillGate.skill = '${richExit.skillGate.skill}' (not a valid SkillType)`
+          )
+        }
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] INVALID SKILL TYPES IN skillGate (${violations.length}):\n  ` +
+        violations.join('\n  ')
+      )
+    }
+
+    expect(violations, `Invalid SkillType in skillGate: ${violations.join('; ')}`).toHaveLength(0)
+  })
+
+  it('every richExits discoverSkill is a valid SkillType, and discoverDc is set when discoverSkill is set', () => {
+    const violations: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (!room.richExits) continue
+      for (const dir of DIRECTIONS) {
+        const richExit = room.richExits[dir]
+        if (!richExit) continue
+
+        if (richExit.discoverSkill !== undefined) {
+          if (!VALID_SKILLS.has(richExit.discoverSkill)) {
+            violations.push(
+              `${room.id}.richExits[${dir}].discoverSkill = '${richExit.discoverSkill}' (not a valid SkillType)`
+            )
+          }
+          if (richExit.discoverDc === undefined) {
+            violations.push(
+              `${room.id}.richExits[${dir}]: discoverSkill='${richExit.discoverSkill}' set but discoverDc is missing`
+            )
+          }
+        }
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] DISCOVER SKILL/DC INVARIANTS (${violations.length}):\n  ` +
+        violations.join('\n  ')
+      )
+    }
+
+    expect(violations, `discoverSkill/discoverDc invariant violations: ${violations.join('; ')}`).toHaveLength(0)
+  })
+})
+
+// ------------------------------------------------------------
+// 9. Spawn Reference Validity
+// ------------------------------------------------------------
+
+describe('spawn reference validity', () => {
+  it('every npcSpawns npcId resolves to a defined NPC in data/npcs.ts', async () => {
+    const { NPCS } = await import('@/data/npcs')
+    const broken: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (!room.npcSpawns) continue
+      for (const spawn of room.npcSpawns) {
+        if (!NPCS[spawn.npcId]) {
+          broken.push(`${room.id}.npcSpawns[].npcId = '${spawn.npcId}' (NPC not found)`)
+        }
+      }
+    }
+
+    if (broken.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] NPC SPAWN IDs NOT IN data/npcs.ts (${broken.length}):\n  ` +
+        broken.join('\n  ')
+      )
+    }
+
+    expect(broken, `NPC spawn IDs with no definition: ${broken.join('; ')}`).toHaveLength(0)
+  })
+
+  it('every npcSpawns npcId in static npcs[] resolves to a defined NPC in data/npcs.ts', async () => {
+    // The Room.npcs[] field holds static NPC IDs (always present, not probabilistic).
+    const { NPCS } = await import('@/data/npcs')
+    const broken: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      for (const npcId of room.npcs) {
+        if (!NPCS[npcId]) {
+          broken.push(`${room.id}.npcs[] contains '${npcId}' (NPC not found)`)
+        }
+      }
+    }
+
+    if (broken.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] STATIC NPC IDs NOT IN data/npcs.ts (${broken.length}):\n  ` +
+        broken.join('\n  ')
+      )
+    }
+
+    expect(broken, `Static NPC IDs with no definition: ${broken.join('; ')}`).toHaveLength(0)
+  })
+
+  it('every itemSpawns entityId resolves to a defined item in data/items.ts', async () => {
+    const { getItem } = await import('@/data/items')
+    const broken: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (!room.itemSpawns) continue
+      for (const spawn of room.itemSpawns) {
+        if (!getItem(spawn.entityId)) {
+          broken.push(`${room.id}.itemSpawns[].entityId = '${spawn.entityId}' (item not found)`)
+        }
+      }
+    }
+
+    if (broken.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] ITEM SPAWN entityIds NOT IN data/items.ts (${broken.length}):\n  ` +
+        broken.join('\n  ')
+      )
+    }
+
+    expect(broken, `ItemSpawn entityIds with no definition: ${broken.join('; ')}`).toHaveLength(0)
+  })
+
+  it('every room.items[] entry resolves to a defined item in data/items.ts', async () => {
+    const { getItem } = await import('@/data/items')
+    const broken: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      for (const itemId of room.items) {
+        if (!getItem(itemId)) {
+          broken.push(`${room.id}.items[] contains '${itemId}' (item not found)`)
+        }
+      }
+    }
+
+    if (broken.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] STATIC ITEM IDs NOT IN data/items.ts (${broken.length}):\n  ` +
+        broken.join('\n  ')
+      )
+    }
+
+    expect(broken, `Static item IDs with no definition: ${broken.join('; ')}`).toHaveLength(0)
+  })
+
+  it('every room.enemies[] entry resolves to a defined enemy in data/enemies.ts', async () => {
+    const { getEnemy } = await import('@/data/enemies')
+    const broken: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      for (const enemyId of room.enemies) {
+        if (!getEnemy(enemyId)) {
+          broken.push(`${room.id}.enemies[] contains '${enemyId}' (enemy not found)`)
+        }
+      }
+    }
+
+    if (broken.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] STATIC ENEMY IDs NOT IN data/enemies.ts (${broken.length}):\n  ` +
+        broken.join('\n  ')
+      )
+    }
+
+    expect(broken, `Static enemy IDs with no definition: ${broken.join('; ')}`).toHaveLength(0)
+  })
+})
+
+// ------------------------------------------------------------
+// 10. Spawn Chance Invariants
+// ------------------------------------------------------------
+
+describe('spawn chance invariants', () => {
+  it('every npcSpawns spawnChance is in range [0.0, 0.95]', () => {
+    // Per SpawnPoolEntry docs: "0.0–0.95 hard cap enforced at runtime"
+    const violations: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (!room.npcSpawns) continue
+      for (const spawn of room.npcSpawns) {
+        if (spawn.spawnChance < 0.0 || spawn.spawnChance > 0.95) {
+          violations.push(
+            `${room.id}.npcSpawns[${spawn.npcId}].spawnChance=${spawn.spawnChance} (expected 0.0–0.95)`
+          )
+        }
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] NPC SPAWN CHANCE OUT OF RANGE (${violations.length}):\n  ` +
+        violations.join('\n  ')
+      )
+    }
+
+    expect(violations, `NPC spawnChance out of range: ${violations.join('; ')}`).toHaveLength(0)
+  })
+
+  it('every itemSpawns spawnChance is in range [0.0, 0.95]', () => {
+    const violations: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (!room.itemSpawns) continue
+      for (const spawn of room.itemSpawns) {
+        if (spawn.spawnChance < 0.0 || spawn.spawnChance > 0.95) {
+          violations.push(
+            `${room.id}.itemSpawns[${spawn.entityId}].spawnChance=${spawn.spawnChance} (expected 0.0–0.95)`
+          )
+        }
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] ITEM SPAWN CHANCE OUT OF RANGE (${violations.length}):\n  ` +
+        violations.join('\n  ')
+      )
+    }
+
+    expect(violations, `Item spawnChance out of range: ${violations.join('; ')}`).toHaveLength(0)
+  })
+
+  it('every hollowEncounter baseChance is in range [0.0, 0.95]', () => {
+    // Engine clamps effective chance to 0.95; baseChance above that indicates
+    // a data error (the comment at duskhollow.ts:656 shows the correct pattern).
+    const violations: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (!room.hollowEncounter) continue
+      const { baseChance } = room.hollowEncounter
+      if (baseChance < 0.0 || baseChance > 0.95) {
+        violations.push(
+          `${room.id}.hollowEncounter.baseChance=${baseChance} (expected 0.0–0.95)`
+        )
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] HOLLOW ENCOUNTER baseChance OUT OF RANGE (${violations.length}):\n  ` +
+        violations.join('\n  ')
+      )
+    }
+
+    expect(violations, `hollowEncounter baseChance out of range: ${violations.join('; ')}`).toHaveLength(0)
+  })
+})
+
+// ------------------------------------------------------------
+// 11. Hollow Encounter Invariants
+// ------------------------------------------------------------
+
+describe('hollow encounter invariants', () => {
+  it('every hollowEncounter threatPool type is a valid HollowType', () => {
+    const violations: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (!room.hollowEncounter?.threatPool) continue
+      for (const entry of room.hollowEncounter.threatPool) {
+        if (!VALID_HOLLOW_TYPES.has(entry.type)) {
+          violations.push(
+            `${room.id}.hollowEncounter.threatPool[].type = '${entry.type}' (not a valid HollowType)`
+          )
+        }
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] INVALID HOLLOW TYPES IN threatPool (${violations.length}):\n  ` +
+        violations.join('\n  ')
+      )
+    }
+
+    expect(violations, `Invalid HollowType in threatPool: ${violations.join('; ')}`).toHaveLength(0)
+  })
+
+  it('every hollowEncounter threatPool has at least one entry', () => {
+    const violations: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (!room.hollowEncounter) continue
+      if (!room.hollowEncounter.threatPool || room.hollowEncounter.threatPool.length === 0) {
+        violations.push(`${room.id}: hollowEncounter defined but threatPool is empty`)
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] HOLLOW ENCOUNTER WITH EMPTY THREAT POOL (${violations.length}):\n  ` +
+        violations.join('\n  ')
+      )
+    }
+
+    expect(violations, `hollowEncounter with empty threatPool: ${violations.join('; ')}`).toHaveLength(0)
+  })
+
+  it('every hollowEncounter threatPool entry has weight > 0', () => {
+    const violations: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (!room.hollowEncounter?.threatPool) continue
+      for (const entry of room.hollowEncounter.threatPool) {
+        if (entry.weight <= 0) {
+          violations.push(
+            `${room.id}.hollowEncounter.threatPool[${entry.type}].weight=${entry.weight} (expected > 0)`
+          )
+        }
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] ZERO/NEGATIVE THREAT POOL WEIGHT (${violations.length}):\n  ` +
+        violations.join('\n  ')
+      )
+    }
+
+    expect(violations, `threatPool entries with weight <= 0: ${violations.join('; ')}`).toHaveLength(0)
+  })
+
+  it('every hollowEncounter awarenessRoll probabilities sum to approximately 1.0 when present', () => {
+    // The three awareness branches (unaware, awarePassive, awareAggressive) should
+    // cover the full probability space. Tolerance: ±0.01 for floating point.
+    const violations: string[] = []
+
+    for (const room of ALL_ROOMS) {
+      if (!room.hollowEncounter?.awarenessRoll) continue
+      const { unaware, awarePassive, awareAggressive } = room.hollowEncounter.awarenessRoll
+      const sum = (unaware ?? 0) + (awarePassive ?? 0) + (awareAggressive ?? 0)
+      if (Math.abs(sum - 1.0) > 0.01) {
+        violations.push(
+          `${room.id}.hollowEncounter.awarenessRoll sums to ${sum.toFixed(3)} (expected ~1.0)`
+        )
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error(
+        `[MAP INTEGRITY] AWARENESS ROLL DOES NOT SUM TO 1.0 (${violations.length}):\n  ` +
+        violations.join('\n  ')
+      )
+    }
+
+    expect(violations, `awarenessRoll sums != 1.0: ${violations.join('; ')}`).toHaveLength(0)
   })
 })

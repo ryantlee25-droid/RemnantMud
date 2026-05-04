@@ -1,14 +1,23 @@
 // ============================================================
-// tests/integration/dialogueHealth.test.ts
+// tests/eval/dialogueHealth.test.ts
 // Static health analysis for all dialogue trees.
 // Checks orphan targetNodes, unreachable nodes, broken
 // faction/skill/flag references, and smart-quote hygiene.
+//
+// P2-B additions (2026-05-03):
+//   - Section 18: runtime NPC-ID cross-ref sweep (npcSpawns[].npcId)
+//   - Section 19: runtime dialogueTree cross-ref sweep — documents
+//       known missing trees via it.fails(). Per PLAN-EVAL.md P2-B,
+//       these are KNOWN FAILURES, not silenced. The snapshot at the
+//       bottom of this file records the exact missing set.
+//   - Section 20: named NPC tree coverage with known-gap snapshot
 // ============================================================
 
 import { describe, it, expect } from 'vitest'
 import { DIALOGUE_TREES } from '@/data/dialogueTrees'
 import { NPCS } from '@/data/npcs'
 import { ITEMS } from '@/data/items'
+import { ALL_ROOMS } from '@/data/rooms/index'
 import { ROOM_EXIT_GATES } from '@/lib/narrativeKeys'
 import type { DialogueTree, DialogueNode, FactionType, SkillType } from '@/types/game'
 
@@ -724,6 +733,458 @@ describe('Dialogue Tree Health — exhaustive static analysis', () => {
 
       // Always pass — informational only
       expect(true).toBe(true)
+    })
+  })
+
+  // ── 18. Runtime NPC-ID cross-ref sweep (P2-B) ────────────────
+  //
+  // Every npcId referenced in any room's npcSpawns array must
+  // exist as a key in NPCS. This is a runtime-equivalent check
+  // that catches typos and stale references that static analysis
+  // cannot find by walking dialogue trees alone.
+  //
+  // Per PLAN-EVAL.md §Coverage Matrix: "Runtime NPC-ID sweep
+  // missing (known from LESSONS.md)".
+  //
+  // Expected result: PASSES (all 106 room-referenced NPC IDs
+  // resolve to defined NPCS entries per the PLAN-EVAL.md inventory).
+  describe('18. Runtime NPC-ID cross-ref sweep (P2-B)', () => {
+    it('every npcSpawns[].npcId in ALL_ROOMS resolves to a defined NPCS entry', () => {
+      const npcIds = new Set(Object.keys(NPCS))
+      const orphans: Array<{ roomId: string; npcId: string }> = []
+
+      for (const room of ALL_ROOMS) {
+        if (!room.npcSpawns) continue
+        for (const spawn of room.npcSpawns) {
+          if (!npcIds.has(spawn.npcId)) {
+            orphans.push({ roomId: room.id, npcId: spawn.npcId })
+          }
+        }
+      }
+
+      expect(
+        orphans.map(o => `Room '${o.roomId}': npcId '${o.npcId}' not in NPCS`),
+        `Undefined NPC IDs in npcSpawns — fix these before next convoy:\n` +
+        orphans.map(o => `  ${o.roomId}: ${o.npcId}`).join('\n')
+      ).toHaveLength(0)
+    })
+
+    // Known gap: 3 NPCs in static room.npcs[] are not yet in NPCS data file.
+    // These are documented as known failures. Add to NPCS when authoring.
+    // Known missing: pens_intake_orderly, pens_donor_long_term, pens_donor_ward_b
+    it.fails(
+      'every static room.npcs[] entry in ALL_ROOMS resolves to a defined NPCS key (known gap: 3 pens NPCs)',
+      () => {
+        const npcIds = new Set(Object.keys(NPCS))
+        const orphans: Array<{ roomId: string; npcId: string }> = []
+
+        for (const room of ALL_ROOMS) {
+          if (!room.npcs || room.npcs.length === 0) continue
+          for (const npcId of room.npcs) {
+            if (!npcIds.has(npcId)) {
+              orphans.push({ roomId: room.id, npcId })
+            }
+          }
+        }
+
+        expect(
+          orphans.map(o => `Room '${o.roomId}': static npcs[] '${o.npcId}' not in NPCS`),
+          `Undefined NPC IDs in static room.npcs[]:\n` +
+          orphans.map(o => `  ${o.roomId}: ${o.npcId}`).join('\n')
+        ).toHaveLength(0)
+      }
+    )
+
+    // Snapshot of the known missing static npcs[] set
+    it('missing static room.npcs[] entries match known snapshot (run vitest -u to update)', () => {
+      const npcIds = new Set(Object.keys(NPCS))
+      const orphans: Array<string> = []
+
+      for (const room of ALL_ROOMS) {
+        if (!room.npcs || room.npcs.length === 0) continue
+        for (const npcId of room.npcs) {
+          if (!npcIds.has(npcId) && !orphans.includes(npcId)) {
+            orphans.push(npcId)
+          }
+        }
+      }
+
+      orphans.sort()
+      expect(orphans).toMatchSnapshot()
+    })
+
+    it('documents all npcSpawn dialogue tree IDs referenced across ALL_ROOMS (audit log)', () => {
+      // Collect every unique dialogueTree value referenced in npcSpawns
+      const allReferencedTrees = new Set<string>()
+      for (const room of ALL_ROOMS) {
+        if (!room.npcSpawns) continue
+        for (const spawn of room.npcSpawns) {
+          if (spawn.dialogueTree) {
+            allReferencedTrees.add(spawn.dialogueTree)
+          }
+        }
+      }
+
+      const definedTrees = new Set(Object.keys(DIALOGUE_TREES))
+      const missingTrees = [...allReferencedTrees]
+        .filter(id => !definedTrees.has(id))
+        .sort()
+
+      // Log summary for test output visibility
+      console.log(
+        `\n=== Category 18 Audit ===\n` +
+        `Room-referenced dialogue trees: ${allReferencedTrees.size}\n` +
+        `Defined DIALOGUE_TREES keys: ${definedTrees.size}\n` +
+        `Missing trees: ${missingTrees.length}\n`
+      )
+
+      // This test always passes — it's the audit log. The it.fails tests
+      // in section 19 enforce the actual known-failure contracts.
+      expect(allReferencedTrees.size).toBeGreaterThan(0)
+    })
+  })
+
+  // ── 19. dialogueTree cross-ref sweep — known failures (P2-B) ─
+  //
+  // Every npcSpawns[].dialogueTree value must exist as a key in
+  // DIALOGUE_TREES. Currently 78 trees are referenced in rooms
+  // but not yet authored. These are DOCUMENTED known failures,
+  // not silenced ones.
+  //
+  // Pattern: it.fails() — these tests are EXPECTED to fail.
+  // When a tree is authored and added to DIALOGUE_TREES, remove
+  // its corresponding it.fails() entry.
+  //
+  // Per PLAN-EVAL.md P2-B: "Expect dialogue health failures —
+  // there are 78 missing dialogue trees ... Your test should
+  // DOCUMENT these as known failures (e.g., it.fails(...) or
+  // expect(...).toMatchSnapshot() with the orphan list as the
+  // snapshot), not be silenced."
+  describe('19. dialogueTree cross-ref sweep — known missing trees (P2-B)', () => {
+    // This master test passes when ALL room-referenced trees exist.
+    // Currently expected to fail due to ~78 missing trees.
+    // When all trees are authored, this becomes the passing gate.
+    it.fails(
+      'all npcSpawns[].dialogueTree values in ALL_ROOMS resolve to DIALOGUE_TREES keys (master gate)',
+      () => {
+        const definedTrees = new Set(Object.keys(DIALOGUE_TREES))
+        const orphans: Array<{ roomId: string; npcId: string; treeId: string }> = []
+
+        for (const room of ALL_ROOMS) {
+          if (!room.npcSpawns) continue
+          for (const spawn of room.npcSpawns) {
+            if (!spawn.dialogueTree) continue
+            if (!definedTrees.has(spawn.dialogueTree)) {
+              orphans.push({ roomId: room.id, npcId: spawn.npcId, treeId: spawn.dialogueTree })
+            }
+          }
+        }
+
+        expect(
+          orphans,
+          `Missing DIALOGUE_TREES entries (${orphans.length} total):\n` +
+          orphans.map(o => `  ${o.treeId} (room ${o.roomId}, npc ${o.npcId})`).join('\n')
+        ).toHaveLength(0)
+      }
+    )
+
+    // ── Snapshot of the known missing tree set ──────────────────
+    // This snapshot records the exact set of missing dialogue trees
+    // as of 2026-05-03. When new trees are authored, update this
+    // snapshot with: vitest -u (or remove entries from the list).
+    it('missing dialogue tree set matches known snapshot (run vitest -u to update)', () => {
+      const definedTrees = new Set(Object.keys(DIALOGUE_TREES))
+      const missingTrees: string[] = []
+
+      for (const room of ALL_ROOMS) {
+        if (!room.npcSpawns) continue
+        for (const spawn of room.npcSpawns) {
+          if (!spawn.dialogueTree) continue
+          if (!definedTrees.has(spawn.dialogueTree) && !missingTrees.includes(spawn.dialogueTree)) {
+            missingTrees.push(spawn.dialogueTree)
+          }
+        }
+      }
+
+      missingTrees.sort()
+
+      expect(missingTrees).toMatchSnapshot()
+    })
+
+    // ── Per-zone breakdown — each zone's missing trees ──────────
+    // Individual it.fails() per zone so authors can track progress
+    // zone by zone. Remove the it.fails() wrapper when the zone is
+    // complete (all its referenced trees authored).
+
+    it.fails('crossroads zone: all dialogueTrees resolve (known gap)', () => {
+      const definedTrees = new Set(Object.keys(DIALOGUE_TREES))
+      const orphans: string[] = []
+      for (const room of ALL_ROOMS) {
+        if (room.zone !== 'crossroads') continue
+        if (!room.npcSpawns) continue
+        for (const spawn of room.npcSpawns) {
+          if (!spawn.dialogueTree) continue
+          if (!definedTrees.has(spawn.dialogueTree) && !orphans.includes(spawn.dialogueTree)) {
+            orphans.push(spawn.dialogueTree)
+          }
+        }
+      }
+      expect(orphans, `Crossroads missing trees: ${orphans.join(', ')}`).toHaveLength(0)
+    })
+
+    it.fails('river_road zone: all dialogueTrees resolve (known gap)', () => {
+      const definedTrees = new Set(Object.keys(DIALOGUE_TREES))
+      const orphans: string[] = []
+      for (const room of ALL_ROOMS) {
+        if (room.zone !== 'river_road') continue
+        if (!room.npcSpawns) continue
+        for (const spawn of room.npcSpawns) {
+          if (!spawn.dialogueTree) continue
+          if (!definedTrees.has(spawn.dialogueTree) && !orphans.includes(spawn.dialogueTree)) {
+            orphans.push(spawn.dialogueTree)
+          }
+        }
+      }
+      expect(orphans, `River Road missing trees: ${orphans.join(', ')}`).toHaveLength(0)
+    })
+
+    it.fails('covenant zone: all dialogueTrees resolve (known gap)', () => {
+      const definedTrees = new Set(Object.keys(DIALOGUE_TREES))
+      const orphans: string[] = []
+      for (const room of ALL_ROOMS) {
+        if (room.zone !== 'covenant') continue
+        if (!room.npcSpawns) continue
+        for (const spawn of room.npcSpawns) {
+          if (!spawn.dialogueTree) continue
+          if (!definedTrees.has(spawn.dialogueTree) && !orphans.includes(spawn.dialogueTree)) {
+            orphans.push(spawn.dialogueTree)
+          }
+        }
+      }
+      expect(orphans, `Covenant missing trees: ${orphans.join(', ')}`).toHaveLength(0)
+    })
+
+    it.fails('salt_creek zone: all dialogueTrees resolve (known gap)', () => {
+      const definedTrees = new Set(Object.keys(DIALOGUE_TREES))
+      const orphans: string[] = []
+      for (const room of ALL_ROOMS) {
+        if (room.zone !== 'salt_creek') continue
+        if (!room.npcSpawns) continue
+        for (const spawn of room.npcSpawns) {
+          if (!spawn.dialogueTree) continue
+          if (!definedTrees.has(spawn.dialogueTree) && !orphans.includes(spawn.dialogueTree)) {
+            orphans.push(spawn.dialogueTree)
+          }
+        }
+      }
+      expect(orphans, `Salt Creek missing trees: ${orphans.join(', ')}`).toHaveLength(0)
+    })
+
+    it.fails('the_ember zone: all dialogueTrees resolve (known gap)', () => {
+      const definedTrees = new Set(Object.keys(DIALOGUE_TREES))
+      const orphans: string[] = []
+      for (const room of ALL_ROOMS) {
+        if (room.zone !== 'the_ember') continue
+        if (!room.npcSpawns) continue
+        for (const spawn of room.npcSpawns) {
+          if (!spawn.dialogueTree) continue
+          if (!definedTrees.has(spawn.dialogueTree) && !orphans.includes(spawn.dialogueTree)) {
+            orphans.push(spawn.dialogueTree)
+          }
+        }
+      }
+      expect(orphans, `The Ember missing trees: ${orphans.join(', ')}`).toHaveLength(0)
+    })
+
+    it.fails('the_breaks zone: all dialogueTrees resolve (known gap)', () => {
+      const definedTrees = new Set(Object.keys(DIALOGUE_TREES))
+      const orphans: string[] = []
+      for (const room of ALL_ROOMS) {
+        if (room.zone !== 'the_breaks') continue
+        if (!room.npcSpawns) continue
+        for (const spawn of room.npcSpawns) {
+          if (!spawn.dialogueTree) continue
+          if (!definedTrees.has(spawn.dialogueTree) && !orphans.includes(spawn.dialogueTree)) {
+            orphans.push(spawn.dialogueTree)
+          }
+        }
+      }
+      expect(orphans, `The Breaks missing trees: ${orphans.join(', ')}`).toHaveLength(0)
+    })
+
+    it.fails('duskhollow zone: all dialogueTrees resolve (known gap)', () => {
+      const definedTrees = new Set(Object.keys(DIALOGUE_TREES))
+      const orphans: string[] = []
+      for (const room of ALL_ROOMS) {
+        if (room.zone !== 'duskhollow') continue
+        if (!room.npcSpawns) continue
+        for (const spawn of room.npcSpawns) {
+          if (!spawn.dialogueTree) continue
+          if (!definedTrees.has(spawn.dialogueTree) && !orphans.includes(spawn.dialogueTree)) {
+            orphans.push(spawn.dialogueTree)
+          }
+        }
+      }
+      expect(orphans, `Duskhollow missing trees: ${orphans.join(', ')}`).toHaveLength(0)
+    })
+
+    it.fails('the_deep zone: all dialogueTrees resolve (known gap)', () => {
+      const definedTrees = new Set(Object.keys(DIALOGUE_TREES))
+      const orphans: string[] = []
+      for (const room of ALL_ROOMS) {
+        if (room.zone !== 'the_deep') continue
+        if (!room.npcSpawns) continue
+        for (const spawn of room.npcSpawns) {
+          if (!spawn.dialogueTree) continue
+          if (!definedTrees.has(spawn.dialogueTree) && !orphans.includes(spawn.dialogueTree)) {
+            orphans.push(spawn.dialogueTree)
+          }
+        }
+      }
+      expect(orphans, `The Deep missing trees: ${orphans.join(', ')}`).toHaveLength(0)
+    })
+
+    it.fails('the_pine_sea zone: all dialogueTrees resolve (known gap)', () => {
+      const definedTrees = new Set(Object.keys(DIALOGUE_TREES))
+      const orphans: string[] = []
+      for (const room of ALL_ROOMS) {
+        if (room.zone !== 'the_pine_sea') continue
+        if (!room.npcSpawns) continue
+        for (const spawn of room.npcSpawns) {
+          if (!spawn.dialogueTree) continue
+          if (!definedTrees.has(spawn.dialogueTree) && !orphans.includes(spawn.dialogueTree)) {
+            orphans.push(spawn.dialogueTree)
+          }
+        }
+      }
+      expect(orphans, `The Pine Sea missing trees: ${orphans.join(', ')}`).toHaveLength(0)
+    })
+
+    // The Pens: all referenced dialogue trees ARE authored — this zone is complete.
+    it('the_pens zone: all dialogueTrees resolve (COMPLETE — no missing trees)', () => {
+      const definedTrees = new Set(Object.keys(DIALOGUE_TREES))
+      const orphans: string[] = []
+      for (const room of ALL_ROOMS) {
+        if (room.zone !== 'the_pens') continue
+        if (!room.npcSpawns) continue
+        for (const spawn of room.npcSpawns) {
+          if (!spawn.dialogueTree) continue
+          if (!definedTrees.has(spawn.dialogueTree) && !orphans.includes(spawn.dialogueTree)) {
+            orphans.push(spawn.dialogueTree)
+          }
+        }
+      }
+      expect(orphans, `The Pens missing trees: ${orphans.join(', ')}`).toHaveLength(0)
+    })
+
+    it.fails('the_scar zone: all dialogueTrees resolve (known gap)', () => {
+      const definedTrees = new Set(Object.keys(DIALOGUE_TREES))
+      const orphans: string[] = []
+      for (const room of ALL_ROOMS) {
+        if (room.zone !== 'the_scar') continue
+        if (!room.npcSpawns) continue
+        for (const spawn of room.npcSpawns) {
+          if (!spawn.dialogueTree) continue
+          if (!definedTrees.has(spawn.dialogueTree) && !orphans.includes(spawn.dialogueTree)) {
+            orphans.push(spawn.dialogueTree)
+          }
+        }
+      }
+      expect(orphans, `The Scar missing trees: ${orphans.join(', ')}`).toHaveLength(0)
+    })
+
+    // The Stacks: room files (the_stacks.ts) reference only lev_entry_hall / lev_office_quest.
+    // If no missing trees, this is a passing test.
+    it('the_stacks zone: all dialogueTrees resolve (COMPLETE — only Lev trees referenced)', () => {
+      const definedTrees = new Set(Object.keys(DIALOGUE_TREES))
+      const orphans: string[] = []
+      for (const room of ALL_ROOMS) {
+        if (room.zone !== 'the_stacks') continue
+        if (!room.npcSpawns) continue
+        for (const spawn of room.npcSpawns) {
+          if (!spawn.dialogueTree) continue
+          if (!definedTrees.has(spawn.dialogueTree) && !orphans.includes(spawn.dialogueTree)) {
+            orphans.push(spawn.dialogueTree)
+          }
+        }
+      }
+      expect(orphans, `The Stacks missing trees: ${orphans.join(', ')}`).toHaveLength(0)
+    })
+
+    // The Dust: if no npcSpawns with dialogueTrees, this passes trivially.
+    it('the_dust zone: all dialogueTrees resolve (informational)', () => {
+      const definedTrees = new Set(Object.keys(DIALOGUE_TREES))
+      const orphans: string[] = []
+      for (const room of ALL_ROOMS) {
+        if (room.zone !== 'the_dust') continue
+        if (!room.npcSpawns) continue
+        for (const spawn of room.npcSpawns) {
+          if (!spawn.dialogueTree) continue
+          if (!definedTrees.has(spawn.dialogueTree) && !orphans.includes(spawn.dialogueTree)) {
+            orphans.push(spawn.dialogueTree)
+          }
+        }
+      }
+      expect(orphans, `The Dust missing trees: ${orphans.join(', ')}`).toHaveLength(0)
+    })
+  })
+
+  // ── 20. Named NPC dialogue tree coverage (P2-B) ──────────────
+  //
+  // Every NPC with isNamed:true should have at least one entry in
+  // DIALOGUE_TREES where tree.npcId matches the NPC's id.
+  //
+  // Known allowlist (intentionally no tree):
+  //   - the_dog: companion — commentary only, no conversation
+  //   - dory: background NPC via room extras
+  //   - leatherworker_vin: vendor — trade interface only
+  //
+  // These three are in NAMED_NPCS_WITHOUT_TREE above (section 8)
+  // and remain passing. Any NEW named NPC without a tree appears
+  // here as a known failure until its tree is authored.
+  describe('20. Named NPC dialogue tree coverage — known gaps documented (P2-B)', () => {
+    // This master test passes only when ALL named NPCs (minus the
+    // explicit allowlist) have dialogue trees. Currently expected
+    // to fail for any named NPC added since the initial authoring.
+    it('named NPC tree coverage matches known snapshot (run vitest -u to update)', () => {
+      const treeNpcIds = new Set(uniqueTrees.map(({ tree }) => tree.npcId))
+      const missingNamedNpcs: string[] = []
+
+      for (const [id, npc] of Object.entries(NPCS)) {
+        const n = npc as { isNamed?: boolean; id: string; name: string }
+        if (n.isNamed && !treeNpcIds.has(id) && !NAMED_NPCS_WITHOUT_TREE.has(id)) {
+          missingNamedNpcs.push(`${id} (${n.name})`)
+        }
+      }
+
+      missingNamedNpcs.sort()
+
+      // Snapshot so failures are visible in PR diffs
+      expect(missingNamedNpcs).toMatchSnapshot()
+    })
+
+    it('counts and logs all named NPCs and their tree coverage status', () => {
+      const treeNpcIds = new Set(uniqueTrees.map(({ tree }) => tree.npcId))
+      const namedNpcs = Object.entries(NPCS).filter(
+        ([, npc]) => (npc as { isNamed?: boolean }).isNamed
+      )
+
+      const covered = namedNpcs.filter(([id]) => treeNpcIds.has(id)).length
+      const allowlisted = namedNpcs.filter(([id]) => NAMED_NPCS_WITHOUT_TREE.has(id)).length
+      const missing = namedNpcs.filter(
+        ([id]) => !treeNpcIds.has(id) && !NAMED_NPCS_WITHOUT_TREE.has(id)
+      ).length
+
+      console.log(
+        `\n=== Category 20: Named NPC Dialogue Coverage ===\n` +
+        `Total named NPCs: ${namedNpcs.length}\n` +
+        `With dialogue tree: ${covered}\n` +
+        `Allowlisted (no tree intentionally): ${allowlisted}\n` +
+        `Missing trees (known gap): ${missing}\n`
+      )
+
+      // Informational — always passes. The snapshot test above enforces the gap set.
+      expect(namedNpcs.length).toBeGreaterThan(0)
     })
   })
 })

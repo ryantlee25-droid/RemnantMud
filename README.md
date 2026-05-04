@@ -209,6 +209,21 @@ tests/          Vitest test suite
 
 ## Release Notes
 
+### 2026-05-04 — Eval Convoy 2026-05-04 — comprehensive game evaluation testing
+
+27-task parallel Howler convoy (5 phases) delivering full-spectrum evaluation of The Remnant — every system, every zone, every mechanic. ~28K lines of test/validation code added; zero production source modifications.
+
+- **Test count**: 6,206 → 7,413 passing (+1,207); 108 test files; 42 skipped, 15 expected-fail
+- **Coverage wins**: `supabaseMock.ts` 10.75% → 98.92%; `narrativeKeys.ts` 69.49% → 100%; `combat.ts` 48.97% → 85.04%; `vendorDialogue.ts` 54.54% → 90.9%; 7 component files 0% → substantial (86 RTL tests)
+- **Modules covered**: eval, integration, playtest, unit suites across all 13 zones and core engine systems
+- **4 eval rubrics** added in `evaluation/narrative-review/` (narrative quality, combat feel, world consistency, dialogue coherence)
+- **2 validator scripts** added (`scripts/validate-npc-cross-refs.ts`, `scripts/validate-schema-drift.ts`); wired into `pnpm validate`
+- **Harness extended** additively: `teleport()` and `setQuestFlag()` helpers in test harness
+- **11 game bugs documented** in eval suite (expected-fail tests): unreachable endings, shepherd heal overflow, orphan DB column, missing dialogue trees, and more — filed for triage as separate issues
+- **100 real game-data findings** surfaced by `pnpm validate`: 78 missing dialogue trees, 3 orphan room.npcs, 16 prose name hardcodes, 3 named NPCs without trees
+- **White review blocker fixed**: P4-F `_mockDb` closure hole patched (commit 31aff4a)
+- **vitest config**: worktree exclude paths added to stop cross-worktree test pollution
+
 ### 2026-05-03 — Complete interaction-coverage spectrum + 5 chat fixes
 
 Five-Howler parallel sweep covering every player-facing interaction surface — chat (exhaustive runtime walk), examine, items, parser commands, and crafting + trade. Goal: every interaction works where expected, every character is chattable. Suite grew from 2490 → 6199 tests; 5 dialogue-tree key mismatches and 1 examine-keyword collision found and fixed.

@@ -269,4 +269,26 @@ describe('PlayerSession — smoke test', () => {
     await session.create(ENFORCER_SPEC)
     await expect(session.destroy()).resolves.toBeUndefined()
   })
+
+  it('teleport() moves player to target room', async () => {
+    await session.create(ENFORCER_SPEC)
+
+    // cr_02_gate is a real room adjacent to the start room
+    session.teleport('cr_02_gate')
+
+    expect(session.currentRoom.id).toBe('cr_02_gate')
+    expect(session.player.currentRoomId).toBe('cr_02_gate')
+
+    await session.destroy()
+  })
+
+  it('setQuestFlag() persists the flag value on the player', async () => {
+    await session.create(ENFORCER_SPEC)
+
+    session.setQuestFlag('sparks_quest_active', true)
+
+    expect(session.player.questFlags?.['sparks_quest_active']).toBe(true)
+
+    await session.destroy()
+  })
 })

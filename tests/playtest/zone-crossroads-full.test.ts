@@ -270,7 +270,7 @@ describe('Zone A — Crossroads: NPC cross-reference', () => {
     expect(DIALOGUE_TREES['cr_pit_bookie']).toBeDefined()
   })
 
-  it.fails('leatherworker_vin has dialogue tree cr_vin_intro [TODO: not yet registered]', () => {
+  it('leatherworker_vin has dialogue tree cr_vin_intro', () => {
     expect(DIALOGUE_TREES['cr_vin_intro']).toBeDefined()
   })
 
@@ -616,8 +616,7 @@ describe('Zone A — Crossroads: NPC interactions', () => {
     expect(vinSpawn!.tradeInventory).toContain('scrap_vest')
   })
 
-  // TODO: cr_vin_intro dialogue tree is not yet registered
-  it.fails('Vin: dialogue tree cr_vin_intro registered [TODO: missing from dialogueTrees.ts]', () => {
+  it('Vin: dialogue tree cr_vin_intro registered', () => {
     expect(DIALOGUE_TREES['cr_vin_intro']).toBeDefined()
   })
 
